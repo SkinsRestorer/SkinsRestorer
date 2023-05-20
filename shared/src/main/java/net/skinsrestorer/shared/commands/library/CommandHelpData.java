@@ -21,15 +21,13 @@ package net.skinsrestorer.shared.commands.library;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.subjects.SRCommandSender;
-
-import java.util.function.Predicate;
+import lombok.ToString;
+import net.skinsrestorer.shared.subjects.messages.Message;
 
 @Getter
+@ToString
 @RequiredArgsConstructor
-public class SRCommandMeta<T extends SRCommandSender> {
-    private final String rootName;
-    private final String[] aliases;
-    private final Predicate<T> permission;
-    private final CommandHelpData rootHelp;
+public class CommandHelpData {
+    private final boolean privateCommand;
+    private final Message commandDescription;
 }

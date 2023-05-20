@@ -26,6 +26,6 @@ import net.skinsrestorer.shared.subjects.SRCommandSender;
 @Getter
 @RequiredArgsConstructor
 public class SRRegisterPayload<T extends SRCommandSender> {
-    private final SRCommandMeta meta;
+    private final SRCommandMeta<T> meta;
     private final CommandExecutor<T> executor;
 }

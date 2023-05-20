@@ -38,6 +38,7 @@ import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.plugin.SRServerPlatformInit;
 import net.skinsrestorer.shared.serverinfo.SemanticVersion;
+import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.PermissionGroup;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
@@ -119,8 +120,12 @@ public class SRBukkitInit implements SRServerPlatformInit {
 
     @Override
     public void initPrePlatformInit() {
+        SkinsRestorerLocale locale = injector.getSingleton(SkinsRestorerLocale.class);
         server.getHelpMap().registerHelpTopicFactory(SRBukkitCommand.class, command -> {
-            if (command instanceof SRBukkitCommand) {
+            if (!(command instanceof SRBukkitCommand)) {
+                throw new IllegalArgumentException("Command must be an instance of SRBukkitCommand");
+
+            }
                 SRBukkitCommand srbukkitCommand = (SRBukkitCommand) command;
 
                 return new HelpTopic() {
@@ -138,40 +143,18 @@ public class SRBukkitInit implements SRServerPlatformInit {
                     @NotNull
                     @Override
                     public String getShortText() {
-                        return srbukkitCommand.getMeta().getDescription();
+                        return locale.getMessage(locale.getDefaultForeign(),
+                                srbukkitCommand.getMeta().getRootHelp().getCommandDescription());
                     }
 
                     @NotNull
                     @Override
                     public String getFullText(@NotNull CommandSender forWho) {
-                        StringBuilder sb = new StringBuilder();
-
-                        sb.append(ChatColor.GOLD);
-                        sb.append("Description: ");
-                        sb.append(ChatColor.WHITE);
-                        sb.append(srbukkitCommand.getMeta().getDescription());
-
-                        sb.append("\n");
-
-                        sb.append(ChatColor.GOLD);
-                        sb.append("Usage: ");
-                        sb.append(ChatColor.WHITE);
-                        sb.append(srbukkitCommand.getExecutor().getHelpUsage(wrapper.commandSender(forWho)));
-
-                        String[] aliases = srbukkitCommand.getMeta().getAliases();
-                        if (aliases.length > 0) {
-                            sb.append("\n");
-                            sb.append(ChatColor.GOLD);
-                            sb.append("Aliases: ");
-                            sb.append(ChatColor.WHITE);
-                            sb.append(String.join(", ", aliases));
-                        }
-                        return sb.toString();
+                        SRCommandSender sender = wrapper.commandSender(forWho);
+                        return String.join("\n",
+                                srbukkitCommand.getExecutor().getManager().getHelpMessage(srbukkitCommand.getMeta().getRootName(), sender, true));
                     }
                 };
-            } else {
-                throw new IllegalArgumentException("Command must be an instance of SRBukkitCommand");
-            }
         });
     }
 

@@ -22,12 +22,14 @@ package net.skinsrestorer.sponge;
 import ch.jalu.injector.Injector;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.commands.library.SRRegisterPayload;
 import net.skinsrestorer.shared.gui.SharedGUI;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
+import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.utils.IOExceptionConsumer;
 import net.skinsrestorer.sponge.gui.SkinsGUI;
 import net.skinsrestorer.sponge.listeners.ForceAliveListener;
@@ -209,6 +211,8 @@ public class SRSpongeAdapter implements SRServerAdapter<PluginContainer> {
     @Listener
     public void onCommandRegister(RegisterCommandEvent<Command.Raw> event) {
         WrapperSponge wrapper = injector.getSingleton(WrapperSponge.class);
+        SkinsRestorerLocale locale = injector.getSingleton(SkinsRestorerLocale.class);
+        LegacyComponentSerializer serializer = LegacyComponentSerializer.legacySection();
         for (SRRegisterPayload<SRCommandSender> payload : commands) {
             event.register(pluginContainer, new Command.Raw() {
                 @Override
@@ -233,12 +237,15 @@ public class SRSpongeAdapter implements SRServerAdapter<PluginContainer> {
 
                 @Override
                 public Optional<Component> shortDescription(CommandCause cause) {
-                    return Optional.of(Component.text(payload.getMeta().getDescription()));
+                    SRCommandSender sender = wrapper.commandSender(cause);
+                    return Optional.of(serializer.deserialize(locale.getMessage(sender, payload.getMeta().getRootHelp().getCommandDescription())));
                 }
 
                 @Override
                 public Optional<Component> extendedDescription(CommandCause cause) {
-                    return Optional.empty();
+                    SRCommandSender sender = wrapper.commandSender(cause);
+                    return Optional.of(serializer.deserialize(String.join("\n",
+                            payload.getExecutor().getManager().getHelpMessage(payload.getMeta().getRootName(), sender, true))));
                 }
 
                 @Override

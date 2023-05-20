@@ -26,7 +26,6 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -36,7 +35,7 @@ public class CommandExecutor<T extends SRCommandSender> {
     private final CommandDispatcher<T> dispatcher;
     @Getter
     private final CommandManager<T> manager;
-    private final SRCommandMeta meta;
+    private final SRCommandMeta<T> meta;
     private final SRLogger logger;
 
     public void execute(T executor, String input) {
@@ -50,13 +49,6 @@ public class CommandExecutor<T extends SRCommandSender> {
     }
 
     public boolean hasPermission(T executor) {
-        return executor.hasPermission(meta.getRootPermission());
-    }
-
-    public String getHelpUsage(T executor) {
-        return Arrays.stream(dispatcher.getAllUsage(dispatcher.getRoot().getChild(meta.getRootName()), executor, true))
-                .filter(s -> !s.isEmpty())
-                .map(s -> "/" + meta.getRootName() + " " + s)
-                .collect(Collectors.joining("\n"));
+        return meta.getPermission().test(executor);
     }
 }

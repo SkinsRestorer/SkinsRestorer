@@ -19,17 +19,21 @@
  */
 package net.skinsrestorer.shared.commands.library;
 
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 
-import java.util.function.Predicate;
-
-@Getter
 @RequiredArgsConstructor
-public class SRCommandMeta<T extends SRCommandSender> {
-    private final String rootName;
-    private final String[] aliases;
-    private final Predicate<T> permission;
-    private final CommandHelpData rootHelp;
+public class CommandInjectHelp<T extends SRCommandSender> implements Command<T> {
+    @Getter
+    private final CommandHelpData helpData;
+    private final Command<T> delegate;
+
+    @Override
+    public int run(CommandContext<T> context) throws CommandSyntaxException {
+        return delegate.run(context);
+    }
 }

@@ -42,7 +42,7 @@ public class SRBukkitCommand extends Command implements PluginIdentifiableComman
     private final CommandExecutor<SRCommandSender> executor;
     private final WrapperBukkit wrapper;
     @Getter
-    private final SRCommandMeta meta;
+    private final SRCommandMeta<SRCommandSender> meta;
 
     public SRBukkitCommand(SRRegisterPayload<SRCommandSender> payload, Plugin plugin, WrapperBukkit wrapper) {
         super(

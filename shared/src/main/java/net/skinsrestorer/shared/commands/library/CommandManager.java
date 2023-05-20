@@ -19,7 +19,6 @@
  */
 package net.skinsrestorer.shared.commands.library;
 
-import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
@@ -47,9 +46,12 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class CommandManager<T extends SRCommandSender> {
-    public final CommandDispatcher<T> dispatcher = new CommandDispatcher<>();
+    public static final String ARGUMENT_SEPARATOR = " ";
+
+    private final CommandDispatcher<T> dispatcher = new CommandDispatcher<>();
     private final Map<String, Predicate<T>> conditions = new HashMap<>();
     private final CommandPlatform<T> platform;
     private final SRLogger logger;
@@ -88,9 +90,47 @@ public class CommandManager<T extends SRCommandSender> {
     }
 
     public void registerCommand(Object command) {
-        CommandNames names = getAnnotation(CommandNames.class, command.getClass()).orElseThrow(() -> new IllegalStateException("Command is missing @CommandNames annotation"));
+        LiteralArgumentBuilder<T> rootBuilder = LiteralArgumentBuilder.literal("root");
 
-        String rootName = names.value()[0];
+        addClassCommands(rootBuilder, new LinkedHashSet<>(), command, command.getClass());
+
+        CommandNode<T> rootNode = rootBuilder.build();
+
+        CommandNode<T> baseNode = rootNode.getChildren().iterator().next();
+        String commandName = baseNode.getName();
+        List<String> aliases = new ArrayList<>();
+        for (CommandNode<T> node : rootNode.getChildren()) {
+            if (node.getName().equals(commandName)) {
+                continue;
+            }
+
+            aliases.add(node.getName());
+        }
+
+        for (CommandNode<T> node : rootNode.getChildren()) {
+            dispatcher.getRoot().addChild(node);
+        }
+
+        String[] usage = dispatcher.getAllUsage(rootNode, null, false);
+
+        for (int i = 0; i < usage.length; i++) {
+            usage[i] = "/" + usage[i];
+        }
+
+        SRCommandMeta<T> meta = new SRCommandMeta<>(commandName,
+                aliases.toArray(new String[0]), baseNode::canUse, ((CommandInjectHelp<T>) baseNode.getCommand()).getHelpData());
+        CommandExecutor<T> executor = new CommandExecutor<>(dispatcher, this, meta, logger);
+        SRRegisterPayload<T> payload = new SRRegisterPayload<>(meta, executor);
+
+        platform.registerCommand(payload);
+    }
+
+    private void addClassCommands(ArgumentBuilder<T, ?> baseNode, Set<String> conditionTrail, Object command, Class<?> commandClass) {
+        CommandNames names = getAnnotation(CommandNames.class, command.getClass())
+                .orElseThrow(() ->
+                        new IllegalStateException("Command is missing @CommandNames annotation"));
+
+        String mainName = names.value()[0];
 
         String[] aliases;
         if (names.value().length == 1) {
@@ -99,85 +139,101 @@ public class CommandManager<T extends SRCommandSender> {
             aliases = Arrays.copyOfRange(names.value(), 1, names.value().length);
         }
 
-        PermissionRegistry rootPermission = getAnnotation(CommandPermission.class, command.getClass())
-                .map(CommandPermission::value).orElseThrow(() -> new IllegalStateException("Command is missing @CommandPermission annotation"));
+        PermissionRegistry classPermission = getAnnotation(CommandPermission.class, command.getClass())
+                .map(CommandPermission::value).orElseThrow(() ->
+                        new IllegalStateException(String.format("Command %s is missing @CommandPermission annotation", mainName)));
 
-        LiteralArgumentBuilder<T> rootNode = LiteralArgumentBuilder.literal(rootName);
+        LiteralArgumentBuilder<T> classBuilder = LiteralArgumentBuilder.literal(mainName);
 
-        rootNode.requires(requirePermission(rootPermission));
+        classBuilder.requires(requirePermission(classPermission));
 
-        Set<String> conditionTrail = new LinkedHashSet<>();
+        Set<String> classConditionTrail = new LinkedHashSet<>(conditionTrail);
 
         getAnnotation(CommandConditions.class, command.getClass())
-                .ifPresent(condition -> conditionTrail.addAll(Arrays.asList(condition.value())));
+                .ifPresent(condition -> classConditionTrail.addAll(Arrays.asList(condition.value())));
 
-        addMethodCommands(rootNode, rootPermission, conditionTrail, command, command.getClass());
+        CommandHelpData currentHelpData = getHelpData(mainName, command.getClass());
 
-        LiteralCommandNode<T> rootCommandNode = dispatcher.register(rootNode);
+        addMethodCommands(classBuilder, classPermission, classConditionTrail, command, command.getClass(), currentHelpData);
+
+        LiteralCommandNode<T> classCommandNode = classBuilder.build();
+        baseNode.then(classCommandNode);
 
         for (String alias : aliases) {
-            dispatcher.getRoot().addChild(buildRedirect(alias, rootCommandNode));
+            baseNode.then(buildRedirect(alias, classCommandNode));
         }
-
-        String description = locale.getMessage(locale.getDefaultForeign(),
-                getAnnotation(Description.class, command.getClass())
-                        .orElseThrow(() -> new IllegalStateException("Command is missing @Description annotation")).value());
-
-        String[] usage = dispatcher.getAllUsage(rootCommandNode, null, false);
-
-        for (int i = 0; i < usage.length; i++) {
-            usage[i] = "/" + rootName + " " + usage[i];
-        }
-
-        SRCommandMeta meta = new SRCommandMeta(rootName, aliases, rootPermission.getPermission(), description);
-        CommandExecutor<T> executor = new CommandExecutor<>(dispatcher, this, meta, logger);
-        SRRegisterPayload<T> payload = new SRRegisterPayload<>(meta, executor);
-
-        platform.registerCommand(payload);
     }
 
-    private void addMethodCommands(ArgumentBuilder<T, ?> node, PermissionRegistry rootPermission, Set<String> conditionTrail, Object command, Class<?> commandClass) {
+    private void addMethodCommands(ArgumentBuilder<T, ?> node, PermissionRegistry rootPermission,
+                                   Set<String> conditionTrail, Object command, Class<?> commandClass, CommandHelpData currentHelpData) {
+        List<Method> sortedMethods = new ArrayList<>();
         for (Method method : commandClass.getDeclaredMethods()) {
             method.setAccessible(true);
+            sortedMethods.add(method);
+        }
 
+        sortedMethods.sort(Comparator.comparingInt(Method::getParameterCount));
+        Collections.reverse(sortedMethods);
+
+        for (Method method : sortedMethods) {
             Optional<RootCommand> def = getAnnotation(RootCommand.class, method);
             Optional<Subcommand> names = getAnnotation(Subcommand.class, method);
-            if (names.isPresent() || def.isPresent()) {
-                validateMethod(method);
+            if (!def.isPresent() && !names.isPresent()) {
+                continue;
+            }
 
-                Set<String> commandConditions = insertPlayerCondition(insertAnnotationConditions(conditionTrail, method), method);
-                if (def.isPresent()) {
-                    registerParameters(node, rootPermission, commandConditions, command, method);
-                } else {
-                    String[] namesArray = names.get().value();
-                    if (namesArray.length == 0) {
-                        throw new IllegalStateException("Subcommand annotation must have at least one name");
-                    }
+            validateMethod(method);
 
-                    String name = namesArray[0];
-                    String[] aliases = Arrays.copyOfRange(namesArray, 1, namesArray.length);
+            Set<String> commandConditions = insertPlayerCondition(insertAnnotationConditions(conditionTrail, method), method);
+            if (def.isPresent()) {
+                registerParameters(node, rootPermission, commandConditions, command, method, currentHelpData);
+            } else {
+                String[] namesArray = names.get().value();
+                if (namesArray.length == 0) {
+                    throw new IllegalStateException("Subcommand annotation must have at least one name");
+                }
 
-                    LiteralArgumentBuilder<T> childNode = LiteralArgumentBuilder.literal(name);
+                String name = namesArray[0];
+                String[] aliases = Arrays.copyOfRange(namesArray, 1, namesArray.length);
 
-                    PermissionRegistry subPermission = getAnnotation(CommandPermission.class, method)
-                            .map(CommandPermission::value).orElseThrow(() -> new IllegalStateException("Command is missing @CommandPermission annotation"));
+                LiteralArgumentBuilder<T> childNode = LiteralArgumentBuilder.literal(name);
 
-                    childNode.requires(requirePermission(subPermission));
+                PermissionRegistry subPermission = getAnnotation(CommandPermission.class, method)
+                        .map(CommandPermission::value).orElseThrow(() ->
+                                new IllegalStateException(String.format("Command %s is missing @CommandPermission annotation", method.getName())));
 
-                    registerParameters(childNode, subPermission, commandConditions, command, method);
+                childNode.requires(requirePermission(subPermission));
 
-                    LiteralCommandNode<T> registeredNode = childNode.build();
-                    node.then(registeredNode);
+                CommandHelpData commandHelpData = getHelpData(name, method);
 
-                    for (String alias : aliases) {
-                        node.then(buildRedirect(alias, registeredNode));
-                    }
+                registerParameters(childNode, subPermission, commandConditions, command, method, commandHelpData);
+
+                LiteralCommandNode<T> registeredNode = childNode.build();
+                node.then(registeredNode);
+
+                for (String alias : aliases) {
+                    node.then(buildRedirect(alias, registeredNode));
                 }
             }
         }
     }
 
-    private void registerParameters(ArgumentBuilder<T, ?> node, PermissionRegistry subPermission, Set<String> conditionTrail, Object command, Method method) {
+    private CommandHelpData getHelpData(String nodeName, AnnotatedElement element) {
+        Optional<Private> privateAnnotation = getAnnotation(Private.class, element);
+
+        if (privateAnnotation.isPresent()) {
+            return new CommandHelpData(true, null);
+        } else {
+            Message description = getAnnotation(Description.class, element)
+                    .orElseThrow(() ->
+                            new IllegalStateException(String.format("Command %s is missing @Description annotation", nodeName))).value();
+
+            return new CommandHelpData(false, description);
+        }
+    }
+
+    private void registerParameters(ArgumentBuilder<T, ?> node, PermissionRegistry subPermission,
+                                    Set<String> conditionTrail, Object command, Method method, CommandHelpData currentHelpData) {
         List<ArgumentBuilder<T, ?>> nodes = new ArrayList<>();
         nodes.add(node);
         int i = 0;
@@ -223,33 +279,9 @@ public class CommandManager<T extends SRCommandSender> {
             i++;
         }
 
-        nodes.get(nodes.size() - 1).executes(requireConditions(context -> {
-            try {
-                int i1 = 0;
-                Object[] parameters = new Object[method.getParameterCount()];
-                for (Parameter parameter : method.getParameters()) {
-                    if (i1 == 0) {
-                        parameters[i1] = context.getSource();
-                        i1++;
-                        continue;
-                    }
-                    parameters[i1] = context.getArgument(parameter.getName(), parameter.getType());
-                    i1++;
-                }
-                logger.debug(String.format("Executing command %s with method parameters %s", method.getName(), Arrays.toString(parameters)));
-                platform.runAsync(() -> {
-                    try {
-                        method.invoke(command, parameters);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                });
-                return Command.SINGLE_SUCCESS;
-            } catch (Exception e) {
-                e.printStackTrace();
-                return 0;
-            }
-        }, conditionTrail));
+        nodes.get(nodes.size() - 1).executes(new CommandInjectHelp<>(currentHelpData,
+                new ConditionCommand<>(getConditionRegistrations(),
+                        new BrigadierCommand<>(method, logger, command, platform))));
 
         if (nodes.size() > 1) {
             for (int i1 = nodes.size() - 1; i1 > 0; i1--) {
@@ -278,16 +310,6 @@ public class CommandManager<T extends SRCommandSender> {
         return source -> source.hasPermission(permission);
     }
 
-    private Command<T> requireConditions(Command<T> command, Iterable<String> conditions) {
-        return source -> {
-            if (checkConditions(source.getSource(), conditions)) {
-                return command.run(source);
-            }
-
-            return 0;
-        };
-    }
-
     private Set<String> insertAnnotationConditions(Set<String> conditionTrail, AnnotatedElement element) {
         Set<String> copy = copyAndInsert(conditionTrail);
         getAnnotation(CommandConditions.class, element)
@@ -313,24 +335,53 @@ public class CommandManager<T extends SRCommandSender> {
         conditions.put(name, condition);
     }
 
-    private boolean checkConditions(T source, Iterable<String> conditions) {
-        for (String condition : conditions) {
-            if (!this.conditions.get(condition).test(source)) {
-                return false;
-            }
-        }
-
-        return true;
+    private List<ConditionRegistration<T>> getConditionRegistrations() {
+        return conditions.entrySet().stream().map(entry -> new ConditionRegistration<>(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
     }
 
-    public String[] getRootHelp(String command, T source) {
-        String[] usage = dispatcher.getAllUsage(dispatcher.getRoot().getChild(command), source, true);
+    public List<String> getHelpMessage(String command, T source, boolean restricted) {
+        List<String> result = new ArrayList<>();
+        CommandNode<T> node = dispatcher.getRoot().getChild(command);
+        getAllUsage(node, source, result, "", restricted);
+        result.replaceAll(s -> "/" + command + ARGUMENT_SEPARATOR + s);
+        return Collections.unmodifiableList(result.stream().filter(s -> !s.isEmpty()).collect(Collectors.toList()));
+    }
 
-        for (int i = 0; i < usage.length; i++) {
-            usage[i] = "/" + command + " " + usage[i];
+    private void getAllUsage(CommandNode<T> node, T source, List<String> result, String prefix, boolean restricted) {
+        if (restricted && !node.canUse(source)) {
+            return;
         }
 
-        return usage;
+        if (node.getCommand() != null && ((CommandInjectHelp<T>) node.getCommand()).getHelpData().isPrivateCommand()) {
+            return;
+        }
+
+        if (node.getCommand() != null && !prefix.isEmpty()) {
+            StringBuilder builder = new StringBuilder();
+            builder.append(prefix);
+            CommandInjectHelp<T> command = (CommandInjectHelp<T>) node.getCommand();
+            if (command.getHelpData() != null) {
+                builder.append(" - ");
+                builder.append(locale.getMessage(source, command.getHelpData().getCommandDescription()));
+            }
+            result.add(builder.toString());
+        }
+
+        if (node.getRedirect() != null) {
+            String redirect = node.getRedirect() == dispatcher.getRoot() ? "..." : "-> " + node.getRedirect().getUsageText();
+            result.add(prefix.isEmpty() ? node.getUsageText() + ARGUMENT_SEPARATOR + redirect : prefix + ARGUMENT_SEPARATOR + redirect);
+        } else if (!node.getChildren().isEmpty()) {
+            for (CommandNode<T> child : node.getChildren()) {
+                StringBuilder builder = new StringBuilder();
+                if (!prefix.isEmpty()) {
+                    builder.append(prefix).append(ARGUMENT_SEPARATOR);
+                }
+
+                builder.append(child.getUsageText());
+                getAllUsage(child, source, result, builder.toString(), restricted);
+            }
+        }
     }
 
     public void executeCommand(T executor, String input) {
