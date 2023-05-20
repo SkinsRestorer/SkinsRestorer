@@ -152,7 +152,7 @@ public class SRBukkitInit implements SRServerPlatformInit {
                     public String getFullText(@NotNull CommandSender forWho) {
                         SRCommandSender sender = wrapper.commandSender(forWho);
                         return String.join("\n",
-                                srbukkitCommand.getExecutor().getManager().getHelpMessage(srbukkitCommand.getMeta().getRootName(), sender, true));
+                                srbukkitCommand.getExecutor().getManager().getHelpMessage(srbukkitCommand.getMeta().getRootName(), sender));
                     }
                 };
         });

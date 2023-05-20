@@ -245,7 +245,7 @@ public class SRSpongeAdapter implements SRServerAdapter<PluginContainer> {
                 public Optional<Component> extendedDescription(CommandCause cause) {
                     SRCommandSender sender = wrapper.commandSender(cause);
                     return Optional.of(serializer.deserialize(String.join("\n",
-                            payload.getExecutor().getManager().getHelpMessage(payload.getMeta().getRootName(), sender, true))));
+                            payload.getExecutor().getManager().getHelpMessage(payload.getMeta().getRootName(), sender))));
                 }
 
                 @Override

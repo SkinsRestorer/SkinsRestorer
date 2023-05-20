@@ -340,16 +340,19 @@ public class CommandManager<T extends SRCommandSender> {
                 .collect(Collectors.toList());
     }
 
-    public List<String> getHelpMessage(String command, T source, boolean restricted) {
+    public List<String> getHelpMessage(String command, T source) {
+        return getHelpMessageNodeStart(dispatcher.getRoot().getChild(command), "/" + command, source);
+    }
+
+    protected List<String> getHelpMessageNodeStart(CommandNode<T> node, String commandPrefix, T source) {
         List<String> result = new ArrayList<>();
-        CommandNode<T> node = dispatcher.getRoot().getChild(command);
-        getAllUsage(node, source, result, "", restricted);
-        result.replaceAll(s -> "/" + command + ARGUMENT_SEPARATOR + s);
+        getAllUsage(node, source, result, "");
+        result.replaceAll(s -> commandPrefix + ARGUMENT_SEPARATOR + s);
         return Collections.unmodifiableList(result.stream().filter(s -> !s.isEmpty()).collect(Collectors.toList()));
     }
 
-    private void getAllUsage(CommandNode<T> node, T source, List<String> result, String prefix, boolean restricted) {
-        if (restricted && !node.canUse(source)) {
+    private void getAllUsage(CommandNode<T> node, T source, List<String> result, String prefix) {
+        if (!node.canUse(source)) {
             return;
         }
 
@@ -379,7 +382,7 @@ public class CommandManager<T extends SRCommandSender> {
                 }
 
                 builder.append(child.getUsageText());
-                getAllUsage(child, source, result, builder.toString(), restricted);
+                getAllUsage(child, source, result, builder.toString());
             }
         }
     }

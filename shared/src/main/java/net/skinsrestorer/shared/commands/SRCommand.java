@@ -83,7 +83,7 @@ public final class SRCommand {
 
     @RootCommand
     private void onDefault(SRCommandSender sender) {
-        for (String line : commandManager.getHelpMessage("sr", sender, true)) {
+        for (String line : commandManager.getHelpMessage("sr", sender)) {
             sender.sendMessage(line);
         }
     }
