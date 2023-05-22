@@ -154,7 +154,7 @@ public final class SkinCommand {
 
             Optional<SkinProperty> skin = playerStorage.getSkinForPlayer(target.getUniqueId(), target.getName());
 
-            sender.sendMessage(Message.SUCCESS_SKIN_CHANGE, null); // TODO: Figure this out
+            sender.sendMessage(Message.SUCCESS_SKIN_CHANGE);
 
             skinApplier.applySkin(target.getAs(Object.class), skin.orElse(SRConstants.EMPTY_SKIN));
 
@@ -207,7 +207,7 @@ public final class SkinCommand {
         }
 
         if (playerEqual(sender, target)) {
-            sender.sendMessage(Message.SUCCESS_SKIN_CHANGE, (Object) null); // TODO: Figure this out
+            sender.sendMessage(Message.SUCCESS_SKIN_CHANGE);
         } else {
             sender.sendMessage(Message.SUCCESS_SKIN_CHANGE_OTHER, target.getName());
         }
@@ -285,7 +285,7 @@ public final class SkinCommand {
             }
         }
 
-        playerStorage.setSkinIdOfPlayer(target.getUniqueId(), oldSkinId.orElse(null)); // TODO: Rethink this
+        playerStorage.setSkinIdOfPlayer(target.getUniqueId(), oldSkinId.orElse(null)); // TODO: Rethink this logic
 
         return false;
     }

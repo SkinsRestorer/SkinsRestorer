@@ -64,7 +64,7 @@ public interface StorageAdapter {
 
     Map<String, String> getStoredSkins(int offset); // TODO: Redesign this
 
-    void purgeStoredOldSkins(long targetPurgeTimestamp) throws StorageException; // TODO: Redesign this
+    void purgeStoredOldSkins(long targetPurgeTimestamp) throws StorageException;
 
     Optional<MojangCacheData> getCachedUUID(String playerName) throws StorageException;
 

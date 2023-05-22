@@ -371,26 +371,25 @@ public class FileAdapter implements StorageAdapter {
 
     @Override
     public void purgeStoredOldSkins(long targetPurgeTimestamp) throws StorageException {
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(skinsFolder, "*.skin")) {
-            for (Path file : stream) {
-                if (!Files.exists(file)) {
-                    continue;
-                }
-
-                try {
-                    List<String> lines = Files.readAllLines(file);
-                    long timestamp = Long.parseLong(lines.get(2));
-
-                    if (timestamp != 0L && timestamp < targetPurgeTimestamp) {
-                        Files.deleteIfExists(file);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+        List<Path> files = new ArrayList<>();
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(skinsFolder, "*.playerskin")) {
+            stream.forEach(files::add);
         } catch (IOException e) {
-            e.printStackTrace();
             throw new StorageException(e);
+        }
+
+        for (Path file : files) {
+            try {
+                String json = new String(Files.readAllBytes(file), StandardCharsets.UTF_8);
+
+                PlayerSkinFile skinFile = gson.fromJson(json, PlayerSkinFile.class);
+
+                if (skinFile.getTimestamp() != 0L && skinFile.getTimestamp() < targetPurgeTimestamp) {
+                    Files.deleteIfExists(file);
+                }
+            } catch (Exception e) {
+                throw new StorageException(e);
+            }
         }
     }
 

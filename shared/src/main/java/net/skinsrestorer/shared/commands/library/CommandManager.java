@@ -280,7 +280,7 @@ public class CommandManager<T extends SRCommandSender> {
         }
 
         nodes.get(nodes.size() - 1).executes(new CommandInjectHelp<>(currentHelpData,
-                new ConditionCommand<>(getConditionRegistrations(),
+                new ConditionCommand<>(getConditionRegistrations(conditionTrail),
                         new BrigadierCommand<>(method, logger, command, platform))));
 
         if (nodes.size() > 1) {
@@ -335,9 +335,17 @@ public class CommandManager<T extends SRCommandSender> {
         conditions.put(name, condition);
     }
 
-    private List<ConditionRegistration<T>> getConditionRegistrations() {
-        return conditions.entrySet().stream().map(entry -> new ConditionRegistration<>(entry.getKey(), entry.getValue()))
-                .collect(Collectors.toList());
+    private List<ConditionRegistration<T>> getConditionRegistrations(Set<String> conditionTrail) {
+        List<ConditionRegistration<T>> result = new ArrayList<>();
+        for (String condition : conditionTrail) {
+            if (!conditions.containsKey(condition)) {
+                throw new IllegalStateException("Unknown condition: " + condition);
+            }
+
+            result.add(new ConditionRegistration<>(condition, conditions.get(condition)));
+        }
+
+        return result;
     }
 
     public List<String> getHelpMessage(String command, T source) {
