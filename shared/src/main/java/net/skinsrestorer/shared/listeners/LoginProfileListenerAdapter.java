@@ -39,7 +39,7 @@ public final class LoginProfileListenerAdapter<R> {
     private final SRLogger logger;
 
     public R handleLogin(SRLoginProfileEvent<R> event) {
-        logger.info("Handling login for " + event.getPlayerName() + " (" + event.getPlayerUniqueId() + ")");
+        logger.debug("Handling login for " + event.getPlayerName() + " (" + event.getPlayerUniqueId() + ")");
         if (handleSync(event)) {
             return null;
         }
