@@ -33,6 +33,7 @@ import java.io.InputStream;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Locale;
 import java.util.Map;
 
@@ -103,7 +104,7 @@ public class MessageLoader {
         Path archive = plugin.getDataFolder().resolve("archive");
         try {
             Files.createDirectories(archive);
-            Files.move(path, archive.resolve(path.getFileName().toString()));
+            Files.move(path, archive.resolve(path.getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
         } catch (Exception e) {
             e.printStackTrace();
         }
