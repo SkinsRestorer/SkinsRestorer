@@ -23,25 +23,28 @@ import net.skinsrestorer.bukkit.gui.SkinsGUIHolder;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.InventoryView;
 
 public class InventoryListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
-        Inventory inventory = event.getView().getTopInventory();
-        Inventory clickedInventory = event.getView().getInventory(event.getRawSlot());
-        InventoryHolder holder = inventory.getHolder();
+        InventoryView view = event.getView();
+        InventoryHolder holder = view.getTopInventory().getHolder();
         if (holder instanceof SkinsGUIHolder) {
-            if (inventory == clickedInventory) { // Only handle if there was a click in the top inventory
+            if (isInTop(view, event.getRawSlot())) { // Only handle if there was a click in the top inventory
                 try {
                     ((SkinsGUIHolder) holder).onClick(event);
-                } catch (Exception e) { // Ensure event always cancels
+                } catch (Throwable e) { // Ensure event always cancels
                     e.printStackTrace();
                 }
             }
 
             event.setCancelled(true);
         }
+    }
+
+    public boolean isInTop(InventoryView view, int rawSlot) {
+        return rawSlot < view.getTopInventory().getSize();
     }
 }
