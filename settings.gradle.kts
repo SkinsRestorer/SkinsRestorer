@@ -15,14 +15,14 @@ pluginManagement {
         id("net.kyori.indra.publishing") version "3.1.1"
         id("net.kyori.blossom") version "1.3.1"
         id("io.github.patrick.remapper") version "1.4.0"
-        id("com.diffplug.spotless") version "6.18.0"
+        id("com.diffplug.spotless") version "6.19.0"
         id("com.github.spotbugs") version "5.0.14"
         id("io.freefair.lombok") version "8.0.1"
     }
 }
 
 plugins {
-    id("com.gradle.enterprise") version "3.13.2"
+    id("com.gradle.enterprise") version "3.13.3"
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.5.0"
 }
 
