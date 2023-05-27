@@ -130,12 +130,12 @@ public class MojangAPIImpl implements MojangAPI {
         HttpResponse httpResponse = readURL(ASHCON.replace("%uuidOrName%", uuidOrName), MetricsCounter.Service.ASHCON);
         AshconResponse response = httpResponse.getBodyAs(AshconResponse.class);
 
-        if (response.getError() != null) {
-            throw new DataRequestExceptionShared("Ashcon error: " + response.getError());
-        }
-
         if (response.getCode() == 404) {
             return Optional.empty();
+        }
+
+        if (response.getError() != null) {
+            throw new DataRequestExceptionShared("Ashcon error: " + response.getError());
         }
 
         if (response.getCode() != 0) {
