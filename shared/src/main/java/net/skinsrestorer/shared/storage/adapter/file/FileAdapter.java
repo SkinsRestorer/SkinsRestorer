@@ -545,6 +545,36 @@ public class FileAdapter implements StorageAdapter {
         }
     }
 
+    @Override
+    public Optional<LegacyPlayerData> getLegacyPlayerData(String playerName) throws StorageException {
+        Path legacyFile = resolveLegacyPlayerFile(playerName);
+
+        if (!Files.exists(legacyFile)) {
+            return Optional.empty();
+        }
+
+        try {
+            String json = new String(Files.readAllBytes(legacyFile), StandardCharsets.UTF_8);
+
+            LegacyPlayerFile file = gson.fromJson(json, LegacyPlayerFile.class);
+
+            return Optional.of(file.toLegacyPlayerData());
+        } catch (Exception e) {
+            throw new StorageException(e);
+        }
+    }
+
+    @Override
+    public void removeLegacyPlayerData(String playerName) {
+        Path legacyFile = resolveLegacyPlayerFile(playerName);
+
+        try {
+            Files.deleteIfExists(legacyFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private Path resolveCustomSkinFile(String skinName) {
         return skinsFolder.resolve(hashSHA256(skinName) + ".customskin");
     }

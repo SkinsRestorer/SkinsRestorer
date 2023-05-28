@@ -31,6 +31,7 @@ import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.storage.model.cache.MojangCacheData;
+import net.skinsrestorer.shared.storage.model.player.LegacyPlayerData;
 import net.skinsrestorer.shared.storage.model.player.PlayerData;
 import net.skinsrestorer.shared.storage.model.skin.*;
 
@@ -104,60 +105,64 @@ public class MySQLAdapter implements StorageAdapter {
 
     private void migrateLegacyPlayerTable() throws IOException {
         Optional<String> legacyPlayerTable = getLegacyPlayerTableFile();
-        if (legacyPlayerTable.isPresent()) {
-            logger.info("Migrating legacy player table to new format...");
-            mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolveLegacyPlayerTable() + "` ("
-                    + "`name` varchar(17) NOT NULL,"
-                    + "`skin` varchar(19) NOT NULL,"
-                    + "PRIMARY KEY (`name`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
-
-            try (ResultSet crs = mysql.query("SELECT * FROM " + legacyPlayerTable.get())) {
-                while (crs.next()) {
-                    String name = crs.getString("Name");
-                    String skin = crs.getString("Skin");
-
-                    mysql.execute("INSERT INTO " + resolveLegacyPlayerTable() + " (name, skin) VALUES (?, ?)",
-                            name, skin);
-                }
-            } catch (SQLException e) {
-                logger.severe("Failed to migrate legacy player table", e);
-            }
-
-            mysql.execute("DROP TABLE " + legacyPlayerTable.get());
-
-            Files.deleteIfExists(getLegacyPlayerTableFilePath());
-            logger.info("Player migration complete!");
+        if (!legacyPlayerTable.isPresent()) {
+            return;
         }
+        
+        logger.info("Migrating legacy player table to new format...");
+        mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolveLegacyPlayerTable() + "` ("
+                + "`name` varchar(17) NOT NULL,"
+                + "`skin_name` varchar(19) NOT NULL,"
+                + "PRIMARY KEY (`name`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+
+        try (ResultSet crs = mysql.query("SELECT * FROM " + legacyPlayerTable.get())) {
+            while (crs.next()) {
+                String name = crs.getString("Name");
+                String skin = crs.getString("Skin");
+
+                mysql.execute("INSERT INTO " + resolveLegacyPlayerTable() + " (name, skin_name) VALUES (?, ?)",
+                        name, skin);
+            }
+        } catch (SQLException e) {
+            logger.severe("Failed to migrate legacy player table", e);
+        }
+
+        mysql.execute("DROP TABLE " + legacyPlayerTable.get());
+
+        Files.deleteIfExists(getLegacyPlayerTableFilePath());
+        logger.info("Player migration complete!");
     }
 
     private void migrateLegacySkinTable() throws IOException {
         Optional<String> legacySkinTable = getLegacyPlayerTableFile();
-        if (legacySkinTable.isPresent()) {
-            logger.info("Migrating legacy skin table to new format...");
-            mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolveLegacySkinTable() + "` ("
-                    + "`name` varchar(36) NOT NULL,"
-                    + "`value` text NOT NULL,"
-                    + "`signature` text NOT NULL,"
-                    + "PRIMARY KEY (`name`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
-
-            try (ResultSet crs = mysql.query("SELECT * FROM " + legacySkinTable.get())) {
-                while (crs.next()) {
-                    String name = crs.getString("Nick");
-                    String value = crs.getString("Value");
-                    String signature = crs.getString("Signature");
-
-                    mysql.execute("INSERT INTO " + resolveLegacySkinTable() + " (name, value, signature) VALUES (?, ?, ?)",
-                            name, value, signature);
-                }
-            } catch (SQLException e) {
-                throw new IOException(e);
-            }
-
-            mysql.execute("DROP TABLE `" + legacySkinTable.get() + "`");
-
-            Files.deleteIfExists(getLegacySkinTableFilePath());
-            logger.info("Skin migration complete!");
+        if (!legacySkinTable.isPresent()) {
+            return;
         }
+        
+        logger.info("Migrating legacy skin table to new format...");
+        mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolveLegacySkinTable() + "` ("
+                + "`name` varchar(36) NOT NULL,"
+                + "`value` text NOT NULL,"
+                + "`signature` text NOT NULL,"
+                + "PRIMARY KEY (`name`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+
+        try (ResultSet crs = mysql.query("SELECT * FROM " + legacySkinTable.get())) {
+            while (crs.next()) {
+                String name = crs.getString("Nick");
+                String value = crs.getString("Value");
+                String signature = crs.getString("Signature");
+
+                mysql.execute("INSERT INTO " + resolveLegacySkinTable() + " (name, value, signature) VALUES (?, ?, ?)",
+                        name, value, signature);
+            }
+        } catch (SQLException e) {
+            throw new IOException(e);
+        }
+
+        mysql.execute("DROP TABLE `" + legacySkinTable.get() + "`");
+
+        Files.deleteIfExists(getLegacySkinTableFilePath());
+        logger.info("Skin migration complete!");
     }
 
     private boolean tableExists(String table) {
@@ -401,6 +406,32 @@ public class MySQLAdapter implements StorageAdapter {
                 mojangCacheData.isPremium(),
                 uuid,
                 mojangCacheData.getTimestamp());
+    }
+
+    @Override
+    public Optional<LegacyPlayerData> getLegacyPlayerData(String playerName) throws StorageException {
+        if (tableExists(resolveLegacyPlayerTable())) {
+            try (ResultSet crs = mysql.query("SELECT * FROM " + resolveLegacyPlayerTable() + " WHERE name=?", playerName)) {
+                if (!crs.next()) {
+                    return Optional.empty();
+                }
+
+                String skinName = crs.getString("skin_name");
+
+                return Optional.of(LegacyPlayerData.of(playerName, skinName));
+            } catch (SQLException e) {
+                throw new StorageException(e);
+            }
+        } else {
+            return Optional.empty();
+        }
+    }
+    
+    @Override
+    public void removeLegacyPlayerData(String playerName) {
+        if (tableExists(resolveLegacyPlayerTable())) {
+            mysql.execute("DELETE FROM " + resolveLegacyPlayerTable() + " WHERE name=?", playerName);
+        }
     }
 
     private String resolveCustomSkinTable() {

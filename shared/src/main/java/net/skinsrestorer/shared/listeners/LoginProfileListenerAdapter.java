@@ -28,6 +28,8 @@ import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.config.LoginConfig;
 import net.skinsrestorer.shared.listeners.event.SRLoginProfileEvent;
 import net.skinsrestorer.shared.log.SRLogger;
+import net.skinsrestorer.shared.storage.adapter.AtomicAdapter;
+import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 
 import javax.inject.Inject;
 import java.util.Optional;
@@ -37,6 +39,7 @@ public final class LoginProfileListenerAdapter<R> {
     private final SettingsManager settings;
     private final PlayerStorage playerStorage;
     private final SRLogger logger;
+    private final AtomicAdapter atomicAdapter;
 
     public R handleLogin(SRLoginProfileEvent<R> event) {
         logger.debug("Handling login for " + event.getPlayerName() + " (" + event.getPlayerUniqueId() + ")");
@@ -58,6 +61,12 @@ public final class LoginProfileListenerAdapter<R> {
     }
 
     private Optional<SkinProperty> handleAsync(SRLoginProfileEvent<R> event) throws DataRequestException {
+        try {
+            atomicAdapter.get().migrateLegacyPlayer(event.getPlayerName(), event.getPlayerUniqueId());
+        } catch (StorageAdapter.StorageException e) {
+            e.printStackTrace();
+        }
+
         return playerStorage.getSkinForPlayer(event.getPlayerUniqueId(), event.getPlayerName(), event.hasOnlineProperties());
     }
 }

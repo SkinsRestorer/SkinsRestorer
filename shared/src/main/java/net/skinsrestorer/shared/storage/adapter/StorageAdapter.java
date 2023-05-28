@@ -20,7 +20,10 @@
 package net.skinsrestorer.shared.storage.adapter;
 
 import net.skinsrestorer.api.model.SkinVariant;
+import net.skinsrestorer.api.property.SkinIdentifier;
+import net.skinsrestorer.api.property.SkinType;
 import net.skinsrestorer.shared.storage.model.cache.MojangCacheData;
+import net.skinsrestorer.shared.storage.model.player.LegacyPlayerData;
 import net.skinsrestorer.shared.storage.model.player.PlayerData;
 import net.skinsrestorer.shared.storage.model.skin.*;
 
@@ -70,6 +73,23 @@ public interface StorageAdapter {
     Optional<MojangCacheData> getCachedUUID(String playerName) throws StorageException;
 
     void setCachedUUID(String playerName, MojangCacheData mojangCacheData);
+
+    Optional<LegacyPlayerData> getLegacyPlayerData(String playerName) throws StorageException;
+
+    void removeLegacyPlayerData(String playerName);
+
+    default void migrateLegacyPlayer(String playerName, UUID uuid) throws StorageException {
+        Optional<LegacyPlayerData> legacyPlayerData = getLegacyPlayerData(playerName);
+        if (!legacyPlayerData.isPresent()) {
+            return;
+        }
+
+        PlayerData playerData = PlayerData.of(uuid, SkinIdentifier.of(legacyPlayerData.get().getSkinName(), null, SkinType.LEGACY));
+
+        setPlayerData(uuid, playerData);
+
+        removeLegacyPlayerData(playerName);
+    }
 
     class StorageException extends Exception {
         public StorageException(Throwable cause) {
