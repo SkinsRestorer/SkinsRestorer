@@ -22,21 +22,18 @@ package net.skinsrestorer.shared.storage.adapter.file;
 import ch.jalu.configme.SettingsManager;
 import com.google.gson.Gson;
 import net.skinsrestorer.api.model.SkinVariant;
-import net.skinsrestorer.shared.config.GUIConfig;
+import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.storage.adapter.file.model.cache.MojangCacheFile;
+import net.skinsrestorer.shared.storage.adapter.file.model.player.LegacyPlayerFile;
 import net.skinsrestorer.shared.storage.adapter.file.model.player.PlayerFile;
-import net.skinsrestorer.shared.storage.adapter.file.model.skin.CustomSkinFile;
-import net.skinsrestorer.shared.storage.adapter.file.model.skin.PlayerSkinFile;
-import net.skinsrestorer.shared.storage.adapter.file.model.skin.URLIndexFile;
-import net.skinsrestorer.shared.storage.adapter.file.model.skin.URLSkinFile;
+import net.skinsrestorer.shared.storage.adapter.file.model.skin.*;
 import net.skinsrestorer.shared.storage.model.cache.MojangCacheData;
+import net.skinsrestorer.shared.storage.model.player.LegacyPlayerData;
 import net.skinsrestorer.shared.storage.model.player.PlayerData;
-import net.skinsrestorer.shared.storage.model.skin.CustomSkinData;
-import net.skinsrestorer.shared.storage.model.skin.PlayerSkinData;
-import net.skinsrestorer.shared.storage.model.skin.URLIndexData;
-import net.skinsrestorer.shared.storage.model.skin.URLSkinData;
+import net.skinsrestorer.shared.storage.model.skin.*;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -47,23 +44,31 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class FileAdapter implements StorageAdapter {
     private final Path skinsFolder;
     private final Path playersFolder;
     private final Path cacheFolder;
+    private final Path legacyFolder;
     private final SettingsManager settings;
     private final Gson gson = new Gson();
+    private final SRLogger logger;
 
     @Inject
-    public FileAdapter(SRPlugin plugin, SettingsManager settings) {
+    public FileAdapter(SRPlugin plugin, SettingsManager settings, SRLogger logger) {
         Path dataFolder = plugin.getDataFolder();
-        skinsFolder = dataFolder.resolve("skins");
-        playersFolder = dataFolder.resolve("players");
-        cacheFolder = dataFolder.resolve("cache");
-        init();
+        this.skinsFolder = dataFolder.resolve("skins");
+        this.playersFolder = dataFolder.resolve("players");
+        this.cacheFolder = dataFolder.resolve("cache");
+        this.legacyFolder = dataFolder.resolve("legacy");
         this.settings = settings;
+        this.logger = logger;
+        init();
+        try {
+            migrate(dataFolder);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -75,6 +80,85 @@ public class FileAdapter implements StorageAdapter {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void migrate(Path dataFolder) throws IOException {
+        // Legacy support
+        Path legacySkinsFolder = legacyFolder.resolve("skins");
+        Path legacyPlayersFolder = legacyFolder.resolve("players");
+        Path oldSkinsFolder = dataFolder.resolve("Skins");
+        Path oldPlayersFolder = dataFolder.resolve("Players");
+
+        if (Files.exists(oldSkinsFolder)) {
+            Files.createDirectories(legacySkinsFolder);
+            migrateSkins(oldSkinsFolder);
+        }
+
+        if (Files.exists(oldPlayersFolder)) {
+            Files.createDirectories(legacyPlayersFolder);
+            migratePlayers(oldPlayersFolder);
+        }
+    }
+
+    private void migratePlayers(Path oldPlayersFolder) {
+        logger.info("Migrating legacy player files to new format...");
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(oldPlayersFolder, "*.player")) {
+            for (Path path : stream) {
+                try {
+                    String fileName = path.getFileName().toString();
+                    String playerName = fileName.substring(0, fileName.length() - ".player".length());
+
+                    Path legacyPlayerFile = resolveLegacyPlayerFile(playerName);
+                    if (Files.exists(legacyPlayerFile)) {
+                        continue;
+                    }
+
+                    String skinName = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+
+                    LegacyPlayerData legacyPlayerData = LegacyPlayerData.of(playerName, skinName);
+
+                    Files.write(legacyPlayerFile, gson.toJson(LegacyPlayerFile.fromLegacyPlayerData(legacyPlayerData)).getBytes(StandardCharsets.UTF_8));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            Files.deleteIfExists(oldPlayersFolder);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        logger.info("Migrating legacy player files to new format... Done!");
+    }
+
+    private void migrateSkins(Path oldSkinsFolder) {
+        logger.info("Migrating legacy skin table to new format...");
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(oldSkinsFolder, "*.skin")) {
+            for (Path path : stream) {
+                try {
+                    String fileName = path.getFileName().toString();
+                    String skinName = fileName.substring(0, fileName.length() - ".skin".length());
+
+                    Path legacySkinFile = resolveLegacySkinFile(skinName);
+                    if (Files.exists(legacySkinFile)) {
+                        continue;
+                    }
+
+                    String[] lines = new String(Files.readAllBytes(path), StandardCharsets.UTF_8).split("\n");
+
+                    LegacySkinData legacySkinData = LegacySkinData.of(skinName, SkinProperty.of(lines[0], lines[1]));
+
+                    Files.write(legacySkinFile, gson.toJson(LegacySkinFile.fromLegacySkinData(legacySkinData)).getBytes(StandardCharsets.UTF_8));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            Files.deleteIfExists(oldSkinsFolder);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        logger.info("Skin migration complete!");
     }
 
     private static String hashSHA256(String input) {
@@ -303,6 +387,37 @@ public class FileAdapter implements StorageAdapter {
     }
 
     @Override
+    public Optional<LegacySkinData> getLegacySkinData(String skinName) throws StorageException {
+        Path skinFile = resolveLegacySkinFile(skinName);
+
+        if (!Files.exists(skinFile)) {
+            return Optional.empty();
+        }
+
+        try {
+            String json = new String(Files.readAllBytes(skinFile), StandardCharsets.UTF_8);
+
+            LegacySkinFile file = gson.fromJson(json, LegacySkinFile.class);
+
+            return Optional.of(file.toLegacySkinData());
+        } catch (Exception e) {
+            throw new StorageException(e);
+        }
+    }
+
+    @Override
+    public void removeLegacySkinData(String skinName) {
+        Path skinFile = resolveLegacySkinFile(skinName);
+
+        try {
+            Files.deleteIfExists(skinFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /* // OLD METHOD
+    @Override
     public Map<String, String> getStoredSkins(int offset) {
         Map<String, String> list = new TreeMap<>();
         List<Path> files = new ArrayList<>();
@@ -367,6 +482,11 @@ public class FileAdapter implements StorageAdapter {
         }
 
         return list;
+    }*/
+
+    @Override
+    public Map<String, String> getStoredGUISkins(int offset) {
+        throw new UnsupportedOperationException("getStoredGUISkins is not supported by this storage method");
     }
 
     @Override
@@ -429,6 +549,10 @@ public class FileAdapter implements StorageAdapter {
         return skinsFolder.resolve(hashSHA256(skinName) + ".customskin");
     }
 
+    private Path resolveLegacySkinFile(String skinName) {
+        return legacyFolder.resolve("skins").resolve(skinName + ".legacyskin");
+    }
+
     private Path resolveURLSkinFile(String url, SkinVariant skinVariant) {
         return skinsFolder.resolve(hashSHA256(url) + "_" + skinVariant.name() + ".urlskin");
     }
@@ -443,6 +567,10 @@ public class FileAdapter implements StorageAdapter {
 
     private Path resolvePlayerFile(UUID uuid) {
         return playersFolder.resolve(uuid + ".player");
+    }
+
+    private Path resolveLegacyPlayerFile(String name) {
+        return legacyFolder.resolve("players").resolve(name + ".legacyplayer");
     }
 
     private Path resolveCacheFile(String name) {

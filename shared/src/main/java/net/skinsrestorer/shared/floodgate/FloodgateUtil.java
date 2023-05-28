@@ -45,7 +45,7 @@ public class FloodgateUtil {
         try {
             FloodgateApi.getInstance().getEventBus()
                     .subscribe(SkinApplyEvent.class, injector.getSingleton(FloodgateListener.class));
-            // System.out.println("Floodgate listener registered");
+            System.out.println("Floodgate listener registered");
         } catch (Throwable t) {
             t.printStackTrace();
             // Cancel if Floodgate isn't installed

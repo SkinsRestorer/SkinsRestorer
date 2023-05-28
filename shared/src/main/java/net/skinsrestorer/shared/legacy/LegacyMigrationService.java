@@ -26,6 +26,7 @@ import net.skinsrestorer.shared.plugin.SRPlugin;
 
 import javax.inject.Inject;
 
+// TODO
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class LegacyMigrationService {
     private final SettingsManager settings;
@@ -33,6 +34,5 @@ public class LegacyMigrationService {
     private final SRLogger logger;
 
     public void migrate() {
-
     }
 }

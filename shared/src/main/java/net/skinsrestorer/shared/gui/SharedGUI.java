@@ -43,7 +43,7 @@ public class SharedGUI {
 
         int skinNumber = HEAD_COUNT_PER_PAGE * page;
 
-        return manager.createGUI(callback, player, page, skinStorage.getSkins(skinNumber));
+        return manager.createGUI(callback, player, page, skinStorage.getGUISkins(skinNumber));
     }
 
     @RequiredArgsConstructor(onConstructor_ = @Inject)

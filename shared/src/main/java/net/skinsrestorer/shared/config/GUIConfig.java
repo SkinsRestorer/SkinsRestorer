@@ -37,7 +37,7 @@ public class GUIConfig implements SettingsHolder {
     public void registerComments(CommentsConfiguration conf) {
         conf.setComment("customGUI",
                 "Custom list for the /skins GUI.",
-                "ShowOnlyCustomGUI will only show CustomGUI.Names in the gui."
+                "customGUI.showOnlyCustomGUI will only show customGUI.list in the gui."
         );
     }
 }

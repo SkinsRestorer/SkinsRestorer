@@ -36,10 +36,7 @@ import net.skinsrestorer.shared.connections.MojangAPIImpl;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.storage.adapter.AtomicAdapter;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
-import net.skinsrestorer.shared.storage.model.skin.CustomSkinData;
-import net.skinsrestorer.shared.storage.model.skin.PlayerSkinData;
-import net.skinsrestorer.shared.storage.model.skin.URLIndexData;
-import net.skinsrestorer.shared.storage.model.skin.URLSkinData;
+import net.skinsrestorer.shared.storage.model.skin.*;
 import net.skinsrestorer.shared.utils.C;
 
 import javax.inject.Inject;
@@ -68,12 +65,11 @@ public class SkinStorageImpl implements SkinStorage {
             try {
                 findOrCreateSkinData(skin);
             } catch (DataRequestException e) {
-                // removing skin from list
+                logger.debug(String.format("DefaultSkin '%s' could not be found or requested! Removing from list..", skin), e);
                 toRemove.add(skin);
-                logger.debug(String.format("DefaultSkin '%s' could not be found or requested! Removing from list..", skin));
-                logger.debug(String.format("DefaultSkin '%s' error: ", skin), e);
             }
         });
+
         if (!toRemove.isEmpty()) {
             defaultSkins.removeAll(toRemove);
             settings.setProperty(StorageConfig.DEFAULT_SKINS, defaultSkins);
@@ -130,11 +126,12 @@ public class SkinStorageImpl implements SkinStorage {
         atomicAdapter.get().setCustomSkinData(skinName, CustomSkinData.of(skinName, textures));
     }
 
-    // TODO: CUSTOM_GUI
-    public Map<String, String> getSkins(int offset) {
-        return atomicAdapter.get().getStoredSkins(offset);
+    @Override
+    public Map<String, String> getGUISkins(int offset) {
+        return atomicAdapter.get().getStoredGUISkins(offset);
     }
 
+    @Override
     public Optional<InputDataResult> findSkinData(String input) {
         try {
             if (C.validUrl(input)) {
@@ -215,6 +212,9 @@ public class SkinStorageImpl implements SkinStorage {
                 case CUSTOM:
                     return atomicAdapter.get().getCustomSkinData(identifier.getIdentifier())
                             .map(CustomSkinData::getProperty);
+                case LEGACY:
+                    return atomicAdapter.get().getLegacySkinData(identifier.getIdentifier())
+                            .map(LegacySkinData::getProperty);
                 default:
                     throw new IllegalStateException("Unexpected value: " + identifier.getSkinType());
             }
@@ -237,6 +237,9 @@ public class SkinStorageImpl implements SkinStorage {
             case CUSTOM:
                 atomicAdapter.get().removeCustomSkinData(identifier.getIdentifier());
                 break;
+            case LEGACY:
+                atomicAdapter.get().removeLegacySkinData(identifier.getIdentifier());
+                break;
         }
     }
 
@@ -258,6 +261,7 @@ public class SkinStorageImpl implements SkinStorage {
         return expiryDate <= now;
     }
 
+    @Override
     public boolean purgeOldSkins(int days) {
         long targetPurgeTimestamp = Instant.now().minus(days, ChronoUnit.DAYS).toEpochMilli();
 

@@ -31,7 +31,7 @@ public class ServerConfig implements SettingsHolder {
             "Disabling this will stop SkinsRestorer from changing skins when a player loads a server resource pack.",
             "When a player loads a server resource pack, their skin is reset. By default, SkinsRestorer reapplies the skin when the player reports that the resource pack has been loaded or an error has occurred."
     })
-    public static final Property<Boolean> RESOURCE_PACK_FIX = newProperty("server.resourcePackFix", true);
+    public static final Property<Boolean> RESOURCE_PACK_FIX = newProperty("server.resourcePackFix", true); //TODO: Should this not be in LoginConfig?
     @Comment({
             "Dismounts a mounted (on a horse, or sitting) player when their skin is updated, preventing players from becoming desynced.",
             "File override = ./plugins/SkinsRestorer/disableDismountPlayer.txt"

@@ -58,7 +58,7 @@ public class SRProxyPlugin {
     public void sendPage(int page, SRProxyPlayer player, SkinStorage skinStorage) {
         int skinNumber = 36 * page;
 
-        byte[] ba = convertToByteArray(skinStorage.getSkins(skinNumber));
+        byte[] ba = convertToByteArray(skinStorage.getGUISkins(skinNumber));
 
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         DataOutputStream out = new DataOutputStream(b);

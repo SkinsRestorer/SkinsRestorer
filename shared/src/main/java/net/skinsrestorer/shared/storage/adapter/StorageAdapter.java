@@ -22,10 +22,7 @@ package net.skinsrestorer.shared.storage.adapter;
 import net.skinsrestorer.api.model.SkinVariant;
 import net.skinsrestorer.shared.storage.model.cache.MojangCacheData;
 import net.skinsrestorer.shared.storage.model.player.PlayerData;
-import net.skinsrestorer.shared.storage.model.skin.CustomSkinData;
-import net.skinsrestorer.shared.storage.model.skin.PlayerSkinData;
-import net.skinsrestorer.shared.storage.model.skin.URLIndexData;
-import net.skinsrestorer.shared.storage.model.skin.URLSkinData;
+import net.skinsrestorer.shared.storage.model.skin.*;
 
 import java.util.Map;
 import java.util.Optional;
@@ -62,7 +59,11 @@ public interface StorageAdapter {
 
     void setCustomSkinData(String skinName, CustomSkinData skinData);
 
-    Map<String, String> getStoredSkins(int offset); // TODO: Redesign this
+    Optional<LegacySkinData> getLegacySkinData(String skinName) throws StorageException;
+
+    void removeLegacySkinData(String skinName);
+
+    Map<String, String> getStoredGUISkins(int offset); // TODO: Redesign this
 
     void purgeStoredOldSkins(long targetPurgeTimestamp) throws StorageException;
 

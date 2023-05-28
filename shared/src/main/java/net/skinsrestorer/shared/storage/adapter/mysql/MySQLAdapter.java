@@ -28,15 +28,17 @@ import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.property.SkinType;
 import net.skinsrestorer.shared.config.DatabaseConfig;
 import net.skinsrestorer.shared.log.SRLogger;
+import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.storage.model.cache.MojangCacheData;
 import net.skinsrestorer.shared.storage.model.player.PlayerData;
-import net.skinsrestorer.shared.storage.model.skin.CustomSkinData;
-import net.skinsrestorer.shared.storage.model.skin.PlayerSkinData;
-import net.skinsrestorer.shared.storage.model.skin.URLIndexData;
-import net.skinsrestorer.shared.storage.model.skin.URLSkinData;
+import net.skinsrestorer.shared.storage.model.skin.*;
 
 import javax.inject.Inject;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
@@ -48,6 +50,7 @@ public class MySQLAdapter implements StorageAdapter {
     private final MySQLProvider mysql;
     private final SettingsManager settings;
     private final SRLogger logger;
+    private final SRPlugin plugin;
 
     @Override
     public void init() {
@@ -90,6 +93,80 @@ public class MySQLAdapter implements StorageAdapter {
                 + "`value` text NOT NULL,"
                 + "`signature` text NOT NULL,"
                 + "PRIMARY KEY (`name`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+
+        try {
+            migrateLegacyPlayerTable();
+            migrateLegacySkinTable();
+        } catch (IOException e) {
+            logger.severe("Failed to migrate legacy tables", e);
+        }
+    }
+
+    private void migrateLegacyPlayerTable() throws IOException {
+        Optional<String> legacyPlayerTable = getLegacyPlayerTableFile();
+        if (legacyPlayerTable.isPresent()) {
+            logger.info("Migrating legacy player table to new format...");
+            mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolveLegacyPlayerTable() + "` ("
+                    + "`name` varchar(17) NOT NULL,"
+                    + "`skin` varchar(19) NOT NULL,"
+                    + "PRIMARY KEY (`name`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+
+            try (ResultSet crs = mysql.query("SELECT * FROM " + legacyPlayerTable.get())) {
+                while (crs.next()) {
+                    String name = crs.getString("Name");
+                    String skin = crs.getString("Skin");
+
+                    mysql.execute("INSERT INTO " + resolveLegacyPlayerTable() + " (name, skin) VALUES (?, ?)",
+                            name, skin);
+                }
+            } catch (SQLException e) {
+                logger.severe("Failed to migrate legacy player table", e);
+            }
+
+            mysql.execute("DROP TABLE " + legacyPlayerTable.get());
+
+            Files.deleteIfExists(getLegacyPlayerTableFilePath());
+            logger.info("Player migration complete!");
+        }
+    }
+
+    private void migrateLegacySkinTable() throws IOException {
+        Optional<String> legacySkinTable = getLegacyPlayerTableFile();
+        if (legacySkinTable.isPresent()) {
+            logger.info("Migrating legacy skin table to new format...");
+            mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolveLegacySkinTable() + "` ("
+                    + "`name` varchar(36) NOT NULL,"
+                    + "`value` text NOT NULL,"
+                    + "`signature` text NOT NULL,"
+                    + "PRIMARY KEY (`name`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+
+            try (ResultSet crs = mysql.query("SELECT * FROM " + legacySkinTable.get())) {
+                while (crs.next()) {
+                    String name = crs.getString("Nick");
+                    String value = crs.getString("Value");
+                    String signature = crs.getString("Signature");
+
+                    mysql.execute("INSERT INTO " + resolveLegacySkinTable() + " (name, value, signature) VALUES (?, ?, ?)",
+                            name, value, signature);
+                }
+            } catch (SQLException e) {
+                throw new IOException(e);
+            }
+
+            mysql.execute("DROP TABLE `" + legacySkinTable.get() + "`");
+
+            Files.deleteIfExists(getLegacySkinTableFilePath());
+            logger.info("Skin migration complete!");
+        }
+    }
+
+    private boolean tableExists(String table) {
+        try (ResultSet rs = mysql.query("SHOW TABLES LIKE '" + table + "'")) {
+            return rs.next();
+        } catch (SQLException e) {
+            logger.severe("Failed to check if table exists", e);
+            return false;
+        }
     }
 
     @Override
@@ -258,9 +335,36 @@ public class MySQLAdapter implements StorageAdapter {
                 skinData.getProperty().getSignature());
     }
 
+    @Override
+    public Optional<LegacySkinData> getLegacySkinData(String skinName) throws StorageException {
+        if (tableExists(resolveLegacySkinTable())) {
+            try (ResultSet crs = mysql.query("SELECT * FROM " + resolveLegacySkinTable() + " WHERE name=?", skinName)) {
+                if (!crs.next()) {
+                    return Optional.empty();
+                }
+
+                String value = crs.getString("value");
+                String signature = crs.getString("signature");
+
+                return Optional.of(LegacySkinData.of(skinName, SkinProperty.of(value, signature)));
+            } catch (SQLException e) {
+                throw new StorageException(e);
+            }
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public void removeLegacySkinData(String skinName) {
+        if (tableExists(resolveLegacySkinTable())) {
+            mysql.execute("DELETE FROM " + resolveLegacySkinTable() + " WHERE name=?", skinName);
+        }
+    }
+
     @SuppressFBWarnings(justification = "SQL injection is not possible here", value = {"SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING"})
     @Override
-    public Map<String, String> getStoredSkins(int offset) {
+    public Map<String, String> getStoredGUISkins(int offset) {
         throw new UnsupportedOperationException("MySQL storage does not support this operation YET"); // TODO
     }
 
@@ -321,5 +425,47 @@ public class MySQLAdapter implements StorageAdapter {
 
     private String resolveCacheTable() {
         return settings.getProperty(DatabaseConfig.MYSQL_TABLE_PREFIX) + "cache";
+    }
+
+    private String resolveLegacyPlayerTable() {
+        return settings.getProperty(DatabaseConfig.MYSQL_TABLE_PREFIX) + "legacy_players";
+    }
+
+    private String resolveLegacySkinTable() {
+        return settings.getProperty(DatabaseConfig.MYSQL_TABLE_PREFIX) + "legacy_skins";
+    }
+
+    private Optional<String> getLegacyPlayerTableFile() {
+        Path legacyTable = getLegacyPlayerTableFilePath();
+        try {
+            if (Files.exists(legacyTable)) {
+                return Optional.of(new String(Files.readAllBytes(legacyTable), StandardCharsets.UTF_8));
+            } else {
+                return Optional.empty();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Optional<String> getLegacySkinTableFile() {
+        Path legacyTable = getLegacySkinTableFilePath();
+        try {
+            if (Files.exists(legacyTable)) {
+                return Optional.of(new String(Files.readAllBytes(legacyTable), StandardCharsets.UTF_8));
+            } else {
+                return Optional.empty();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Path getLegacyPlayerTableFilePath() {
+        return plugin.getDataFolder().resolve("legacy_player_table.txt");
+    }
+
+    private Path getLegacySkinTableFilePath() {
+        return plugin.getDataFolder().resolve("legacy_skin_table.txt");
     }
 }

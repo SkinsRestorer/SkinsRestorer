@@ -17,24 +17,14 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api.property;
+package net.skinsrestorer.shared.storage.model.player;
 
-public enum SkinType {
-    /**
-     * Skin linked to a player by uuid
-     */
-    PLAYER,
-    /**
-     * Skin linked to an url, can not update
-     */
-    URL,
-    /**
-     * Skin linked to a custom value and signature
-     */
-    CUSTOM,
-    /**
-     * Skin linked to an old value and signature from pre-v15 versions
-     * DO NOT USE THIS TYPE, IT IS ONLY FOR COMPATIBILITY
-     */
-    LEGACY;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor(staticName = "of")
+public class LegacyPlayerData {
+    private final String playerName;
+    private String skinName;
 }

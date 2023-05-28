@@ -100,5 +100,5 @@ public interface SkinStorage {
 
     boolean purgeOldSkins(int days);
 
-    Map<String, String> getSkins(int skinNumber);
+    Map<String, String> getGUISkins(int skinNumber);
 }
