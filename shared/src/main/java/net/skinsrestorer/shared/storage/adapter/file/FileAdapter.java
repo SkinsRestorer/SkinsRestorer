@@ -611,10 +611,14 @@ public class FileAdapter implements StorageAdapter {
     }
 
     private String sanitizeLegacyPlayerName(String playerName) {
+        // The use of #toLowerCase() instead of #toLowerCase(Locale.ENGLISH) is intentional
+        // This is because the legacy player names used this incorrect way of lowercasing
         return playerName.toLowerCase();
     }
 
     private String sanitizeLegacySkinName(String skinName) {
+        // The use of #toLowerCase() instead of #toLowerCase(Locale.ENGLISH) is intentional
+        // This is because the legacy skin names used this incorrect way of lowercasing
         return skinName.toLowerCase();
     }
 

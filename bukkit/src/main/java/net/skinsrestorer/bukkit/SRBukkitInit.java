@@ -23,6 +23,7 @@ import ch.jalu.configme.SettingsManager;
 import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.bukkit.command.SRBukkitCommand;
+import net.skinsrestorer.bukkit.command.SRHelpTopic;
 import net.skinsrestorer.bukkit.listener.InventoryListener;
 import net.skinsrestorer.bukkit.listener.PlayerJoin;
 import net.skinsrestorer.bukkit.listener.PlayerResourcePackStatus;
@@ -38,22 +39,18 @@ import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.plugin.SRServerPlatformInit;
 import net.skinsrestorer.shared.serverinfo.SemanticVersion;
-import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.PermissionGroup;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.help.HelpTopic;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.SimplePluginManager;
-import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
 import java.io.BufferedReader;
@@ -121,41 +118,8 @@ public class SRBukkitInit implements SRServerPlatformInit {
     @Override
     public void initPrePlatformInit() {
         SkinsRestorerLocale locale = injector.getSingleton(SkinsRestorerLocale.class);
-        server.getHelpMap().registerHelpTopicFactory(SRBukkitCommand.class, command -> {
-            if (!(command instanceof SRBukkitCommand)) {
-                throw new IllegalArgumentException("Command must be an instance of SRBukkitCommand");
-
-            }
-                SRBukkitCommand srbukkitCommand = (SRBukkitCommand) command;
-
-                return new HelpTopic() {
-                    @Override
-                    public boolean canSee(@NotNull CommandSender player) {
-                        return srbukkitCommand.testPermissionSilent(player);
-                    }
-
-                    @NotNull
-                    @Override
-                    public String getName() {
-                        return "/" + srbukkitCommand.getMeta().getRootName();
-                    }
-
-                    @NotNull
-                    @Override
-                    public String getShortText() {
-                        return locale.getMessage(locale.getDefaultForeign(),
-                                srbukkitCommand.getMeta().getRootHelp().getCommandDescription());
-                    }
-
-                    @NotNull
-                    @Override
-                    public String getFullText(@NotNull CommandSender forWho) {
-                        SRCommandSender sender = wrapper.commandSender(forWho);
-                        return String.join("\n",
-                                srbukkitCommand.getExecutor().getManager().getHelpMessage(srbukkitCommand.getMeta().getRootName(), sender));
-                    }
-                };
-        });
+        server.getHelpMap().registerHelpTopicFactory(SRBukkitCommand.class, command ->
+                new SRHelpTopic((SRBukkitCommand) command, wrapper, locale));
     }
 
     @Override
