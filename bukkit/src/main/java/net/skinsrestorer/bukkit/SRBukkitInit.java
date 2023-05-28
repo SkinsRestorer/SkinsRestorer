@@ -70,6 +70,7 @@ public class SRBukkitInit implements SRServerPlatformInit {
     private final Server server;
     private final WrapperBukkit wrapper;
     private final SkinsRestorerLocale locale;
+    private final SettingsManager settingsManager;
 
     @Override
     public void initSkinApplier() throws InitializeException {
@@ -102,7 +103,7 @@ public class SRBukkitInit implements SRServerPlatformInit {
 
     @Override
     public void initLoginProfileListener() {
-        if (injector.getSingleton(SettingsManager.class).getProperty(AdvancedConfig.ENABLE_PAPER_JOIN_LISTENER)
+        if (settingsManager.getProperty(AdvancedConfig.ENABLE_PAPER_JOIN_LISTENER)
                 && ReflectionUtil.classExists("com.destroystokyo.paper.event.profile.PreFillProfileEvent")) {
             logger.info("Using paper join listener!");
             server.getPluginManager().registerEvents(injector.newInstance(PaperPlayerJoinEvent.class), adapter.getPluginInstance());
@@ -117,7 +118,6 @@ public class SRBukkitInit implements SRServerPlatformInit {
 
     @Override
     public void initPrePlatformInit() {
-        SkinsRestorerLocale locale = injector.getSingleton(SkinsRestorerLocale.class);
         server.getHelpMap().registerHelpTopicFactory(SRBukkitCommand.class, command ->
                 new SRHelpTopic((SRBukkitCommand) command, wrapper, locale));
     }
