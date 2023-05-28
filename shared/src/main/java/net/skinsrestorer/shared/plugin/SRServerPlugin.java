@@ -26,15 +26,15 @@ import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.log.SRLogger;
 
 import javax.inject.Inject;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.util.Collections;
 import java.util.Map;
+import java.util.stream.IntStream;
 import java.util.zip.GZIPInputStream;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
@@ -62,16 +62,32 @@ public class SRServerPlugin {
         proxyMode = checkProxy();
 
         try {
-            Path warning = plugin.getDataFolder().resolve("(README) Use proxy config for settings! (README).txt");
+            final Path warning = plugin.getDataFolder().resolve("(README) Use proxy config for settings! (README).txt");
             if (proxyMode) {
-                Files.createDirectories(plugin.getDataFolder());
+                if (!Files.isDirectory(plugin.getDataFolder())) { // in case the directory is a symbol link
+                    Files.createDirectories(plugin.getDataFolder());
+                }
 
-                try (InputStream in = serverAdapter.getResource("proxy_warning.txt")) {
-                    if (in == null) {
+                try (final InputStream inputStream = serverAdapter.getResource("proxy_warning.txt")) {
+                    if (inputStream == null) {
                         throw new IllegalStateException("Could not find proxy_warning.txt in resources!");
                     }
-                    // Always replace the file to make sure it's up-to-date.
-                    Files.copy(in, warning, StandardCopyOption.REPLACE_EXISTING);
+
+                    final ByteArrayOutputStream result = new ByteArrayOutputStream();
+                    final byte[] buffer = new byte[8192];
+                    for (int length; (length = inputStream.read(buffer)) != -1; ) {
+                        result.write(buffer, 0, length);
+                    }
+                    final String proxyWarning = result.toString(StandardCharsets.UTF_8.name());
+
+                    if (Files.exists(warning)) {
+                        final String existingWarning = new String(Files.readAllBytes(warning), StandardCharsets.UTF_8);
+                        if (!existingWarning.equals(proxyWarning)) {
+                            Files.write(warning, proxyWarning.getBytes(StandardCharsets.UTF_8));
+                        }
+                    } else {
+                        Files.copy(inputStream, warning);
+                    }
                 }
             } else {
                 Files.deleteIfExists(warning);
