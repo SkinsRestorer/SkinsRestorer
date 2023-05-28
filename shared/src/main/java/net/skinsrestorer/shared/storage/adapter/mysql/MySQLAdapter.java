@@ -108,7 +108,7 @@ public class MySQLAdapter implements StorageAdapter {
         if (!legacyPlayerTable.isPresent()) {
             return;
         }
-        
+
         logger.info("Migrating legacy player table to new format...");
         mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolveLegacyPlayerTable() + "` ("
                 + "`name` varchar(17) NOT NULL,"
@@ -138,7 +138,7 @@ public class MySQLAdapter implements StorageAdapter {
         if (!legacySkinTable.isPresent()) {
             return;
         }
-        
+
         logger.info("Migrating legacy skin table to new format...");
         mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolveLegacySkinTable() + "` ("
                 + "`name` varchar(36) NOT NULL,"
@@ -426,7 +426,7 @@ public class MySQLAdapter implements StorageAdapter {
             return Optional.empty();
         }
     }
-    
+
     @Override
     public void removeLegacyPlayerData(String playerName) {
         if (tableExists(resolveLegacyPlayerTable())) {
