@@ -367,6 +367,32 @@ public class MySQLAdapter implements StorageAdapter {
         }
     }
 
+    @Override
+    public Optional<LegacyPlayerData> getLegacyPlayerData(String playerName) throws StorageException {
+        if (tableExists(resolveLegacyPlayerTable())) {
+            try (ResultSet crs = mysql.query("SELECT * FROM " + resolveLegacyPlayerTable() + " WHERE name=?", playerName)) {
+                if (!crs.next()) {
+                    return Optional.empty();
+                }
+
+                String skinName = crs.getString("skin_name");
+
+                return Optional.of(LegacyPlayerData.of(playerName, skinName));
+            } catch (SQLException e) {
+                throw new StorageException(e);
+            }
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public void removeLegacyPlayerData(String playerName) {
+        if (tableExists(resolveLegacyPlayerTable())) {
+            mysql.execute("DELETE FROM " + resolveLegacyPlayerTable() + " WHERE name=?", playerName);
+        }
+    }
+
     @SuppressFBWarnings(justification = "SQL injection is not possible here", value = {"SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING"})
     @Override
     public Map<String, String> getStoredGUISkins(int offset) {
@@ -406,32 +432,6 @@ public class MySQLAdapter implements StorageAdapter {
                 mojangCacheData.isPremium(),
                 uuid,
                 mojangCacheData.getTimestamp());
-    }
-
-    @Override
-    public Optional<LegacyPlayerData> getLegacyPlayerData(String playerName) throws StorageException {
-        if (tableExists(resolveLegacyPlayerTable())) {
-            try (ResultSet crs = mysql.query("SELECT * FROM " + resolveLegacyPlayerTable() + " WHERE name=?", playerName)) {
-                if (!crs.next()) {
-                    return Optional.empty();
-                }
-
-                String skinName = crs.getString("skin_name");
-
-                return Optional.of(LegacyPlayerData.of(playerName, skinName));
-            } catch (SQLException e) {
-                throw new StorageException(e);
-            }
-        } else {
-            return Optional.empty();
-        }
-    }
-
-    @Override
-    public void removeLegacyPlayerData(String playerName) {
-        if (tableExists(resolveLegacyPlayerTable())) {
-            mysql.execute("DELETE FROM " + resolveLegacyPlayerTable() + " WHERE name=?", playerName);
-        }
     }
 
     private String resolveCustomSkinTable() {

@@ -66,6 +66,10 @@ public interface StorageAdapter {
 
     void removeLegacySkinData(String skinName);
 
+    Optional<LegacyPlayerData> getLegacyPlayerData(String playerName) throws StorageException;
+
+    void removeLegacyPlayerData(String playerName);
+
     Map<String, String> getStoredGUISkins(int offset); // TODO: Redesign this
 
     void purgeStoredOldSkins(long targetPurgeTimestamp) throws StorageException;
@@ -73,10 +77,6 @@ public interface StorageAdapter {
     Optional<MojangCacheData> getCachedUUID(String playerName) throws StorageException;
 
     void setCachedUUID(String playerName, MojangCacheData mojangCacheData);
-
-    Optional<LegacyPlayerData> getLegacyPlayerData(String playerName) throws StorageException;
-
-    void removeLegacyPlayerData(String playerName);
 
     default void migrateLegacyPlayer(String playerName, UUID uuid) throws StorageException {
         Optional<LegacyPlayerData> legacyPlayerData = getLegacyPlayerData(playerName);

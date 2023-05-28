@@ -38,9 +38,8 @@ import net.skinsrestorer.shared.storage.model.skin.*;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
@@ -123,12 +122,12 @@ public class FileAdapter implements StorageAdapter {
                 }
             }
 
-            Files.deleteIfExists(oldPlayersFolder);
+            Files.walkFileTree(oldPlayersFolder, new RecursiveDirectoryDeletion());
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        logger.info("Migrating legacy player files to new format... Done!");
+        logger.info("Player files migration complete!");
     }
 
     private void migrateSkins(Path oldSkinsFolder) {
@@ -154,11 +153,11 @@ public class FileAdapter implements StorageAdapter {
                 }
             }
 
-            Files.deleteIfExists(oldSkinsFolder);
+            Files.walkFileTree(oldSkinsFolder, new RecursiveDirectoryDeletion());
         } catch (IOException e) {
             e.printStackTrace();
         }
-        logger.info("Skin migration complete!");
+        logger.info("Skin files migration complete!");
     }
 
     private static String hashSHA256(String input) {
@@ -388,6 +387,7 @@ public class FileAdapter implements StorageAdapter {
 
     @Override
     public Optional<LegacySkinData> getLegacySkinData(String skinName) throws StorageException {
+        skinName = sanitizeLegacySkinName(skinName);
         Path skinFile = resolveLegacySkinFile(skinName);
 
         if (!Files.exists(skinFile)) {
@@ -407,10 +407,43 @@ public class FileAdapter implements StorageAdapter {
 
     @Override
     public void removeLegacySkinData(String skinName) {
+        skinName = sanitizeLegacySkinName(skinName);
         Path skinFile = resolveLegacySkinFile(skinName);
 
         try {
             Files.deleteIfExists(skinFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public Optional<LegacyPlayerData> getLegacyPlayerData(String playerName) throws StorageException {
+        playerName = sanitizeLegacyPlayerName(playerName);
+        Path legacyFile = resolveLegacyPlayerFile(playerName);
+
+        if (!Files.exists(legacyFile)) {
+            return Optional.empty();
+        }
+
+        try {
+            String json = new String(Files.readAllBytes(legacyFile), StandardCharsets.UTF_8);
+
+            LegacyPlayerFile file = gson.fromJson(json, LegacyPlayerFile.class);
+
+            return Optional.of(file.toLegacyPlayerData());
+        } catch (Exception e) {
+            throw new StorageException(e);
+        }
+    }
+
+    @Override
+    public void removeLegacyPlayerData(String playerName) {
+        playerName = sanitizeLegacyPlayerName(playerName);
+        Path legacyFile = resolveLegacyPlayerFile(playerName);
+
+        try {
+            Files.deleteIfExists(legacyFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -545,36 +578,6 @@ public class FileAdapter implements StorageAdapter {
         }
     }
 
-    @Override
-    public Optional<LegacyPlayerData> getLegacyPlayerData(String playerName) throws StorageException {
-        Path legacyFile = resolveLegacyPlayerFile(playerName);
-
-        if (!Files.exists(legacyFile)) {
-            return Optional.empty();
-        }
-
-        try {
-            String json = new String(Files.readAllBytes(legacyFile), StandardCharsets.UTF_8);
-
-            LegacyPlayerFile file = gson.fromJson(json, LegacyPlayerFile.class);
-
-            return Optional.of(file.toLegacyPlayerData());
-        } catch (Exception e) {
-            throw new StorageException(e);
-        }
-    }
-
-    @Override
-    public void removeLegacyPlayerData(String playerName) {
-        Path legacyFile = resolveLegacyPlayerFile(playerName);
-
-        try {
-            Files.deleteIfExists(legacyFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     private Path resolveCustomSkinFile(String skinName) {
         return skinsFolder.resolve(hashSHA256(skinName) + ".customskin");
     }
@@ -605,5 +608,27 @@ public class FileAdapter implements StorageAdapter {
 
     private Path resolveCacheFile(String name) {
         return cacheFolder.resolve(name + ".mojangcache");
+    }
+
+    private String sanitizeLegacyPlayerName(String playerName) {
+        return playerName.toLowerCase();
+    }
+
+    private String sanitizeLegacySkinName(String skinName) {
+        return skinName.toLowerCase();
+    }
+
+    private static class RecursiveDirectoryDeletion extends SimpleFileVisitor<Path> {
+        @Override
+        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+            Files.delete(file);
+            return FileVisitResult.CONTINUE;
+        }
+
+        @Override
+        public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+            Files.delete(dir);
+            return FileVisitResult.CONTINUE;
+        }
     }
 }
