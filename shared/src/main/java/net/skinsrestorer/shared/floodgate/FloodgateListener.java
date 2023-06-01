@@ -32,10 +32,8 @@ public class FloodgateListener implements Consumer<SkinApplyEvent> {
 
     @Override
     public void accept(SkinApplyEvent event) {
-        System.out.println("SkinApplyEvent");
-        logger.info(event.player().getUsername());
-        logger.info(event.currentSkin().value());
-        logger.info(event.newSkin().value());
-        throw new RuntimeException("FloodgateListener");
+        logger.debug(event.player().getUsername());
+        logger.debug(event.currentSkin().value());
+        logger.debug(event.newSkin().value());
     }
 }

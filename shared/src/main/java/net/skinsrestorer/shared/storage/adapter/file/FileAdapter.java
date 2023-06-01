@@ -38,8 +38,9 @@ import net.skinsrestorer.shared.storage.model.skin.*;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
@@ -82,27 +83,35 @@ public class FileAdapter implements StorageAdapter {
     }
 
     private void migrate(Path dataFolder) throws IOException {
-        // Legacy support
-        Path legacySkinsFolder = legacyFolder.resolve("skins");
-        Path legacyPlayersFolder = legacyFolder.resolve("players");
-        Path oldSkinsFolder = dataFolder.resolve("Skins");
-        Path oldPlayersFolder = dataFolder.resolve("Players");
+        renameIfExists(dataFolder, "Skins", "skins");
+        renameIfExists(dataFolder, "Players", "players");
 
-        if (Files.exists(oldSkinsFolder)) {
-            Files.createDirectories(legacySkinsFolder);
-            migrateSkins(oldSkinsFolder);
-        }
+        migrateSkins();
+        migratePlayers();
+    }
 
-        if (Files.exists(oldPlayersFolder)) {
-            Files.createDirectories(legacyPlayersFolder);
-            migratePlayers(oldPlayersFolder);
+    private void renameIfExists(Path parent, String oldName, String newName) {
+        Path oldPath = parent.resolve(oldName);
+        Path newPath = parent.resolve(newName);
+        if (Files.exists(oldPath) && !Files.exists(newPath)) {
+            try {
+                Files.move(oldPath, newPath);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    private void migratePlayers(Path oldPlayersFolder) {
+    private void migratePlayers() {
+        Path legacyPlayersFolder = legacyFolder.resolve("players");
         logger.info("Migrating legacy player files to new format...");
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(oldPlayersFolder, "*.player")) {
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(playersFolder, "*.player")) {
+            boolean generatedFolder = false;
             for (Path path : stream) {
+                if (!generatedFolder) {
+                    generatedFolder = true;
+                    Files.createDirectories(legacyPlayersFolder);
+                }
                 try {
                     String fileName = path.getFileName().toString();
                     String playerName = fileName.substring(0, fileName.length() - ".player".length());
@@ -117,12 +126,12 @@ public class FileAdapter implements StorageAdapter {
                     LegacyPlayerData legacyPlayerData = LegacyPlayerData.of(playerName, skinName);
 
                     Files.write(legacyPlayerFile, gson.toJson(LegacyPlayerFile.fromLegacyPlayerData(legacyPlayerData)).getBytes(StandardCharsets.UTF_8));
+
+                    Files.deleteIfExists(path);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-
-            Files.walkFileTree(oldPlayersFolder, new RecursiveDirectoryDeletion());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -130,10 +139,16 @@ public class FileAdapter implements StorageAdapter {
         logger.info("Player files migration complete!");
     }
 
-    private void migrateSkins(Path oldSkinsFolder) {
+    private void migrateSkins() {
+        Path legacySkinsFolder = legacyFolder.resolve("skins");
         logger.info("Migrating legacy skin table to new format...");
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(oldSkinsFolder, "*.skin")) {
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(skinsFolder, "*.skin")) {
+            boolean generatedFolder = false;
             for (Path path : stream) {
+                if (!generatedFolder) {
+                    generatedFolder = true;
+                    Files.createDirectories(legacySkinsFolder);
+                }
                 try {
                     String fileName = path.getFileName().toString();
                     String skinName = fileName.substring(0, fileName.length() - ".skin".length());
@@ -148,12 +163,12 @@ public class FileAdapter implements StorageAdapter {
                     LegacySkinData legacySkinData = LegacySkinData.of(skinName, SkinProperty.of(lines[0], lines[1]));
 
                     Files.write(legacySkinFile, gson.toJson(LegacySkinFile.fromLegacySkinData(legacySkinData)).getBytes(StandardCharsets.UTF_8));
+
+                    Files.deleteIfExists(path);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-
-            Files.walkFileTree(oldSkinsFolder, new RecursiveDirectoryDeletion());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -620,19 +635,5 @@ public class FileAdapter implements StorageAdapter {
         // The use of #toLowerCase() instead of #toLowerCase(Locale.ENGLISH) is intentional
         // This is because the legacy skin names used this incorrect way of lowercasing
         return skinName.toLowerCase();
-    }
-
-    private static class RecursiveDirectoryDeletion extends SimpleFileVisitor<Path> {
-        @Override
-        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-            Files.delete(file);
-            return FileVisitResult.CONTINUE;
-        }
-
-        @Override
-        public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-            Files.delete(dir);
-            return FileVisitResult.CONTINUE;
-        }
     }
 }
