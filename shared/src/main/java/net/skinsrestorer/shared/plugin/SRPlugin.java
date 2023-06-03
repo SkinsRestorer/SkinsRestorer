@@ -252,13 +252,7 @@ public class SRPlugin {
             if (settings.getProperty(DatabaseConfig.MYSQL_ENABLED)) {
                 MySQLProvider mySQLProvider = injector.getSingleton(MySQLProvider.class);
 
-                mySQLProvider.initPool(settings.getProperty(DatabaseConfig.MYSQL_HOST),
-                        settings.getProperty(DatabaseConfig.MYSQL_PORT),
-                        settings.getProperty(DatabaseConfig.MYSQL_DATABASE),
-                        settings.getProperty(DatabaseConfig.MYSQL_USERNAME),
-                        settings.getProperty(DatabaseConfig.MYSQL_PASSWORD),
-                        settings.getProperty(DatabaseConfig.MYSQL_MAX_POOL_SIZE),
-                        settings.getProperty(DatabaseConfig.MYSQL_CONNECTION_OPTIONS));
+                mySQLProvider.initPool();
 
                 MySQLAdapter adapter = injector.getSingleton(MySQLAdapter.class);
 

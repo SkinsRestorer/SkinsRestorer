@@ -26,10 +26,17 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface CacheStorage {
+    /**
+     * Gets the skin data of a Mojang player from the cache.
+     * @param playerName Player name to search for
+     * @param allowExpired Allow expired data to be returned
+     * @return The skin data of the player or empty if no such player exists
+     * @throws DataRequestException If the data could not be retrieved
+     */
     Optional<MojangSkinDataResult> getSkin(String playerName, boolean allowExpired) throws DataRequestException;
 
     /**
-     * Gets the uuid of a Mojang player from the cache.
+     * Gets the UUID of a Mojang player from the cache.
      * If the uuid is not found locally, it will try to get the uuid from Mojang.
      *
      * @param playerName Player name to search for

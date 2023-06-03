@@ -21,9 +21,16 @@ package net.skinsrestorer.api;
 
 import org.jetbrains.annotations.ApiStatus;
 
+/**
+ * Provides the SkinsRestorer API instance to other plugins.
+ */
 public class SkinsRestorerProvider {
     private static SkinsRestorer api;
 
+    /**
+     * Gets the SkinsRestorer API instance.
+     * @return The SkinsRestorer API instance.
+     */
     public static SkinsRestorer get() {
         if (SkinsRestorerProvider.api == null) {
             throw new IllegalStateException("SkinsRestorerAPI is not initialized yet!");

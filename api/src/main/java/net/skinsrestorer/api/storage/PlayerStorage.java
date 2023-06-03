@@ -78,6 +78,5 @@ public interface PlayerStorage {
         return getSkinForPlayer(uuid, playerName, false);
     }
 
-    // TODO: JavaDoc
     Optional<SkinProperty> getPremiumSkinForPlayer(String playerName) throws DataRequestException;
 }

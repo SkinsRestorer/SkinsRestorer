@@ -19,7 +19,9 @@
  */
 package net.skinsrestorer.shared.storage.adapter.mysql;
 
+import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.shared.config.DatabaseConfig;
 import net.skinsrestorer.shared.log.SRLogger;
 import org.intellij.lang.annotations.Language;
 import org.mariadb.jdbc.Configuration;
@@ -35,11 +37,18 @@ import java.sql.SQLException;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class MySQLProvider {
     private final SRLogger logger;
+    private final SettingsManager settings;
     private Pool pool;
 
-    public void initPool(String host, int port, String database,
-                         String username, String password,
-                         int maxPoolSize, String options) throws SQLException {
+    public void initPool() throws SQLException {
+        String host = settings.getProperty(DatabaseConfig.MYSQL_HOST);
+        String username = settings.getProperty(DatabaseConfig.MYSQL_USERNAME);
+        String password = settings.getProperty(DatabaseConfig.MYSQL_PASSWORD);
+        String database = settings.getProperty(DatabaseConfig.MYSQL_DATABASE);
+        int port = settings.getProperty(DatabaseConfig.MYSQL_PORT);
+        int maxPoolSize = settings.getProperty(DatabaseConfig.MYSQL_MAX_POOL_SIZE);
+        String options = settings.getProperty(DatabaseConfig.MYSQL_CONNECTION_OPTIONS);
+
         Configuration configuration = Configuration.parse("jdbc:mysql://" + host + ":" + port + "/" + database +
                 "?permitMysqlScheme" +
                 "&maxPoolSize=" + maxPoolSize +
@@ -59,8 +68,12 @@ public class MySQLProvider {
             if (e.getErrorCode() == 1060) {
                 return;
             }
+
             e.printStackTrace();
             logger.warning("MySQL error: " + e.getMessage());
+
+            // If there is an error in unit tests, we want to know about it
+            assert false;
         }
     }
 
