@@ -25,6 +25,7 @@ import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.utils.LocaleParser;
+import net.skinsrestorer.shared.utils.SRFileUtils;
 import net.skinsrestorer.shared.utils.TranslationReader;
 
 import javax.inject.Inject;
@@ -90,7 +91,11 @@ public class MessageLoader {
     public void moveOldFiles() {
         Path dataFolder = plugin.getDataFolder();
 
-        moveToArchive(dataFolder.resolve("Archive")); // Now lowercase
+        try {
+            SRFileUtils.renameFile(dataFolder, "Archive", "archive"); // Now lowercase
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         moveToArchive(dataFolder.resolve("messages.yml"));
         moveToArchive(dataFolder.resolve("command-messages.properties"));
         moveToArchive(dataFolder.resolve("languages"));
@@ -105,7 +110,7 @@ public class MessageLoader {
         try {
             Files.createDirectories(archive);
             Files.move(path, archive.resolve(path.getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
