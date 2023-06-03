@@ -45,6 +45,7 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class FileAdapter implements StorageAdapter {
     private final Path skinsFolder;
@@ -54,6 +55,7 @@ public class FileAdapter implements StorageAdapter {
     private final SettingsManager settings;
     private final Gson gson = new Gson();
     private final SRLogger logger;
+    private static final Pattern UUID_REGEX = Pattern.compile("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$");
 
     @Inject
     public FileAdapter(SRPlugin plugin, SettingsManager settings, SRLogger logger) {
@@ -97,14 +99,19 @@ public class FileAdapter implements StorageAdapter {
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(playersFolder, "*.player")) {
             boolean generatedFolder = false;
             for (Path path : stream) {
+                String fileName = path.getFileName().toString();
+                String playerName = fileName.substring(0, fileName.length() - ".player".length());
+
+                if (UUID_REGEX.matcher(playerName).matches()) {
+                    return; // If we find a UUID, we assume the migration has already been done.
+                }
+
                 if (!generatedFolder) {
                     generatedFolder = true;
                     Files.createDirectories(legacyPlayersFolder);
                 }
-                try {
-                    String fileName = path.getFileName().toString();
-                    String playerName = fileName.substring(0, fileName.length() - ".player".length());
 
+                try {
                     Path legacyPlayerFile = resolveLegacyPlayerFile(playerName);
                     if (Files.exists(legacyPlayerFile)) {
                         continue;
