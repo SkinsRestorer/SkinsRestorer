@@ -41,9 +41,12 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class FileAdapter implements StorageAdapter {
     private final Path skinsFolder;
@@ -90,14 +93,21 @@ public class FileAdapter implements StorageAdapter {
         migratePlayers();
     }
 
-    private void renameIfExists(Path parent, String oldName, String newName) {
-        Path oldPath = parent.resolve(oldName);
-        Path newPath = parent.resolve(newName);
-        if (Files.exists(oldPath) && !Files.exists(newPath)) {
-            try {
-                Files.move(oldPath, newPath);
-            } catch (IOException e) {
-                e.printStackTrace();
+    private void renameIfExists(Path parent, String oldName, String newName) throws IOException {
+        try (Stream<Path> stream = Files.list(parent)) {
+            // Folders are case-insensitive on Windows, so we need to check it using this method
+            List<String> files = stream.map(Path::getFileName).map(Path::toString).collect(Collectors.toList());
+
+            String tempName = newName + "_temp";
+            if (files.contains(oldName) && !files.contains(tempName) && !files.contains(newName)) {
+                Path oldPath = parent.resolve(oldName);
+                Path tempPath = parent.resolve(tempName);
+                Path newPath = parent.resolve(newName);
+
+                // Windows will not allow renaming a folder to a name that differs only in case
+                // So we need to rename it to a temporary name first
+                Files.move(oldPath, tempPath, StandardCopyOption.REPLACE_EXISTING);
+                Files.move(tempPath, newPath, StandardCopyOption.REPLACE_EXISTING);
             }
         }
     }
