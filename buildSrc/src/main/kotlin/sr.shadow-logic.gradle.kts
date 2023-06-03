@@ -133,7 +133,8 @@ fun ShadowJar.configureRelocations() {
     relocate("net.skinsrestorer.axiom", "net.skinsrestorer.shadow.axiom")
     relocate("ch.jalu.configme", "net.skinsrestorer.shadow.configme")
 
-    relocate("javax", "net.skinsrestorer.shadow.javax")
+    relocate("javax.inject", "net.skinsrestorer.shadow.javax.inject")
+    relocate("javax.annotation", "net.skinsrestorer.shadow.javax.annotation")
     relocate("ch.jalu.injector", "net.skinsrestorer.shadow.injector")
 
     relocate("io.papermc.lib", "net.skinsrestorer.shadow.paperlib")

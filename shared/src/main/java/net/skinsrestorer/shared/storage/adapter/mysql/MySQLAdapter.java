@@ -134,7 +134,7 @@ public class MySQLAdapter implements StorageAdapter {
     }
 
     private void migrateLegacySkinTable() throws IOException {
-        Optional<String> legacySkinTable = getLegacyPlayerTableFile();
+        Optional<String> legacySkinTable = getLegacySkinTableFile();
         if (!legacySkinTable.isPresent()) {
             return;
         }
