@@ -77,7 +77,7 @@ public class MySQLAdapter implements StorageAdapter {
                 + "PRIMARY KEY (`uuid`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
 
         mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolveURLSkinTable() + "` ("
-                + "`url` varchar(2083) NOT NULL,"
+                + "`url` varchar(266) NOT NULL," // Max chatbox command length
                 + "`mine_skin_id` varchar(36),"
                 + "`value` text NOT NULL,"
                 + "`signature` text NOT NULL,"
