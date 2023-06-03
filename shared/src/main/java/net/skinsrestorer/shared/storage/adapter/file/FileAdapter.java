@@ -95,9 +95,8 @@ public class FileAdapter implements StorageAdapter {
 
     private void migratePlayers() {
         Path legacyPlayersFolder = legacyFolder.resolve("players");
-        logger.info("Migrating legacy player files to new format...");
+        boolean generatedFolder = false;
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(playersFolder, "*.player")) {
-            boolean generatedFolder = false;
             for (Path path : stream) {
                 String fileName = path.getFileName().toString();
                 String playerName = fileName.substring(0, fileName.length() - ".player".length());
@@ -109,6 +108,7 @@ public class FileAdapter implements StorageAdapter {
                 if (!generatedFolder) {
                     generatedFolder = true;
                     Files.createDirectories(legacyPlayersFolder);
+                    logger.info("Migrating legacy player files to new format...");
                 }
 
                 try {
@@ -132,19 +132,22 @@ public class FileAdapter implements StorageAdapter {
             e.printStackTrace();
         }
 
-        logger.info("Player files migration complete!");
+        if (generatedFolder) {
+            logger.info("Player files migration complete!");
+        }
     }
 
     private void migrateSkins() {
         Path legacySkinsFolder = legacyFolder.resolve("skins");
-        logger.info("Migrating legacy skin table to new format...");
+        boolean generatedFolder = false;
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(skinsFolder, "*.skin")) {
-            boolean generatedFolder = false;
             for (Path path : stream) {
                 if (!generatedFolder) {
                     generatedFolder = true;
                     Files.createDirectories(legacySkinsFolder);
+                    logger.info("Migrating legacy skin files to new format...");
                 }
+
                 try {
                     String fileName = path.getFileName().toString();
                     String skinName = fileName.substring(0, fileName.length() - ".skin".length());
@@ -168,7 +171,10 @@ public class FileAdapter implements StorageAdapter {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        logger.info("Skin files migration complete!");
+
+        if (generatedFolder) {
+            logger.info("Skin files migration complete!");
+        }
     }
 
     private static String hashSHA256(String input) {
