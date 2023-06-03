@@ -117,7 +117,7 @@ public class MySQLAdapter implements StorageAdapter {
 
         try (ResultSet crs = mysql.query("SELECT * FROM " + legacyPlayerTable.get())) {
             while (crs.next()) {
-                String name = crs.getString("Name");
+                String name = crs.getString("Nick");
                 String skin = crs.getString("Skin");
 
                 mysql.execute("INSERT INTO " + resolveLegacyPlayerTable() + " (name, skin_name) VALUES (?, ?)",
