@@ -43,6 +43,7 @@ import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.plugin.SkinsRestorerServerShared;
 import net.skinsrestorer.shared.reflection.ReflectionUtil;
+import net.skinsrestorer.shared.reflection.exception.ReflectionException;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.storage.YamlConfig;
@@ -125,7 +126,7 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
 
         if (server.getPluginManager().getPlugin("ViaVersion") != null) {
             if (!ReflectionUtil.classExists("com.viaversion.viaversion.api.Via")) {
-                server.getScheduler().runTaskTimerAsynchronously(pluginInstance, () -> logger.severe("Outdated ViaVersion found! Please update to at least ViaVersion 4.0.0 for SkinsRestorer to work again!"), 50, 20L * 60);
+                runRepeatAsync(() -> logger.severe("Outdated ViaVersion found! Please update to at least ViaVersion 4.0.0 for SkinsRestorer to work again!"), 50 / 20, 20 * 60 / 20, TimeUnit.SECONDS);
             }
         }
 
@@ -465,16 +466,40 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
 
     @Override
     public void runAsync(Runnable runnable) {
+        if (FoliaScheduler.isSupported()) {
+            try {
+                FoliaScheduler.getInstance().runNow(pluginInstance, runnable);
+                return;
+            } catch (ReflectionException e) {
+                logger.severe("It is not possible to call the Folia scheduler to execute 'runNow'", e);
+            }
+        }
         server.getScheduler().runTaskAsynchronously(pluginInstance, runnable);
     }
 
     @Override
     public void runSync(Runnable runnable) {
+        if (FoliaScheduler.isSupported()) {
+            try {
+                FoliaScheduler.getInstance().execute(pluginInstance, runnable);
+                return;
+            } catch (ReflectionException e) {
+                logger.severe("It is not possible to call the Folia scheduler to execute 'execute'", e);
+            }
+        }
         server.getScheduler().runTask(pluginInstance, runnable);
     }
 
     @Override
     public void runRepeatAsync(Runnable runnable, int delay, int interval, TimeUnit timeUnit) {
+        if (FoliaScheduler.isSupported()) {
+            try {
+                FoliaScheduler.getInstance().runAtFixedRate(pluginInstance, runnable, delay, interval, timeUnit);
+                return;
+            } catch (ReflectionException e) {
+                logger.severe("It is not possible to call the Folia scheduler to execute 'runAtFixedRate'", e);
+            }
+        }
         server.getScheduler().runTaskTimerAsynchronously(pluginInstance, runnable, timeUnit.toSeconds(delay) * 20L, timeUnit.toSeconds(interval) * 20L);
     }
 

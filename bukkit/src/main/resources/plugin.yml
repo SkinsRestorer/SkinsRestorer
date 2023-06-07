@@ -6,6 +6,7 @@ website: https://skinsrestorer.net/
 authors: [ "knat", "AlexProgrammerDE", "Th3Tr0LLeR", "McLive", "DoNotSpamPls" ]
 softdepend: [ "ProtocolLib", "ViaVersion", "ViaBackwards", "ProtocolSupport", "MundoSK" ]
 api-version: 1.13
+folia-supported: true
 commands:
   skin:
     description: Main command.
