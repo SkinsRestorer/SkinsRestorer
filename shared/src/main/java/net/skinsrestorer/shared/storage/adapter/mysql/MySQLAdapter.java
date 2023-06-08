@@ -197,15 +197,19 @@ public class MySQLAdapter implements StorageAdapter {
 
     @Override
     public void setPlayerData(UUID uuid, PlayerData data) {
-        String skinIdentifier = data.getSkinIdentifier() != null ? data.getSkinIdentifier().getIdentifier() : null;
-        String skinType = data.getSkinIdentifier() != null ? data.getSkinIdentifier().getSkinType().name() : null;
-        String skinVariant = data.getSkinIdentifier() != null ? data.getSkinIdentifier().getSkinVariant().name() : null;
+        boolean hasSkin = data.getSkinIdentifier() != null;
+        SkinIdentifier identifier = data.getSkinIdentifier();
+        String skinIdentifierString = hasSkin ? identifier.getIdentifier() : null;
+        String skinType = hasSkin ? identifier.getSkinType().name() : null;
+
+        // Variant is only present on url skins
+        String skinVariant = hasSkin && identifier.getSkinVariant() != null ? identifier.getSkinVariant().name() : null;
         mysql.execute("INSERT INTO " + resolvePlayerTable() + " (uuid, skin_identifier, skin_type, skin_variant) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE skin_identifier=?, skin_type=?, skin_variant=?",
                 uuid.toString(),
-                skinIdentifier,
+                skinIdentifierString,
                 skinType,
                 skinVariant,
-                skinIdentifier,
+                skinIdentifierString,
                 skinType,
                 skinVariant);
     }
