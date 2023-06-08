@@ -32,7 +32,6 @@ import net.skinsrestorer.mappings.shared.ViaPacketData;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -43,13 +42,15 @@ public class Mapping1_19_4 implements IMapping {
         player.connection.send(packet);
     }
 
+    @Override
     public void triggerHealthUpdate(Player player) {
         MappingReflection.getHandle(player, ServerPlayer.class).resetSentInfo();
     }
 
+    @Override
     public void accept(Player player, Predicate<ViaPacketData> viaFunction) {
         try {
-            final ServerPlayer entityPlayer = (ServerPlayer) player.getClass().getMethod("getHandle").invoke(player);
+            ServerPlayer entityPlayer = MappingReflection.getHandle(player, ServerPlayer.class);
 
             ClientboundPlayerInfoRemovePacket removePlayer = new ClientboundPlayerInfoRemovePacket(ImmutableList.of(entityPlayer.getUUID()));
             ClientboundPlayerInfoUpdatePacket addPlayer = ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(entityPlayer));
@@ -93,7 +94,7 @@ public class Mapping1_19_4 implements IMapping {
             player.getClass().getMethod("updateScaledHealth").invoke(player);
             player.updateInventory();
             triggerHealthUpdate(player);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+        } catch (ReflectiveOperationException e) {
             e.printStackTrace();
             throw new RuntimeException(e.getMessage());
         }

@@ -42,13 +42,15 @@ public class Mapping1_19_3 implements IMapping {
         player.connection.send(packet);
     }
 
+    @Override
     public void triggerHealthUpdate(Player player) {
         MappingReflection.getHandle(player, ServerPlayer.class).resetSentInfo();
     }
 
+    @Override
     public void accept(Player player, Predicate<ViaPacketData> viaFunction) {
         try {
-            final ServerPlayer entityPlayer = (ServerPlayer) player.getClass().getMethod("getHandle").invoke(player);
+            ServerPlayer entityPlayer = MappingReflection.getHandle(player, ServerPlayer.class);
 
             ClientboundPlayerInfoRemovePacket removePlayer = new ClientboundPlayerInfoRemovePacket(ImmutableList.of(entityPlayer.getUUID()));
             ClientboundPlayerInfoUpdatePacket addPlayer = ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(entityPlayer));
