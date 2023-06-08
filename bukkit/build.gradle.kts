@@ -8,7 +8,7 @@ dependencies {
     implementation(projects.multiver.bukkit.multipaper)
     implementation(projects.multiver.bukkit.v17)
 
-    setOf("1-18", "1-18-2", "1-19", "1-19-3", "1-19-4").forEach {
+    setOf("1-18", "1-18-2", "1-19", "1-19-3", "1-19-4", "1-20").forEach {
         implementation(project(":mappings:mc-$it", "remapped"))
     }
     testImplementation(testFixtures(projects.skinsrestorerShared))
