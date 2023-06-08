@@ -76,7 +76,7 @@ gradleEnterprise {
 }
 
 include("mappings:shared")
-setOf("1-18", "1-18-2", "1-19", "1-19-3", "1-19-4").forEach {
+setOf("1-18", "1-18-2", "1-19", "1-19-3", "1-19-4", "1-20").forEach {
     include("mappings:mc-$it")
 }
 

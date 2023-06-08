@@ -30,3 +30,5 @@ gradle-app.setting
 *.iml
 *.iws
 *.ipr
+
+**/run/
