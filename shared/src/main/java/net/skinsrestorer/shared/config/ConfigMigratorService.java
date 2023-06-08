@@ -82,6 +82,9 @@ public class ConfigMigratorService implements MigrationService {
         Property<String> oldMySQLPasswordProperty = newProperty("MySQL.Password", "password");
         migrated |= moveProperty(oldMySQLPasswordProperty, DatabaseConfig.MYSQL_PASSWORD, reader, configData);
 
+        Property<String> oldMySQLConnectionOptionsProperty = newProperty("MySQL.ConnectionOptions", "");
+        migrated |= moveProperty(oldMySQLConnectionOptionsProperty, DatabaseConfig.MYSQL_CONNECTION_OPTIONS, reader, configData);
+
         Property<Boolean> oldSkinWithoutPermProperty = newProperty("SkinWithoutPerm", true);
         migrated |= moveProperty(oldSkinWithoutPermProperty, CommandConfig.FORCE_DEFAULT_PERMISSIONS, reader, configData);
 
