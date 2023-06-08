@@ -44,7 +44,7 @@ import java.sql.SQLException;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@Testcontainers
+@Testcontainers(disabledWithoutDocker = true)
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 @ExtendWith({MockitoExtension.class, SRExtension.class})
 public class MySQLAdapterTest {
