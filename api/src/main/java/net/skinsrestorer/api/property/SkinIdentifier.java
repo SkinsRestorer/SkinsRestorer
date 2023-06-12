@@ -27,6 +27,9 @@ import net.skinsrestorer.api.model.SkinVariant;
 
 import java.util.UUID;
 
+/**
+ * A skin identifier represents a reference skin that can be applied to a player.
+ */
 @Data
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class SkinIdentifier {

@@ -33,7 +33,7 @@ public class SkinsRestorerProvider {
      */
     public static SkinsRestorer get() {
         if (SkinsRestorerProvider.api == null) {
-            throw new IllegalStateException("SkinsRestorerAPI is not initialized yet!");
+            throw new IllegalStateException("SkinsRestorerAPI is not initialized yet! (Are you trying to access it without softDepends?)");
         }
 
         return SkinsRestorerProvider.api;

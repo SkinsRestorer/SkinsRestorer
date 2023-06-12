@@ -36,7 +36,7 @@ public interface PlayerStorage {
     Optional<SkinIdentifier> getSkinIdOfPlayer(UUID uuid);
 
     /**
-     * Saves players skin identifier to the database
+     * Links a player to a skin identifier.
      *
      * @param uuid       Players UUID
      * @param identifier Skin identifier
@@ -44,7 +44,7 @@ public interface PlayerStorage {
     void setSkinIdOfPlayer(UUID uuid, SkinIdentifier identifier);
 
     /**
-     * Removes players skin identifier from the database
+     * Removes the link between the player and a skin identifier.
      *
      * @param uuid Players UUID
      */

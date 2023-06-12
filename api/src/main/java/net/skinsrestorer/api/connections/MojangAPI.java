@@ -30,7 +30,7 @@ public interface MojangAPI {
     /**
      * Get skin property by player name, this method will return empty if the player is not premium.
      * It may return a hardcoded skin value, for example for "Steve" or "Alex".
-     * It does in theory a name to uuid to profile request.
+     * It does, in theory, a name to uuid to profile request.
      * But internally it is faster than calling {@link #getUUID(String)} and {@link #getProfile(UUID)} separately.
      * That is because we use ashcon.app, and we can directly get the profile and uuid from the name.
      *
