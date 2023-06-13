@@ -28,7 +28,8 @@ import java.util.UUID;
 public interface CacheStorage {
     /**
      * Gets the skin data of a Mojang player from the cache.
-     * @param playerName Player name to search for
+     *
+     * @param playerName   Player name to search for
      * @param allowExpired Allow expired data to be returned
      * @return The skin data of the player or empty if no such player exists
      * @throws DataRequestException If the data could not be retrieved
@@ -37,7 +38,7 @@ public interface CacheStorage {
 
     /**
      * Gets the UUID of a Mojang player from the cache.
-     * If the uuid is not found locally, it will try to get the uuid from Mojang.
+     * If the UUID is not found locally, it will try to get the UUID from one of our data providers.
      *
      * @param playerName Player name to search for
      * @return The uuid of the player or empty if no such player exists

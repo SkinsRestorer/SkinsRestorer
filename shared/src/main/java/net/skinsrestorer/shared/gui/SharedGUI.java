@@ -20,10 +20,10 @@
 package net.skinsrestorer.shared.gui;
 
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.storage.SkinStorage;
 import net.skinsrestorer.shared.commands.library.CommandManager;
 import net.skinsrestorer.shared.listeners.event.ClickEventInfo;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
+import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRForeign;
 import net.skinsrestorer.shared.subjects.SRServerPlayer;
@@ -34,7 +34,7 @@ import java.util.function.Consumer;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SharedGUI {
     public static final int HEAD_COUNT_PER_PAGE = 36;
-    private final SkinStorage skinStorage;
+    private final SkinStorageImpl skinStorage;
 
     public <T> T createGUI(GUIManager<T> manager, Consumer<ClickEventInfo> callback, SRForeign player, int page) {
         if (page > 999) {

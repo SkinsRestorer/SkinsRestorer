@@ -126,7 +126,6 @@ public class SkinStorageImpl implements SkinStorage {
         atomicAdapter.get().setCustomSkinData(skinName, CustomSkinData.of(skinName, textures));
     }
 
-    @Override
     public Map<String, String> getGUISkins(int offset) {
         return atomicAdapter.get().getStoredGUISkins(offset);
     }
@@ -261,7 +260,6 @@ public class SkinStorageImpl implements SkinStorage {
         return expiryDate <= now;
     }
 
-    @Override
     public boolean purgeOldSkins(int days) {
         long targetPurgeTimestamp = Instant.now().minus(days, ChronoUnit.DAYS).toEpochMilli();
 

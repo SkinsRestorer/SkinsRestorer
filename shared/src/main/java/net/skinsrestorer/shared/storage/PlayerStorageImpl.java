@@ -125,7 +125,8 @@ public class PlayerStorageImpl implements PlayerStorage {
             return getDefaultSkin();
         }
 
-        Optional<SkinProperty> premiumSkin = getPremiumSkinForPlayer(playerName);
+        Optional<SkinProperty> premiumSkin = cacheStorage.getSkin(playerName, false)
+                .map(MojangSkinDataResult::getSkinProperty);
 
         if (premiumSkin.isPresent()) {
             return premiumSkin;
@@ -136,11 +137,6 @@ public class PlayerStorageImpl implements PlayerStorage {
         }
 
         return Optional.empty();
-    }
-
-    @Override
-    public Optional<SkinProperty> getPremiumSkinForPlayer(String playerName) throws DataRequestException {
-        return cacheStorage.getSkin(playerName, false).map(MojangSkinDataResult::getSkinProperty);
     }
 
     private Optional<SkinProperty> getDefaultSkin() {

@@ -29,6 +29,7 @@ public class SkinsRestorerProvider {
 
     /**
      * Gets the SkinsRestorer API instance.
+     *
      * @return The SkinsRestorer API instance.
      */
     public static SkinsRestorer get() {

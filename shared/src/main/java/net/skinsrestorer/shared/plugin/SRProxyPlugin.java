@@ -21,9 +21,9 @@ package net.skinsrestorer.shared.plugin;
 
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinProperty;
-import net.skinsrestorer.api.storage.SkinStorage;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.log.SRLogger;
+import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.subjects.SRProxyPlayer;
 import org.jetbrains.annotations.NotNull;
 
@@ -55,7 +55,7 @@ public class SRProxyPlugin {
         return byteOut.toByteArray();
     }
 
-    public void sendPage(int page, SRProxyPlayer player, SkinStorage skinStorage) {
+    public void sendPage(int page, SRProxyPlayer player, SkinStorageImpl skinStorage) {
         int skinNumber = 36 * page;
 
         byte[] ba = convertToByteArray(skinStorage.getGUISkins(skinNumber));

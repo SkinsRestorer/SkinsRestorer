@@ -28,10 +28,10 @@ import java.util.UUID;
 
 public interface PlayerStorage {
     /**
-     * Get the custom set skin of a player.
+     * Get the linked skin identifier of a player.
      *
      * @param uuid Players UUID
-     * @return The skin identifier of the skin that would be set on join
+     * @return The skin identifier of the player
      */
     Optional<SkinIdentifier> getSkinIdOfPlayer(UUID uuid);
 
@@ -39,7 +39,7 @@ public interface PlayerStorage {
      * Links a player to a skin identifier.
      *
      * @param uuid       Players UUID
-     * @param identifier Skin identifier
+     * @param identifier Skin identifier to link
      */
     void setSkinIdOfPlayer(UUID uuid, SkinIdentifier identifier);
 
@@ -51,21 +51,25 @@ public interface PlayerStorage {
     void removeSkinIdOfPlayer(UUID uuid);
 
     /**
-     * Gets the optional set skin identifier of a player and then returns the skin data.
+     * Calls {@link #getSkinIdOfPlayer(UUID)} and fetches the stored skin property from the skin identifier.
      *
      * @param uuid Players UUID
-     * @return The skin identifier of the skin that would be set on join
+     * @return The skin property of the player or empty if no identifier is linked or data is missing.
      */
     Optional<SkinProperty> getSkinOfPlayer(UUID uuid);
 
     /**
      * This method seeks out the skin that would be set on join and returns
-     * the property containing all the skin data.
+     * the property containing all the skin data (Value and Signature).
      * That skin can either be custom set, the premium skin or a default skin.
      * It also executes a skin data update if the saved skin data expired.
+     * <p>
+     * The isOnlineMode parameter is used to determine whether the player is
+     * connected via online mode, so we may skip default skins for that player
+     * if configured by the admin.
      *
-     * @param uuid Players UUID
-     * @param playerName Players name
+     * @param uuid         Players UUID
+     * @param playerName   Players name
      * @param isOnlineMode Whether the player gets properties from the platform already
      * @return The skin identifier of the skin that would be set on join
      */
@@ -77,6 +81,4 @@ public interface PlayerStorage {
     default Optional<SkinProperty> getSkinForPlayer(UUID uuid, String playerName) throws DataRequestException {
         return getSkinForPlayer(uuid, playerName, false);
     }
-
-    Optional<SkinProperty> getPremiumSkinForPlayer(String playerName) throws DataRequestException;
 }

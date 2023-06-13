@@ -36,5 +36,5 @@ public enum SkinType {
      * Skin linked to an old value and signature from pre-v15 versions
      * DO NOT USE THIS TYPE, IT IS ONLY FOR COMPATIBILITY
      */
-    LEGACY;
+    LEGACY
 }
