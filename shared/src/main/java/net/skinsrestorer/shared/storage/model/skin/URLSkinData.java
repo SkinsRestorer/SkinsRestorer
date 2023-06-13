@@ -21,8 +21,8 @@ package net.skinsrestorer.shared.storage.model.skin;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.model.SkinVariant;
 import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.api.property.SkinVariant;
 
 @Getter
 @RequiredArgsConstructor(staticName = "of")

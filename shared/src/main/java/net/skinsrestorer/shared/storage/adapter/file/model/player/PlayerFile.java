@@ -22,9 +22,9 @@ package net.skinsrestorer.shared.storage.adapter.file.model.player;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import net.skinsrestorer.api.model.SkinVariant;
 import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.api.property.SkinType;
+import net.skinsrestorer.api.property.SkinVariant;
 import net.skinsrestorer.shared.storage.model.player.PlayerData;
 
 import java.util.UUID;

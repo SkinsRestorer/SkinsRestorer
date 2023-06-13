@@ -21,8 +21,8 @@ package net.skinsrestorer.shared.storage.adapter.file;
 
 import ch.jalu.configme.SettingsManager;
 import com.google.gson.Gson;
-import net.skinsrestorer.api.model.SkinVariant;
 import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.api.property.SkinVariant;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;

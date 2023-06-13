@@ -23,12 +23,13 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.model.SkinVariant;
 
 import java.util.UUID;
 
 /**
  * A skin identifier represents a reference skin that can be applied to a player.
+ * A skin identifier always identifies a *stored* skin inside the storage.
+ * (eg. file or database)
  */
 @Data
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)

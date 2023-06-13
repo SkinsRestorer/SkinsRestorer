@@ -17,7 +17,7 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api.model;
+package net.skinsrestorer.api.property;
 
 public enum SkinVariant {
     CLASSIC,

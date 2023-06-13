@@ -21,7 +21,7 @@ package net.skinsrestorer.shared.storage.adapter.file.model.skin;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import net.skinsrestorer.api.model.SkinVariant;
+import net.skinsrestorer.api.property.SkinVariant;
 import net.skinsrestorer.shared.storage.model.skin.URLIndexData;
 
 @Getter

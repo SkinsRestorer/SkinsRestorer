@@ -25,27 +25,25 @@ import net.skinsrestorer.api.property.SkinProperty;
 
 public interface SkinApplier<P> {
     /**
-     * Applies the player selected skin from the player table/file.
-     * This is useful in combination with setSkinName.
+     * Applies a skin to a player that would be set on join.
      *
      * @param player Player to apply the skin to.
-     * @throws DataRequestException
+     * @throws DataRequestException If the skin data could not be requested.
      */
     void applySkin(P player) throws DataRequestException;
 
     /**
-     * Only Apply the skinName from the skin table/file.
-     * This will not keep the skin on rejoin / applySkin(playerWrapper).
+     * Applies a skin to a player from a skin identifier.
      *
      * @param player     Player to apply the skin to.
      * @param identifier SkinIdentifier to apply
-     * @throws DataRequestException
+     * @throws DataRequestException If the skin data could not be requested.
      */
     void applySkin(P player, SkinIdentifier identifier) throws DataRequestException;
 
     /**
-     * Applies the skin In other words, sets the skin data, but no changes will
-     * be visible until you reconnect or force update with.
+     * Applies a raw skin property to a player.
+     * You can use this to apply custom values to a player without needing to touch the storage.
      *
      * @param player   Player to apply the skin to.
      * @param property Skin property to apply

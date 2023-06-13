@@ -21,7 +21,7 @@ package net.skinsrestorer.shared.storage.model.skin;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.model.SkinVariant;
+import net.skinsrestorer.api.property.SkinVariant;
 
 /**
  * A URL can be generated both as SLIM and as CLASSIC, so we need to find the default determined by MineSkin.

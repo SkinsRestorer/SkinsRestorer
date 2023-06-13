@@ -22,8 +22,8 @@ package net.skinsrestorer.api;
 import com.google.gson.Gson;
 import net.skinsrestorer.api.model.MojangProfileResponse;
 import net.skinsrestorer.api.model.MojangProfileTextureMeta;
-import net.skinsrestorer.api.model.SkinVariant;
 import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.api.property.SkinVariant;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.charset.StandardCharsets;
