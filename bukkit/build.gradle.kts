@@ -18,7 +18,7 @@ dependencies {
     }
 
     implementation("org.bstats:bstats-bukkit:3.0.2")
-    implementation("com.github.cryptomorin:XSeries:9.3.1")
+    implementation("com.github.cryptomorin:XSeries:9.4.0")
 
     compileOnly("com.viaversion:viabackwards-common:4.7.0")
     compileOnly("com.viaversion:viaversion:4.4.1")
