@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2022 SkinsRestorer
+ * Copyright (C) 2023 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -19,37 +19,76 @@
  */
 package net.skinsrestorer.shared.storage.adapter;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.property.SkinIdentifier;
+import net.skinsrestorer.api.property.SkinType;
+import net.skinsrestorer.api.property.SkinVariant;
+import net.skinsrestorer.shared.storage.model.cache.MojangCacheData;
+import net.skinsrestorer.shared.storage.model.player.LegacyPlayerData;
+import net.skinsrestorer.shared.storage.model.player.PlayerData;
+import net.skinsrestorer.shared.storage.model.skin.*;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface StorageAdapter {
-    Optional<String> getStoredSkinNameOfPlayer(String playerName);
+    void init();
 
-    void removeStoredSkinNameOfPlayer(String playerName);
+    Optional<PlayerData> getPlayerData(UUID uuid) throws StorageException;
 
-    void setStoredSkinNameOfPlayer(String playerName, String skinName);
+    void setPlayerData(UUID uuid, PlayerData data);
 
-    Optional<StoredProperty> getStoredSkinData(String skinName) throws Exception;
+    Optional<PlayerSkinData> getPlayerSkinData(UUID uuid) throws StorageException;
 
-    void removeStoredSkinData(String skinName);
+    void removePlayerSkinData(UUID uuid);
 
-    void setStoredSkinData(String skinName, StoredProperty storedProperty);
+    void setPlayerSkinData(UUID uuid, PlayerSkinData skinData);
 
-    Map<String, String> getStoredSkins(int offset);
+    Optional<URLSkinData> getURLSkinData(String url, SkinVariant skinVariant) throws StorageException;
 
-    Optional<Long> getStoredTimestamp(String skinName);
+    void removeURLSkinData(String url, SkinVariant skinVariant);
+
+    void setURLSkinData(String url, URLSkinData skinData);
+
+    Optional<URLIndexData> getURLSkinIndex(String url) throws StorageException;
+
+    void removeURLSkinIndex(String url);
+
+    void setURLSkinIndex(String url, URLIndexData skinData);
+
+    Optional<CustomSkinData> getCustomSkinData(String skinName) throws StorageException;
+
+    void removeCustomSkinData(String skinName);
+
+    void setCustomSkinData(String skinName, CustomSkinData skinData);
+
+    Optional<LegacySkinData> getLegacySkinData(String skinName) throws StorageException;
+
+    void removeLegacySkinData(String skinName);
+
+    Optional<LegacyPlayerData> getLegacyPlayerData(String playerName) throws StorageException;
+
+    void removeLegacyPlayerData(String playerName);
+
+    Map<String, String> getStoredGUISkins(int offset); // TODO: Redesign this
 
     void purgeStoredOldSkins(long targetPurgeTimestamp) throws StorageException;
 
-    @RequiredArgsConstructor
-    @Getter
-    class StoredProperty {
-        private final String value;
-        private final String signature;
-        private final long timestamp;
+    Optional<MojangCacheData> getCachedUUID(String playerName) throws StorageException;
+
+    void setCachedUUID(String playerName, MojangCacheData mojangCacheData);
+
+    default void migrateLegacyPlayer(String playerName, UUID uuid) throws StorageException {
+        Optional<LegacyPlayerData> legacyPlayerData = getLegacyPlayerData(playerName);
+        if (!legacyPlayerData.isPresent()) {
+            return;
+        }
+
+        PlayerData playerData = PlayerData.of(uuid, SkinIdentifier.of(legacyPlayerData.get().getSkinName(), null, SkinType.LEGACY));
+
+        setPlayerData(uuid, playerData);
+
+        removeLegacyPlayerData(playerName);
     }
 
     class StorageException extends Exception {

@@ -1,102 +1,10 @@
 name: SkinsRestorer
-main: net.skinsrestorer.bukkit.SkinsRestorerBootstrap
+main: net.skinsrestorer.bukkit.SRBukkitBootstrap
+load: STARTUP
 version: ${version}
 description: ${description}
 website: https://skinsrestorer.net/
 authors: [ "knat", "AlexProgrammerDE", "Th3Tr0LLeR", "McLive", "DoNotSpamPls" ]
-softdepend: [ "ProtocolLib", "ViaVersion", "ViaBackwards", "ProtocolSupport", "MundoSK" ]
+softdepend: [ "ProtocolLib", "ViaVersion", "ViaBackwards", "ProtocolSupport", "MundoSK", "floodgate" ]
 api-version: 1.13
-commands:
-  skin:
-    description: Main command.
-  skins:
-    description: Opens skins GUI.
-  sr:
-    aliases: [ skinsrestorer ]
-    description: Admin commands.
-permissions:
-  skinsrestorer.command:
-    description: Allows access to the main "/skin" commands.
-    default: op
-  skinsrestorer.command.set:
-    description: Allows access to change your skin.
-    default: op
-  skinsrestorer.command.set.url:
-    description: Allows access to change your skin by url.
-    default: op
-  skinsrestorer.command.clear:
-    description: Allows access to clear your skin.
-    default: op
-  skinsrestorer.command.update:
-    description: Allows access to update your skin.
-    default: op
-  skinsrestorer.command.search:
-    description: Allows access to search your skin.
-    default: op
-
-  skinsrestorer.command.gui:
-    description: Allows access to open skins GUI.
-    default: op
-
-  skinsrestorer.admincommand:
-    description: Allows access to the main "/sr" commands.
-    default: op
-  skinsrestorer.command.set.other:
-    description: Allows access to set a player skin.
-    default: op
-  skinsrestorer.command.clear.other:
-    description: Allows access to clear a player skin.
-    default: op
-  skinsrestorer.command.update.other:
-    description: Allows access to update a player skin.
-    default: op
-  skinsrestorer.admincommand.status:
-    description: Allows access to /sr status.
-    default: op
-  skinsrestorer.admincommand.drop:
-    description: Allows access to removes a .SKIN file.
-    default: op
-  skinsrestorer.admincommand.props:
-    description: Allows access to get the skinprops of a player.
-    default: op
-  skinsrestorer.admincommand.applyskin:
-    description: Allows access to re-apply the skin of a player.
-    default: op
-  skinsrestorer.admincommand.createcustom:
-    description: Allows access to create a custom skin by url.
-    default: op
-
-  skinsrestorer.bypasscooldown:
-    description: Bypasses any set cooldowns in the config.
-    default: op
-  skinsrestorer.bypassdisabled:
-    description: Allows access to disabled skins in the config.
-    default: op
-
-  # wildcards
-  skinsrestorer.command.*:
-    description: Wildcard permission for players
-    children:
-      skinsrestorer.command: true
-      skinsrestorer.command.set: true
-      skinsrestorer.command.set.url: true
-      skinsrestorer.command.clear: true
-      skinsrestorer.command.update: true
-      skinsrestorer.command.search: true
-      skinsrestorer.command.gui: true
-
-  skinsrestorer.admincommand.*:
-    description: Wildcard permission for admins
-    children:
-      skinsrestorer.command.*: true
-      skinsrestorer.admincommand: true
-      skinsrestorer.command.set.other: true
-      skinsrestorer.command.clear.other: true
-      skinsrestorer.command.update.other: true
-      skinsrestorer.admincommand.status: true
-      skinsrestorer.admincommand.drop: true
-      skinsrestorer.admincommand.props: true
-      skinsrestorer.admincommand.applyskin: true
-      skinsrestorer.admincommand.createcustom: true
-      skinsrestorer.bypasscooldown: true
-      skinsrestorer.bypassdisabled: true
+folia-supported: true

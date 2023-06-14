@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2022 SkinsRestorer
+ * Copyright (C) 2023 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -22,39 +22,35 @@ package net.skinsrestorer.velocity.listener;
 import com.velocitypowered.api.event.EventTask;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.player.GameProfileRequestEvent;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.exception.SkinRequestException;
-import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
-import net.skinsrestorer.shared.listeners.SharedLoginProfileListener;
-import net.skinsrestorer.velocity.SkinsRestorerVelocity;
+import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.shared.listeners.LoginProfileListenerAdapter;
+import net.skinsrestorer.shared.listeners.event.SRLoginProfileEvent;
+import net.skinsrestorer.velocity.SkinApplierVelocity;
 
-@RequiredArgsConstructor
-@Getter
-public class GameProfileRequest extends SharedLoginProfileListener {
-    private final SkinsRestorerVelocity plugin;
+import javax.inject.Inject;
+import java.util.UUID;
+
+@RequiredArgsConstructor(onConstructor_ = @Inject)
+public class GameProfileRequest {
+    private final SkinApplierVelocity skinApplier;
+    private final LoginProfileListenerAdapter<EventTask> adapter;
 
     @Subscribe
     public EventTask onGameProfileRequest(GameProfileRequestEvent event) {
-        SRLoginProfileEvent wrapped = wrap(event);
-        if (handleSync(wrapped))
-            return null;
-
-        return EventTask.async(() -> {
-            try {
-                handleAsync(wrapped).ifPresent(property ->
-                        event.setGameProfile(plugin.getSkinApplierVelocity().updateProfileSkin(event.getGameProfile(), property)));
-            } catch (SkinRequestException e) {
-                plugin.getLogger().debug(e);
-            }
-        });
+        return adapter.handleLogin(wrap(event));
     }
 
-    private SRLoginProfileEvent wrap(GameProfileRequestEvent event) {
-        return new SRLoginProfileEvent() {
+    private SRLoginProfileEvent<EventTask> wrap(GameProfileRequestEvent event) {
+        return new SRLoginProfileEvent<EventTask>() {
             @Override
-            public boolean isOnline() {
+            public boolean hasOnlineProperties() {
                 return event.isOnlineMode();
+            }
+
+            @Override
+            public UUID getPlayerUniqueId() {
+                return event.getOriginalProfile().getId();
             }
 
             @Override
@@ -65,6 +61,16 @@ public class GameProfileRequest extends SharedLoginProfileListener {
             @Override
             public boolean isCancelled() {
                 return false;
+            }
+
+            @Override
+            public void setResultProperty(SkinProperty property) {
+                event.setGameProfile(skinApplier.updateProfileSkin(event.getGameProfile(), property));
+            }
+
+            @Override
+            public EventTask runAsync(Runnable runnable) {
+                return EventTask.async(runnable);
             }
         };
     }

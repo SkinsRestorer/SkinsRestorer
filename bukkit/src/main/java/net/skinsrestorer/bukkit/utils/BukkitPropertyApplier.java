@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2022 SkinsRestorer
+ * Copyright (C) 2023 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -21,57 +21,39 @@ package net.skinsrestorer.bukkit.utils;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.shared.reflection.ReflectionUtil;
-import net.skinsrestorer.shared.reflection.exception.ReflectionException;
+import net.skinsrestorer.api.property.SkinProperty;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Optional;
 
-public class BukkitPropertyApplier {
+public class BukkitPropertyApplier implements SkinApplyBukkitAdapter {
     @SuppressWarnings("unchecked")
-    public static void applyProperty(Player player, IProperty property) {
+    @Override
+    public void applyProperty(Player player, SkinProperty property) {
         try {
-            GameProfile profile = getGameProfile(player);
-            profile.getProperties().removeAll(IProperty.TEXTURES_NAME);
-            profile.getProperties().put(IProperty.TEXTURES_NAME, property.getHandle());
-        } catch (ReflectionException e) {
+            GameProfile profile = getGameProfile(player, GameProfile.class);
+            profile.getProperties().removeAll(SkinProperty.TEXTURES_NAME);
+            profile.getProperties().put(SkinProperty.TEXTURES_NAME, new Property(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
+        } catch (ReflectiveOperationException e) {
             e.printStackTrace();
         }
     }
 
-    public static GameProfile getGameProfile(Player player) throws ReflectionException {
-        Object ep = ReflectionUtil.invokeMethod(player.getClass(), player, "getHandle");
-        GameProfile profile;
-        try {
-            profile = (GameProfile) ReflectionUtil.invokeMethod(ep.getClass(), ep, "getProfile");
-        } catch (Exception e) {
-            profile = (GameProfile) ReflectionUtil.getFieldByType(ep, "GameProfile");
-        }
-
-        return profile;
-    }
-
     @SuppressWarnings("unchecked")
-    public static Map<String, Collection<IProperty>> getPlayerProperties(Player player) {
+    @Override
+    public Optional<SkinProperty> getSkinProperty(Player player) {
         try {
-            Map<String, Collection<Property>> getGameProfileProperties = getGameProfile(player).getProperties().asMap();
+            Collection<Property> properties = getGameProfile(player, GameProfile.class).getProperties().values();
 
-            Map<String, Collection<IProperty>> properties = new HashMap<>();
-            for (Map.Entry<String, Collection<Property>> entry : getGameProfileProperties.entrySet()) {
-                List<IProperty> list = new ArrayList<>();
-
-                for (Property property : entry.getValue()) {
-                    list.add(new BukkitProperty(property.getName(), property.getValue(), property.getSignature()));
-                }
-
-                properties.put(entry.getKey(), list);
-            }
-
-            return properties;
-        } catch (ReflectionException e) {
+            return properties
+                    .stream()
+                    .filter(property -> property.getName().equals(SkinProperty.TEXTURES_NAME))
+                    .map(property -> SkinProperty.of(property.getValue(), property.getSignature()))
+                    .findFirst();
+        } catch (ReflectiveOperationException e) {
             e.printStackTrace();
-            return Collections.emptyMap();
+            return Optional.empty();
         }
     }
 }

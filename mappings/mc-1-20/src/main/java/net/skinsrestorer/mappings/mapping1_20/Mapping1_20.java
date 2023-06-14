@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2022 SkinsRestorer
+ * Copyright (C) 2023 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -27,11 +27,11 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.world.level.biome.BiomeManager;
 import net.skinsrestorer.mappings.shared.IMapping;
+import net.skinsrestorer.mappings.shared.MappingReflection;
 import net.skinsrestorer.mappings.shared.ViaPacketData;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -42,13 +42,15 @@ public class Mapping1_20 implements IMapping {
         player.connection.send(packet);
     }
 
+    @Override
     public void triggerHealthUpdate(Player player) {
-        extractServerPlayer(player).resetSentInfo();
+        MappingReflection.getHandle(player, ServerPlayer.class).resetSentInfo();
     }
 
+    @Override
     public void accept(Player player, Predicate<ViaPacketData> viaFunction) {
         try {
-            final ServerPlayer entityPlayer = (ServerPlayer) player.getClass().getMethod("getHandle").invoke(player);
+            ServerPlayer entityPlayer = MappingReflection.getHandle(player, ServerPlayer.class);
 
             ClientboundPlayerInfoRemovePacket removePlayer = new ClientboundPlayerInfoRemovePacket(ImmutableList.of(entityPlayer.getUUID()));
             ClientboundPlayerInfoUpdatePacket addPlayer = ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(entityPlayer));
@@ -93,16 +95,7 @@ public class Mapping1_20 implements IMapping {
             player.getClass().getMethod("updateScaledHealth").invoke(player);
             player.updateInventory();
             triggerHealthUpdate(player);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
-        }
-    }
-
-    private ServerPlayer extractServerPlayer(Player player) {
-        try {
-            return (ServerPlayer) player.getClass().getMethod("getHandle").invoke(player);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+        } catch (ReflectiveOperationException e) {
             e.printStackTrace();
             throw new RuntimeException(e.getMessage());
         }

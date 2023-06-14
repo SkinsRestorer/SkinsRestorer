@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2022 SkinsRestorer
+ * Copyright (C) 2023 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -20,23 +20,24 @@
 package net.skinsrestorer.shared.storage;
 
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 public class CooldownStorage {
-    private final Map<String, Long> cooldown = new ConcurrentHashMap<>();
+    private final Map<UUID, Long> cooldown = new ConcurrentHashMap<>();
 
-    public boolean hasCooldown(String name) {
-        Long expire = cooldown.get(name);
+    public boolean hasCooldown(UUID uuid) {
+        Long expire = cooldown.get(uuid);
         return expire != null && expire > System.currentTimeMillis();
     }
 
-    public int getCooldownSeconds(String name) {
-        return (int) TimeUnit.MILLISECONDS.toSeconds(cooldown.get(name) - System.currentTimeMillis());
+    public int getCooldownSeconds(UUID uuid) {
+        return (int) TimeUnit.MILLISECONDS.toSeconds(cooldown.get(uuid) - System.currentTimeMillis());
     }
 
-    public void setCooldown(String name, int cooldownTime, TimeUnit timeunit) {
-        cooldown.put(name, System.currentTimeMillis() + timeunit.toMillis(cooldownTime));
+    public void setCooldown(UUID uuid, int cooldownTime, TimeUnit timeunit) {
+        cooldown.put(uuid, System.currentTimeMillis() + timeunit.toMillis(cooldownTime));
     }
 
     public void cleanup() {

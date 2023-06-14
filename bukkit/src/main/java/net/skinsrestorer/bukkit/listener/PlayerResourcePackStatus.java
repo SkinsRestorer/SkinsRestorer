@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2022 SkinsRestorer
+ * Copyright (C) 2023 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -19,62 +19,31 @@
  */
 package net.skinsrestorer.bukkit.listener;
 
-import lombok.Getter;
+import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.PlayerWrapper;
-import net.skinsrestorer.api.SkinsRestorerAPI;
-import net.skinsrestorer.api.exception.SkinRequestException;
-import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
-import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
-import net.skinsrestorer.shared.listeners.SharedLoginProfileListener;
-import net.skinsrestorer.shared.storage.Config;
+import net.skinsrestorer.bukkit.utils.EventWrapper;
+import net.skinsrestorer.shared.config.ServerConfig;
+import net.skinsrestorer.shared.listeners.LoginProfileListenerAdapter;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent;
 
-@Getter
-@RequiredArgsConstructor
-public class PlayerResourcePackStatus extends SharedLoginProfileListener implements Listener {
-    private final SkinsRestorerBukkit plugin;
+import javax.inject.Inject;
+
+@RequiredArgsConstructor(onConstructor_ = @Inject)
+public class PlayerResourcePackStatus implements Listener {
+    private final SettingsManager settings;
+    private final LoginProfileListenerAdapter<Void> adapter;
+    private final EventWrapper eventWrapper;
 
     @EventHandler
-    public void onResourcePackStatus(final PlayerResourcePackStatusEvent event) {
-        if (!Config.RESOURCE_PACK_FIX)
+    public void onResourcePackStatus(PlayerResourcePackStatusEvent event) {
+        if (!settings.getProperty(ServerConfig.RESOURCE_PACK_FIX)) {
             return;
+        }
 
         PlayerJoin.setResourcePack(true);
 
-        SRLoginProfileEvent profileEvent = wrap(event);
-
-        if (handleSync(profileEvent))
-            return;
-
-        plugin.runAsync(() -> {
-            try {
-                handleAsync(profileEvent).ifPresent(property ->
-                        SkinsRestorerAPI.getApi().applySkin(new PlayerWrapper(event.getPlayer()), property));
-            } catch (SkinRequestException e) {
-                plugin.getLogger().debug(e);
-            }
-        });
-    }
-
-    private SRLoginProfileEvent wrap(PlayerResourcePackStatusEvent event) {
-        return new SRLoginProfileEvent() {
-            @Override
-            public boolean isOnline() {
-                return !plugin.getSkinApplierBukkit().getPlayerProperties(event.getPlayer()).isEmpty();
-            }
-
-            @Override
-            public String getPlayerName() {
-                return event.getPlayer().getName();
-            }
-
-            @Override
-            public boolean isCancelled() {
-                return false;
-            }
-        };
+        adapter.handleLogin(eventWrapper.wrap(event));
     }
 }

@@ -1,17 +1,11 @@
 plugins {
     java
-    id("sr.license-logic")
+    id("sr.formatting-logic")
     id("sr.core-dependencies")
     id("io.github.patrick.remapper")
 }
 
-dependencies.implementation(project(":mappings:shared"))
-
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
-    }
-}
+dependencies.implementation(project(":mappings:mc-shared"))
 
 tasks.remap.get().apply {
     archiveClassifier.set("remapped")

@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2022 SkinsRestorer
+ * Copyright (C) 2023 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 public class MojangProfileTexture {
     public static final Pattern URL_STRIP_PATTERN = Pattern.compile("^https?://textures\\.minecraft\\.net/texture/");
     private String url;
+    private MojangProfileTextureMeta metadata;
 
     public String getStrippedUrl() {
         return URL_STRIP_PATTERN.matcher(url).replaceAll("");

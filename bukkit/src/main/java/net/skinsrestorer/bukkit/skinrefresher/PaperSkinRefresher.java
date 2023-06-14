@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2022 SkinsRestorer
+ * Copyright (C) 2023 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -20,77 +20,38 @@
 package net.skinsrestorer.bukkit.skinrefresher;
 
 import lombok.SneakyThrows;
-import net.skinsrestorer.shared.reflection.ReflectionUtil;
-import net.skinsrestorer.bukkit.utils.MappingManager;
-import net.skinsrestorer.bukkit.utils.NoMappingException;
-import net.skinsrestorer.mappings.shared.IMapping;
+import net.skinsrestorer.bukkit.utils.BukkitReflection;
 import net.skinsrestorer.shared.exception.InitializeException;
-import net.skinsrestorer.shared.interfaces.ISRPlugin;
+import net.skinsrestorer.shared.log.SRLogger;
+import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Method;
-import java.util.Optional;
 import java.util.function.Consumer;
 
 public final class PaperSkinRefresher implements Consumer<Player> {
     private final Method refreshPlayerMethod;
     private final Consumer<Player> triggerHealthUpdate;
 
-    public PaperSkinRefresher(ISRPlugin plugin) throws InitializeException {
+    public PaperSkinRefresher(SRLogger logger) throws InitializeException {
         try {
-            refreshPlayerMethod = ReflectionUtil.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("refreshPlayer");
+            refreshPlayerMethod = BukkitReflection.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("refreshPlayer");
             refreshPlayerMethod.setAccessible(true);
 
-            Consumer<Player> triggerHealthUpdate;
             // XP won't get updated on unsupported Paper builds
-            try {
-                Method healthUpdateMethod = ReflectionUtil.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("triggerHealthUpdate");
-                healthUpdateMethod.setAccessible(true);
-
-                triggerHealthUpdate = player -> {
-                    try {
-                        healthUpdateMethod.invoke(player);
-                    } catch (Exception exception) {
-                        exception.printStackTrace();
-                    }
-                };
-            } catch (NoSuchMethodException ignored) {
+            this.triggerHealthUpdate = player -> {
                 try {
-                    Method getHandleMethod = ReflectionUtil.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("getHandle");
-                    getHandleMethod.setAccessible(true);
+                    Object entityPlayer = BukkitReflection.getHandle(player, Object.class);
 
-                    Method healthUpdateMethod = getHandleMethod.getReturnType().getDeclaredMethod("triggerHealthUpdate");
-                    healthUpdateMethod.setAccessible(true);
-
-                    triggerHealthUpdate = player -> {
-                        try {
-                            healthUpdateMethod.invoke(getHandleMethod.invoke(player));
-                        } catch (Exception exception) {
-                            exception.printStackTrace();
-                        }
-                    };
-                } catch (NoSuchMethodException ignored2) {
-                    Optional<IMapping> mapping = MappingManager.getMapping();
-                    if (!mapping.isPresent()) {
-                        throw new NoMappingException();
-                    } else {
-                        triggerHealthUpdate = player -> {
-                            try {
-                                mapping.get().triggerHealthUpdate(player);
-                            } catch (Exception exception) {
-                                exception.printStackTrace();
-                            }
-                        };
-                    }
+                    ReflectionUtil.invokeMethod(entityPlayer, "triggerHealthUpdate");
+                } catch (ReflectiveOperationException e) {
+                    player.resetMaxHealth();
                 }
-            }
-            this.triggerHealthUpdate = triggerHealthUpdate;
+            };
 
-            plugin.getLogger().debug("Using PaperSkinRefresher");
-        } catch (NoMappingException e) {
-            throw e;
+            logger.debug("Using PaperSkinRefresher");
         } catch (Exception e) {
-            plugin.getLogger().debug("Failed PaperSkinRefresher", e);
+            logger.debug("Failed PaperSkinRefresher", e);
             throw new InitializeException(e);
         }
     }

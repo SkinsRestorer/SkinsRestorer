@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2022 SkinsRestorer
+ * Copyright (C) 2023 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -18,8 +18,6 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
 package net.skinsrestorer.shared.utils;
-
-import net.skinsrestorer.shared.storage.Config;
 
 public class C {
     private C() {
@@ -43,7 +41,7 @@ public class C {
         // Note: there are exceptions to players with under 3 characters, who bought the game early in its development.
         if (len > 16) return false;
 
-        // For some reasons Apache's Lists.charactersOf is faster than character indexing for small strings.
+        // For some reason Apache's Lists.charactersOf is faster than character indexing for small strings.
         for (int i = 0; i < len; i++) {
             char c = username.charAt(i);
             // Note: Players who bought the game early in its development can have "-" in usernames.
@@ -55,19 +53,5 @@ public class C {
 
     public static boolean validUrl(String url) {
         return url.startsWith("http://") || url.startsWith("https://");
-    }
-
-    public static boolean allowedSkinUrl(String url) {
-        if (Config.RESTRICT_SKIN_URLS_ENABLED) {
-            for (String possiblyAllowedUrl : Config.RESTRICT_SKIN_URLS_LIST) {
-                if (url.startsWith(possiblyAllowedUrl)) {
-                    return true;
-                }
-            }
-
-            return false;
-        } else {
-            return true;
-        }
     }
 }

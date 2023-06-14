@@ -1,10 +1,11 @@
 plugins {
     base
+    idea
 }
 
 allprojects {
     group = "net.skinsrestorer"
-    version = "14.2.12"
+    version = "15.0.0-SNAPSHOT"
     description = "Ability to restore/change skins on servers! (Offline and Online Mode)"
 }
 
@@ -16,12 +17,13 @@ val platforms = setOf(
 ).map { it.dependencyProject }
 
 val shadow = setOf(
-    projects.skinsrestorerShared
+    projects.skinsrestorerShared,
 ).map { it.dependencyProject }
 
 val special = setOf(
     projects.skinsrestorer,
-    projects.skinsrestorerApi
+    projects.skinsrestorerApi,
+    projects.multiver.bukkit.folia
 ).map { it.dependencyProject }
 
 val mappings = setOf(
@@ -34,7 +36,7 @@ subprojects {
         in shadow -> plugins.apply("sr.shadow-logic")
         in special -> plugins.apply("sr.base-logic")
         in mappings -> subprojects.onEach {
-            if (it.name.startsWith("mc-")) it.plugins.apply("sr.mapping-logic")
+            if (!it.name.contains("shared")) it.plugins.apply("sr.mapping-logic")
         }
     }
 }

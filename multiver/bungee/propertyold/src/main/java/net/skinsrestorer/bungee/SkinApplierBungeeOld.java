@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2022 SkinsRestorer
+ * Copyright (C) 2023 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -23,31 +23,24 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.connection.LoginResult;
 import net.md_5.bungee.connection.LoginResult.Property;
-import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.shared.reflection.ReflectionUtil;
-import net.skinsrestorer.shared.reflection.exception.ReflectionException;
-import net.skinsrestorer.shared.interfaces.ISRPlugin;
-import net.skinsrestorer.shared.utils.log.SRLogger;
+import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.shared.utils.ReflectionUtil;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
-public class SkinApplierBungeeOld extends SkinApplierBungeeShared {
-    public SkinApplierBungeeOld(ISRPlugin plugin, SRLogger log) {
-        super(plugin, log);
-    }
-
-    protected void applyToHandler(InitialHandler handler, IProperty textures) throws ReflectionException {
+public class SkinApplierBungeeOld implements SkinApplyBungeeAdapter {
+    @Override
+    public void applyToHandler(InitialHandler handler, SkinProperty textures) throws ReflectiveOperationException {
         LoginResult profile = handler.getLoginProfile();
-        Property[] newProps = new Property[]{(Property) textures.getHandle()};
+        Property[] newProps = new Property[]{new Property(SkinProperty.TEXTURES_NAME, textures.getValue(), textures.getSignature())};
 
         if (profile == null) {
             try {
                 // NEW BUNGEECORD (id, name, property)
                 profile = new LoginResult(null, null, newProps);
-            } catch (Exception error) {
+            } catch (Exception ignored) {
                 // FALL BACK TO OLD (id, property)
                 profile = (LoginResult) ReflectionUtil.invokeConstructor(LoginResult.class,
                         new Class<?>[]{String.class, Property[].class},
@@ -67,13 +60,15 @@ public class SkinApplierBungeeOld extends SkinApplierBungeeShared {
     }
 
     @Override
-    public List<IProperty> getProperties(ProxiedPlayer player) {
+    public Optional<SkinProperty> getSkinProperty(ProxiedPlayer player) {
         Property[] props = ((InitialHandler) player.getPendingConnection()).getLoginProfile().getProperties();
 
         if (props == null) {
-            return null;
+            return Optional.empty();
         }
 
-        return Arrays.stream(props).map(BungeePropertyOld::new).collect(Collectors.toList());
+        return Arrays.stream(props)
+                .filter(property -> property.getName().equals(SkinProperty.TEXTURES_NAME))
+                .map(property -> SkinProperty.of(property.getValue(), property.getSignature())).findFirst();
     }
 }

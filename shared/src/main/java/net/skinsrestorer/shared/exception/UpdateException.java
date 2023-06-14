@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2022 SkinsRestorer
+ * Copyright (C) 2023 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -19,9 +19,7 @@
  */
 package net.skinsrestorer.shared.exception;
 
-public class UpdateException extends RuntimeException {
-    private static final long serialVersionUID = -6444814178959123178L;
-
+public class UpdateException extends Exception {
     public UpdateException(String message) {
         super(message);
     }

@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2022 SkinsRestorer
+ * Copyright (C) 2023 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -19,82 +19,55 @@
  */
 package net.skinsrestorer.velocity;
 
-import com.velocitypowered.api.event.ResultedEvent;
+import ch.jalu.configme.SettingsManager;
 import com.velocitypowered.api.proxy.Player;
-import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import com.velocitypowered.api.util.GameProfile;
 import com.velocitypowered.api.util.GameProfile.Property;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.api.velocity.events.SkinApplyVelocityEvent;
-import net.skinsrestorer.shared.storage.Config;
+import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.shared.api.SkinApplierAccess;
+import net.skinsrestorer.shared.api.event.EventBusImpl;
+import net.skinsrestorer.shared.api.event.SkinApplyEventImpl;
+import net.skinsrestorer.shared.config.AdvancedConfig;
+import net.skinsrestorer.shared.plugin.SRProxyPlugin;
+import net.skinsrestorer.velocity.wrapper.WrapperVelocity;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
-@RequiredArgsConstructor
-public class SkinApplierVelocity {
-    private final SkinsRestorerVelocity plugin;
+@RequiredArgsConstructor(onConstructor_ = @Inject)
+public class SkinApplierVelocity implements SkinApplierAccess<Player> {
+    private final SettingsManager settings;
+    private final WrapperVelocity wrapper;
+    private final SRProxyPlugin proxyPlugin;
+    private final EventBusImpl eventBus;
 
-    protected void applySkin(Player player, IProperty property) {
-        plugin.getProxy().getEventManager().fire(new SkinApplyVelocityEvent(player, property)).thenAccept((event) -> {
-            if (event.getResult() != ResultedEvent.GenericResult.allowed())
-                return;
+    @Override
+    public void applySkin(Player player, SkinProperty property) {
+        SkinApplyEventImpl applyEvent = new SkinApplyEventImpl(player, property);
 
-            player.setGameProfileProperties(updatePropertiesSkin(player.getGameProfileProperties(), (Property) property.getHandle()));
-            sendUpdateRequest(player, Config.FORWARD_TEXTURES ? (Property) property.getHandle() : null);
-        });
-    }
-
-    public GameProfile updateProfileSkin(GameProfile profile, IProperty skin) {
-        Property textures = (Property) skin.getHandle();
-        List<Property> oldProperties = profile.getProperties();
-
-        return new GameProfile(profile.getId(), profile.getName(), updatePropertiesSkin(oldProperties, textures));
-    }
-
-    private List<Property> updatePropertiesSkin(List<Property> original, Property property) {
-        List<Property> properties = new ArrayList<>(original);
-        boolean applied = false;
-
-        int i = 0;
-        for (Property lProperty : properties) {
-            if (IProperty.TEXTURES_NAME.equals(lProperty.getName())) {
-                properties.set(i, property);
-                applied = true;
-            }
-            i++;
+        eventBus.callEvent(applyEvent);
+        if (applyEvent.isCancelled()) {
+            return;
         }
 
-        if (!applied)
-            properties.add(property);
+        SkinProperty appliedProperty = applyEvent.getProperty();
 
-        return properties;
+        player.setGameProfileProperties(updatePropertiesSkin(player.getGameProfileProperties(), appliedProperty));
+        proxyPlugin.sendUpdateRequest(wrapper.player(player), settings.getProperty(AdvancedConfig.FORWARD_TEXTURES) ? appliedProperty : null);
     }
 
-    private void sendUpdateRequest(Player player, Property textures) {
-        player.getCurrentServer().ifPresent(serverConnection -> {
-            plugin.getLogger().debug("Sending skin update request for " + player.getUsername());
+    public GameProfile updateProfileSkin(GameProfile profile, SkinProperty property) {
+        return new GameProfile(profile.getId(), profile.getName(), updatePropertiesSkin(profile.getProperties(), property));
+    }
 
-            ByteArrayOutputStream b = new ByteArrayOutputStream();
-            DataOutputStream out = new DataOutputStream(b);
+    private List<Property> updatePropertiesSkin(List<Property> original, SkinProperty property) {
+        List<Property> properties = new ArrayList<>(original);
 
-            try {
-                out.writeUTF("SkinUpdate");
+        properties.removeIf(property1 -> property1.getName().equals(SkinProperty.TEXTURES_NAME));
+        properties.add(new Property(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
 
-                if (textures != null) {
-                    out.writeUTF(textures.getName());
-                    out.writeUTF(textures.getValue());
-                    out.writeUTF(textures.getSignature());
-                }
-
-                serverConnection.sendPluginMessage(MinecraftChannelIdentifier.create("sr", "skinchange"), b.toByteArray());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+        return properties;
     }
 }

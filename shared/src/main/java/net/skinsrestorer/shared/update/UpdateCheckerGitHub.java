@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2022 SkinsRestorer
+ * Copyright (C) 2023 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -19,60 +19,122 @@
  */
 package net.skinsrestorer.shared.update;
 
-import com.google.gson.Gson;
-import net.skinsrestorer.shared.storage.Config;
-import net.skinsrestorer.shared.utils.log.SRLogger;
-import org.inventivetalent.update.spiget.UpdateCallback;
+import ch.jalu.injector.Injector;
+import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.exception.DataRequestException;
+import net.skinsrestorer.builddata.BuildData;
+import net.skinsrestorer.shared.connections.http.HttpClient;
+import net.skinsrestorer.shared.connections.http.HttpResponse;
+import net.skinsrestorer.shared.exception.DataRequestExceptionShared;
+import net.skinsrestorer.shared.log.SRLogger;
+import net.skinsrestorer.shared.plugin.SRPlugin;
+import net.skinsrestorer.shared.plugin.SRServerPlugin;
+import net.skinsrestorer.shared.serverinfo.SemanticVersion;
+import net.skinsrestorer.shared.update.model.GitHubAssetInfo;
+import net.skinsrestorer.shared.update.model.GitHubReleaseInfo;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.stream.Collectors;
+import javax.inject.Inject;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Optional;
 
-public class UpdateCheckerGitHub extends UpdateChecker {
-    private static final String RESOURCE_ID = "SkinsRestorerX";
-    private static final String RELEASES_URL_LATEST = "https://api.github.com/repos/SkinsRestorer/%s/releases/latest";
-    private GitHubReleaseInfo releaseInfo;
+/**
+ * Credit goes to <a href="https://github.com/InventivetalentDev/SpigetUpdater">SpigetUpdater</a>
+ */
+@RequiredArgsConstructor(onConstructor_ = @Inject)
+public class UpdateCheckerGitHub {
+    private static final String RELEASES_URL_LATEST = "https://api.github.com/repos/SkinsRestorer/SkinsRestorerX/releases/latest";
+    private static final String JAR_ASSET_NAME = "SkinsRestorer.jar";
+    private static final String LOG_ROW = "§a----------------------------------------------";
+    private final SRLogger logger;
+    private final SRPlugin plugin;
+    private final Injector injector;
+    private final HttpClient httpClient;
 
-    public UpdateCheckerGitHub(int resourceId, String currentVersion, SRLogger log, String userAgent) {
-        super(resourceId, currentVersion, log, userAgent);
-    }
-
-    @Override
-    public void checkForUpdate(final UpdateCallback callback) {
+    public void checkForUpdate(UpdateCallback callback) {
         try {
-            HttpURLConnection connection = (HttpURLConnection) new URL(String.format(RELEASES_URL_LATEST, RESOURCE_ID)).openConnection();
-            connection.setRequestProperty("User-Agent", userAgent);
+            HttpResponse response = httpClient.execute(RELEASES_URL_LATEST,
+                    null,
+                    HttpClient.HttpType.JSON,
+                    plugin.getUserAgent(),
+                    HttpClient.HttpMethod.GET,
+                    Collections.emptyMap(),
+                    90_000);
+            GitHubReleaseInfo releaseInfo = response.getBodyAs(GitHubReleaseInfo.class);
 
-            String body = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))
-                    .lines()
-                    .collect(Collectors.joining("\n"));
-            log.debug("Response body: " + body);
-            log.debug("Response code: " + connection.getResponseCode());
+            Optional<GitHubAssetInfo> jarAsset = releaseInfo.getAssets().stream()
+                    .filter(asset -> asset.getName().equals(JAR_ASSET_NAME))
+                    .findFirst();
 
-            releaseInfo = new Gson().fromJson(body, GitHubReleaseInfo.class);
-
-            releaseInfo.assets.forEach(gitHubAssetInfo -> {
-                releaseInfo.latestDownloadURL = gitHubAssetInfo.browser_download_url;
-
-                if (isVersionNewer(currentVersion, releaseInfo.tag_name)) {
-                    callback.updateAvailable(releaseInfo.tag_name, gitHubAssetInfo.browser_download_url, true);
-                } else {
-                    callback.upToDate();
-                }
-            });
-        } catch (Exception e) {
-            log.warning("Failed to get release info from api.github.com. \n If this message is repeated a lot, please see http://skinsrestorer.net/firewall");
-            if (Config.DEBUG) {
-                e.printStackTrace();
+            if (!jarAsset.isPresent()) {
+                throw new DataRequestExceptionShared("No jar asset found in release");
             }
+
+            if (isVersionNewer(plugin.getVersion(), releaseInfo.getTagName())) {
+                callback.updateAvailable(releaseInfo.getTagName(), jarAsset.get().getBrowserDownloadUrl());
+            } else {
+                callback.upToDate();
+            }
+        } catch (IOException | DataRequestException e) {
+            logger.warning("Failed to get release info from api.github.com. \n If this message is repeated a lot, please see https://skinsrestorer.net/firewall");
+            logger.debug(e);
         }
     }
 
-    @Override
-    public GitHubReleaseInfo getLatestResourceInfo() {
-        return releaseInfo;
+    public void printUpToDate(UpdateCause cause) {
+        printHeader(cause);
+        logger.info("§b    Current version: §a" + plugin.getVersion());
+        logger.info("§b    Commit: §a" + BuildData.COMMIT_SHORT);
+        if (cause == UpdateCause.NO_NETWORK) {
+            logger.info("§c    No network connection available!");
+        } else {
+            logger.info("§a    This is the latest version!");
+        }
+        printFooter();
+    }
+
+    public void printUpdateAvailable(UpdateCause cause, String newVersion, String downloadUrl, boolean updateDownloader) {
+        printHeader(cause);
+        logger.info("§b    Current version: §c" + plugin.getVersion());
+        logger.info("§b    Commit: §a" + BuildData.COMMIT_SHORT);
+        logger.info("§b    New version: §c" + newVersion);
+        if (updateDownloader) {
+            logger.info("    A new version is available! Downloading it now...");
+        } else {
+            logger.info("§e    A new version is available! Download it at:");
+            logger.info("§e    " + downloadUrl);
+        }
+        printFooter();
+    }
+
+    private void printHeader(UpdateCause cause) {
+        logger.info(LOG_ROW);
+        logger.info("§a    +==================+");
+        logger.info("§a    |   SkinsRestorer  |");
+        if (cause.isError()) {
+            logger.info("§a    |------------------|");
+            logger.info("§a    |    §cError Mode§a    |");
+        } else {
+            SRServerPlugin serverPlugin = injector.getIfAvailable(SRServerPlugin.class);
+            if (serverPlugin != null) {
+                if (serverPlugin.isProxyMode()) {
+                    logger.info("§a    |------------------|");
+                    logger.info("§a    |    §eProxy Mode§a    |");
+                } else {
+                    logger.info("§a    |------------------|");
+                    logger.info("§a    |  §9§n§lStandalone Mode§r§a |");
+                }
+            }
+        }
+        logger.info("§a    +==================+");
+        logger.info(LOG_ROW);
+    }
+
+    private void printFooter() {
+        logger.info(LOG_ROW);
+    }
+
+    public boolean isVersionNewer(String currentVersion, String newVersion) {
+        return SemanticVersion.fromString(newVersion).isNewerThan(SemanticVersion.fromString(currentVersion));
     }
 }

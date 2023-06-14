@@ -6,7 +6,6 @@ import shadow.org.apache.tools.zip.ZipOutputStream
 import shadow.org.codehaus.plexus.util.IOUtil
 import java.io.BufferedReader
 import java.io.ByteArrayInputStream
-import java.util.*
 
 plugins {
     id("sr.base-logic")
@@ -117,16 +116,13 @@ tasks {
 }
 
 fun ShadowJar.configureRelocations() {
-    relocate("co.aikar.commands", "net.skinsrestorer.shadow.aikar.commands")
-    relocate("co.aikar.locales", "net.skinsrestorer.shadow.aikar.locales")
+    relocate("com.mojang.brigadier", "net.skinsrestorer.shadow.brigadier")
 
     relocate("com.google.gson", "net.skinsrestorer.shadow.google.gson")
 
     relocate("com.cryptomorin.xseries", "net.skinsrestorer.shadow.xseries")
     relocate("org.bstats", "net.skinsrestorer.shadow.bstats")
-    relocate("io.papermc.lib", "net.skinsrestorer.shadow.paperlib")
     relocate("org.fusesource.jansi", "net.skinsrestorer.shadow.jansi")
-    relocate("org.inventivetalent.update.spiget", "net.skinsrestorer.shadow.spiget")
 
     relocate("org.mariadb.jdbc", "net.skinsrestorer.shadow.mariadb")
 
@@ -134,8 +130,13 @@ fun ShadowJar.configureRelocations() {
     relocate("org.jetbrains.annotations", "net.skinsrestorer.shadow.jbannotations")
 
     relocate("org.yaml.snakeyaml", "net.skinsrestorer.shadow.snakeyaml")
-    relocate("org.apache.commons.lang3", "net.skinsrestorer.shadow.commons.lang3")
     relocate("net.skinsrestorer.axiom", "net.skinsrestorer.shadow.axiom")
+    relocate("ch.jalu.configme", "net.skinsrestorer.shadow.configme")
 
+    relocate("javax.inject", "net.skinsrestorer.shadow.javax.inject")
+    relocate("javax.annotation", "net.skinsrestorer.shadow.javax.annotation")
+    relocate("ch.jalu.injector", "net.skinsrestorer.shadow.injector")
+
+    relocate("io.papermc.lib", "net.skinsrestorer.shadow.paperlib")
     relocate("com.github.puregero.multilib", "net.skinsrestorer.shadow.multilib")
 }

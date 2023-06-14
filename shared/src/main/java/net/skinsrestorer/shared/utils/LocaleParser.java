@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2022 SkinsRestorer
+ * Copyright (C) 2023 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -19,22 +19,21 @@
  */
 package net.skinsrestorer.shared.utils;
 
-import net.skinsrestorer.shared.storage.Config;
-
 import java.util.Locale;
+import java.util.Optional;
 
 public class LocaleParser {
-    public static Locale parseLocale(String locale) {
+    public static Optional<Locale> parseLocale(String locale) {
         if (locale == null) {
-            return getDefaultLocale();
+            return Optional.empty();
         }
         String[] split = locale.split("_");
         if (split.length == 1) {
-            return new Locale(split[0]);
+            return Optional.of(new Locale(split[0]));
         } else if (split.length == 2) {
-            return new Locale(split[0], split[1]);
+            return Optional.of(new Locale(split[0], split[1]));
         } else {
-            return getDefaultLocale();
+            return Optional.empty();
         }
     }
 
@@ -46,19 +45,5 @@ public class LocaleParser {
             return new Locale(split[0], split[1]);
         }
         throw new IllegalArgumentException("Invalid locale: " + locale);
-    }
-
-    public static Locale getDefaultLocale() {
-        Locale locale = Config.LANGUAGE;
-
-        if (locale == null) {
-            locale = Locale.getDefault();
-        }
-
-        if (locale == null) {
-            locale = Locale.ENGLISH;
-        }
-
-        return locale;
     }
 }

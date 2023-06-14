@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2022 SkinsRestorer
+ * Copyright (C) 2023 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -35,23 +35,7 @@ public class MetricsCounter {
     }
 
     private AtomicInteger getOrCreate(Service service) {
-        return map.compute(service, (k, v) -> v == null ? new AtomicInteger() : v);
-    }
-
-    public int collectMineskinCalls() {
-        return collect(Service.MINE_SKIN);
-    }
-
-    public int collectMinetoolsCalls() {
-        return collect(Service.MINE_TOOLS);
-    }
-
-    public int collectMojangCalls() {
-        return collect(Service.MOJANG);
-    }
-
-    public int collectAshconCalls() {
-        return collect(Service.ASHCON);
+        return map.computeIfAbsent(service, (k) -> new AtomicInteger());
     }
 
     public enum Service {

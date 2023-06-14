@@ -10,16 +10,20 @@ pluginManagement {
     plugins {
         id("com.github.johnrengelman.shadow") version "8.1.1"
         id("org.cadixdev.licenser") version "0.6.1"
-        id("net.kyori.indra") version "3.0.1"
-        id("net.kyori.indra.git") version "3.0.1"
-        id("net.kyori.indra.publishing") version "3.0.1"
+        id("net.kyori.indra") version "3.1.1"
+        id("net.kyori.indra.git") version "3.1.1"
+        id("net.kyori.indra.publishing") version "3.1.1"
         id("net.kyori.blossom") version "1.3.1"
         id("io.github.patrick.remapper") version "1.4.0"
+        id("com.diffplug.spotless") version "6.19.0"
+        id("com.github.spotbugs") version "5.0.14"
+        id("io.freefair.lombok") version "8.0.1"
     }
 }
 
 plugins {
-    id("com.gradle.enterprise") version "3.12.6"
+    id("com.gradle.enterprise") version "3.13.3"
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.5.0"
 }
 
 rootProject.name = "skinsrestorer-parent"
@@ -34,9 +38,6 @@ dependencyResolutionManagement {
         }
         maven("https://repo.spongepowered.org/maven/") {
             name = "SpongePowered Repository"
-        }
-        maven("https://nexus.velocitypowered.com/repository/velocity-artifacts-release/") {
-            name = "Velocitypowered Repository"
         }
         maven("https://repo.codemc.org/repository/maven-public/") {
             name = "CodeMC Repository"
@@ -62,6 +63,12 @@ dependencyResolutionManagement {
         maven("https://repo.clojars.org/") {
             name = "Clojars Repository"
         }
+        maven("https://repo.opencollab.dev/maven-snapshots/") {
+            name = "OpenCollab Snapshot Repository"
+        }
+        maven("https://repo.opencollab.dev/maven-releases/") {
+            name = "OpenCollab Release Repository"
+        }
         mavenCentral()
     }
 }
@@ -75,8 +82,7 @@ gradleEnterprise {
     }
 }
 
-include("mappings:shared")
-setOf("1-18", "1-18-2", "1-19", "1-19-3", "1-19-4", "1-20").forEach {
+setOf("shared", "1-18", "1-18-2", "1-19", "1-19-3", "1-19-4", "1-20").forEach {
     include("mappings:mc-$it")
 }
 
@@ -84,8 +90,8 @@ setOf("shared", "propertyold", "propertynew").forEach {
     include("multiver:bungee:$it")
 }
 
-setOf("v1-7", "spigot", "paper").forEach {
-    include("multiver:$it")
+setOf("shared", "v1-7", "spigot", "paper", "multipaper", "folia").forEach {
+    include("multiver:bukkit:$it")
 }
 
 setupSRSubproject("build-data")

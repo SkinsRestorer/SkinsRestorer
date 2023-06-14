@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2022 SkinsRestorer
+ * Copyright (C) 2023 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -19,11 +19,13 @@
  */
 package net.skinsrestorer.bukkit.skinrefresher;
 
-import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
+import net.skinsrestorer.bukkit.SRBukkitAdapter;
 import net.skinsrestorer.bukkit.utils.MappingManager;
 import net.skinsrestorer.bukkit.utils.NoMappingException;
 import net.skinsrestorer.mappings.shared.IMapping;
 import net.skinsrestorer.mappings.shared.ViaPacketData;
+import net.skinsrestorer.shared.log.SRLogger;
+import org.bukkit.Server;
 import org.bukkit.entity.Player;
 
 import java.util.Optional;
@@ -31,36 +33,34 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class MappingSpigotSkinRefresher implements Consumer<Player> {
-    private final SkinsRestorerBukkit plugin;
+    private final SRBukkitAdapter adapter;
     private final IMapping mapping;
-    private boolean useViabackwards = false;
+    private boolean useViaBackwards = false;
 
-    public MappingSpigotSkinRefresher(SkinsRestorerBukkit plugin) throws NoMappingException {
-        this.plugin = plugin;
-        Optional<IMapping> mapping = MappingManager.getMapping();
+    public MappingSpigotSkinRefresher(SRBukkitAdapter adapter, SRLogger logger, Server server) throws NoMappingException {
+        this.adapter = adapter;
+        Optional<IMapping> mapping = MappingManager.getMapping(server);
         if (!mapping.isPresent()) {
-            throw new NoMappingException();
+            throw new NoMappingException(server);
         } else {
             this.mapping = mapping.get();
         }
 
-        plugin.runSync(() -> {
-            // Wait to run task in order for ViaVersion to determine server protocol
-            if (plugin.isPluginEnabled("ViaBackwards")
-                    && ViaWorkaround.isProtocolNewer()) {
-                useViabackwards = true;
-                plugin.getLogger().debug("Activating ViaBackwards workaround.");
-            }
-        });
+        // Wait to run task in order for ViaVersion to determine server protocol
+        if (adapter.isPluginEnabled("ViaBackwards")
+                && ViaWorkaround.isProtocolNewer()) {
+            useViaBackwards = true;
+            logger.debug("Activating ViaBackwards workaround.");
+        }
 
-        plugin.getLogger().debug("Using MappingSpigotSkinRefresher");
+        logger.debug("Using MappingSpigotSkinRefresher");
     }
 
     @Override
     public void accept(Player player) {
         Predicate<ViaPacketData> viaFunction;
 
-        if (useViabackwards) {
+        if (useViaBackwards) {
             viaFunction = ViaWorkaround::sendCustomPacketVia;
         } else {
             viaFunction = data -> true;
@@ -69,7 +69,7 @@ public class MappingSpigotSkinRefresher implements Consumer<Player> {
         mapping.accept(player, viaFunction);
 
         if (player.isOp()) {
-            plugin.runSync(() -> {
+            adapter.runSyncToPlayer(player, () -> {
                 // Workaround..
                 player.setOp(false);
                 player.setOp(true);

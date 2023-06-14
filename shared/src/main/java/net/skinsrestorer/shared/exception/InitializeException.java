@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2022 SkinsRestorer
+ * Copyright (C) 2023 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -20,7 +20,7 @@
 package net.skinsrestorer.shared.exception;
 
 /**
- * Used for constructors that fail initializing.
+ * Used for constructors that fail to initialize.
  */
 public class InitializeException extends Exception {
     private static final long serialVersionUID = 7174618370827939357L;

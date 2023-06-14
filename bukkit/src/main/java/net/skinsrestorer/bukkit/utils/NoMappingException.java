@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2022 SkinsRestorer
+ * Copyright (C) 2023 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -20,9 +20,10 @@
 package net.skinsrestorer.bukkit.utils;
 
 import net.skinsrestorer.shared.exception.InitializeException;
+import org.bukkit.Server;
 
 public class NoMappingException extends InitializeException {
-    public NoMappingException() {
-        super(String.format("No mapping for this minecraft version found! (%s)", MappingManager.getMappingsVersion()));
+    public NoMappingException(Server server) {
+        super(String.format("No mapping for this minecraft version found! (%s)", MappingManager.getMappingsVersion(server).orElse("unknown")));
     }
 }
