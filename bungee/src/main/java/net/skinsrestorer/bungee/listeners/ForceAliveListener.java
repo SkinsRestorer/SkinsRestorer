@@ -33,5 +33,6 @@ public class ForceAliveListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void handle(ProxyReloadEvent event) {
         // Ignore this event. We only need the field above to be alive.
+        // This is required, so we can store an eventbus listener without causing a memory leak.
     }
 }

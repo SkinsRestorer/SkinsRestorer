@@ -31,5 +31,6 @@ public class ForceAliveListener implements EventHandler<ProxyShutdownEvent> {
     @Override
     public void execute(ProxyShutdownEvent event) {
         // Ignore this event. We only need the field above to be alive.
+        // This is required, so we can store an eventbus listener without causing a memory leak.
     }
 }
