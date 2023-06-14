@@ -24,6 +24,9 @@ import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.property.SkinVariant;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Generate Value and Signature for a skin image url using the <a href="https://mineskin.org/">MineSkin</a> API
+ */
 public interface MineSkinAPI {
     /**
      * Generates a skin using the <a href="https://mineskin.org/">MineSkin</a> API

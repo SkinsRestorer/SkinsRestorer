@@ -19,8 +19,8 @@
  */
 package net.skinsrestorer.adapter;
 
-import net.skinsrestorer.api.model.SkinVariant;
 import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.api.property.SkinVariant;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.storage.model.cache.MojangCacheData;
 import net.skinsrestorer.shared.storage.model.player.PlayerData;

@@ -21,6 +21,10 @@ package net.skinsrestorer.api.event;
 
 import java.util.function.Consumer;
 
+/**
+ * Event bus for SkinsRestorer.
+ * This is used to register event listeners to SkinRestorer events.
+ */
 public interface EventBus {
     <E extends SkinsRestorerEvent> void subscribe(Object plugin, Class<E> eventClass, Consumer<E> listener);
 }

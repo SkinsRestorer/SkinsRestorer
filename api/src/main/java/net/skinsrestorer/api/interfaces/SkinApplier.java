@@ -23,6 +23,11 @@ import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.api.property.SkinProperty;
 
+/**
+ * Applies skins to players.
+ *
+ * @param <P> Player type of the server implementation
+ */
 public interface SkinApplier<P> {
     /**
      * Applies a skin to a player that would be set on join.

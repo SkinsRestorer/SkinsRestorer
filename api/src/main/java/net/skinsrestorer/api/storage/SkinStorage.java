@@ -30,8 +30,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * SkinStorage
- * <br/>
  * There are three types of skins:
  * - Player skins
  * - URL skins

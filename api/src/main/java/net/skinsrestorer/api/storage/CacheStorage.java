@@ -25,6 +25,10 @@ import net.skinsrestorer.api.property.MojangSkinDataResult;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Caches Name -> UUID to avoid spamming Mojang's API and speed up skin fetching.
+ * This does also cache whether a premium player exists or not.
+ */
 public interface CacheStorage {
     /**
      * Gets the skin data of a Mojang player from the cache.

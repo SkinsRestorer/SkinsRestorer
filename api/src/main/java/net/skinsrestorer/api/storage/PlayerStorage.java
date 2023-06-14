@@ -26,6 +26,11 @@ import net.skinsrestorer.api.property.SkinProperty;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * This interface is used to store and retrieve skin data for players.
+ * <br/>
+ * Internally a player is stored by their UUID and is linked to a skin identifier.
+ */
 public interface PlayerStorage {
     /**
      * Get the linked skin identifier of a player.

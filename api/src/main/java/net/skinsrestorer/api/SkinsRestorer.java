@@ -35,17 +35,47 @@ import net.skinsrestorer.api.storage.SkinStorage;
  */
 @SuppressWarnings({"unused"})
 public interface SkinsRestorer {
+    /**
+     * @return SkinStorage instance
+     * @see SkinStorage for more info
+     */
     SkinStorage getSkinStorage();
 
+    /**
+     * @return PlayerStorage instance
+     * @see PlayerStorage for more info
+     */
     PlayerStorage getPlayerStorage();
 
+    /**
+     * @return CacheStorage instance
+     * @see CacheStorage for more info
+     */
     CacheStorage getCacheStorage();
 
+    /**
+     * @return MojangAPI instance
+     * @see MojangAPI for more info
+     */
     MojangAPI getMojangAPI();
 
+    /**
+     * @return MineSkinAPI instance
+     * @see MineSkinAPI for more info
+     */
     MineSkinAPI getMineSkinAPI();
 
+    /**
+     * @param playerClass class of the player class in your server implementation
+     * @param <P>         player class
+     * @return SkinApplier instance
+     * @see SkinApplier for more info
+     */
     <P> SkinApplier<P> getSkinApplier(Class<P> playerClass);
 
+    /**
+     * @return EventBus instance
+     * @see EventBus for more info
+     */
     EventBus getEventBus();
 }
