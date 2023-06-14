@@ -67,6 +67,7 @@ import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
 import net.skinsrestorer.shared.update.UpdateCheckInit;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
+import net.skinsrestorer.shared.utils.SRFileUtils;
 import org.bstats.MetricsBase;
 import org.bstats.charts.SingleLineChart;
 
@@ -74,6 +75,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
 import java.util.Optional;
 import java.util.UUID;
@@ -238,9 +240,34 @@ public class SRPlugin {
     }
 
     public void loadLocales() throws IOException {
-        MessageLoader messageLoader = injector.getSingleton(MessageLoader.class);
-        messageLoader.moveOldFiles();
-        messageLoader.loadMessages();
+        injector.getSingleton(MessageLoader.class).loadMessages();
+    }
+
+    public void moveOldFiles() {
+        try {
+            SRFileUtils.renameFile(dataFolder, "Archive", "archive"); // Now lowercase
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        moveToArchive(dataFolder.resolve("messages.yml"));
+        moveToArchive(dataFolder.resolve("command-messages.properties"));
+        moveToArchive(dataFolder.resolve("languages"));
+    }
+
+    private void moveToArchive(Path path) {
+        if (!Files.exists(path)) {
+            return;
+        }
+
+        logger.info("Moving old file " + path.getFileName() + " to archive folder.");
+        Path archive = dataFolder.resolve("archive");
+        try {
+            Files.createDirectories(archive);
+            Files.move(path, archive.resolve(path.getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void loadStorage() throws InitializeException {
@@ -339,6 +366,7 @@ public class SRPlugin {
         }
 
         try {
+            moveOldFiles();
             loadLocales();
         } catch (IOException e) {
             throw new InitializeException(e);
