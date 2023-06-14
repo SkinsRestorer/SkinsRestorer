@@ -32,6 +32,6 @@ public class ForceAliveListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void handle(ServerLoadEvent event) {
-        // NO-OP
+        // This is required, so we can store a eventbus listener without causing a memory leak
     }
 }
