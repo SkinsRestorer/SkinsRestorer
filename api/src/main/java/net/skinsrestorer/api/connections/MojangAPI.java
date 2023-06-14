@@ -29,9 +29,11 @@ import java.util.UUID;
 /**
  * Fetch Minecraft data from Mojang's API.
  * We use internal data providers to speed up the process and avoid spamming Mojang's API.
- * You can fetch UUID and SkinProperty by name.
- * Or you can fetch SkinProperty by UUID.
- * Or you can fetch UUID by name.
+ * You have the option to fetch data from mojang:
+ * - Get UUID and SkinProperty by a premium player name
+ * - SkinProperty by UUID
+ * - UUID by premium player name
+ * This will not use any local cache, but one of our data providers may remotely cache the result data.
  */
 public interface MojangAPI {
     /**
