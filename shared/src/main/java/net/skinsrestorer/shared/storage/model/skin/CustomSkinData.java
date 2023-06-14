@@ -19,13 +19,24 @@
  */
 package net.skinsrestorer.shared.storage.model.skin;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinProperty;
 
+import java.util.Locale;
+
 @Getter
-@RequiredArgsConstructor(staticName = "of")
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class CustomSkinData {
     private final String skinName;
     private final SkinProperty property;
+
+    public static CustomSkinData of(String skinName, SkinProperty property) {
+        return new CustomSkinData(sanitizeCustomSkinName(skinName), property);
+    }
+
+    public static String sanitizeCustomSkinName(String skinName) {
+        return skinName.toLowerCase(Locale.ENGLISH);
+    }
 }

@@ -315,6 +315,7 @@ public class MySQLAdapter implements StorageAdapter {
 
     @Override
     public Optional<CustomSkinData> getCustomSkinData(String skinName) throws StorageException {
+        skinName = CustomSkinData.sanitizeCustomSkinName(skinName);
         try (ResultSet crs = mysql.query("SELECT * FROM " + resolveCustomSkinTable() + " WHERE name=?", skinName)) {
             if (!crs.next()) {
                 return Optional.empty();
@@ -331,11 +332,13 @@ public class MySQLAdapter implements StorageAdapter {
 
     @Override
     public void removeCustomSkinData(String skinName) {
+        skinName = CustomSkinData.sanitizeCustomSkinName(skinName);
         mysql.execute("DELETE FROM " + resolveCustomSkinTable() + " WHERE name=?", skinName);
     }
 
     @Override
     public void setCustomSkinData(String skinName, CustomSkinData skinData) {
+        skinName = CustomSkinData.sanitizeCustomSkinName(skinName);
         mysql.execute("INSERT INTO " + resolveCustomSkinTable() + " (name, value, signature) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE value=?, signature=?",
                 skinName,
                 skinData.getProperty().getValue(),

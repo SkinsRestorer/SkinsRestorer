@@ -361,6 +361,7 @@ public class FileAdapter implements StorageAdapter {
 
     @Override
     public Optional<CustomSkinData> getCustomSkinData(String skinName) throws StorageException {
+        skinName = CustomSkinData.sanitizeCustomSkinName(skinName);
         Path skinFile = resolveCustomSkinFile(skinName);
 
         if (!Files.exists(skinFile)) {
@@ -380,6 +381,7 @@ public class FileAdapter implements StorageAdapter {
 
     @Override
     public void removeCustomSkinData(String skinName) {
+        skinName = CustomSkinData.sanitizeCustomSkinName(skinName);
         Path skinFile = resolveCustomSkinFile(skinName);
 
         try {
@@ -391,6 +393,7 @@ public class FileAdapter implements StorageAdapter {
 
     @Override
     public void setCustomSkinData(String skinName, CustomSkinData skinData) {
+        skinName = CustomSkinData.sanitizeCustomSkinName(skinName);
         Path skinFile = resolveCustomSkinFile(skinName);
 
         try {
