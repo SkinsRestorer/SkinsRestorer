@@ -29,7 +29,7 @@ import java.util.UUID;
 /**
  * Fetch Minecraft data from Mojang's API.
  * We use internal data providers to speed up the process and avoid spamming Mojang's API.
- * You can fetch either UUID & SkinProperty by name.
+ * You can fetch either UUID and SkinProperty by name.
  * Or you can fetch SkinProperty by UUID.
  * Or you can fetch UUID by name.
  */
