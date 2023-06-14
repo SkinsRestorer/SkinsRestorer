@@ -63,6 +63,11 @@ public class WrapperPlayer extends WrapperCommandSender implements SRProxyPlayer
     }
 
     @Override
+    public String getName() {
+        return player.getName();
+    }
+
+    @Override
     public boolean canSee(SRPlayer player) {
         return true;
     }

@@ -25,6 +25,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
+import net.skinsrestorer.shared.subjects.SRPlayer;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -43,7 +44,12 @@ public class CommandExecutor<T extends SRCommandSender> {
     }
 
     public CompletableFuture<List<String>> tabComplete(T executor, String input) {
-        logger.debug(String.format("Tab completing: '%s' for '%s'", input, executor.getName()));
+        if (executor instanceof SRPlayer) {
+            logger.debug(String.format("Tab completing: '%s' for '%s'", input, ((SRPlayer) executor).getName()));
+        } else {
+            logger.debug(String.format("Tab completing: '%s' for console", input));
+        }
+
         return dispatcher.getCompletionSuggestions(dispatcher.parse(input, executor)).thenApply(suggestions ->
                 suggestions.getList().stream().map(Suggestion::getText).collect(Collectors.toList()));
     }

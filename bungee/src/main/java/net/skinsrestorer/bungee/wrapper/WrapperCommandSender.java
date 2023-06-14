@@ -53,11 +53,6 @@ public class WrapperCommandSender implements SRCommandSender {
     }
 
     @Override
-    public String getName() {
-        return sender.getName();
-    }
-
-    @Override
     public boolean hasPermission(Permission permission) {
         return permission.checkPermission(settings, sender::hasPermission);
     }

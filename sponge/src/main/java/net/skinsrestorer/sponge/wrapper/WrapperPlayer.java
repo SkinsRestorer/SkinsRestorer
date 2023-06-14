@@ -48,6 +48,11 @@ public class WrapperPlayer extends WrapperCommandSender implements SRServerPlaye
     }
 
     @Override
+    public String getName() {
+        return player.name();
+    }
+
+    @Override
     public boolean canSee(SRPlayer player) {
         return this.player.canSee(player.getAs(Player.class));
     }

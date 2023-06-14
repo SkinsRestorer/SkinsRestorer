@@ -106,7 +106,7 @@ public final class SkinCommand {
             Optional<SkinProperty> property = playerStorage.getSkinForPlayer(target.getUniqueId(), target.getName());
             skinApplier.applySkin(target.getAs(Object.class), property.orElse(SRConstants.EMPTY_SKIN));
 
-            if (sender.getName().equals(target.getName())) {
+            if (senderEqual(sender, target)) {
                 sender.sendMessage(Message.SUCCESS_SKIN_CLEAR);
             } else {
                 sender.sendMessage(Message.SUCCESS_SKIN_CLEAR_OTHER, target.getName());
@@ -154,7 +154,7 @@ public final class SkinCommand {
 
             skinApplier.applySkin(target.getAs(Object.class), skin.orElse(SRConstants.EMPTY_SKIN));
 
-            if (sender.getName().equals(target.getName())) {
+            if (senderEqual(sender, target)) {
                 sender.sendMessage(Message.SUCCESS_UPDATING_SKIN);
             } else {
                 sender.sendMessage(Message.SUCCESS_UPDATING_SKIN_OTHER, target.getName());
@@ -314,12 +314,15 @@ public final class SkinCommand {
 
     private boolean canSetSkin(SRCommandSender sender, String skinName) {
         if (settings.getProperty(CommandConfig.PER_SKIN_PERMISSIONS) && !sender.hasPermission(PermissionRegistry.forSkin(skinName))) {
-            if (sender.hasPermission(PermissionRegistry.OWN_SKIN) && skinName.equalsIgnoreCase(sender.getName())) {
-                return true;
-            } else {
-                sender.sendMessage(Message.PLAYER_HAS_NO_PERMISSION_SKIN);
-                return false;
+            if (sender.hasPermission(PermissionRegistry.OWN_SKIN) && sender instanceof SRPlayer) {
+                SRPlayer player = (SRPlayer) sender;
+                if (skinName.equalsIgnoreCase(player.getName())) {
+                    return true;
+                }
             }
+
+            sender.sendMessage(Message.PLAYER_HAS_NO_PERMISSION_SKIN);
+            return false;
         }
 
         return true;
@@ -328,5 +331,16 @@ public final class SkinCommand {
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean playerEqual(SRCommandSender sender, SRPlayer player) {
         return sender instanceof SRPlayer && ((SRPlayer) sender).getUniqueId().equals(player.getUniqueId());
+    }
+
+    private boolean senderEqual(SRCommandSender sender, SRCommandSender target) {
+        boolean senderIsPlayer = sender instanceof SRPlayer;
+        boolean targetIsPlayer = target instanceof SRPlayer;
+
+        if (senderIsPlayer && targetIsPlayer) {
+            return ((SRPlayer) sender).getUniqueId().equals(((SRPlayer) target).getUniqueId());
+        } else {
+            return !senderIsPlayer && !targetIsPlayer; // Console == Console
+        }
     }
 }

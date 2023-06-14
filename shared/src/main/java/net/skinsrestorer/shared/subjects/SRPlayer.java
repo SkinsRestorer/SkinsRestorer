@@ -26,5 +26,7 @@ public interface SRPlayer extends SRCommandSender {
 
     UUID getUniqueId();
 
+    String getName();
+
     boolean canSee(SRPlayer player);
 }
