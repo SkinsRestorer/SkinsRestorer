@@ -20,6 +20,7 @@
 package net.skinsrestorer.shared.serverinfo;
 
 import lombok.Data;
+import net.skinsrestorer.shared.utils.ReflectionUtil;
 
 @Data
 public class ClassInfo {
@@ -35,30 +36,18 @@ public class ClassInfo {
     private final boolean velocity;
 
     private ClassInfo() {
-        spigot = isClassPresent("org.spigotmc.SpigotConfig");
-        paper = isClassPresent("com.destroystokyo.paper.PaperConfig", "io.papermc.paper.configuration.Configuration");
-        craftBukkit = isClassPresent("org.bukkit.Bukkit");
-        folia = isClassPresent("io.papermc.paper.threadedregions.scheduler.AsyncScheduler");
-        spongeVanilla = isClassPresent("org.spongepowered.server.SpongeVanilla");
-        spongeForge = isClassPresent("org.spongepowered.mod.SpongeCoremod");
-        spongeAPI = isClassPresent("org.spongepowered.api.Sponge");
-        bungeecord = isClassPresent("net.md_5.bungee.BungeeCord");
-        velocity = isClassPresent("com.velocitypowered.proxy.Velocity");
+        spigot = ReflectionUtil.classExists("org.spigotmc.SpigotConfig");
+        paper = ReflectionUtil.classExists("com.destroystokyo.paper.PaperConfig", "io.papermc.paper.configuration.Configuration");
+        craftBukkit = ReflectionUtil.classExists("org.bukkit.Bukkit");
+        folia = ReflectionUtil.classExists("io.papermc.paper.threadedregions.scheduler.AsyncScheduler");
+        spongeVanilla = ReflectionUtil.classExists("org.spongepowered.server.SpongeVanilla");
+        spongeForge = ReflectionUtil.classExists("org.spongepowered.mod.SpongeCoremod");
+        spongeAPI = ReflectionUtil.classExists("org.spongepowered.api.Sponge");
+        bungeecord = ReflectionUtil.classExists("net.md_5.bungee.BungeeCord");
+        velocity = ReflectionUtil.classExists("com.velocitypowered.proxy.Velocity");
     }
 
     public static ClassInfo get() {
         return INSTANCE;
-    }
-
-    private boolean isClassPresent(String... classNames) {
-        for (String className : classNames) {
-            try {
-                Class.forName(className);
-                return true;
-            } catch (ClassNotFoundException ignored) {
-            }
-        }
-
-        return false;
     }
 }

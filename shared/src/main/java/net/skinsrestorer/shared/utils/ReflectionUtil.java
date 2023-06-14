@@ -51,6 +51,16 @@ public class ReflectionUtil {
         }
     }
 
+    public static boolean classExists(String... classNames) {
+        for (String className : classNames) {
+            if (classExists(className)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public static Enum<?> getEnum(Class<?> clazz, String constant) throws ReflectiveOperationException {
         Enum<?>[] enumConstants = (Enum<?>[]) clazz.getEnumConstants();
 
