@@ -32,6 +32,6 @@ public class ForceAliveListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void handle(ServerLoadEvent event) {
-        // NO-OP
+        // Ignore this event. We only need the field above to be alive.
     }
 }

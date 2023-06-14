@@ -30,6 +30,6 @@ public class ForceAliveListener implements EventListener<ConstructPluginEvent> {
 
     @Override
     public void handle(ConstructPluginEvent event) {
-        // NO-OP
+        // Ignore this event. We only need the field above to be alive.
     }
 }
