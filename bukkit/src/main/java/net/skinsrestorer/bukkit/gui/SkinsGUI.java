@@ -38,7 +38,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import javax.inject.Inject;
-import java.nio.CharBuffer;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -115,12 +114,6 @@ public class SkinsGUI implements GUIManager<Inventory> {
             if (skinCount >= SharedGUI.HEAD_COUNT_PER_PAGE) {
                 logger.warning("SkinsGUI: Skin count is more than 36, skipping...");
                 break;
-            }
-
-            if (CharBuffer.wrap(entry.getKey().toCharArray()).chars().anyMatch(i -> Character.isLetter(i) && Character.isUpperCase(i))) {
-                logger.info("ERROR: skin " + entry.getKey() + ".skin contains a Upper case!");
-                logger.info("Please rename the file name to a lower case!.");
-                continue;
             }
 
             inventory.addItem(createSkull(logger, locale, player, entry.getKey(), entry.getValue()));

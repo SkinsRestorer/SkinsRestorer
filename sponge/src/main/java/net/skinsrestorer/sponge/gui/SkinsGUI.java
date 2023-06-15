@@ -43,7 +43,6 @@ import org.spongepowered.api.profile.GameProfile;
 import org.spongepowered.api.profile.property.ProfileProperty;
 
 import javax.inject.Inject;
-import java.nio.CharBuffer;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -90,12 +89,6 @@ public class SkinsGUI implements GUIManager<InventoryMenu> {
             if (skinCount >= SharedGUI.HEAD_COUNT_PER_PAGE) {
                 logger.warning("SkinsGUI: Skin count is more than 36, skipping...");
                 break;
-            }
-
-            if (CharBuffer.wrap(entry.getKey().toCharArray()).chars().anyMatch(i -> Character.isLetter(i) && Character.isUpperCase(i))) {
-                logger.info("ERROR: skin " + entry.getKey() + ".skin contains a Upper case!");
-                logger.info("Please rename the file name to a lower case!.");
-                continue;
             }
 
             inventory.set(skinCount, createSkull(locale, player, entry.getKey(), entry.getValue()));
