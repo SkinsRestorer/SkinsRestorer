@@ -573,6 +573,8 @@ public class FileAdapter implements StorageAdapter {
                 } else {
                     files.put(name, data);
                 }
+
+                i++;
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -655,7 +657,7 @@ public class FileAdapter implements StorageAdapter {
     }
 
     private Path resolveCustomSkinFile(String skinName) {
-        return skinsFolder.resolve(hashSHA256(skinName) + ".customskin");
+        return skinsFolder.resolve(skinName + ".customskin");
     }
 
     private Path resolveLegacySkinFile(String skinName) {

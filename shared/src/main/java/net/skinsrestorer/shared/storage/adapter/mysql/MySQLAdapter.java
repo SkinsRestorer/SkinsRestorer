@@ -413,7 +413,7 @@ public class MySQLAdapter implements StorageAdapter {
                 .append(resolvePlayerSkinTable());
 
         if (settings.getProperty(GUIConfig.CUSTOM_GUI_ENABLED)) {
-            query.append(") UNION ALL (");
+            query.append(" UNION ALL ");
 
             query.append("SELECT 'custom' as type, `name`, `value`, `signature`")
                     .append(" FROM ")
