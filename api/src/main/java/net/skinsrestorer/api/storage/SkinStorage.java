@@ -60,11 +60,12 @@ public interface SkinStorage {
     /**
      * Saves a player skin to the database.
      *
-     * @param uuid      Player UUID
-     * @param textures  Property object
-     * @param timestamp timestamp string in milliseconds
+     * @param uuid          Player UUID
+     * @param lastKnownName Last known name of the player
+     * @param textures      Property object
+     * @param timestamp     timestamp string in milliseconds
      */
-    void setPlayerSkinData(UUID uuid, SkinProperty textures, long timestamp);
+    void setPlayerSkinData(UUID uuid, String lastKnownName, SkinProperty textures, long timestamp);
 
     /**
      * Saves an url skin to the database.

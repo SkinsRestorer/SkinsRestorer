@@ -21,10 +21,15 @@ package net.skinsrestorer.shared.storage.adapter.file;
 
 import ch.jalu.configme.SettingsManager;
 import com.google.gson.Gson;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.api.property.SkinType;
 import net.skinsrestorer.api.property.SkinVariant;
+import net.skinsrestorer.shared.config.GUIConfig;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
+import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.storage.adapter.file.model.cache.MojangCacheFile;
 import net.skinsrestorer.shared.storage.adapter.file.model.player.LegacyPlayerFile;
@@ -38,14 +43,18 @@ import net.skinsrestorer.shared.utils.SRFileUtils;
 
 import javax.inject.Inject;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.UserDefinedFileAttributeView;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class FileAdapter implements StorageAdapter {
     private final Path skinsFolder;
@@ -55,6 +64,7 @@ public class FileAdapter implements StorageAdapter {
     private final SettingsManager settings;
     private final Gson gson = new Gson();
     private final SRLogger logger;
+    private static final String LAST_KNOW_NAME_ATTRIBUTE = "sr_last_known_name";
     private static final Pattern UUID_REGEX = Pattern.compile("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$");
 
     @Inject
@@ -268,6 +278,9 @@ public class FileAdapter implements StorageAdapter {
             PlayerSkinFile file = PlayerSkinFile.fromPlayerSkinData(skinData);
 
             Files.write(skinFile, gson.toJson(file).getBytes(StandardCharsets.UTF_8));
+
+            UserDefinedFileAttributeView view = Files.getFileAttributeView(skinFile, UserDefinedFileAttributeView.class);
+            view.write(LAST_KNOW_NAME_ATTRIBUTE, StandardCharsets.UTF_8.encode(skinData.getLastKnownName()));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -469,77 +482,120 @@ public class FileAdapter implements StorageAdapter {
         }
     }
 
-    /* // OLD METHOD
     @Override
-    public Map<String, String> getStoredSkins(int offset) {
-        Map<String, String> list = new TreeMap<>();
-        List<Path> files = new ArrayList<>();
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(skinsFolder, "*.skin")) {
-            stream.forEach(files::add);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public Map<String, String> getStoredGUISkins(int offset) {
+        Map<String, String> list = new LinkedHashMap<>();
 
-        List<String> skinNames = files.stream().map(Path::getFileName).map(Path::toString).map(s ->
-                s.substring(0, s.length() - 5) // remove .skin (5 characters)
-        ).sorted().collect(Collectors.toList());
-
-        if (settings.getProperty(GUIConfig.CUSTOM_GUI_ENABLED)) {
-            List<String> customSkinNames = settings.getProperty(GUIConfig.CUSTOM_GUI_SKINS);
-            if (settings.getProperty(GUIConfig.CUSTOM_GUI_ONLY)) {
-                skinNames = skinNames.stream().filter(customSkinNames::contains).collect(Collectors.toList());
-            } else {
-                skinNames = skinNames.stream().sorted((s1, s2) -> {
-                    boolean s1Custom = customSkinNames.contains(s1);
-                    boolean s2Custom = customSkinNames.contains(s2);
-                    if (s1Custom && s2Custom) {
-                        return s1.compareTo(s2);
-                    } else if (s1Custom) {
-                        return -1;
-                    } else if (s2Custom) {
-                        return 1;
-                    } else {
-                        return s1.compareTo(s2);
-                    }
-                }).collect(Collectors.toList());
-            }
-        }
+        Map<String, GUIFileData> files = getGUIFilesSorted(offset);
 
         int i = 0;
-        for (String skinName : skinNames) {
-            if (list.size() >= 36)
+        for (Map.Entry<String, GUIFileData> entry : files.entrySet()) {
+            if (i > SkinStorageImpl.SKINS_PER_GUI_PAGE) {
                 break;
-
-            if (i < offset) {
-                continue;
             }
 
-            if (settings.getProperty(GUIConfig.CUSTOM_GUI_ONLY)) { // Show only Config.CUSTOM_GUI_SKINS in the gui
-                for (String guiSkins : settings.getProperty(GUIConfig.CUSTOM_GUI_SKINS)) {
-                    if (skinName.toLowerCase().contains(guiSkins.toLowerCase())) {
-                        try {
-                            getCustomSkinData(skinName).ifPresent(property -> list.put(skinName.toLowerCase(), property.getProperty().getValue()));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            } else {
+            if (entry.getValue().getSkinType() == SkinType.PLAYER) {
                 try {
-                    getCustomSkinData(skinName).ifPresent(property -> list.put(skinName.toLowerCase(), property.getProperty().getValue()));
-                } catch (Exception e) {
+                    getPlayerSkinData(UUID.fromString(entry.getValue().getFileName()))
+                            .ifPresent(skinData -> list.put(entry.getKey(), skinData.getProperty().getValue()));
+                } catch (StorageException e) {
+                    e.printStackTrace();
+                }
+            } else if (entry.getValue().getSkinType() == SkinType.CUSTOM) {
+                try {
+                    getCustomSkinData(entry.getValue().getFileName())
+                            .ifPresent(skinData -> list.put(entry.getKey(), skinData.getProperty().getValue()));
+                } catch (StorageException e) {
                     e.printStackTrace();
                 }
             }
+
             i++;
         }
 
         return list;
-    }*/
+    }
 
-    @Override
-    public Map<String, String> getStoredGUISkins(int offset) {
-        throw new UnsupportedOperationException("getStoredGUISkins is not supported by this storage method");
+    private Map<String, GUIFileData> getGUIFilesSorted(int offset) {
+        boolean customEnabled = settings.getProperty(GUIConfig.CUSTOM_GUI_ENABLED);
+        boolean customOnly = settings.getProperty(GUIConfig.CUSTOM_GUI_ONLY);
+        List<String> customSkins = settings.getProperty(GUIConfig.CUSTOM_GUI_SKINS)
+                .stream()
+                .map(String::toLowerCase)
+                .distinct() // No duplicates
+                .collect(Collectors.toList());
+
+        int i = 0;
+        Map<String, GUIFileData> files = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        try (Stream<Path> stream = Files.walk(skinsFolder, 1)) {
+            for (Iterator<Path> it = stream.iterator(); it.hasNext(); ) {
+                Path path = it.next();
+                if (Files.isDirectory(path)) {
+                    continue;
+                }
+
+                String fileName = path.getFileName().toString();
+                String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
+                String name = fileName.substring(0, fileName.length() - extension.length() - 1);
+
+                boolean isPlayerSkin = extension.equals("playerskin");
+                boolean isCustomSkin = extension.equals("customskin");
+
+                // Only allow player skins and custom skins
+                if (!isPlayerSkin && !isCustomSkin) {
+                    continue;
+                }
+
+                // No player skins if custom skins only
+                if (isPlayerSkin && customEnabled && customOnly) {
+                    continue;
+                }
+
+                // Do not allow custom skins if not enabled
+                if (isCustomSkin && !customEnabled) {
+                    continue;
+                }
+
+                // Only allow specific custom skins if enabled
+                if (customEnabled && customOnly && !customSkins.contains(name.toLowerCase())) {
+                    continue;
+                }
+
+                if (i < offset) {
+                    i++;
+                    continue;
+                }
+
+                GUIFileData data = new GUIFileData(name, path, isPlayerSkin ? SkinType.PLAYER : SkinType.CUSTOM);
+                if (isPlayerSkin) {
+                    getLastKnownName(path)
+                            .ifPresent(lastKnownName -> files.put(lastKnownName, data));
+                } else {
+                    files.put(name, data);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return files;
+    }
+
+    private Optional<String> getLastKnownName(Path path) {
+        try {
+            UserDefinedFileAttributeView view = Files.getFileAttributeView(path, UserDefinedFileAttributeView.class);
+            if (!view.list().contains(LAST_KNOW_NAME_ATTRIBUTE)) {
+                return Optional.empty();
+            }
+
+            ByteBuffer buffer = ByteBuffer.allocate(view.size(LAST_KNOW_NAME_ATTRIBUTE));
+            view.read(LAST_KNOW_NAME_ATTRIBUTE, buffer);
+            buffer.flip();
+            return Optional.of(StandardCharsets.UTF_8.decode(buffer).toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -640,5 +696,13 @@ public class FileAdapter implements StorageAdapter {
         // The use of #toLowerCase() instead of #toLowerCase(Locale.ENGLISH) is intentional
         // This is because the legacy skin names used this incorrect way of lowercasing
         return skinName.toLowerCase();
+    }
+
+    @Getter
+    @RequiredArgsConstructor
+    private static class GUIFileData {
+        private final String fileName;
+        private final Path path;
+        private final SkinType skinType;
     }
 }
