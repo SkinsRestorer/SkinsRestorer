@@ -32,6 +32,10 @@ dependencies {
     testRuntimeOnly("com.mojang:authlib:1.11")
 }
 
+tasks.shadowJar {
+    configureKyoriRelocations()
+}
+
 val projectIncludes = setOf(
     rootProject.projects.multiver.bukkit.folia
 ).map { it.dependencyProject }

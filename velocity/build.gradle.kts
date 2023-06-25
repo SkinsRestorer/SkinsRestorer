@@ -1,6 +1,9 @@
 dependencies {
     implementation(projects.skinsrestorerApi)
-    implementation(projects.skinsrestorerShared)
+    implementation(projects.skinsrestorerShared) {
+        exclude("net.kyori")
+    }
+
     testImplementation(testFixtures(projects.skinsrestorerShared))
 
     compileOnly("com.velocitypowered:velocity-api:3.1.1")

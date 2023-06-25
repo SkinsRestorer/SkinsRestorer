@@ -13,3 +13,7 @@ dependencies {
 
     implementation("org.bstats:bstats-bungeecord:3.0.2")
 }
+
+tasks.shadowJar {
+    configureKyoriRelocations()
+}
