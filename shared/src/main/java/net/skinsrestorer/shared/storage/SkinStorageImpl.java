@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.PropertyUtil;
 import net.skinsrestorer.api.connections.model.MineSkinResponse;
 import net.skinsrestorer.api.exception.DataRequestException;
+import net.skinsrestorer.api.exception.MineSkinException;
 import net.skinsrestorer.api.model.MojangProfileResponse;
 import net.skinsrestorer.api.property.*;
 import net.skinsrestorer.api.storage.CacheStorage;
@@ -46,13 +47,13 @@ import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SkinStorageImpl implements SkinStorage {
+    public static final int SKINS_PER_GUI_PAGE = 36;
     private final SRLogger logger;
     private final CacheStorage cacheStorage;
     private final MojangAPIImpl mojangAPI;
     private final MineSkinAPIImpl mineSkinAPI;
     private final SettingsManager settings;
     private final AtomicAdapter atomicAdapter;
-    public static final int SKINS_PER_GUI_PAGE = 36;
 
     public void preloadDefaultSkins() {
         if (!settings.getProperty(StorageConfig.DEFAULT_SKINS_ENABLED)) {
@@ -64,7 +65,7 @@ public class SkinStorageImpl implements SkinStorage {
         defaultSkins.forEach(skin -> {
             try {
                 findOrCreateSkinData(skin);
-            } catch (DataRequestException e) {
+            } catch (DataRequestException | MineSkinException e) {
                 logger.debug(String.format("DefaultSkin '%s' could not be found or requested! Removing from list..", skin), e);
                 toRemove.add(skin);
             }
@@ -189,7 +190,7 @@ public class SkinStorageImpl implements SkinStorage {
     }
 
     @Override
-    public Optional<InputDataResult> findOrCreateSkinData(String input) throws DataRequestException {
+    public Optional<InputDataResult> findOrCreateSkinData(String input) throws DataRequestException, MineSkinException {
         Optional<InputDataResult> skinData = findSkinData(input);
 
         if (skinData.isPresent()) {

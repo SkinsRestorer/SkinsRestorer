@@ -19,6 +19,8 @@
  */
 package net.skinsrestorer.bukkit;
 
+import lombok.Getter;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.skinsrestorer.bukkit.logger.BukkitConsoleImpl;
 import net.skinsrestorer.bukkit.update.BukkitUpdateCheckInit;
 import net.skinsrestorer.shared.log.JavaLoggerImpl;
@@ -32,20 +34,37 @@ import java.nio.file.Path;
 
 @SuppressWarnings("unused")
 public class SRBukkitBootstrap extends JavaPlugin {
+    @Getter
+    private BukkitAudiences adventure;
+
     @Override
     public void onEnable() {
+        this.adventure = BukkitAudiences.create(this);
+
         Server server = getServer();
         Path pluginFile = getFile().toPath();
         SRBootstrapper.startPlugin(
-                injector -> injector.register(Server.class, server),
+                injector -> {
+                    injector.register(JavaPlugin.class, this);
+                    injector.register(Server.class, server);
+                    injector.register(BukkitAudiences.class, this.adventure);
+                },
                 new JavaLoggerImpl(new BukkitConsoleImpl(server.getConsoleSender()), server.getLogger()),
                 true,
-                injector -> new SRBukkitAdapter(injector, pluginFile, this),
+                injector -> new SRBukkitAdapter(injector, pluginFile, this, this.adventure),
                 BukkitUpdateCheckInit.class,
                 SRServerPlugin.class,
                 getDescription().getVersion(),
                 getDataFolder().toPath(),
                 Platform.BUKKIT,
                 SRBukkitInit.class);
+    }
+
+    @Override
+    public void onDisable() {
+        if (this.adventure != null) {
+            this.adventure.close();
+            this.adventure = null;
+        }
     }
 }

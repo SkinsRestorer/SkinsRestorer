@@ -8,6 +8,8 @@ dependencies {
     implementation(projects.multiver.bukkit.multipaper)
     implementation(projects.multiver.bukkit.v17)
 
+    implementation("net.kyori:adventure-platform-bukkit:4.3.0")
+
     setOf("1-18", "1-18-2", "1-19", "1-19-3", "1-19-4", "1-20").forEach {
         implementation(project(":mappings:mc-$it", "remapped"))
     }

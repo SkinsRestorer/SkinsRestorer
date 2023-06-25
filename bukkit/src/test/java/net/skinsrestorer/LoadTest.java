@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer;
 
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.bukkit.SRBukkitAdapter;
 import net.skinsrestorer.bukkit.SRBukkitInit;
@@ -106,11 +107,13 @@ public class LoadTest {
         descriptionField.setAccessible(true);
         descriptionField.set(plugin, description);
 
+        BukkitAudiences adventure = mock(BukkitAudiences.class);
+
         SRBootstrapper.startPlugin(
                 injector -> injector.register(Server.class, server),
                 new JavaLoggerImpl(new BukkitConsoleImpl(server.getConsoleSender()), server.getLogger()),
                 true,
-                injector -> new SRBukkitAdapter(injector, pluginFile, plugin),
+                injector -> new SRBukkitAdapter(injector, pluginFile, plugin, adventure),
                 BukkitUpdateCheckInit.class,
                 SRServerPlugin.class,
                 BuildData.VERSION,

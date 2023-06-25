@@ -21,7 +21,7 @@ package net.skinsrestorer.sponge;
 
 import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
-import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.plugin.SRServerPlatformInit;
 import net.skinsrestorer.shared.subjects.messages.Message;
@@ -49,6 +49,7 @@ import javax.inject.Inject;
 @SuppressWarnings("unused")
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SRSpongeInit implements SRServerPlatformInit {
+    private static final GsonComponentSerializer GSON = GsonComponentSerializer.gson();
     private final Injector injector;
     private final SRSpongeAdapter adapter;
     private final SRPlugin plugin;
@@ -105,6 +106,6 @@ public class SRSpongeInit implements SRServerPlatformInit {
         return game.server().serviceProvider().permissionService()
                 .newDescriptionBuilder(adapter.getPluginContainer())
                 .id(permission.getPermissionString())
-                .description(Component.text(locale.getMessage(locale.getDefaultForeign(), description)));
+                .description(GSON.deserializeFromTree(locale.getMessage(locale.getDefaultForeign(), description)));
     }
 }

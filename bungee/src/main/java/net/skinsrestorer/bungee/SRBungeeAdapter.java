@@ -21,6 +21,7 @@ package net.skinsrestorer.bungee;
 
 import ch.jalu.injector.Injector;
 import lombok.Getter;
+import net.kyori.adventure.platform.bungeecord.BungeeAudiences;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -46,11 +47,14 @@ public class SRBungeeAdapter implements SRProxyAdapter<Plugin> {
     private final ProxyServer proxy;
     @Getter
     private final Plugin pluginInstance; // Only for platform API use
+    @Getter
+    private final BungeeAudiences adventure;
 
-    public SRBungeeAdapter(Injector injector, Plugin pluginInstance) {
+    public SRBungeeAdapter(Injector injector, Plugin pluginInstance, BungeeAudiences adventure) {
         this.injector = injector;
         this.proxy = injector.getSingleton(ProxyServer.class);
         this.pluginInstance = pluginInstance;
+        this.adventure = adventure;
 
         injector.register(SRBungeeAdapter.class, this);
         injector.register(SRProxyAdapter.class, this);

@@ -17,16 +17,17 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.exception;
+package net.skinsrestorer.bukkit.utils;
 
-import net.skinsrestorer.api.exception.DataRequestException;
+import com.google.gson.JsonElement;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
-public class DataRequestExceptionShared extends DataRequestException {
-    public DataRequestExceptionShared(String message) {
-        super(message);
-    }
+public class BukkitComponentHelper {
+    private static final GsonComponentSerializer GSON = GsonComponentSerializer.gson();
+    private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacySection();
 
-    public DataRequestExceptionShared(Throwable cause) {
-        super(cause);
+    public static String convertToLegacy(JsonElement element) {
+        return LEGACY.serialize(GSON.deserializeFromTree(element));
     }
 }

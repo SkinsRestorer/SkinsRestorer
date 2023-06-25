@@ -2,10 +2,16 @@ dependencies {
     api(projects.skinsrestorerBuildData)
     implementation(projects.skinsrestorerApi)
 
-    implementation("com.google.code.gson:gson:2.10.1")
+    api("com.google.code.gson:gson:2.10.1")
     implementation("org.mariadb.jdbc:mariadb-java-client:3.1.4") {
         exclude("com.github.waffle", "waffle-jna")
     }
+
+    implementation("net.kyori:adventure-api:4.14.0")
+    implementation("net.kyori:adventure-text-serializer-gson:4.14.0")
+    implementation("net.kyori:adventure-text-serializer-legacy:4.14.0")
+    implementation("net.kyori:adventure-text-serializer-ansi:4.14.0")
+    implementation("net.kyori:adventure-text-serializer-plain:4.14.0")
 
     implementation("org.fusesource.jansi:jansi:2.4.0")
 

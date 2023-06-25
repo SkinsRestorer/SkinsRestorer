@@ -27,6 +27,7 @@ public class LocaleParser {
         if (locale == null) {
             return Optional.empty();
         }
+
         String[] split = locale.split("_");
         if (split.length == 1) {
             return Optional.of(new Locale(split[0]));
@@ -44,6 +45,7 @@ public class LocaleParser {
         } else if (split.length == 2) {
             return new Locale(split[0], split[1]);
         }
+
         throw new IllegalArgumentException("Invalid locale: " + locale);
     }
 }

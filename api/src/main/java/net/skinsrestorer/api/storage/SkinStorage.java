@@ -21,6 +21,7 @@ package net.skinsrestorer.api.storage;
 
 import net.skinsrestorer.api.connections.model.MineSkinResponse;
 import net.skinsrestorer.api.exception.DataRequestException;
+import net.skinsrestorer.api.exception.MineSkinException;
 import net.skinsrestorer.api.property.InputDataResult;
 import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.api.property.SkinProperty;
@@ -122,7 +123,7 @@ public interface SkinStorage {
      * @return InputDataResult object or empty if not found
      * @throws DataRequestException If MojangAPI lookup errors (e.g. premium player not found)
      */
-    Optional<InputDataResult> findOrCreateSkinData(String input) throws DataRequestException;
+    Optional<InputDataResult> findOrCreateSkinData(String input) throws DataRequestException, MineSkinException;
 
     /**
      * Searches a skin in the database by its skin identifier.

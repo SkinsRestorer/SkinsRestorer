@@ -21,6 +21,7 @@ package net.skinsrestorer.bukkit;
 
 import ch.jalu.injector.Injector;
 import lombok.Getter;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.bukkit.command.SRBukkitCommand;
 import net.skinsrestorer.bukkit.gui.SkinsGUI;
@@ -72,12 +73,15 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin> {
             .add("net.skinsrestorer.bukkit.folia.FoliaSchedulerProvider") // Compiled with java 17, which the bukkit module is not.
             .add(new BukkitSchedulerProvider())
             .buildAndGet();
+    @Getter
+    private final BukkitAudiences adventure;
 
-    public SRBukkitAdapter(Injector injector, Path pluginFile, JavaPlugin pluginInstance) {
+    public SRBukkitAdapter(Injector injector, Path pluginFile, JavaPlugin pluginInstance, BukkitAudiences adventure) {
         this.injector = injector;
         this.server = injector.getSingleton(Server.class);
         this.pluginFile = pluginFile;
         this.pluginInstance = pluginInstance;
+        this.adventure = adventure;
 
         injector.register(SRBukkitAdapter.class, this);
         injector.register(SRServerAdapter.class, this);

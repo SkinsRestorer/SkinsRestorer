@@ -19,14 +19,10 @@
  */
 package net.skinsrestorer.shared.exception;
 
-import net.skinsrestorer.api.exception.DataRequestException;
+import com.google.gson.JsonElement;
+import net.skinsrestorer.shared.subjects.SRForeign;
+import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 
-public class DataRequestExceptionShared extends DataRequestException {
-    public DataRequestExceptionShared(String message) {
-        super(message);
-    }
-
-    public DataRequestExceptionShared(Throwable cause) {
-        super(cause);
-    }
+public interface TranslatableException {
+    JsonElement getMessage(SRForeign foreign, SkinsRestorerLocale locale);
 }

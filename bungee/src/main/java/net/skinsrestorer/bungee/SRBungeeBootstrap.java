@@ -19,6 +19,8 @@
  */
 package net.skinsrestorer.bungee;
 
+import lombok.Getter;
+import net.kyori.adventure.platform.bungeecord.BungeeAudiences;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.skinsrestorer.bungee.logger.BungeeConsoleImpl;
@@ -30,19 +32,36 @@ import net.skinsrestorer.shared.update.SharedUpdateCheckInit;
 
 @SuppressWarnings("unused")
 public class SRBungeeBootstrap extends Plugin {
+    @Getter
+    private BungeeAudiences adventure;
+
     @Override
     public void onEnable() {
+        this.adventure = BungeeAudiences.create(this);
+
         ProxyServer proxy = getProxy();
         SRBootstrapper.startPlugin(
-                injector -> injector.register(ProxyServer.class, proxy),
+                injector -> {
+                    injector.register(Plugin.class, this);
+                    injector.register(ProxyServer.class, proxy);
+                    injector.register(BungeeAudiences.class, this.adventure);
+                },
                 new JavaLoggerImpl(new BungeeConsoleImpl(proxy.getConsole()), proxy.getLogger()),
                 true,
-                injector -> new SRBungeeAdapter(injector, this),
+                injector -> injector.getSingleton(SRBungeeAdapter.class),
                 SharedUpdateCheckInit.class,
                 SRProxyPlugin.class,
                 getDescription().getVersion(),
                 getDataFolder().toPath(),
                 Platform.BUNGEE_CORD,
                 SRBungeeInit.class);
+    }
+
+    @Override
+    public void onDisable() {
+        if (this.adventure != null) {
+            this.adventure.close();
+            this.adventure = null;
+        }
     }
 }

@@ -20,6 +20,7 @@
 package net.skinsrestorer.bukkit.command;
 
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.bukkit.utils.BukkitComponentHelper;
 import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
@@ -47,8 +48,8 @@ public class SRHelpTopic extends HelpTopic {
     @NotNull
     @Override
     public String getShortText() {
-        return locale.getMessage(locale.getDefaultForeign(),
-                srbukkitCommand.getMeta().getRootHelp().getCommandDescription());
+        return BukkitComponentHelper.convertToLegacy(locale.getMessage(locale.getDefaultForeign(),
+                srbukkitCommand.getMeta().getRootHelp().getCommandDescription()));
     }
 
     @NotNull

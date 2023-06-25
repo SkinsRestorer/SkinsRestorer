@@ -17,16 +17,14 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.exception;
+package net.skinsrestorer.api.exception;
 
-import net.skinsrestorer.api.exception.DataRequestException;
-
-public class DataRequestExceptionShared extends DataRequestException {
-    public DataRequestExceptionShared(String message) {
+public class MineSkinException extends Exception {
+    protected MineSkinException(String message) {
         super(message);
     }
 
-    public DataRequestExceptionShared(Throwable cause) {
+    protected MineSkinException(Throwable cause) {
         super(cause);
     }
 }

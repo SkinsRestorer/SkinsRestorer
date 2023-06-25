@@ -57,6 +57,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class FileAdapter implements StorageAdapter {
+    private static final String LAST_KNOW_NAME_ATTRIBUTE = "sr_last_known_name";
+    private static final Pattern UUID_REGEX = Pattern.compile("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$");
     private final Path skinsFolder;
     private final Path playersFolder;
     private final Path cacheFolder;
@@ -64,8 +66,6 @@ public class FileAdapter implements StorageAdapter {
     private final SettingsManager settings;
     private final Gson gson = new Gson();
     private final SRLogger logger;
-    private static final String LAST_KNOW_NAME_ATTRIBUTE = "sr_last_known_name";
-    private static final Pattern UUID_REGEX = Pattern.compile("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$");
 
     @Inject
     public FileAdapter(SRPlugin plugin, SettingsManager settings, SRLogger logger) {
@@ -82,6 +82,28 @@ public class FileAdapter implements StorageAdapter {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static String hashSHA256(String input) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(input.getBytes(StandardCharsets.UTF_8));
+            return bytesToHex(hash);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static String bytesToHex(byte[] hash) {
+        StringBuilder hexString = new StringBuilder(2 * hash.length);
+        for (byte b : hash) {
+            String hex = Integer.toHexString(0xff & b);
+            if (hex.length() == 1) {
+                hexString.append('0');
+            }
+            hexString.append(hex);
+        }
+        return hexString.toString();
     }
 
     @Override
@@ -185,28 +207,6 @@ public class FileAdapter implements StorageAdapter {
         if (generatedFolder) {
             logger.info("Skin files migration complete!");
         }
-    }
-
-    private static String hashSHA256(String input) {
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(input.getBytes(StandardCharsets.UTF_8));
-            return bytesToHex(hash);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static String bytesToHex(byte[] hash) {
-        StringBuilder hexString = new StringBuilder(2 * hash.length);
-        for (byte b : hash) {
-            String hex = Integer.toHexString(0xff & b);
-            if (hex.length() == 1) {
-                hexString.append('0');
-            }
-            hexString.append(hex);
-        }
-        return hexString.toString();
     }
 
     @Override

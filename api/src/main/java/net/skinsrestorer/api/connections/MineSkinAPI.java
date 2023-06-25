@@ -21,6 +21,7 @@ package net.skinsrestorer.api.connections;
 
 import net.skinsrestorer.api.connections.model.MineSkinResponse;
 import net.skinsrestorer.api.exception.DataRequestException;
+import net.skinsrestorer.api.exception.MineSkinException;
 import net.skinsrestorer.api.property.SkinVariant;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,6 +37,7 @@ public interface MineSkinAPI {
      * @param skinVariant can be null, steve or slim
      * @return Custom skin property containing "value" and "signature"
      * @throws DataRequestException on error
+     * @throws MineSkinException    when there was a MineSkin specific error
      */
-    MineSkinResponse genSkin(String url, @Nullable SkinVariant skinVariant) throws DataRequestException;
+    MineSkinResponse genSkin(String url, @Nullable SkinVariant skinVariant) throws DataRequestException, MineSkinException;
 }

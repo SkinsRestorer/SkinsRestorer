@@ -38,6 +38,7 @@ import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
+import net.skinsrestorer.shared.utils.ComponentHelper;
 import net.skinsrestorer.shared.utils.FluentList;
 
 import java.lang.annotation.Annotation;
@@ -402,7 +403,7 @@ public class CommandManager<T extends SRCommandSender> {
         try {
             dispatcher.execute(input, executor);
         } catch (CommandSyntaxException e) {
-            executor.sendMessage(e.getRawMessage().getString());
+            executor.sendMessage(ComponentHelper.parse(e.getRawMessage().getString()));
         }
     }
 

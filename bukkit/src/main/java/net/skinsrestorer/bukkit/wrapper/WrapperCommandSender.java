@@ -20,7 +20,10 @@
 package net.skinsrestorer.bukkit.wrapper;
 
 import ch.jalu.configme.SettingsManager;
+import com.google.gson.JsonElement;
 import lombok.experimental.SuperBuilder;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.skinsrestorer.bukkit.SRBukkitAdapter;
 import net.skinsrestorer.shared.config.MessageConfig;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.messages.Message;
@@ -34,7 +37,9 @@ import java.util.Locale;
 public class WrapperCommandSender implements SRCommandSender {
     private final SettingsManager settings;
     private final SkinsRestorerLocale locale;
+    private final SRBukkitAdapter adapter;
     private final CommandSender sender;
+    private final GsonComponentSerializer serializer = GsonComponentSerializer.gson();
 
     @Override
     public Locale getLocale() {
@@ -42,8 +47,8 @@ public class WrapperCommandSender implements SRCommandSender {
     }
 
     @Override
-    public void sendMessage(String message) {
-        sender.sendMessage(message);
+    public void sendMessage(JsonElement message) {
+        adapter.getAdventure().sender(sender).sendMessage(serializer.deserializeFromTree(message));
     }
 
     @Override

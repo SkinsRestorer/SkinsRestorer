@@ -22,6 +22,7 @@ package net.skinsrestorer.sponge;
 import ch.jalu.injector.Injector;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.commands.library.SRRegisterPayload;
@@ -64,6 +65,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class SRSpongeAdapter implements SRServerAdapter<PluginContainer> {
+    private static final GsonComponentSerializer GSON = GsonComponentSerializer.gson();
     private final Injector injector;
     private final Metrics metrics;
     @Getter
@@ -238,7 +240,7 @@ public class SRSpongeAdapter implements SRServerAdapter<PluginContainer> {
                 @Override
                 public Optional<Component> shortDescription(CommandCause cause) {
                     SRCommandSender sender = wrapper.commandSender(cause);
-                    return Optional.of(serializer.deserialize(locale.getMessage(sender, payload.getMeta().getRootHelp().getCommandDescription())));
+                    return Optional.of(GSON.deserializeFromTree(locale.getMessage(sender, payload.getMeta().getRootHelp().getCommandDescription())));
                 }
 
                 @Override

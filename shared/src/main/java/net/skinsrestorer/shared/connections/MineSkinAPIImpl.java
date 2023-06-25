@@ -20,12 +20,12 @@
 package net.skinsrestorer.shared.connections;
 
 import ch.jalu.configme.SettingsManager;
-import com.google.gson.JsonSyntaxException;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.PropertyUtil;
 import net.skinsrestorer.api.connections.MineSkinAPI;
 import net.skinsrestorer.api.connections.model.MineSkinResponse;
 import net.skinsrestorer.api.exception.DataRequestException;
+import net.skinsrestorer.api.exception.MineSkinException;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.property.SkinVariant;
 import net.skinsrestorer.shared.config.APIConfig;
@@ -35,6 +35,7 @@ import net.skinsrestorer.shared.connections.responses.mineskin.MineSkinErrorDela
 import net.skinsrestorer.shared.connections.responses.mineskin.MineSkinErrorResponse;
 import net.skinsrestorer.shared.connections.responses.mineskin.MineSkinUrlResponse;
 import net.skinsrestorer.shared.exception.DataRequestExceptionShared;
+import net.skinsrestorer.shared.exception.MineSkinExceptionShared;
 import net.skinsrestorer.shared.log.SRLogLevel;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.subjects.messages.Message;
@@ -71,23 +72,20 @@ public class MineSkinAPIImpl implements MineSkinAPI {
     private final HttpClient httpClient;
 
     @Override
-    public MineSkinResponse genSkin(String url, @Nullable SkinVariant skinVariant) throws DataRequestException {
+    public MineSkinResponse genSkin(String url, @Nullable SkinVariant skinVariant) throws DataRequestException, MineSkinException {
         String resultUrl = url.startsWith(NAMEMC_SKIN_URL) ? NAMEMC_IMG_URL.replace("%s", url.substring(24)) : url; // Fix NameMC skins
-        AtomicInteger failedAttempts = new AtomicInteger(0);
+        AtomicInteger retryAttempts = new AtomicInteger(0);
 
         do {
             try {
                 Optional<MineSkinResponse> optional = CompletableFuture.supplyAsync(() -> {
                     try {
                         return genSkinInternal(resultUrl, skinVariant);
-                    } catch (DataRequestException e) {
+                    } catch (DataRequestException | MineSkinException e) {
                         throw new CompletionException(e);
                     } catch (IOException e) {
-                        logger.debug(SRLogLevel.WARNING, "[ERROR] MineSkin Failed! IOException (connection/disk): (" + url + ") " + e.getLocalizedMessage());
-                        throw new CompletionException(new DataRequestExceptionShared(locale, Message.ERROR_MS_FULL));
-                    } catch (JsonSyntaxException e) {
-                        logger.debug(SRLogLevel.WARNING, "[ERROR] MineSkin Failed! JsonSyntaxException (encoding): (" + url + ") " + e.getLocalizedMessage());
-                        throw new CompletionException(new DataRequestExceptionShared(locale, Message.ERROR_MS_FULL));
+                        logger.debug(SRLogLevel.WARNING, "[ERROR] MineSkin Failed! IOException (connection/disk): (" + url + ")", e);
+                        throw new CompletionException(new DataRequestExceptionShared(e));
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
@@ -97,20 +95,22 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                     return optional.get();
                 }
 
-                failedAttempts.incrementAndGet();
+                retryAttempts.incrementAndGet();
             } catch (CompletionException e) {
                 if (e.getCause() instanceof DataRequestException) {
                     throw new DataRequestExceptionShared(e.getCause());
+                } else if (e.getCause() instanceof MineSkinException) {
+                    throw new MineSkinExceptionShared((MineSkinException) e.getCause());
                 } else {
-                    throw new DataRequestExceptionShared(e);
+                    throw new RuntimeException(e);
                 }
             }
-        } while (failedAttempts.get() < 5);
+        } while (retryAttempts.get() < 5);
 
-        throw new DataRequestExceptionShared(locale, Message.ERROR_MS_API_FAILED);
+        throw new MineSkinExceptionShared(locale, Message.ERROR_MS_API_FAILED);
     }
 
-    private Optional<MineSkinResponse> genSkinInternal(String url, @Nullable SkinVariant skinVariant) throws DataRequestException, IOException, InterruptedException {
+    private Optional<MineSkinResponse> genSkinInternal(String url, @Nullable SkinVariant skinVariant) throws DataRequestException, MineSkinException, IOException, InterruptedException {
         String skinVariantString = skinVariant != null ? "&variant=" + skinVariant.name().toLowerCase(Locale.ENGLISH) : "";
 
         HttpResponse response = queryURL("url=" + URLEncoder.encode(url, "UTF-8") + skinVariantString);
@@ -137,9 +137,9 @@ public class MineSkinAPIImpl implements MineSkinAPI {
 
                         return Optional.empty(); // try again
                     case "no_account_available":
-                        throw new DataRequestExceptionShared(locale, Message.ERROR_MS_FULL);
+                        throw new MineSkinExceptionShared(locale, Message.ERROR_MS_FULL);
                     default:
-                        throw new DataRequestExceptionShared(locale, Message.ERROR_INVALID_URLSKIN);
+                        throw new MineSkinExceptionShared(locale, Message.ERROR_INVALID_URLSKIN);
                 }
             }
             case 403: {
@@ -165,10 +165,11 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                             logger.severe("Unknown error, please report this to SkinsRestorer's discord!");
                             break;
                     }
-                    throw new DataRequestExceptionShared("Invalid Mineskin API key!, nag the server owner about this!");
+
+                    throw new MineSkinExceptionShared(locale, Message.ERROR_MS_API_KEY_INVALID);
                 }
 
-                throw new DataRequestExceptionShared("Unknown MineSkin Error!");
+                throw new MineSkinExceptionShared(locale, Message.ERROR_MS_UNKNOWN);
             }
             case 429: {
                 MineSkinErrorDelayResponse errorDelayResponse = response.getBodyAs(MineSkinErrorDelayResponse.class);
@@ -190,7 +191,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
             }
             default:
                 logger.debug("[ERROR] MineSkin Failed! Unknown error: (" + url + ") " + response.getStatusCode());
-                throw new DataRequestExceptionShared(locale, Message.ERROR_MS_API_FAILED);
+                throw new MineSkinExceptionShared(locale, Message.ERROR_MS_API_FAILED);
         }
     }
 
@@ -215,7 +216,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                         90_000
                 );
             } catch (IOException e) {
-                if (i == 2) {
+                if (i >= 2) {
                     throw e;
                 }
             }

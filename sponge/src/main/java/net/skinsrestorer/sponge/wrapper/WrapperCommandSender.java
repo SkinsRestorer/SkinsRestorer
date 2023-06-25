@@ -20,10 +20,11 @@
 package net.skinsrestorer.sponge.wrapper;
 
 import ch.jalu.configme.SettingsManager;
+import com.google.gson.JsonElement;
 import lombok.experimental.SuperBuilder;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.identity.Identity;
-import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.skinsrestorer.shared.config.MessageConfig;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.messages.Message;
@@ -39,6 +40,7 @@ public class WrapperCommandSender implements SRCommandSender {
     private final SkinsRestorerLocale locale;
     private final Subject subject;
     private final Audience audience;
+    private final GsonComponentSerializer serializer = GsonComponentSerializer.gson();
 
     @Override
     public Locale getLocale() {
@@ -46,8 +48,8 @@ public class WrapperCommandSender implements SRCommandSender {
     }
 
     @Override
-    public void sendMessage(String message) {
-        audience.sendMessage(Identity.nil(), Component.text(message));
+    public void sendMessage(JsonElement message) {
+        audience.sendMessage(Identity.nil(), serializer.deserializeFromTree(message));
     }
 
     @Override

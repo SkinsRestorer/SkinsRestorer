@@ -19,12 +19,13 @@
  */
 package net.skinsrestorer.shared.subjects;
 
+import com.google.gson.JsonElement;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.permissions.Permission;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
 
 public interface SRCommandSender extends SRForeign {
-    void sendMessage(String message);
+    void sendMessage(JsonElement message);
 
     void sendMessage(Message key, Object... args);
 
