@@ -251,13 +251,19 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
             player.updateInventory();
             ReflectionUtil.invokeMethod(entityPlayer, "triggerHealthUpdate");
 
+            // Here we fix a bug where changing your skin causes CommandBlocks to no longer work
+            // This might be FALSE REPORT by another plugin and this is NOT OP EXPLOIT
+            // This code is being used by paper in your server as well: https://github.com/PaperMC/Paper/blob/master/patches/server/0182-Player.setPlayerProfile-API.patch#L175-L178
+
+            // Here we check if the player is /OP
             if (player.isOp()) {
                 adapter.runSyncToPlayer(player, () -> {
-                    // Workaround..
+                    // Here we /deOP and /OP the same player
                     player.setOp(false);
                     player.setOp(true);
                 });
             }
+
         } catch (ReflectiveOperationException e) {
             e.printStackTrace();
         }
