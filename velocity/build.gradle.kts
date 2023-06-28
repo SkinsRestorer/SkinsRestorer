@@ -13,6 +13,10 @@ dependencies {
     compileOnly("com.velocitypowered:velocity-api:3.1.1")
     annotationProcessor("com.velocitypowered:velocity-api:3.1.1")
 
+    implementation("net.kyori:adventure-text-serializer-gson:4.14.0") {
+        isTransitive = false
+    }
+
     implementation("org.bstats:bstats-velocity:3.0.2")
 }
 
@@ -25,5 +29,8 @@ indra {
 tasks {
     runVelocity {
         version(libs.versions.runvelocityversion.get())
+    }
+    shadowJar {
+        relocate("net.kyori.adventure.text.serializer.gson", "net.skinsrestorer.shadow.kyori.normal.gson")
     }
 }
