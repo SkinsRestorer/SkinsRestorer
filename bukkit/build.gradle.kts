@@ -1,3 +1,7 @@
+plugins {
+    alias(libs.plugins.runpaper)
+}
+
 dependencies {
     implementation(projects.skinsrestorerApi)
     implementation(projects.skinsrestorerShared)
@@ -49,10 +53,15 @@ tasks.jar {
     }
 }
 
-tasks.shadowJar {
-    projectIncludes.forEach { include ->
-        val jarTask = include.tasks.named<Jar>("jar").get()
-        dependsOn(jarTask)
-        from(zipTree(jarTask.archiveFile))
+tasks {
+    shadowJar {
+        projectIncludes.forEach { include ->
+            val jarTask = include.tasks.named<Jar>("jar").get()
+            dependsOn(jarTask)
+            from(zipTree(jarTask.archiveFile))
+        }
+    }
+    runServer {
+        minecraftVersion(libs.versions.runpaperversion.get())
     }
 }

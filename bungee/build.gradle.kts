@@ -1,3 +1,7 @@
+plugins {
+    alias(libs.plugins.runwaterfall)
+}
+
 dependencies {
     implementation(projects.skinsrestorerApi)
     implementation(projects.skinsrestorerShared)
@@ -14,6 +18,11 @@ dependencies {
     implementation("org.bstats:bstats-bungeecord:3.0.2")
 }
 
-tasks.shadowJar {
-    configureKyoriRelocations()
+tasks {
+    shadowJar {
+        configureKyoriRelocations()
+    }
+    runWaterfall {
+        version(libs.versions.runwaterfallversion.get())
+    }
 }

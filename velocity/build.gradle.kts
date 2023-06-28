@@ -1,3 +1,7 @@
+plugins {
+    alias(libs.plugins.runvelocity)
+}
+
 dependencies {
     implementation(projects.skinsrestorerApi)
     implementation(projects.skinsrestorerShared) {
@@ -15,5 +19,11 @@ dependencies {
 indra {
     javaVersions {
         target(11)
+    }
+}
+
+tasks {
+    runVelocity {
+        version(libs.versions.runvelocityversion.get())
     }
 }
