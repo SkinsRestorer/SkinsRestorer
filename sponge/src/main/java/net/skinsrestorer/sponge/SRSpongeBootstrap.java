@@ -56,6 +56,7 @@ public class SRSpongeBootstrap {
         SRBootstrapper.startPlugin(
                 injector -> {
                     injector.register(Game.class, game);
+                    injector.register(PluginContainer.class, container);
                     injector.register(Injector.class, guiceInjector);
                 },
                 new Log4jLoggerImpl(logger),
