@@ -14,10 +14,6 @@ dependencies {
 
     testImplementation(testFixtures(projects.skinsrestorerShared))
 
-    implementation("net.kyori:adventure-text-serializer-gson:4.14.0") {
-        isTransitive = false
-    }
-
     implementation("org.bstats:bstats-sponge:3.0.2")
     compileOnly("com.mojang:authlib:1.11")
 }
@@ -51,11 +47,5 @@ sponge {
             loadOrder(PluginDependency.LoadOrder.AFTER)
             optional(false)
         }
-    }
-}
-
-tasks {
-    shadowJar {
-        relocate("net.kyori.adventure.text.serializer.gson", "net.skinsrestorer.shadow.kyori.normal.gson")
     }
 }
