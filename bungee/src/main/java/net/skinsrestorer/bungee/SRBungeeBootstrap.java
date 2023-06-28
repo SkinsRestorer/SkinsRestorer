@@ -48,7 +48,7 @@ public class SRBungeeBootstrap extends Plugin {
                 },
                 new JavaLoggerImpl(new BungeeConsoleImpl(proxy.getConsole()), proxy.getLogger()),
                 true,
-                injector -> injector.getSingleton(SRBungeeAdapter.class),
+                SRBungeeAdapter.class,
                 SharedUpdateCheckInit.class,
                 SRProxyPlugin.class,
                 getDescription().getVersion(),

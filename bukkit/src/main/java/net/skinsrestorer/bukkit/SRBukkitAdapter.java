@@ -21,6 +21,7 @@ package net.skinsrestorer.bukkit;
 
 import ch.jalu.injector.Injector;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.bukkit.command.SRBukkitCommand;
@@ -48,6 +49,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import javax.inject.Inject;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -61,31 +63,19 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin> {
     private final Injector injector;
     private final Server server;
     @Getter
-    private final Path pluginFile; // Only for platform API use
-    @Getter
     private final JavaPlugin pluginInstance; // Only for platform API use
+    @Getter
+    private final BukkitAudiences adventure;
     @Getter
     private final SchedulerProvider schedulerProvider = ProviderSelector.builder(SchedulerProvider.class)
             .add("net.skinsrestorer.bukkit.folia.FoliaSchedulerProvider") // Compiled with java 17, which the bukkit module is not.
             .add(new BukkitSchedulerProvider())
             .buildAndGet();
-    @Getter
-    private final BukkitAudiences adventure;
-
-    public SRBukkitAdapter(Injector injector, Path pluginFile, JavaPlugin pluginInstance, BukkitAudiences adventure) {
-        this.injector = injector;
-        this.server = injector.getSingleton(Server.class);
-        this.pluginFile = pluginFile;
-        this.pluginInstance = pluginInstance;
-        this.adventure = adventure;
-
-        injector.register(SRBukkitAdapter.class, this);
-        injector.register(SRServerAdapter.class, this);
-    }
 
     @Override
     public Object createMetricsInstance() {

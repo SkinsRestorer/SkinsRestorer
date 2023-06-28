@@ -20,13 +20,13 @@
 package net.skinsrestorer.sponge;
 
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 import net.skinsrestorer.shared.plugin.SRBootstrapper;
 import net.skinsrestorer.shared.plugin.SRServerPlugin;
 import net.skinsrestorer.shared.serverinfo.Platform;
 import net.skinsrestorer.shared.update.SharedUpdateCheckInit;
 import net.skinsrestorer.sponge.logger.Log4jLoggerImpl;
 import org.apache.logging.log4j.Logger;
-import org.bstats.sponge.Metrics;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.event.Listener;
@@ -45,8 +45,7 @@ public class SRSpongeBootstrap {
     @Inject
     private Path dataFolder;
     @Inject
-    @SuppressWarnings("SpongeInjection")
-    private Metrics.Factory metricsFactory;
+    private Injector guiceInjector;
     @Inject
     private Logger logger;
     @Inject
@@ -54,15 +53,14 @@ public class SRSpongeBootstrap {
 
     @Listener
     public void onInitialize(ConstructPluginEvent event) {
-        // Need to init metrics before plugin because metrics wants to hook in the lifecycle before the plugin
-        Metrics metrics = metricsFactory.make(2337);
-        metrics.startup(null);
-
         SRBootstrapper.startPlugin(
-                injector -> injector.register(Game.class, game),
+                injector -> {
+                    injector.register(Game.class, game);
+                    injector.register(Injector.class, guiceInjector);
+                },
                 new Log4jLoggerImpl(logger),
                 false,
-                i -> new SRSpongeAdapter(i, metrics, container),
+                SRSpongeAdapter.class,
                 SharedUpdateCheckInit.class,
                 SRServerPlugin.class,
                 container.metadata().version().toString(),

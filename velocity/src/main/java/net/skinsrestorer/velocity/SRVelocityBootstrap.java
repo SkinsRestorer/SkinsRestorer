@@ -20,6 +20,7 @@
 package net.skinsrestorer.velocity;
 
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Dependency;
@@ -33,7 +34,6 @@ import net.skinsrestorer.shared.plugin.SRProxyPlugin;
 import net.skinsrestorer.shared.serverinfo.Platform;
 import net.skinsrestorer.shared.update.SharedUpdateCheckInit;
 import net.skinsrestorer.velocity.logger.Slf4jLoggerImpl;
-import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
 
 import java.nio.file.Path;
@@ -46,7 +46,7 @@ public class SRVelocityBootstrap {
     @Inject
     private ProxyServer proxy;
     @Inject
-    private Metrics.Factory metricsFactory;
+    private Injector guiceInjector;
     @Inject
     @DataDirectory
     private Path dataFolder;
@@ -58,10 +58,14 @@ public class SRVelocityBootstrap {
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent event) {
         SRBootstrapper.startPlugin(
-                injector -> injector.register(ProxyServer.class, proxy),
+                injector -> {
+                    injector.register(ProxyServer.class, proxy);
+                    injector.register(Injector.class, guiceInjector);
+                    injector.register(SRVelocityBootstrap.class, this);
+                },
                 new Slf4jLoggerImpl(logger),
                 false,
-                injector -> new SRVelocityAdapter(injector, this, metricsFactory),
+                SRVelocityAdapter.class,
                 SharedUpdateCheckInit.class,
                 SRProxyPlugin.class,
                 container.getDescription().getVersion()

@@ -25,6 +25,7 @@ import net.skinsrestorer.bukkit.SRBukkitAdapter;
 import net.skinsrestorer.bukkit.SRBukkitInit;
 import net.skinsrestorer.bukkit.logger.BukkitConsoleImpl;
 import net.skinsrestorer.bukkit.update.BukkitUpdateCheckInit;
+import net.skinsrestorer.bukkit.utils.PluginJarProvider;
 import net.skinsrestorer.shared.log.JavaLoggerImpl;
 import net.skinsrestorer.shared.plugin.SRBootstrapper;
 import net.skinsrestorer.shared.plugin.SRServerPlugin;
@@ -107,27 +108,32 @@ public class LoadTest {
         descriptionField.setAccessible(true);
         descriptionField.set(plugin, description);
 
-        BukkitAudiences adventure = mock(BukkitAudiences.class);
+        try (BukkitAudiences adventure = mock(BukkitAudiences.class)) {
+            SRBootstrapper.startPlugin(
+                    injector -> {
+                        injector.register(JavaPlugin.class, plugin);
+                        injector.register(Server.class, server);
+                        injector.register(BukkitAudiences.class, adventure);
+                        injector.register(PluginJarProvider.class, new PluginJarProvider(pluginFile));
+                    },
+                    new JavaLoggerImpl(new BukkitConsoleImpl(server.getConsoleSender()), server.getLogger()),
+                    true,
+                    SRBukkitAdapter.class,
+                    BukkitUpdateCheckInit.class,
+                    SRServerPlugin.class,
+                    BuildData.VERSION,
+                    configDir,
+                    Platform.BUKKIT,
+                    SRBukkitInit.class
+            );
 
-        SRBootstrapper.startPlugin(
-                injector -> injector.register(Server.class, server),
-                new JavaLoggerImpl(new BukkitConsoleImpl(server.getConsoleSender()), server.getLogger()),
-                true,
-                injector -> new SRBukkitAdapter(injector, pluginFile, plugin, adventure),
-                BukkitUpdateCheckInit.class,
-                SRServerPlugin.class,
-                BuildData.VERSION,
-                configDir,
-                Platform.BUKKIT,
-                SRBukkitInit.class
-        );
-
-        while (!runQueue.isEmpty()) {
-            try {
-                runQueue.poll().run();
-            } catch (Exception e) {
-                e.printStackTrace();
-                throw e;
+            while (!runQueue.isEmpty()) {
+                try {
+                    runQueue.poll().run();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    throw e;
+                }
             }
         }
     }

@@ -29,13 +29,12 @@ import net.skinsrestorer.shared.update.UpdateCheckInit;
 
 import java.nio.file.Path;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class SRBootstrapper {
     public static void startPlugin(
             Consumer<Injector> platformRegister,
             SRPlatformLogger isrLogger, boolean loggerColor,
-            Function<Injector, SRPlatformAdapter<?>> createAdapter,
+            Class<? extends SRPlatformAdapter<?>> adapterClass,
             Class<? extends UpdateCheckInit> updateCheck, Class<?> srPlatformClass,
             String version, Path dataFolder, Platform platform,
             Class<? extends SRPlatformInit> initCLass) {
@@ -47,7 +46,14 @@ public class SRBootstrapper {
 
             injector.register(SRLogger.class, new SRLogger(isrLogger, loggerColor));
 
-            injector.register(SRPlatformAdapter.class, createAdapter.apply(injector));
+            SRPlatformAdapter<?> adapter = injector.getSingleton(adapterClass);
+            injector.register(SRPlatformAdapter.class, adapter);
+            if (adapter instanceof SRServerAdapter) {
+                injector.register(SRServerAdapter.class, (SRServerAdapter<?>) adapter);
+            } else if (adapter instanceof SRProxyAdapter) {
+                injector.register(SRProxyAdapter.class, (SRProxyAdapter<?>) adapter);
+            }
+
             srPlugin = new SRPlugin(injector, version, dataFolder, platform, updateCheck);
             injector.getSingleton(srPlatformClass);
 
