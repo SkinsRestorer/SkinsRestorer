@@ -27,7 +27,7 @@ public class BukkitComponentHelper {
     private static final GsonComponentSerializer GSON = GsonComponentSerializer.gson();
     private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacySection();
 
-    public static String convertToLegacy(JsonElement element) {
-        return LEGACY.serialize(GSON.deserializeFromTree(element));
+    public static String convertToLegacy(String messageJson) {
+        return LEGACY.serialize(GSON.deserialize(messageJson));
     }
 }

@@ -44,8 +44,8 @@ public class SkinsRestorerLocale {
     @Getter
     private final SRForeign defaultForeign = () -> settings.getProperty(MessageConfig.LOCALE);
 
-    public JsonElement getMessage(SRForeign foreign, Message key, Object... args) {
-        return gsonSerializer.serializeToTree(legacySerializer.deserialize(getMessageInternal(foreign, key, args)));
+    public String getMessage(SRForeign foreign, Message key, Object... args) {
+        return gsonSerializer.serialize(legacySerializer.deserialize(getMessageInternal(foreign, key, args)));
     }
 
     private String getMessageInternal(SRForeign foreign, Message key, Object... args) {

@@ -24,5 +24,5 @@ import net.skinsrestorer.shared.subjects.SRForeign;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 
 public interface TranslatableException {
-    JsonElement getMessage(SRForeign foreign, SkinsRestorerLocale locale);
+    String getMessage(SRForeign foreign, SkinsRestorerLocale locale);
 }

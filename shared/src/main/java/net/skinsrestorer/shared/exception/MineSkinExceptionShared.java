@@ -47,7 +47,7 @@ public class MineSkinExceptionShared extends MineSkinException implements Transl
     }
 
     @Override
-    public JsonElement getMessage(SRForeign foreign, SkinsRestorerLocale locale) {
+    public String getMessage(SRForeign foreign, SkinsRestorerLocale locale) {
         return locale.getMessage(foreign, message, args);
     }
 }

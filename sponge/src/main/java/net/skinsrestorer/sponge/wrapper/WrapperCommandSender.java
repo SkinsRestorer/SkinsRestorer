@@ -48,8 +48,8 @@ public class WrapperCommandSender implements SRCommandSender {
     }
 
     @Override
-    public void sendMessage(JsonElement message) {
-        audience.sendMessage(Identity.nil(), serializer.deserializeFromTree(message));
+    public void sendMessage(String messageJson) {
+        audience.sendMessage(Identity.nil(), serializer.deserialize(messageJson));
     }
 
     @Override

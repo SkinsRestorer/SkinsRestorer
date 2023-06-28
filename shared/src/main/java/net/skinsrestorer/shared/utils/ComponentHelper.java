@@ -32,12 +32,12 @@ public class ComponentHelper {
     private static final LegacyComponentSerializer LEGACY_COMPONENT_SERIALIZER = LegacyComponentSerializer.legacySection();
     private static final PlainTextComponentSerializer PLAIN_COMPONENT_SERIALIZER = PlainTextComponentSerializer.plainText();
 
-    public static JsonElement parse(String s) {
-        return GSON_COMPONENT_SERIALIZER.serializeToTree(LEGACY_COMPONENT_SERIALIZER.deserialize(s));
+    public static String parse(String s) {
+        return GSON_COMPONENT_SERIALIZER.serialize(LEGACY_COMPONENT_SERIALIZER.deserialize(s));
     }
 
-    public static String convertToPlain(JsonElement jsonElement) {
-        return PLAIN_COMPONENT_SERIALIZER.serialize(GSON_COMPONENT_SERIALIZER.deserializeFromTree(jsonElement));
+    public static String convertToPlain(String messageJson) {
+        return PLAIN_COMPONENT_SERIALIZER.serialize(GSON_COMPONENT_SERIALIZER.deserialize(messageJson));
     }
 
     public static void sendException(Throwable t, SRCommandSender sender, SkinsRestorerLocale locale) {

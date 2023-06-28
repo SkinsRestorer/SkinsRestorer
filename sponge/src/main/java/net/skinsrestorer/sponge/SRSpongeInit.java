@@ -106,6 +106,6 @@ public class SRSpongeInit implements SRServerPlatformInit {
         return game.server().serviceProvider().permissionService()
                 .newDescriptionBuilder(adapter.getPluginContainer())
                 .id(permission.getPermissionString())
-                .description(GSON.deserializeFromTree(locale.getMessage(locale.getDefaultForeign(), description)));
+                .description(GSON.deserialize(locale.getMessage(locale.getDefaultForeign(), description)));
     }
 }

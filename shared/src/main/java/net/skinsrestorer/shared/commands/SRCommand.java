@@ -120,7 +120,7 @@ public final class SRCommand {
     private void onStatus(SRCommandSender sender) {
         sender.sendMessage(Message.ADMINCOMMAND_STATUS_CHECKING);
 
-        JsonElement breakLine = ComponentHelper.parse("§3----------------------------------------------");
+        String breakLine = ComponentHelper.parse("§3----------------------------------------------");
         sender.sendMessage(breakLine);
 
         ServiceCheckerService.ServiceCheckResponse response = serviceCheckerService.checkServices();
