@@ -1,5 +1,5 @@
 {
-  "skinsrestorer.prefix_format": "<yellow>[<dark_green>SkinsRestorer</dark_green>] {0}",
+  "skinsrestorer.prefix_format": "<yellow>[<dark_green>SkinsRestorer</dark_green>] <text>",
   "skinsrestorer.help_skin": "Changes your skin.",
   "skinsrestorer.help_skins": "Opens skins GUI.",
   "skinsrestorer.help_sr": "Admin commands for SkinsRestorer.",

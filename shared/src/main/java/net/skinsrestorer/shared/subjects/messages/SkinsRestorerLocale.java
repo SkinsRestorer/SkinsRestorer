@@ -22,6 +22,10 @@ package net.skinsrestorer.shared.subjects.messages;
 import ch.jalu.configme.SettingsManager;
 import com.google.gson.JsonElement;
 import lombok.Getter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.skinsrestorer.shared.config.MessageConfig;
@@ -36,7 +40,7 @@ import java.util.Locale;
 
 public class SkinsRestorerLocale {
     private final GsonComponentSerializer gsonSerializer = GsonComponentSerializer.gson();
-    private final LegacyComponentSerializer legacySerializer = LegacyComponentSerializer.legacySection();
+    private final MiniMessage miniMessage = MiniMessage.miniMessage();
     @Inject
     private LocaleManager localeManager;
     @Inject
@@ -44,11 +48,11 @@ public class SkinsRestorerLocale {
     @Getter
     private final SRForeign defaultForeign = () -> settings.getProperty(MessageConfig.LOCALE);
 
-    public String getMessage(SRForeign foreign, Message key, Object... args) {
-        return gsonSerializer.serialize(legacySerializer.deserialize(getMessageInternal(foreign, key, args)));
+    public String getMessage(SRForeign foreign, Message key, TagResolver tagResolver) {
+        return gsonSerializer.serialize(getMessageInternal(foreign, key, tagResolver));
     }
 
-    private String getMessageInternal(SRForeign foreign, Message key, Object... args) {
+    private Component getMessageInternal(SRForeign foreign, Message key, TagResolver tagResolver) {
         SRForeign target = settings.getProperty(MessageConfig.PER_ISSUER_LOCALE) ? foreign : defaultForeign;
 
         boolean isConsole = foreign instanceof SRCommandSender && !(foreign instanceof SRPlayer);
@@ -60,10 +64,12 @@ public class SkinsRestorerLocale {
             throw new IllegalStateException(String.format("Message %s not found", key.name()));
         }
 
+        Component component = miniMessage.deserialize(message, tagResolver);
+
         if (key.isPrefixed() && !settings.getProperty(MessageConfig.DISABLE_PREFIX)) {
-            message = getMessageInternal(target, Message.PREFIX_FORMAT, message);
+            component = getMessageInternal(target, Message.PREFIX_FORMAT, Placeholder.component("text", component));
         }
 
-        return new MessageFormat(C.c(message)).format(args);
+        return component;
     }
 }
