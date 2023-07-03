@@ -19,11 +19,39 @@
  */
 package net.skinsrestorer.shared.utils;
 
+import ch.jalu.configme.SettingsManager;
+import ch.jalu.injector.Injector;
+import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.shared.config.DatabaseConfig;
+import net.skinsrestorer.shared.plugin.SRServerPlugin;
+
+import javax.inject.Inject;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class MetricsCounter {
+    private final Injector injector;
+    public String usesMySQL() {
+        try {
+            SettingsManager settings = injector.getSingleton(SettingsManager.class);
+            return String.valueOf(settings.getProperty(DatabaseConfig.MYSQL_ENABLED));
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public String isProxyMode() {
+        try {
+            SRServerPlugin serverPlugin = injector.getIfAvailable(SRServerPlugin.class);
+            return String.valueOf(serverPlugin.isProxyMode());
+
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     private final Map<Service, AtomicInteger> map = new EnumMap<>(Service.class);
 
     public void increment(Service service) {
