@@ -29,6 +29,8 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.skinsrestorer.shared.commands.library.annotations.*;
 import net.skinsrestorer.shared.commands.library.types.EnumArgumentType;
 import net.skinsrestorer.shared.commands.library.types.SRPlayerArgumentType;
@@ -352,17 +354,21 @@ public class CommandManager<T extends SRCommandSender> {
     }
 
     public List<String> getHelpMessage(String command, T source) {
-        return getHelpMessageNodeStart(dispatcher.getRoot().getChild(command), "/" + command, source);
+        return getHelpMessageNodeStart(dispatcher.getRoot().getChild(command), "/" + command, source)
+                .stream().map(ComponentHelper::convertToJsonString).collect(Collectors.toList());
     }
 
-    protected List<String> getHelpMessageNodeStart(CommandNode<T> node, String commandPrefix, T source) {
-        List<String> result = new ArrayList<>();
-        getAllUsage(node, source, result, "");
-        result.replaceAll(s -> commandPrefix + ARGUMENT_SEPARATOR + s);
-        return Collections.unmodifiableList(result.stream().filter(s -> !s.isEmpty()).collect(Collectors.toList()));
+    protected List<Component> getHelpMessageNodeStart(CommandNode<T> node, String commandPrefix, T source) {
+        TextComponent prefixComponent = Component.text(commandPrefix + ARGUMENT_SEPARATOR);
+        List<TextComponent> result = new ArrayList<>();
+        getAllUsage(node, source, result, Component.empty());
+        return result.stream()
+                .filter(c -> !c.content().isEmpty())
+                .map(prefixComponent::append)
+                .collect(Collectors.toList());
     }
 
-    private void getAllUsage(CommandNode<T> node, T source, List<String> result, String prefix) {
+    private void getAllUsage(CommandNode<T> node, T source, List<TextComponent> result, TextComponent prefix) {
         if (!node.canUse(source)) {
             return;
         }
@@ -371,29 +377,27 @@ public class CommandManager<T extends SRCommandSender> {
             return;
         }
 
-        if (node.getCommand() != null && !prefix.isEmpty()) {
-            StringBuilder builder = new StringBuilder();
-            builder.append(prefix);
+        boolean prefixEmpty = prefix.content().isEmpty();
+
+        if (node.getCommand() != null && !prefixEmpty) {
             CommandInjectHelp<T> command = (CommandInjectHelp<T>) node.getCommand();
             if (command.getHelpData() != null) {
-                builder.append(" - ");
-                builder.append(locale.getMessage(source, command.getHelpData().getCommandDescription()));
+                result.add(prefix
+                        .append(Component.text(" - "))
+                        .append(ComponentHelper.convertJsonToComponent(locale.getMessage(source, command.getHelpData().getCommandDescription()))));
+            } else {
+                result.add(prefix);
             }
-            result.add(builder.toString());
         }
 
         if (node.getRedirect() != null) {
             String redirect = node.getRedirect() == dispatcher.getRoot() ? "..." : "-> " + node.getRedirect().getUsageText();
-            result.add(prefix.isEmpty() ? node.getUsageText() + ARGUMENT_SEPARATOR + redirect : prefix + ARGUMENT_SEPARATOR + redirect);
+            result.add(Component.text(prefixEmpty ? node.getUsageText() + ARGUMENT_SEPARATOR + redirect : prefix + ARGUMENT_SEPARATOR + redirect));
         } else if (!node.getChildren().isEmpty()) {
             for (CommandNode<T> child : node.getChildren()) {
-                StringBuilder builder = new StringBuilder();
-                if (!prefix.isEmpty()) {
-                    builder.append(prefix).append(ARGUMENT_SEPARATOR);
-                }
+                TextComponent resultPrefix = prefixEmpty ? prefix : prefix.append(Component.text(ARGUMENT_SEPARATOR));
 
-                builder.append(child.getUsageText());
-                getAllUsage(child, source, result, builder.toString());
+                getAllUsage(child, source, result, resultPrefix.append(Component.text(child.getUsageText())));
             }
         }
     }
@@ -403,7 +407,7 @@ public class CommandManager<T extends SRCommandSender> {
         try {
             dispatcher.execute(input, executor);
         } catch (CommandSyntaxException e) {
-            executor.sendMessage(ComponentHelper.parse(e.getRawMessage().getString()));
+            executor.sendMessage(ComponentHelper.parseMiniMessageToJsonString(e.getRawMessage().getString()));
         }
     }
 

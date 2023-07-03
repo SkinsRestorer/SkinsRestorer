@@ -12,6 +12,7 @@ dependencies {
     implementation("net.kyori:adventure-text-serializer-legacy:4.14.0")
     implementation("net.kyori:adventure-text-serializer-ansi:4.14.0")
     implementation("net.kyori:adventure-text-serializer-plain:4.14.0")
+    implementation("net.kyori:adventure-text-minimessage:4.14.0")
 
     implementation("org.fusesource.jansi:jansi:2.4.0")
 

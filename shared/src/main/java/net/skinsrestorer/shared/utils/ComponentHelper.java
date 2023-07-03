@@ -19,7 +19,8 @@
  */
 package net.skinsrestorer.shared.utils;
 
-import com.google.gson.JsonElement;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
@@ -30,21 +31,35 @@ import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 public class ComponentHelper {
     private static final GsonComponentSerializer GSON_COMPONENT_SERIALIZER = GsonComponentSerializer.gson();
     private static final LegacyComponentSerializer LEGACY_COMPONENT_SERIALIZER = LegacyComponentSerializer.legacySection();
+    private static final MiniMessage MINI_MESSAGE_COMPONENT_SERIALIZER = MiniMessage.miniMessage();
     private static final PlainTextComponentSerializer PLAIN_COMPONENT_SERIALIZER = PlainTextComponentSerializer.plainText();
 
-    public static String parse(String s) {
-        return GSON_COMPONENT_SERIALIZER.serialize(LEGACY_COMPONENT_SERIALIZER.deserialize(s));
+    public static String parseMiniMessageToJsonString(String miniMessage) {
+        return GSON_COMPONENT_SERIALIZER.serialize(MINI_MESSAGE_COMPONENT_SERIALIZER.deserialize(miniMessage));
     }
 
-    public static String convertToPlain(String messageJson) {
+    public static String convertJsonToPlain(String messageJson) {
         return PLAIN_COMPONENT_SERIALIZER.serialize(GSON_COMPONENT_SERIALIZER.deserialize(messageJson));
+    }
+
+    // Only used on platforms that don't support adventure
+    public static String convertJsonToLegacy(String messageJson) {
+        return LEGACY_COMPONENT_SERIALIZER.serialize(GSON_COMPONENT_SERIALIZER.deserialize(messageJson));
+    }
+
+    public static String convertToJsonString(Component component) {
+        return GSON_COMPONENT_SERIALIZER.serialize(component);
+    }
+
+    public static Component convertJsonToComponent(String messageJson) {
+        return GSON_COMPONENT_SERIALIZER.deserialize(messageJson);
     }
 
     public static void sendException(Throwable t, SRCommandSender sender, SkinsRestorerLocale locale) {
         if (t instanceof TranslatableException) {
             sender.sendMessage(((TranslatableException) t).getMessage(sender, locale));
         } else {
-            sender.sendMessage(parse(SharedMethods.getRootCause(t).getMessage()));
+            sender.sendMessage(parseMiniMessageToJsonString(SharedMethods.getRootCause(t).getMessage()));
         }
     }
 }

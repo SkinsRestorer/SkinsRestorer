@@ -19,7 +19,6 @@
  */
 package net.skinsrestorer.shared.exception;
 
-import com.google.gson.JsonElement;
 import net.skinsrestorer.api.exception.MineSkinException;
 import net.skinsrestorer.shared.subjects.SRForeign;
 import net.skinsrestorer.shared.subjects.messages.Message;
@@ -31,7 +30,7 @@ public class MineSkinExceptionShared extends MineSkinException implements Transl
     private final Object[] args;
 
     public MineSkinExceptionShared(SkinsRestorerLocale locale, Message message, Object... args) {
-        super(ComponentHelper.convertToPlain(locale.getMessage(locale.getDefaultForeign(), message, args)));
+        super(ComponentHelper.convertJsonToPlain(locale.getMessage(locale.getDefaultForeign(), message, args)));
         this.message = message;
         this.args = args;
     }

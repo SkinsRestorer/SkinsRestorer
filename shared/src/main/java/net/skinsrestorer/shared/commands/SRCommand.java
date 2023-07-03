@@ -21,7 +21,6 @@ package net.skinsrestorer.shared.commands;
 
 import ch.jalu.configme.SettingsManager;
 import ch.jalu.injector.Injector;
-import com.google.gson.JsonElement;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.PropertyUtil;
 import net.skinsrestorer.api.SkinsRestorer;
@@ -89,9 +88,7 @@ public final class SRCommand {
 
     @RootCommand
     private void onDefault(SRCommandSender sender) {
-        for (String line : commandManager.getHelpMessage("sr", sender)) {
-            sender.sendMessage(ComponentHelper.parse(line));
-        }
+        commandManager.getHelpMessage("sr", sender).forEach(sender::sendMessage);
     }
 
     @Subcommand("reload")
@@ -120,7 +117,7 @@ public final class SRCommand {
     private void onStatus(SRCommandSender sender) {
         sender.sendMessage(Message.ADMINCOMMAND_STATUS_CHECKING);
 
-        String breakLine = ComponentHelper.parse("§3----------------------------------------------");
+        String breakLine = ComponentHelper.parseMiniMessageToJsonString("<dark_aqua>----------------------------------------------");
         sender.sendMessage(breakLine);
 
         ServiceCheckerService.ServiceCheckResponse response = serviceCheckerService.checkServices();
@@ -133,7 +130,7 @@ public final class SRCommand {
         if (settings.getProperty(DevConfig.DEBUG) || workingUUIDCount == 0 || workingProfileCount == 0) {
             for (String result : results) {
                 if (settings.getProperty(DevConfig.DEBUG) || result.contains("✘")) {
-                    sender.sendMessage(ComponentHelper.parse(result));
+                    sender.sendMessage(ComponentHelper.parseMiniMessageToJsonString(result));
                 }
             }
         }

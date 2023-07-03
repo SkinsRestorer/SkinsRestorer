@@ -23,7 +23,6 @@ import com.cryptomorin.xseries.SkullUtils;
 import com.cryptomorin.xseries.XMaterial;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.bukkit.utils.BukkitComponentHelper;
 import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
 import net.skinsrestorer.shared.gui.GUIManager;
 import net.skinsrestorer.shared.gui.SharedGUI;
@@ -32,6 +31,7 @@ import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.subjects.SRForeign;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
+import net.skinsrestorer.shared.utils.ComponentHelper;
 import org.bukkit.Server;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -65,7 +65,7 @@ public class SkinsGUI implements GUIManager<Inventory> {
         }
 
         skullMeta.setDisplayName(name);
-        skullMeta.setLore(listOf(BukkitComponentHelper.convertToLegacy(locale.getMessage(player, Message.SKINSMENU_SELECT_SKIN))));
+        skullMeta.setLore(listOf(ComponentHelper.convertJsonToLegacy(locale.getMessage(player, Message.SKINSMENU_SELECT_SKIN))));
 
         try {
             SkullUtils.applySkin(skullMeta, property);
@@ -86,7 +86,7 @@ public class SkinsGUI implements GUIManager<Inventory> {
             throw new IllegalStateException("Could not create glass for " + type.name() + "!");
         }
 
-        String text = type.getMessage() == null ? " " : BukkitComponentHelper.convertToLegacy(locale.getMessage(player, type.getMessage()));
+        String text = type.getMessage() == null ? " " : ComponentHelper.convertJsonToLegacy(locale.getMessage(player, type.getMessage()));
 
         ItemMeta itemMeta = itemStack.getItemMeta();
 
@@ -102,7 +102,7 @@ public class SkinsGUI implements GUIManager<Inventory> {
 
     public Inventory createGUI(Consumer<ClickEventInfo> callback, SRForeign player, int page, Map<String, String> skinsList) {
         SkinsGUIHolder instance = new SkinsGUIHolder(page, callback, wrapper);
-        Inventory inventory = server.createInventory(instance, 54, BukkitComponentHelper.convertToLegacy(locale.getMessage(player, Message.SKINSMENU_TITLE_NEW, String.valueOf(page + 1))));
+        Inventory inventory = server.createInventory(instance, 54, ComponentHelper.convertJsonToLegacy(locale.getMessage(player, Message.SKINSMENU_TITLE_NEW, String.valueOf(page + 1))));
         instance.setInventory(inventory);
 
         ItemStack none = createGlass(GlassType.NONE, player, locale);
