@@ -94,6 +94,12 @@ public class Mapping1_19_4 implements IMapping {
             player.getClass().getMethod("updateScaledHealth").invoke(player);
             player.updateInventory();
             triggerHealthUpdate(player);
+
+            // Resend their effects
+            for (net.minecraft.world.effect.MobEffectInstance mobEffect : MappingReflection.getHandle(player, ServerPlayer.class).getActiveEffects()) {
+                ClientboundUpdateMobEffectPacket effect = new ClientboundUpdateMobEffectPacket(MappingReflection.getHandle(player, ServerPlayer.class).getId(), mobEffect);
+                sendPacket(entityPlayer, effect);
+            }
         } catch (ReflectiveOperationException e) {
             e.printStackTrace();
             throw new RuntimeException(e.getMessage());
