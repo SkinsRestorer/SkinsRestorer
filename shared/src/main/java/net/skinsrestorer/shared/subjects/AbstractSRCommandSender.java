@@ -23,11 +23,19 @@ import lombok.experimental.SuperBuilder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
+import net.skinsrestorer.shared.utils.ComponentHelper;
 
 @SuperBuilder
 public abstract class AbstractSRCommandSender implements SRCommandSender {
     public void sendMessage(Message key, TagResolver... resolvers) {
-        sendMessage(getSRLocale().getMessage(this, key, resolvers));
+        String translatedMessage = getSRLocale().getMessage(this, key, resolvers);
+        String plainMessage = ComponentHelper.convertJsonToPlain(translatedMessage);
+
+        if (plainMessage.isEmpty()) {
+            return;
+        }
+
+        sendMessage(translatedMessage);
     }
 
     protected abstract SkinsRestorerLocale getSRLocale();

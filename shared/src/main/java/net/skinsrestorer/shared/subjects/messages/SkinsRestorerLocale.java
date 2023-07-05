@@ -59,6 +59,10 @@ public class SkinsRestorerLocale {
             throw new IllegalStateException(String.format("Message %s not found", key.name()));
         }
 
+        if (message.isEmpty()) {
+            return Component.empty();
+        }
+
         Component component = miniMessage.deserialize(message, tagResolver);
 
         if (key.isPrefixed() && !settings.getProperty(MessageConfig.DISABLE_PREFIX)) {
