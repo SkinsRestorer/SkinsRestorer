@@ -22,6 +22,7 @@ package net.skinsrestorer.sponge.gui;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.gui.GUIManager;
@@ -139,7 +140,8 @@ public class SkinsGUI implements GUIManager<InventoryMenu> {
 
         InventoryMenu menu = inventory.asMenu();
 
-        menu.setTitle(GSON.deserialize(locale.getMessage(player, Message.SKINSMENU_TITLE_NEW, String.valueOf(page + 1))));
+        menu.setTitle(GSON.deserialize(locale.getMessage(player, Message.SKINSMENU_TITLE_NEW,
+                Placeholder.unparsed("page_number", String.valueOf(page + 1)))));
         menu.setReadOnly(true);
         menu.registerSlotClick(new GUIListener(callback, page, wrapper));
 

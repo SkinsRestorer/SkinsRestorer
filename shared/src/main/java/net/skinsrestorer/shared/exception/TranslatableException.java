@@ -19,7 +19,6 @@
  */
 package net.skinsrestorer.shared.exception;
 
-import com.google.gson.JsonElement;
 import net.skinsrestorer.shared.subjects.SRForeign;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 

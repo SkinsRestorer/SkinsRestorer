@@ -19,19 +19,24 @@
  */
 package net.skinsrestorer.shared.subjects;
 
+import lombok.experimental.SuperBuilder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.skinsrestorer.shared.subjects.messages.Message;
-import net.skinsrestorer.shared.subjects.permissions.Permission;
-import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
+import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 
-public interface SRCommandSender extends SRForeign {
-    void sendMessage(String messageJson);
+import java.util.Optional;
 
-    void sendMessage(Message key, TagResolver... resolvers);
+@SuperBuilder
+public abstract class AbstractSRCommandSender implements SRCommandSender {
+    public void sendMessage(Message key, TagResolver... resolvers) {
+        Optional<String> translatedMessage = getSRLocale().getMessageOptional(this, key, resolvers);
 
-    boolean hasPermission(Permission permission);
+        if (!translatedMessage.isPresent()) {
+            return;
+        }
 
-    default boolean hasPermission(PermissionRegistry registry) {
-        return hasPermission(registry.getPermission());
+        sendMessage(translatedMessage.get());
     }
+
+    protected abstract SkinsRestorerLocale getSRLocale();
 }

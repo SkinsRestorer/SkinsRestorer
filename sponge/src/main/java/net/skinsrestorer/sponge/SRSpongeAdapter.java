@@ -69,11 +69,11 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SRSpongeAdapter implements SRServerAdapter<PluginContainer> {
+    private static final GsonComponentSerializer GSON = GsonComponentSerializer.gson();
     private final Injector injector;
     @Getter
     private final PluginContainer pluginContainer;
     private final Game game;
-    private static final GsonComponentSerializer GSON = GsonComponentSerializer.gson();
     private final Set<SRRegisterPayload<SRCommandSender>> commands = new HashSet<>();
 
     @PostConstruct

@@ -29,7 +29,6 @@ import net.skinsrestorer.bukkit.listener.PlayerJoin;
 import net.skinsrestorer.bukkit.listener.PlayerResourcePackStatus;
 import net.skinsrestorer.bukkit.listener.ServerMessageListener;
 import net.skinsrestorer.bukkit.paper.PaperPlayerJoinEvent;
-import net.skinsrestorer.bukkit.utils.BukkitComponentHelper;
 import net.skinsrestorer.bukkit.utils.BukkitReflection;
 import net.skinsrestorer.bukkit.utils.NMSVersion;
 import net.skinsrestorer.bukkit.utils.NoMappingException;
@@ -43,6 +42,7 @@ import net.skinsrestorer.shared.serverinfo.SemanticVersion;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.PermissionGroup;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
+import net.skinsrestorer.shared.utils.ComponentHelper;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
@@ -173,13 +173,13 @@ public class SRBukkitInit implements SRServerPlatformInit {
     public void initPermissions() {
         for (PermissionRegistry permission : PermissionRegistry.values()) {
             String permissionString = permission.getPermission().getPermissionString();
-            String description = BukkitComponentHelper.convertToLegacy(locale.getMessage(locale.getDefaultForeign(), permission.getDescription()));
+            String description = ComponentHelper.convertJsonToLegacy(locale.getMessage(locale.getDefaultForeign(), permission.getDescription()));
 
             addPermission(new Permission(permissionString, description));
         }
 
         for (PermissionGroup group : PermissionGroup.values()) {
-            String description = BukkitComponentHelper.convertToLegacy(locale.getMessage(locale.getDefaultForeign(), group.getDescription()));
+            String description = ComponentHelper.convertJsonToLegacy(locale.getMessage(locale.getDefaultForeign(), group.getDescription()));
             Map<String, Boolean> children = new HashMap<>();
             mergePermissions(group, children);
             PermissionDefault permissionDefault = group == PermissionGroup.PLAYER ? PermissionDefault.TRUE : PermissionDefault.OP;
