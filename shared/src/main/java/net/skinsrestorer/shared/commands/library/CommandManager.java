@@ -129,7 +129,7 @@ public class CommandManager<T extends SRCommandSender> {
     }
 
     private void addClassCommands(ArgumentBuilder<T, ?> baseNode, Set<String> conditionTrail, Object command, Class<?> commandClass) {
-        CommandNames names = getAnnotation(CommandNames.class, command.getClass())
+        CommandNames names = getAnnotation(CommandNames.class, commandClass)
                 .orElseThrow(() ->
                         new IllegalStateException("Command is missing @CommandNames annotation"));
 
@@ -142,7 +142,7 @@ public class CommandManager<T extends SRCommandSender> {
             aliases = Arrays.copyOfRange(names.value(), 1, names.value().length);
         }
 
-        PermissionRegistry classPermission = getAnnotation(CommandPermission.class, command.getClass())
+        PermissionRegistry classPermission = getAnnotation(CommandPermission.class, commandClass)
                 .map(CommandPermission::value).orElseThrow(() ->
                         new IllegalStateException(String.format("Command %s is missing @CommandPermission annotation", mainName)));
 
@@ -152,12 +152,12 @@ public class CommandManager<T extends SRCommandSender> {
 
         Set<String> classConditionTrail = new LinkedHashSet<>(conditionTrail);
 
-        getAnnotation(CommandConditions.class, command.getClass())
+        getAnnotation(CommandConditions.class, commandClass)
                 .ifPresent(condition -> classConditionTrail.addAll(Arrays.asList(condition.value())));
 
-        CommandHelpData currentHelpData = getHelpData(mainName, command.getClass());
+        CommandHelpData currentHelpData = getHelpData(mainName, commandClass);
 
-        addMethodCommands(classBuilder, classPermission, classConditionTrail, command, command.getClass(), currentHelpData);
+        addMethodCommands(classBuilder, classPermission, classConditionTrail, command, commandClass, currentHelpData);
 
         LiteralCommandNode<T> classCommandNode = classBuilder.build();
         baseNode.then(classCommandNode);

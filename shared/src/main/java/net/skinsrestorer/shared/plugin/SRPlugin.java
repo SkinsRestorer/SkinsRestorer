@@ -104,8 +104,6 @@ public class SRPlugin {
 
     public SRPlugin(Injector injector, String version, Path dataFolder, Platform platform, Class<? extends UpdateCheckInit> updateCheck) {
         injector.register(SRPlugin.class, this);
-        injector.register(MetricsCounter.class, new MetricsCounter(injector));
-        injector.register(CooldownStorage.class, new CooldownStorage());
 
         this.injector = injector;
         this.adapter = injector.getSingleton(SRPlatformAdapter.class);

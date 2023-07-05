@@ -33,23 +33,20 @@ import java.util.concurrent.atomic.AtomicInteger;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class MetricsCounter {
     private final Injector injector;
+    private final SettingsManager settingsManager;
+
     public String usesMySQL() {
-        try {
-            SettingsManager settings = injector.getSingleton(SettingsManager.class);
-            return String.valueOf(settings.getProperty(DatabaseConfig.MYSQL_ENABLED));
-        } catch (Exception e) {
-            return null;
-        }
+        return String.valueOf(settingsManager.getProperty(DatabaseConfig.MYSQL_ENABLED));
     }
 
     public String isProxyMode() {
-        try {
-            SRServerPlugin serverPlugin = injector.getIfAvailable(SRServerPlugin.class);
-            return String.valueOf(serverPlugin.isProxyMode());
+        SRServerPlugin serverPlugin = injector.getIfAvailable(SRServerPlugin.class);
 
-        } catch (Exception e) {
+        if (serverPlugin == null) {
             return null;
         }
+
+        return String.valueOf(serverPlugin.isProxyMode());
     }
 
     private final Map<Service, AtomicInteger> map = new EnumMap<>(Service.class);
