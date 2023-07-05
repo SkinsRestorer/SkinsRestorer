@@ -33,9 +33,11 @@ import net.skinsrestorer.shared.subjects.SRPlayer;
 
 import javax.inject.Inject;
 import java.util.Locale;
+import java.util.Optional;
 
 public class SkinsRestorerLocale {
     private final GsonComponentSerializer gsonSerializer = GsonComponentSerializer.gson();
+    private final String empty = gsonSerializer.serialize(Component.empty());
     private final MiniMessage miniMessage = MiniMessage.miniMessage();
     @Inject
     private LocaleManager localeManager;
@@ -45,10 +47,19 @@ public class SkinsRestorerLocale {
     private final SRForeign defaultForeign = () -> settings.getProperty(MessageConfig.LOCALE);
 
     public String getMessage(SRForeign foreign, Message key, TagResolver... tagResolver) {
-        return gsonSerializer.serialize(getMessageInternal(foreign, key, TagResolver.resolver(tagResolver)));
+        Component component = getMessageInternal(foreign, key, TagResolver.resolver(tagResolver))
+                .orElseGet(Component::empty);
+
+        return gsonSerializer.serialize(component);
     }
 
-    private Component getMessageInternal(SRForeign foreign, Message key, TagResolver tagResolver) {
+    public Optional<String> getMessageOptional(SRForeign foreign, Message key, TagResolver... tagResolver) {
+        Optional<Component> component = getMessageInternal(foreign, key, TagResolver.resolver(tagResolver));
+
+        return component.map(gsonSerializer::serialize);
+    }
+
+    private Optional<Component> getMessageInternal(SRForeign foreign, Message key, TagResolver tagResolver) {
         SRForeign target = settings.getProperty(MessageConfig.PER_ISSUER_LOCALE) ? foreign : defaultForeign;
         boolean isConsole = foreign instanceof SRCommandSender && !(foreign instanceof SRPlayer);
         Locale locale = isConsole ? settings.getProperty(MessageConfig.CONSOLE_LOCALE) : target.getLocale();
@@ -60,15 +71,15 @@ public class SkinsRestorerLocale {
         }
 
         if (message.isEmpty()) {
-            return Component.empty();
+            return Optional.empty();
         }
 
         Component component = miniMessage.deserialize(message, tagResolver);
 
         if (key.isPrefixed() && !settings.getProperty(MessageConfig.DISABLE_PREFIX)) {
-            component = getMessageInternal(target, Message.PREFIX_FORMAT, Placeholder.component("text", component));
+            return getMessageInternal(target, Message.PREFIX_FORMAT, Placeholder.component("text", component));
+        } else {
+            return Optional.of(component);
         }
-
-        return component;
     }
 }

@@ -25,17 +25,18 @@ import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.utils.ComponentHelper;
 
+import java.util.Optional;
+
 @SuperBuilder
 public abstract class AbstractSRCommandSender implements SRCommandSender {
     public void sendMessage(Message key, TagResolver... resolvers) {
-        String translatedMessage = getSRLocale().getMessage(this, key, resolvers);
-        String plainMessage = ComponentHelper.convertJsonToPlain(translatedMessage);
+        Optional<String> translatedMessage = getSRLocale().getMessageOptional(this, key, resolvers);
 
-        if (plainMessage.isEmpty()) {
+        if (!translatedMessage.isPresent()) {
             return;
         }
 
-        sendMessage(translatedMessage);
+        sendMessage(translatedMessage.get());
     }
 
     protected abstract SkinsRestorerLocale getSRLocale();
