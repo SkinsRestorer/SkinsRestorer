@@ -38,6 +38,8 @@ import java.util.function.Consumer;
 
 public final class SpigotSkinRefresher implements Consumer<Player> {
     private final SRBukkitAdapter adapter;
+
+    private final Class<?> playerOutEffect;
     private final Class<?> playOutRespawn;
     private final Class<?> playOutPlayerInfo;
     private final Class<?> playOutPosition;
@@ -56,6 +58,7 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
             playOutPosition = BukkitReflection.getNMSClass("PacketPlayOutPosition", "net.minecraft.network.protocol.game.PacketPlayOutPosition");
             playOutPlayerInfo = BukkitReflection.getNMSClass("PacketPlayOutPlayerInfo", "net.minecraft.network.protocol.game.PacketPlayOutPlayerInfo");
             playOutRespawn = BukkitReflection.getNMSClass("PacketPlayOutRespawn", "net.minecraft.network.protocol.game.PacketPlayOutRespawn");
+            playerOutEffect = BukkitReflection.getNMSClass("ClientboundUpdateMobEffectPacket", "net.minecraft.world.effect.MobEffectInstance");
 
             try {
                 removePlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "EnumPlayerInfoAction", "REMOVE_PLAYER");
@@ -250,6 +253,8 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
             ReflectionUtil.invokeMethod(player, "updateScaledHealth");
             player.updateInventory();
             ReflectionUtil.invokeMethod(entityPlayer, "triggerHealthUpdate");
+
+            //todo: resend effect
 
             // Here we fix a bug where changing your skin causes CommandBlocks to no longer work
             // This might be FALSE REPORT by another plugin and this is NOT OP EXPLOIT

@@ -70,6 +70,7 @@ import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.SRFileUtils;
 import org.bstats.MetricsBase;
+import org.bstats.charts.SimplePie;
 import org.bstats.charts.SingleLineChart;
 
 import java.io.IOException;
@@ -103,7 +104,7 @@ public class SRPlugin {
 
     public SRPlugin(Injector injector, String version, Path dataFolder, Platform platform, Class<? extends UpdateCheckInit> updateCheck) {
         injector.register(SRPlugin.class, this);
-        injector.register(MetricsCounter.class, new MetricsCounter());
+        injector.register(MetricsCounter.class, new MetricsCounter(injector));
         injector.register(CooldownStorage.class, new CooldownStorage());
 
         this.injector = injector;
@@ -343,6 +344,8 @@ public class SRPlugin {
             metrics.addCustomChart(new SingleLineChart("minetools_calls", () -> metricsCounter.collect(MetricsCounter.Service.MINE_TOOLS)));
             metrics.addCustomChart(new SingleLineChart("mojang_calls", () -> metricsCounter.collect(MetricsCounter.Service.MOJANG)));
             metrics.addCustomChart(new SingleLineChart("ashcon_calls", () -> metricsCounter.collect(MetricsCounter.Service.ASHCON)));
+            metrics.addCustomChart(new SimplePie("uses_mysql", metricsCounter::usesMySQL));
+            metrics.addCustomChart(new SimplePie("proxy_mode", metricsCounter::isProxyMode));
         } catch (ReflectiveOperationException e) {
             e.printStackTrace();
         }
