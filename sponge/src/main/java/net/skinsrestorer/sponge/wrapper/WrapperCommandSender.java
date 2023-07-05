@@ -20,16 +20,12 @@
 package net.skinsrestorer.sponge.wrapper;
 
 import ch.jalu.configme.SettingsManager;
-import com.google.gson.JsonElement;
 import lombok.experimental.SuperBuilder;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.identity.Identity;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.skinsrestorer.shared.config.MessageConfig;
 import net.skinsrestorer.shared.subjects.AbstractSRCommandSender;
-import net.skinsrestorer.shared.subjects.SRCommandSender;
-import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.Permission;
 import org.spongepowered.api.service.permission.Subject;

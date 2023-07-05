@@ -34,6 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class MetricsCounter {
     private final Injector injector;
     private final SettingsManager settingsManager;
+    private final Map<Service, AtomicInteger> map = new EnumMap<>(Service.class);
 
     public String usesMySQL() {
         return String.valueOf(settingsManager.getProperty(DatabaseConfig.MYSQL_ENABLED));
@@ -48,8 +49,6 @@ public class MetricsCounter {
 
         return String.valueOf(serverPlugin.isProxyMode());
     }
-
-    private final Map<Service, AtomicInteger> map = new EnumMap<>(Service.class);
 
     public void increment(Service service) {
         getOrCreate(service).incrementAndGet();

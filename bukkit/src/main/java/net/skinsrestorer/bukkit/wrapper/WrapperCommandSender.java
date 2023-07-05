@@ -20,14 +20,11 @@
 package net.skinsrestorer.bukkit.wrapper;
 
 import ch.jalu.configme.SettingsManager;
-import com.google.gson.JsonElement;
 import lombok.experimental.SuperBuilder;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.skinsrestorer.bukkit.SRBukkitAdapter;
 import net.skinsrestorer.shared.config.MessageConfig;
 import net.skinsrestorer.shared.subjects.AbstractSRCommandSender;
-import net.skinsrestorer.shared.subjects.SRCommandSender;
-import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.Permission;
 import org.bukkit.command.CommandSender;
