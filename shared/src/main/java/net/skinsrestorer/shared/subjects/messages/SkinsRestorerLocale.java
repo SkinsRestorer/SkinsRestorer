@@ -77,7 +77,7 @@ public class SkinsRestorerLocale {
         Component component = miniMessage.deserialize(message, tagResolver);
 
         if (key.isPrefixed() && !settings.getProperty(MessageConfig.DISABLE_PREFIX)) {
-            return getMessageInternal(target, Message.PREFIX_FORMAT, Placeholder.component("text", component));
+            return getMessageInternal(target, Message.PREFIX_FORMAT, Placeholder.component("message", component));
         } else {
             return Optional.of(component);
         }

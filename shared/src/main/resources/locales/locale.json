@@ -1,5 +1,5 @@
 {
-  "skinsrestorer.prefix_format": "<yellow>[<dark_green>SkinsRestorer</dark_green>] <text>",
+  "skinsrestorer.prefix_format": "<yellow>[<dark_green>SkinsRestorer</dark_green>] <message>",
   "skinsrestorer.help_skin": "Changes your skin.",
   "skinsrestorer.help_skins": "Opens skins GUI.",
   "skinsrestorer.help_sr": "Admin commands for SkinsRestorer.",
@@ -76,7 +76,7 @@
   "skinsrestorer.not_premium": "<dark_red>Error<dark_gray>: <red>Premium player with that name does not exist.",
   "skinsrestorer.only_allowed_on_console": "<dark_red>Error<dark_gray>: <red>Only console may execute this command!",
   "skinsrestorer.only_allowed_on_player": "<dark_red>Error<dark_gray>: <red>Only players may execute this command!",
-  "skinsrestorer.invalid_player": "<dark_red>Error<dark_gray>: <red>{0} is not a valid username or URL.",
+  "skinsrestorer.invalid_player": "<dark_red>Error<dark_gray>: <red><input> is not a valid username or URL.",
   "skinsrestorer.skin_cooldown": "<dark_red>Error<dark_gray>: <red>You can change your skin again in <yellow><time></yellow> seconds.",
   "skinsrestorer.ms_updating_skin": "<dark_green>Uploading skin, please wait... (This may take up some time)",
   "skinsrestorer.generic_error": "<dark_red>Error<dark_gray>: <red>An error occurred while requesting skin data, please try again later!",
