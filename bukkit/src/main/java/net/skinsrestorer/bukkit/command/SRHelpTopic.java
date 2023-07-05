@@ -20,10 +20,10 @@
 package net.skinsrestorer.bukkit.command;
 
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.bukkit.utils.BukkitComponentHelper;
 import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
+import net.skinsrestorer.shared.utils.ComponentHelper;
 import org.bukkit.command.CommandSender;
 import org.bukkit.help.HelpTopic;
 import org.jetbrains.annotations.NotNull;
@@ -48,7 +48,7 @@ public class SRHelpTopic extends HelpTopic {
     @NotNull
     @Override
     public String getShortText() {
-        return BukkitComponentHelper.convertToLegacy(locale.getMessage(locale.getDefaultForeign(),
+        return ComponentHelper.convertJsonToLegacy(locale.getMessage(locale.getDefaultForeign(),
                 srbukkitCommand.getMeta().getRootHelp().getCommandDescription()));
     }
 
@@ -57,6 +57,10 @@ public class SRHelpTopic extends HelpTopic {
     public String getFullText(@NotNull CommandSender forWho) {
         SRCommandSender sender = wrapper.commandSender(forWho);
         return String.join("\n",
-                srbukkitCommand.getExecutor().getManager().getHelpMessage(srbukkitCommand.getMeta().getRootName(), sender));
+                srbukkitCommand.getExecutor().getManager()
+                        .getHelpMessage(srbukkitCommand.getMeta().getRootName(), sender)
+                        .stream()
+                        .map(ComponentHelper::convertJsonToLegacy)
+                        .toArray(String[]::new));
     }
 }

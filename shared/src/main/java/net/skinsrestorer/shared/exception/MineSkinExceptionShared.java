@@ -19,7 +19,7 @@
  */
 package net.skinsrestorer.shared.exception;
 
-import com.google.gson.JsonElement;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.skinsrestorer.api.exception.MineSkinException;
 import net.skinsrestorer.shared.subjects.SRForeign;
 import net.skinsrestorer.shared.subjects.messages.Message;
@@ -28,12 +28,12 @@ import net.skinsrestorer.shared.utils.ComponentHelper;
 
 public class MineSkinExceptionShared extends MineSkinException implements TranslatableException {
     private final Message message;
-    private final Object[] args;
+    private final TagResolver[] args;
 
-    public MineSkinExceptionShared(SkinsRestorerLocale locale, Message message, Object... args) {
-        super(ComponentHelper.convertToPlain(locale.getMessage(locale.getDefaultForeign(), message, args)));
+    public MineSkinExceptionShared(SkinsRestorerLocale locale, Message message, TagResolver... resolvers) {
+        super(ComponentHelper.convertJsonToPlain(locale.getMessage(locale.getDefaultForeign(), message, resolvers)));
         this.message = message;
-        this.args = args;
+        this.args = resolvers;
     }
 
     public MineSkinExceptionShared(MineSkinException cause) {

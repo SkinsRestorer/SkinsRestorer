@@ -20,13 +20,11 @@
 package net.skinsrestorer.bukkit.wrapper;
 
 import ch.jalu.configme.SettingsManager;
-import com.google.gson.JsonElement;
 import lombok.experimental.SuperBuilder;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.skinsrestorer.bukkit.SRBukkitAdapter;
 import net.skinsrestorer.shared.config.MessageConfig;
-import net.skinsrestorer.shared.subjects.SRCommandSender;
-import net.skinsrestorer.shared.subjects.messages.Message;
+import net.skinsrestorer.shared.subjects.AbstractSRCommandSender;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.Permission;
 import org.bukkit.command.CommandSender;
@@ -34,7 +32,7 @@ import org.bukkit.command.CommandSender;
 import java.util.Locale;
 
 @SuperBuilder
-public class WrapperCommandSender implements SRCommandSender {
+public class WrapperCommandSender extends AbstractSRCommandSender {
     private final SettingsManager settings;
     private final SkinsRestorerLocale locale;
     private final SRBukkitAdapter adapter;
@@ -52,12 +50,12 @@ public class WrapperCommandSender implements SRCommandSender {
     }
 
     @Override
-    public void sendMessage(Message key, Object... args) {
-        sendMessage(locale.getMessage(this, key, args));
+    public boolean hasPermission(Permission permission) {
+        return permission.checkPermission(settings, sender::hasPermission);
     }
 
     @Override
-    public boolean hasPermission(Permission permission) {
-        return permission.checkPermission(settings, sender::hasPermission);
+    protected SkinsRestorerLocale getSRLocale() {
+        return locale;
     }
 }

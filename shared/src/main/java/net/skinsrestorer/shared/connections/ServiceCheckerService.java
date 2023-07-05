@@ -35,10 +35,10 @@ import java.util.UUID;
 public class ServiceCheckerService {
     private static final String XKNAT_NAME = "xknat";
     private static final UUID XKNAT_UUID = UUID.fromString("7dcfc130-344a-4719-9fbe-3176bc2075c6");
-    private static final String MESSAGE_ERROR = "%s §c✘ Error getting %s";
-    private static final String MESSAGE_ERROR_EXCEPTION = "%s §c✘ Error getting %s: %s";
-    private static final String UUID_MESSAGE = "%s §a✔ xknat UUID: §b%s";
-    private static final String PROFILE_MESSAGE = "%s §a✔ xknat Profile: §b%s";
+    private static final String MESSAGE_ERROR = "%s <red>✘ Error getting %s";
+    private static final String MESSAGE_ERROR_EXCEPTION = "%s <red>✘ Error getting %s: %s";
+    private static final String UUID_MESSAGE = "%s <green>✔ xknat UUID: <aqua>%s";
+    private static final String PROFILE_MESSAGE = "%s <green>✔ xknat Profile: <aqua>%s";
     private final MojangAPIImpl mojangAPI;
 
     public ServiceCheckResponse checkServices() {

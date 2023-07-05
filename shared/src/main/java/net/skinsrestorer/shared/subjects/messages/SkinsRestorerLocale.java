@@ -20,23 +20,25 @@
 package net.skinsrestorer.shared.subjects.messages;
 
 import ch.jalu.configme.SettingsManager;
-import com.google.gson.JsonElement;
 import lombok.Getter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.skinsrestorer.shared.config.MessageConfig;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRForeign;
 import net.skinsrestorer.shared.subjects.SRPlayer;
-import net.skinsrestorer.shared.utils.C;
 
 import javax.inject.Inject;
-import java.text.MessageFormat;
 import java.util.Locale;
+import java.util.Optional;
 
 public class SkinsRestorerLocale {
     private final GsonComponentSerializer gsonSerializer = GsonComponentSerializer.gson();
-    private final LegacyComponentSerializer legacySerializer = LegacyComponentSerializer.legacySection();
+    private final String empty = gsonSerializer.serialize(Component.empty());
+    private final MiniMessage miniMessage = MiniMessage.miniMessage();
     @Inject
     private LocaleManager localeManager;
     @Inject
@@ -44,13 +46,21 @@ public class SkinsRestorerLocale {
     @Getter
     private final SRForeign defaultForeign = () -> settings.getProperty(MessageConfig.LOCALE);
 
-    public String getMessage(SRForeign foreign, Message key, Object... args) {
-        return gsonSerializer.serialize(legacySerializer.deserialize(getMessageInternal(foreign, key, args)));
+    public String getMessage(SRForeign foreign, Message key, TagResolver... tagResolver) {
+        Component component = getMessageInternal(foreign, key, TagResolver.resolver(tagResolver))
+                .orElseGet(Component::empty);
+
+        return gsonSerializer.serialize(component);
     }
 
-    private String getMessageInternal(SRForeign foreign, Message key, Object... args) {
-        SRForeign target = settings.getProperty(MessageConfig.PER_ISSUER_LOCALE) ? foreign : defaultForeign;
+    public Optional<String> getMessageOptional(SRForeign foreign, Message key, TagResolver... tagResolver) {
+        Optional<Component> component = getMessageInternal(foreign, key, TagResolver.resolver(tagResolver));
 
+        return component.map(gsonSerializer::serialize);
+    }
+
+    private Optional<Component> getMessageInternal(SRForeign foreign, Message key, TagResolver tagResolver) {
+        SRForeign target = settings.getProperty(MessageConfig.PER_ISSUER_LOCALE) ? foreign : defaultForeign;
         boolean isConsole = foreign instanceof SRCommandSender && !(foreign instanceof SRPlayer);
         Locale locale = isConsole ? settings.getProperty(MessageConfig.CONSOLE_LOCALE) : target.getLocale();
 
@@ -60,10 +70,16 @@ public class SkinsRestorerLocale {
             throw new IllegalStateException(String.format("Message %s not found", key.name()));
         }
 
-        if (key.isPrefixed() && !settings.getProperty(MessageConfig.DISABLE_PREFIX)) {
-            message = getMessageInternal(target, Message.PREFIX_FORMAT, message);
+        if (message.isEmpty()) {
+            return Optional.empty();
         }
 
-        return new MessageFormat(C.c(message)).format(args);
+        Component component = miniMessage.deserialize(message, tagResolver);
+
+        if (key.isPrefixed() && !settings.getProperty(MessageConfig.DISABLE_PREFIX)) {
+            return getMessageInternal(target, Message.PREFIX_FORMAT, Placeholder.component("message", component));
+        } else {
+            return Optional.of(component);
+        }
     }
 }
