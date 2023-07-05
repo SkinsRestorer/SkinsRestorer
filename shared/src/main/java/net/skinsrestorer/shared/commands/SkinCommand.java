@@ -22,6 +22,7 @@ package net.skinsrestorer.shared.commands;
 import ch.jalu.configme.SettingsManager;
 import ch.jalu.configme.properties.Property;
 import lombok.RequiredArgsConstructor;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.skinsrestorer.api.connections.MineSkinAPI;
 import net.skinsrestorer.api.connections.model.MineSkinResponse;
 import net.skinsrestorer.api.exception.DataRequestException;
@@ -107,7 +108,7 @@ public final class SkinCommand {
             if (senderEqual(sender, target)) {
                 sender.sendMessage(Message.SUCCESS_SKIN_CLEAR);
             } else {
-                sender.sendMessage(Message.SUCCESS_SKIN_CLEAR_OTHER, target.getName());
+                sender.sendMessage(Message.SUCCESS_SKIN_CLEAR_OTHER, Placeholder.unparsed("name", target.getName()));
             }
         } catch (DataRequestException e) {
             e.printStackTrace();
@@ -120,7 +121,7 @@ public final class SkinCommand {
     @Description(Message.HELP_SKIN_SEARCH)
     @CommandConditions("cooldown")
     private void onSkinSearch(SRCommandSender sender, String searchString) {
-        sender.sendMessage(Message.SKIN_SEARCH_MESSAGE, searchString);
+        sender.sendMessage(Message.SKIN_SEARCH_MESSAGE, Placeholder.unparsed("search", searchString));
     }
 
     @Subcommand("update")
@@ -155,7 +156,7 @@ public final class SkinCommand {
             if (senderEqual(sender, target)) {
                 sender.sendMessage(Message.SUCCESS_UPDATING_SKIN);
             } else {
-                sender.sendMessage(Message.SUCCESS_UPDATING_SKIN_OTHER, target.getName());
+                sender.sendMessage(Message.SUCCESS_UPDATING_SKIN_OTHER, Placeholder.unparsed("name", target.getName()));
             }
 
             setCoolDown(sender, CommandConfig.SKIN_CHANGE_COOLDOWN);
@@ -203,7 +204,7 @@ public final class SkinCommand {
         if (playerEqual(sender, target)) {
             sender.sendMessage(Message.SUCCESS_SKIN_CHANGE);
         } else {
-            sender.sendMessage(Message.SUCCESS_SKIN_CHANGE_OTHER, target.getName());
+            sender.sendMessage(Message.SUCCESS_SKIN_CHANGE_OTHER, Placeholder.unparsed("name", target.getName()));
         }
     }
 

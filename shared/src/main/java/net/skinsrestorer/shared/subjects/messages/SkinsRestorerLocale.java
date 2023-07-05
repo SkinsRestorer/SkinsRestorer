@@ -20,22 +20,18 @@
 package net.skinsrestorer.shared.subjects.messages;
 
 import ch.jalu.configme.SettingsManager;
-import com.google.gson.JsonElement;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.skinsrestorer.shared.config.MessageConfig;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRForeign;
 import net.skinsrestorer.shared.subjects.SRPlayer;
-import net.skinsrestorer.shared.utils.C;
 
 import javax.inject.Inject;
-import java.text.MessageFormat;
 import java.util.Locale;
 
 public class SkinsRestorerLocale {
@@ -48,13 +44,12 @@ public class SkinsRestorerLocale {
     @Getter
     private final SRForeign defaultForeign = () -> settings.getProperty(MessageConfig.LOCALE);
 
-    public String getMessage(SRForeign foreign, Message key, TagResolver tagResolver) {
-        return gsonSerializer.serialize(getMessageInternal(foreign, key, tagResolver));
+    public String getMessage(SRForeign foreign, Message key, TagResolver... tagResolver) {
+        return gsonSerializer.serialize(getMessageInternal(foreign, key, TagResolver.resolver(tagResolver)));
     }
 
     private Component getMessageInternal(SRForeign foreign, Message key, TagResolver tagResolver) {
         SRForeign target = settings.getProperty(MessageConfig.PER_ISSUER_LOCALE) ? foreign : defaultForeign;
-
         boolean isConsole = foreign instanceof SRCommandSender && !(foreign instanceof SRPlayer);
         Locale locale = isConsole ? settings.getProperty(MessageConfig.CONSOLE_LOCALE) : target.getLocale();
 

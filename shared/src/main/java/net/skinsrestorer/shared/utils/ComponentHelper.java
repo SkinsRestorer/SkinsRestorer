@@ -55,6 +55,10 @@ public class ComponentHelper {
         return GSON_COMPONENT_SERIALIZER.deserialize(messageJson);
     }
 
+    public static String convertToPlain(Component component) {
+        return PLAIN_COMPONENT_SERIALIZER.serialize(component);
+    }
+
     public static void sendException(Throwable t, SRCommandSender sender, SkinsRestorerLocale locale) {
         if (t instanceof TranslatableException) {
             sender.sendMessage(((TranslatableException) t).getMessage(sender, locale));

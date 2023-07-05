@@ -23,6 +23,7 @@ import com.cryptomorin.xseries.SkullUtils;
 import com.cryptomorin.xseries.XMaterial;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
 import net.skinsrestorer.shared.gui.GUIManager;
 import net.skinsrestorer.shared.gui.SharedGUI;
@@ -102,7 +103,9 @@ public class SkinsGUI implements GUIManager<Inventory> {
 
     public Inventory createGUI(Consumer<ClickEventInfo> callback, SRForeign player, int page, Map<String, String> skinsList) {
         SkinsGUIHolder instance = new SkinsGUIHolder(page, callback, wrapper);
-        Inventory inventory = server.createInventory(instance, 54, ComponentHelper.convertJsonToLegacy(locale.getMessage(player, Message.SKINSMENU_TITLE_NEW, String.valueOf(page + 1))));
+        Inventory inventory = server.createInventory(instance, 54, ComponentHelper.convertJsonToLegacy(
+                locale.getMessage(player, Message.SKINSMENU_TITLE_NEW,
+                        Placeholder.unparsed("page_number", String.valueOf(page + 1)))));
         instance.setInventory(inventory);
 
         ItemStack none = createGlass(GlassType.NONE, player, locale);

@@ -23,6 +23,7 @@ import ch.jalu.configme.SettingsManager;
 import ch.jalu.configme.SettingsManagerBuilder;
 import ch.jalu.injector.Injector;
 import lombok.Getter;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.skinsrestorer.api.SkinsRestorer;
 import net.skinsrestorer.api.SkinsRestorerProvider;
 import net.skinsrestorer.api.connections.MineSkinAPI;
@@ -162,7 +163,7 @@ public class SRPlugin {
             boolean shouldBlock = settings.getProperty(ProxyConfig.NOT_ALLOWED_COMMAND_SERVERS_ALLOWLIST) != inList;
 
             if (shouldBlock) {
-                sender.sendMessage(Message.COMMAND_SERVER_NOT_ALLOWED_MESSAGE, server);
+                sender.sendMessage(Message.COMMAND_SERVER_NOT_ALLOWED_MESSAGE, Placeholder.unparsed("server", server));
                 return false;
             }
 
@@ -173,7 +174,7 @@ public class SRPlugin {
             if (sender instanceof SRPlayer) {
                 UUID senderUUID = ((SRPlayer) sender).getUniqueId();
                 if (!sender.hasPermission(PermissionRegistry.BYPASS_COOLDOWN) && cooldownStorage.hasCooldown(senderUUID)) {
-                    sender.sendMessage(Message.SKIN_COOLDOWN, cooldownStorage.getCooldownSeconds(senderUUID));
+                    sender.sendMessage(Message.SKIN_COOLDOWN, Placeholder.unparsed("time", String.valueOf(cooldownStorage.getCooldownSeconds(senderUUID))));
 
                     return false;
                 }

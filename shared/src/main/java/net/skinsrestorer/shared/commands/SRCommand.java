@@ -22,6 +22,7 @@ package net.skinsrestorer.shared.commands;
 import ch.jalu.configme.SettingsManager;
 import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.skinsrestorer.api.PropertyUtil;
 import net.skinsrestorer.api.SkinsRestorer;
 import net.skinsrestorer.api.connections.MineSkinAPI;
@@ -135,8 +136,8 @@ public final class SRCommand {
             }
         }
 
-        sender.sendMessage(Message.ADMINCOMMAND_STATUS_WORKING_COUNT, workingUUIDCount);
-        sender.sendMessage(Message.ADMINCOMMAND_STATUS_WORKING_COUNT, workingProfileCount);
+        sender.sendMessage(Message.ADMINCOMMAND_STATUS_WORKING_COUNT, Placeholder.unparsed("count", String.valueOf(workingUUIDCount)));
+        sender.sendMessage(Message.ADMINCOMMAND_STATUS_WORKING_COUNT, Placeholder.unparsed("count", String.valueOf(workingProfileCount)));
 
         if (workingUUIDCount != 0 && workingProfileCount != 0) {
             sender.sendMessage(Message.ADMINCOMMAND_STATUS_WORKING);
@@ -145,15 +146,15 @@ public final class SRCommand {
         }
 
         sender.sendMessage(breakLine);
-        sender.sendMessage(Message.ADMINCOMMAND_STATUS_SUMMARY_VERSION, plugin.getVersion());
-        sender.sendMessage(Message.ADMINCOMMAND_STATUS_SUMMARY_SERVER, adapter.getPlatformVersion());
+        sender.sendMessage(Message.ADMINCOMMAND_STATUS_SUMMARY_VERSION, Placeholder.unparsed("version", plugin.getVersion()));
+        sender.sendMessage(Message.ADMINCOMMAND_STATUS_SUMMARY_SERVER, Placeholder.unparsed("version", adapter.getPlatformVersion()));
 
         SRServerPlugin serverPlugin = injector.getIfAvailable(SRServerPlugin.class);
         if (serverPlugin != null) {
-            sender.sendMessage(Message.ADMINCOMMAND_STATUS_SUMMARY_PROXYMODE, serverPlugin.isProxyMode());
+            sender.sendMessage(Message.ADMINCOMMAND_STATUS_SUMMARY_PROXYMODE, Placeholder.unparsed("proxy_mode", Boolean.toString(serverPlugin.isProxyMode())));
         }
 
-        sender.sendMessage(Message.ADMINCOMMAND_STATUS_SUMMARY_COMMIT, BuildData.COMMIT_SHORT);
+        sender.sendMessage(Message.ADMINCOMMAND_STATUS_SUMMARY_COMMIT, Placeholder.unparsed("hash", BuildData.COMMIT_SHORT));
         sender.sendMessage(Message.ADMINCOMMAND_STATUS_SUMMARY_FINISHED);
         sender.sendMessage(breakLine);
     }
@@ -168,7 +169,7 @@ public final class SRCommand {
                     Optional<UUID> targetId = cacheStorage.getUUID(target, false);
 
                     if (!targetId.isPresent()) {
-                        sender.sendMessage(Message.ADMINCOMMAND_DROP_PLAYER_NOT_FOUND, target);
+                        sender.sendMessage(Message.ADMINCOMMAND_DROP_PLAYER_NOT_FOUND, Placeholder.unparsed("player", target));
                         return;
                     }
 
@@ -182,7 +183,7 @@ public final class SRCommand {
                 Optional<InputDataResult> optional = skinStorage.findSkinData(target);
 
                 if (!optional.isPresent()) {
-                    sender.sendMessage(Message.ADMINCOMMAND_DROP_SKIN_NOT_FOUND, target);
+                    sender.sendMessage(Message.ADMINCOMMAND_DROP_SKIN_NOT_FOUND, Placeholder.unparsed("skin", target));
                     return;
                 }
 
@@ -192,7 +193,7 @@ public final class SRCommand {
                 break;
         }
 
-        sender.sendMessage(Message.SUCCESS_ADMIN_DROP, playerOrSkin.toString(), target);
+        sender.sendMessage(Message.SUCCESS_ADMIN_DROP, Placeholder.unparsed("type", playerOrSkin.toString()), Placeholder.unparsed("target", target));
     }
 
     @Subcommand("props")
@@ -212,10 +213,10 @@ public final class SRCommand {
             long timestamp = profile.getTimestamp();
             String requestTime = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new Date(timestamp));
 
-            sender.sendMessage(Message.ADMINCOMMAND_PROPS_REQUEST_TIME, requestTime);
-            sender.sendMessage(Message.ADMINCOMMAND_PROPS_PROFILE_ID, profile.getProfileId());
-            sender.sendMessage(Message.ADMINCOMMAND_PROPS_NAME, profile.getProfileName());
-            sender.sendMessage(Message.ADMINCOMMAND_PROPS_SKIN_TEXTURE, decodedSkin);
+            sender.sendMessage(Message.ADMINCOMMAND_PROPS_REQUEST_TIME, Placeholder.unparsed("request_time", requestTime));
+            sender.sendMessage(Message.ADMINCOMMAND_PROPS_PROFILE_ID, Placeholder.unparsed("profile_id", profile.getProfileId()));
+            sender.sendMessage(Message.ADMINCOMMAND_PROPS_NAME, Placeholder.unparsed("profile_name", profile.getProfileName()));
+            sender.sendMessage(Message.ADMINCOMMAND_PROPS_SKIN_TEXTURE, Placeholder.unparsed("skin_texture", decodedSkin));
             sender.sendMessage(Message.ADMINCOMMAND_PROPS_MORE_INFO_IN_CONSOLE);
 
             // Console
@@ -248,7 +249,7 @@ public final class SRCommand {
             if (C.validUrl(skinUrl)) {
                 MineSkinResponse response = mineSkinAPI.genSkin(skinUrl, skinVariant);
                 skinStorage.setCustomSkinData(skinName, response.getProperty());
-                sender.sendMessage(Message.SUCCESS_ADMIN_CREATECUSTOM, skinName);
+                sender.sendMessage(Message.SUCCESS_ADMIN_CREATECUSTOM, Placeholder.unparsed("skin", skinName));
             } else {
                 sender.sendMessage(Message.ERROR_INVALID_URLSKIN);
             }
@@ -274,7 +275,7 @@ public final class SRCommand {
             skinApplier.applySkin(player.getAs(Object.class), optional.get().getProperty());
         }
 
-        sender.sendMessage(Message.ADMINCOMMAND_SETSKINALL_SUCCESS, skinName);
+        sender.sendMessage(Message.ADMINCOMMAND_SETSKINALL_SUCCESS, Placeholder.unparsed("skin", skinName));
     }
 
     @Subcommand("applyskinall")
@@ -286,7 +287,7 @@ public final class SRCommand {
             try {
                 skinApplier.applySkin(player.getAs(Object.class));
             } catch (DataRequestException ignored) {
-                sender.sendMessage(Message.ADMINCOMMAND_APPLYSKINALL_PLAYER_ERROR, player.getName());
+                sender.sendMessage(Message.ADMINCOMMAND_APPLYSKINALL_PLAYER_ERROR, Placeholder.unparsed("player", player.getName()));
             }
         }
         sender.sendMessage(Message.ADMINCOMMAND_APPLYSKINALL_SUCCESS);
@@ -312,7 +313,7 @@ public final class SRCommand {
             sender.sendMessage(Message.ADMINCOMMAND_DUMP_UPLOADING);
             Optional<String> url = dumpService.dump();
             if (url.isPresent()) {
-                sender.sendMessage(Message.ADMINCOMMAND_DUMP_SUCCESS, "https://bytebin.lucko.me/" + url.get());
+                sender.sendMessage(Message.ADMINCOMMAND_DUMP_SUCCESS, Placeholder.unparsed("url", "https://bytebin.lucko.me/" + url.get()));
             } else {
                 sender.sendMessage(Message.ADMINCOMMAND_DUMP_ERROR);
             }

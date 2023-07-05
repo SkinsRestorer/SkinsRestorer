@@ -363,7 +363,7 @@ public class CommandManager<T extends SRCommandSender> {
         List<TextComponent> result = new ArrayList<>();
         getAllUsage(node, source, result, Component.empty());
         return result.stream()
-                .filter(c -> !c.content().isEmpty())
+                .filter(c -> !ComponentHelper.convertToPlain(c).isEmpty())
                 .map(prefixComponent::append)
                 .collect(Collectors.toList());
     }
@@ -377,7 +377,7 @@ public class CommandManager<T extends SRCommandSender> {
             return;
         }
 
-        boolean prefixEmpty = prefix.content().isEmpty();
+        boolean prefixEmpty = ComponentHelper.convertToPlain(prefix).isEmpty();
 
         if (node.getCommand() != null && !prefixEmpty) {
             CommandInjectHelp<T> command = (CommandInjectHelp<T>) node.getCommand();
