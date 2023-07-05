@@ -24,6 +24,7 @@ import ch.jalu.injector.Injector;
 import net.skinsrestorer.SRExtension;
 import net.skinsrestorer.SettingsHelper;
 import net.skinsrestorer.shared.config.DatabaseConfig;
+import net.skinsrestorer.shared.config.GUIConfig;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.storage.adapter.mysql.MySQLAdapter;
 import net.skinsrestorer.shared.storage.adapter.mysql.MySQLProvider;
@@ -88,6 +89,10 @@ public class MySQLAdapterTest {
         MySQLAdapter adapter = injector.getSingleton(MySQLAdapter.class);
         adapter.init();
 
-        AdapterHelper.testAdapter(adapter);
+        AdapterHelper.testAdapter(adapter, false);
+
+        when(settingsManager.getProperty(GUIConfig.CUSTOM_GUI_ENABLED)).thenReturn(true);
+
+        AdapterHelper.testAdapter(adapter, true);
     }
 }

@@ -38,6 +38,7 @@ import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
+import net.skinsrestorer.shared.utils.ComponentHelper;
 import net.skinsrestorer.shared.utils.FluentList;
 
 import java.lang.annotation.Annotation;
@@ -209,7 +210,7 @@ public class CommandManager<T extends SRCommandSender> {
                 registerParameters(childNode, subPermission, commandConditions, command, method, commandHelpData);
 
                 LiteralCommandNode<T> registeredNode = childNode.build();
-                node.then(registeredNode);
+                RecursiveCustomMerger.mergeThen(node, registeredNode);
 
                 for (String alias : aliases) {
                     node.then(buildRedirect(alias, registeredNode));
@@ -279,7 +280,9 @@ public class CommandManager<T extends SRCommandSender> {
             i++;
         }
 
-        nodes.get(nodes.size() - 1).executes(new CommandInjectHelp<>(currentHelpData,
+        ArgumentBuilder<T, ?> lastNode = nodes.get(nodes.size() - 1);
+
+        lastNode.executes(new CommandInjectHelp<>(currentHelpData,
                 new ConditionCommand<>(getConditionRegistrations(conditionTrail),
                         new BrigadierCommand<>(method, logger, command, platform))));
 
@@ -307,7 +310,7 @@ public class CommandManager<T extends SRCommandSender> {
     }
 
     private Predicate<T> requirePermission(PermissionRegistry permission) {
-        return source -> source.hasPermission(permission);
+        return new PermissionPredicate<>(permission);
     }
 
     private Set<String> insertAnnotationConditions(Set<String> conditionTrail, AnnotatedElement element) {
@@ -400,7 +403,7 @@ public class CommandManager<T extends SRCommandSender> {
         try {
             dispatcher.execute(input, executor);
         } catch (CommandSyntaxException e) {
-            executor.sendMessage(e.getRawMessage().getString());
+            executor.sendMessage(ComponentHelper.parse(e.getRawMessage().getString()));
         }
     }
 

@@ -19,7 +19,6 @@
  */
 package net.skinsrestorer.shared.api;
 
-import com.google.gson.Gson;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.SkinsRestorer;
@@ -48,7 +47,6 @@ public class SharedSkinsRestorer implements SkinsRestorer {
     private final MineSkinAPI mineSkinAPI;
     private final SharedSkinApplier<?> skinApplier;
     private final EventBusImpl eventBus;
-    private final Gson gson = new Gson();
 
     @SuppressWarnings("unchecked")
     @Override

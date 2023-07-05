@@ -22,8 +22,11 @@ package net.skinsrestorer.adapter;
 import ch.jalu.configme.SettingsManager;
 import ch.jalu.injector.Injector;
 import net.skinsrestorer.SRExtension;
+import net.skinsrestorer.SettingsHelper;
+import net.skinsrestorer.shared.config.GUIConfig;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.storage.adapter.file.FileAdapter;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
@@ -42,6 +45,11 @@ public class FileAdapterTest {
     @Mock
     private SettingsManager settingsManager;
 
+    @BeforeEach
+    public void setup() {
+        SettingsHelper.returnDefaultsForAllProperties(settingsManager);
+    }
+
     @Test
     public void testLoad(Injector injector) {
         injector.register(SettingsManager.class, settingsManager);
@@ -52,6 +60,10 @@ public class FileAdapterTest {
         FileAdapter adapter = injector.getSingleton(FileAdapter.class);
         adapter.init();
 
-        AdapterHelper.testAdapter(adapter);
+        AdapterHelper.testAdapter(adapter, false);
+
+        when(settingsManager.getProperty(GUIConfig.CUSTOM_GUI_ENABLED)).thenReturn(true);
+
+        AdapterHelper.testAdapter(adapter, true);
     }
 }

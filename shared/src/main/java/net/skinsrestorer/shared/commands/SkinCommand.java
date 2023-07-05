@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.connections.MineSkinAPI;
 import net.skinsrestorer.api.connections.model.MineSkinResponse;
 import net.skinsrestorer.api.exception.DataRequestException;
+import net.skinsrestorer.api.exception.MineSkinException;
 import net.skinsrestorer.api.property.*;
 import net.skinsrestorer.api.storage.PlayerStorage;
 import net.skinsrestorer.api.storage.SkinStorage;
@@ -43,14 +44,13 @@ import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
 import net.skinsrestorer.shared.utils.C;
+import net.skinsrestorer.shared.utils.ComponentHelper;
 import net.skinsrestorer.shared.utils.SRConstants;
 
 import javax.inject.Inject;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-
-import static net.skinsrestorer.shared.utils.SharedMethods.getRootCause;
 
 @SuppressWarnings("unused")
 @CommandNames("skin")
@@ -74,7 +74,7 @@ public final class SkinCommand {
     @RootCommand
     private void onDefault(SRCommandSender sender) {
         for (String line : commandManager.getHelpMessage("skin", sender)) {
-            sender.sendMessage(line);
+            sender.sendMessage(ComponentHelper.parse(line));
         }
     }
 
@@ -162,7 +162,7 @@ public final class SkinCommand {
 
             setCoolDown(sender, CommandConfig.SKIN_CHANGE_COOLDOWN);
         } catch (DataRequestException e) {
-            sender.sendMessage(getRootCause(e).getMessage());
+            ComponentHelper.sendException(e, sender, locale);
             setCoolDown(sender, CommandConfig.SKIN_ERROR_COOLDOWN);
         }
     }
@@ -254,7 +254,7 @@ public final class SkinCommand {
 
                 return true;
             } catch (DataRequestException e) {
-                sender.sendMessage(getRootCause(e).getMessage());
+                ComponentHelper.sendException(e, sender, locale);
             } catch (Exception e) {
                 logger.debug(SRLogLevel.SEVERE, String.format("Could not generate skin url: %s", skinInput), e);
                 sender.sendMessage(Message.ERROR_INVALID_URLSKIN);
@@ -276,8 +276,8 @@ public final class SkinCommand {
                 setCoolDown(sender, CommandConfig.SKIN_CHANGE_COOLDOWN);
 
                 return true;
-            } catch (DataRequestException e) {
-                sender.sendMessage(getRootCause(e).getMessage());
+            } catch (DataRequestException | MineSkinException e) {
+                ComponentHelper.sendException(e, sender, locale);
             }
         }
 

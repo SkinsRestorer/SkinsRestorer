@@ -38,6 +38,8 @@ import java.util.function.Consumer;
 
 public final class SpigotSkinRefresher implements Consumer<Player> {
     private final SRBukkitAdapter adapter;
+
+    private final Class<?> playerOutEffect;
     private final Class<?> playOutRespawn;
     private final Class<?> playOutPlayerInfo;
     private final Class<?> playOutPosition;
@@ -56,6 +58,7 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
             playOutPosition = BukkitReflection.getNMSClass("PacketPlayOutPosition", "net.minecraft.network.protocol.game.PacketPlayOutPosition");
             playOutPlayerInfo = BukkitReflection.getNMSClass("PacketPlayOutPlayerInfo", "net.minecraft.network.protocol.game.PacketPlayOutPlayerInfo");
             playOutRespawn = BukkitReflection.getNMSClass("PacketPlayOutRespawn", "net.minecraft.network.protocol.game.PacketPlayOutRespawn");
+            playerOutEffect = BukkitReflection.getNMSClass("ClientboundUpdateMobEffectPacket", "net.minecraft.world.effect.MobEffectInstance");
 
             try {
                 removePlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "EnumPlayerInfoAction", "REMOVE_PLAYER");
@@ -251,13 +254,21 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
             player.updateInventory();
             ReflectionUtil.invokeMethod(entityPlayer, "triggerHealthUpdate");
 
+            //todo: resend effect
+
+            // Here we fix a bug where changing your skin causes CommandBlocks to no longer work
+            // This might be FALSE REPORT by another plugin and this is NOT OP EXPLOIT
+            // This code is being used by paper in your server as well: https://github.com/PaperMC/Paper/blob/master/patches/server/0182-Player.setPlayerProfile-API.patch#L175-L178
+
+            // Here we check if the player is /OP
             if (player.isOp()) {
                 adapter.runSyncToPlayer(player, () -> {
-                    // Workaround..
+                    // Here we /deOP and /OP the same player
                     player.setOp(false);
                     player.setOp(true);
                 });
             }
+
         } catch (ReflectiveOperationException e) {
             e.printStackTrace();
         }

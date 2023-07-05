@@ -27,8 +27,10 @@ import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.property.SkinType;
 import net.skinsrestorer.api.property.SkinVariant;
 import net.skinsrestorer.shared.config.DatabaseConfig;
+import net.skinsrestorer.shared.config.GUIConfig;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
+import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.storage.model.cache.MojangCacheData;
 import net.skinsrestorer.shared.storage.model.player.LegacyPlayerData;
@@ -42,9 +44,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class MySQLAdapter implements StorageAdapter {
@@ -56,43 +56,44 @@ public class MySQLAdapter implements StorageAdapter {
     @Override
     public void init() {
         mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolveCacheTable() + "` ("
-                + "`name` varchar(16) NOT NULL,"
+                + "`name` VARCHAR(16) NOT NULL,"
                 + "`is_premium` tinyint(1) NOT NULL,"
-                + "`uuid` varchar(36),"
-                + "`timestamp` bigint(20) NOT NULL,"
+                + "`uuid` VARCHAR(36),"
+                + "`timestamp` BIGINT(20) NOT NULL,"
                 + "PRIMARY KEY (`name`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
 
         mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolvePlayerTable() + "` ("
-                + "`uuid` varchar(36) NOT NULL,"
+                + "`uuid` VARCHAR(36) NOT NULL,"
                 + "`skin_identifier` VARCHAR(2083),"
                 + "`skin_variant` VARCHAR(20),"
-                + "`skin_type` varchar(20),"
+                + "`skin_type` VARCHAR(20),"
                 + "PRIMARY KEY (`uuid`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
 
         mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolvePlayerSkinTable() + "` ("
-                + "`uuid` varchar(36) NOT NULL,"
-                + "`value` text NOT NULL,"
-                + "`signature` text NOT NULL,"
-                + "`timestamp` bigint(20) NOT NULL,"
+                + "`uuid` VARCHAR(36) NOT NULL,"
+                + "`last_known_name` VARCHAR(16),"
+                + "`value` TEXT NOT NULL,"
+                + "`signature` TEXT NOT NULL,"
+                + "`timestamp` BIGINT(20) NOT NULL,"
                 + "PRIMARY KEY (`uuid`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
 
         mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolveURLSkinTable() + "` ("
-                + "`url` varchar(266) NOT NULL," // Max chatbox command length
-                + "`mine_skin_id` varchar(36),"
-                + "`value` text NOT NULL,"
-                + "`signature` text NOT NULL,"
+                + "`url` VARCHAR(266) NOT NULL," // Max chatbox command length
+                + "`mine_skin_id` VARCHAR(36),"
+                + "`value` TEXT NOT NULL,"
+                + "`signature` TEXT NOT NULL,"
                 + "`skin_variant` VARCHAR(20),"
                 + "PRIMARY KEY (`url`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
 
         mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolveURLSkinIndexTable() + "` ("
-                + "`url` varchar(266) NOT NULL," // Max chatbox command length
+                + "`url` VARCHAR(266) NOT NULL," // Max chatbox command length
                 + "`skin_variant` VARCHAR(20),"
                 + "PRIMARY KEY (`url`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
 
         mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolveCustomSkinTable() + "` ("
-                + "`name` varchar(36) NOT NULL,"
-                + "`value` text NOT NULL,"
-                + "`signature` text NOT NULL,"
+                + "`name` VARCHAR(36) NOT NULL,"
+                + "`value` TEXT NOT NULL,"
+                + "`signature` TEXT NOT NULL,"
                 + "PRIMARY KEY (`name`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
 
         try {
@@ -221,11 +222,12 @@ public class MySQLAdapter implements StorageAdapter {
                 return Optional.empty();
             }
 
+            String lastKnownName = crs.getString("last_known_name");
             String value = crs.getString("value");
             String signature = crs.getString("signature");
             long timestamp = crs.getLong("timestamp");
 
-            return Optional.of(PlayerSkinData.of(uuid, SkinProperty.of(value, signature), timestamp));
+            return Optional.of(PlayerSkinData.of(uuid, lastKnownName, SkinProperty.of(value, signature), timestamp));
         } catch (SQLException e) {
             throw new StorageException(e);
         }
@@ -238,11 +240,13 @@ public class MySQLAdapter implements StorageAdapter {
 
     @Override
     public void setPlayerSkinData(UUID uuid, PlayerSkinData skinData) {
-        mysql.execute("INSERT INTO " + resolvePlayerSkinTable() + " (uuid, value, signature, timestamp) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE value=?, signature=?, timestamp=?",
+        mysql.execute("INSERT INTO " + resolvePlayerSkinTable() + " (uuid, last_known_name, value, signature, timestamp) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE last_known_name=?, value=?, signature=?, timestamp=?",
                 uuid.toString(),
+                skinData.getLastKnownName(),
                 skinData.getProperty().getValue(),
                 skinData.getProperty().getSignature(),
                 skinData.getTimestamp(),
+                skinData.getLastKnownName(),
                 skinData.getProperty().getValue(),
                 skinData.getProperty().getSignature(),
                 skinData.getTimestamp());
@@ -403,7 +407,48 @@ public class MySQLAdapter implements StorageAdapter {
     @SuppressFBWarnings(justification = "SQL injection is not possible here", value = {"SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING"})
     @Override
     public Map<String, String> getStoredGUISkins(int offset) {
-        throw new UnsupportedOperationException("MySQL storage does not support this operation YET"); // TODO
+        StringBuilder query = new StringBuilder("SELECT * FROM (");
+        query.append("SELECT 'player' as type, `last_known_name` as name, `value`, `signature`")
+                .append(" FROM ")
+                .append(resolvePlayerSkinTable());
+
+        if (settings.getProperty(GUIConfig.CUSTOM_GUI_ENABLED)) {
+            query.append(" UNION ALL ");
+
+            query.append("SELECT 'custom' as type, `name`, `value`, `signature`")
+                    .append(" FROM ")
+                    .append(resolveCustomSkinTable());
+
+            if (settings.getProperty(GUIConfig.CUSTOM_GUI_ONLY)) {
+                List<String> customSkins = settings.getProperty(GUIConfig.CUSTOM_GUI_SKINS);
+                if (!customSkins.isEmpty()) {
+                    query.append(" WHERE `name` IN (");
+                    List<String> sanitizedSkins = new ArrayList<>();
+                    for (String customSkin : customSkins) {
+                        sanitizedSkins.add("'" + CustomSkinData.sanitizeCustomSkinName(customSkin) + "'");
+                    }
+
+                    query.append(String.join(", ", sanitizedSkins));
+                    query.append(")");
+                }
+            }
+        }
+
+        query.append(") AS skins LIMIT ").append(offset).append(", ").append(SkinStorageImpl.SKINS_PER_GUI_PAGE);
+
+        Map<String, String> skins = new LinkedHashMap<>();
+        try (ResultSet crs = mysql.query(query.toString())) {
+            while (crs.next()) {
+                String name = crs.getString("name");
+                String value = crs.getString("value");
+                String signature = crs.getString("signature");
+
+                skins.put(name, SkinProperty.of(value, signature).getValue());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return skins;
     }
 
     @Override

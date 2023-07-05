@@ -29,6 +29,7 @@ import java.util.UUID;
 @RequiredArgsConstructor(staticName = "of")
 public class PlayerSkinData {
     private final UUID uniqueId;
+    private final String lastKnownName;
     private final SkinProperty property;
     private final long timestamp;
 }

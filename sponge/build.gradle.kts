@@ -8,7 +8,10 @@ plugins {
 dependencies {
     compileOnly(projects.skinsrestorerBuildData)
     implementation(projects.skinsrestorerApi)
-    implementation(projects.skinsrestorerShared)
+    implementation(projects.skinsrestorerShared) {
+        exclude("net.kyori")
+    }
+
     testImplementation(testFixtures(projects.skinsrestorerShared))
 
     implementation("org.bstats:bstats-sponge:3.0.2")

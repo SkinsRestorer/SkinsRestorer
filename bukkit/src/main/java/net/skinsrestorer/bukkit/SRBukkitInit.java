@@ -29,6 +29,7 @@ import net.skinsrestorer.bukkit.listener.PlayerJoin;
 import net.skinsrestorer.bukkit.listener.PlayerResourcePackStatus;
 import net.skinsrestorer.bukkit.listener.ServerMessageListener;
 import net.skinsrestorer.bukkit.paper.PaperPlayerJoinEvent;
+import net.skinsrestorer.bukkit.utils.BukkitComponentHelper;
 import net.skinsrestorer.bukkit.utils.BukkitReflection;
 import net.skinsrestorer.bukkit.utils.NMSVersion;
 import net.skinsrestorer.bukkit.utils.NoMappingException;
@@ -172,13 +173,13 @@ public class SRBukkitInit implements SRServerPlatformInit {
     public void initPermissions() {
         for (PermissionRegistry permission : PermissionRegistry.values()) {
             String permissionString = permission.getPermission().getPermissionString();
-            String description = locale.getMessage(locale.getDefaultForeign(), permission.getDescription());
+            String description = BukkitComponentHelper.convertToLegacy(locale.getMessage(locale.getDefaultForeign(), permission.getDescription()));
 
             addPermission(new Permission(permissionString, description));
         }
 
         for (PermissionGroup group : PermissionGroup.values()) {
-            String description = locale.getMessage(locale.getDefaultForeign(), group.getDescription());
+            String description = BukkitComponentHelper.convertToLegacy(locale.getMessage(locale.getDefaultForeign(), group.getDescription()));
             Map<String, Boolean> children = new HashMap<>();
             mergePermissions(group, children);
             PermissionDefault permissionDefault = group == PermissionGroup.PLAYER ? PermissionDefault.TRUE : PermissionDefault.OP;

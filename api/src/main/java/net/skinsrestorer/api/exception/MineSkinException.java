@@ -17,23 +17,14 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.floodgate;
+package net.skinsrestorer.api.exception;
 
-import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.log.SRLogger;
-import org.geysermc.floodgate.api.event.skin.SkinApplyEvent;
+public class MineSkinException extends Exception {
+    protected MineSkinException(String message) {
+        super(message);
+    }
 
-import javax.inject.Inject;
-import java.util.function.Consumer;
-
-@RequiredArgsConstructor(onConstructor_ = @Inject)
-public class FloodgateListener implements Consumer<SkinApplyEvent> {
-    private final SRLogger logger;
-
-    @Override
-    public void accept(SkinApplyEvent event) {
-        logger.info(event.player().getUsername());
-        logger.info(event.currentSkin().value());
-        logger.info(event.newSkin().value());
+    protected MineSkinException(Throwable cause) {
+        super(cause);
     }
 }

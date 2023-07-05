@@ -23,6 +23,7 @@ import com.cryptomorin.xseries.SkullUtils;
 import com.cryptomorin.xseries.XMaterial;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.bukkit.utils.BukkitComponentHelper;
 import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
 import net.skinsrestorer.shared.gui.GUIManager;
 import net.skinsrestorer.shared.gui.SharedGUI;
@@ -38,7 +39,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import javax.inject.Inject;
-import java.nio.CharBuffer;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -65,7 +65,7 @@ public class SkinsGUI implements GUIManager<Inventory> {
         }
 
         skullMeta.setDisplayName(name);
-        skullMeta.setLore(listOf(locale.getMessage(player, Message.SKINSMENU_SELECT_SKIN)));
+        skullMeta.setLore(listOf(BukkitComponentHelper.convertToLegacy(locale.getMessage(player, Message.SKINSMENU_SELECT_SKIN))));
 
         try {
             SkullUtils.applySkin(skullMeta, property);
@@ -86,7 +86,7 @@ public class SkinsGUI implements GUIManager<Inventory> {
             throw new IllegalStateException("Could not create glass for " + type.name() + "!");
         }
 
-        String text = type.getMessage() == null ? " " : locale.getMessage(player, type.getMessage());
+        String text = type.getMessage() == null ? " " : BukkitComponentHelper.convertToLegacy(locale.getMessage(player, type.getMessage()));
 
         ItemMeta itemMeta = itemStack.getItemMeta();
 
@@ -102,7 +102,7 @@ public class SkinsGUI implements GUIManager<Inventory> {
 
     public Inventory createGUI(Consumer<ClickEventInfo> callback, SRForeign player, int page, Map<String, String> skinsList) {
         SkinsGUIHolder instance = new SkinsGUIHolder(page, callback, wrapper);
-        Inventory inventory = server.createInventory(instance, 54, locale.getMessage(player, Message.SKINSMENU_TITLE_NEW, String.valueOf(page + 1)));
+        Inventory inventory = server.createInventory(instance, 54, BukkitComponentHelper.convertToLegacy(locale.getMessage(player, Message.SKINSMENU_TITLE_NEW, String.valueOf(page + 1))));
         instance.setInventory(inventory);
 
         ItemStack none = createGlass(GlassType.NONE, player, locale);
@@ -115,12 +115,6 @@ public class SkinsGUI implements GUIManager<Inventory> {
             if (skinCount >= SharedGUI.HEAD_COUNT_PER_PAGE) {
                 logger.warning("SkinsGUI: Skin count is more than 36, skipping...");
                 break;
-            }
-
-            if (CharBuffer.wrap(entry.getKey().toCharArray()).chars().anyMatch(i -> Character.isLetter(i) && Character.isUpperCase(i))) {
-                logger.info("ERROR: skin " + entry.getKey() + ".skin contains a Upper case!");
-                logger.info("Please rename the file name to a lower case!.");
-                continue;
             }
 
             inventory.addItem(createSkull(logger, locale, player, entry.getKey(), entry.getValue()));

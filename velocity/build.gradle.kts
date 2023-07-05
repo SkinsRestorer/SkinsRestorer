@@ -1,6 +1,13 @@
+plugins {
+    alias(libs.plugins.runvelocity)
+}
+
 dependencies {
     implementation(projects.skinsrestorerApi)
-    implementation(projects.skinsrestorerShared)
+    implementation(projects.skinsrestorerShared) {
+        exclude("net.kyori")
+    }
+
     testImplementation(testFixtures(projects.skinsrestorerShared))
 
     compileOnly("com.velocitypowered:velocity-api:3.1.1")
@@ -12,5 +19,11 @@ dependencies {
 indra {
     javaVersions {
         target(11)
+    }
+}
+
+tasks {
+    runVelocity {
+        version(libs.versions.runvelocityversion.get())
     }
 }

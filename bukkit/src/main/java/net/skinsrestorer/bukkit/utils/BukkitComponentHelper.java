@@ -17,23 +17,17 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.floodgate;
+package net.skinsrestorer.bukkit.utils;
 
-import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.log.SRLogger;
-import org.geysermc.floodgate.api.event.skin.SkinApplyEvent;
+import com.google.gson.JsonElement;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
-import javax.inject.Inject;
-import java.util.function.Consumer;
+public class BukkitComponentHelper {
+    private static final GsonComponentSerializer GSON = GsonComponentSerializer.gson();
+    private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacySection();
 
-@RequiredArgsConstructor(onConstructor_ = @Inject)
-public class FloodgateListener implements Consumer<SkinApplyEvent> {
-    private final SRLogger logger;
-
-    @Override
-    public void accept(SkinApplyEvent event) {
-        logger.info(event.player().getUsername());
-        logger.info(event.currentSkin().value());
-        logger.info(event.newSkin().value());
+    public static String convertToLegacy(String messageJson) {
+        return LEGACY.serialize(GSON.deserialize(messageJson));
     }
 }

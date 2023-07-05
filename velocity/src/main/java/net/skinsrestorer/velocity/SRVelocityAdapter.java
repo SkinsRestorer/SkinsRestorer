@@ -29,6 +29,7 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.util.GameProfile;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.commands.library.CommandUtils;
 import net.skinsrestorer.shared.commands.library.SRRegisterPayload;
@@ -40,6 +41,7 @@ import net.skinsrestorer.velocity.listener.ForceAliveListener;
 import net.skinsrestorer.velocity.wrapper.WrapperVelocity;
 import org.bstats.velocity.Metrics;
 
+import javax.inject.Inject;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
@@ -49,24 +51,16 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Getter
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SRVelocityAdapter implements SRProxyAdapter<PluginContainer> {
     private final Injector injector;
-    private final Object pluginInstance; // Only for platform API use
+    private final SRVelocityBootstrap pluginInstance; // Only for platform API use
     private final ProxyServer proxy;
-    private final Metrics.Factory metricsFactory;
-
-    public SRVelocityAdapter(Injector injector, Object pluginInstance, Metrics.Factory metricsFactory) {
-        this.injector = injector;
-        this.pluginInstance = pluginInstance;
-        this.proxy = injector.getSingleton(ProxyServer.class);
-        this.metricsFactory = metricsFactory;
-
-        injector.register(SRVelocityAdapter.class, this);
-        injector.register(SRProxyAdapter.class, this);
-    }
 
     @Override
     public Object createMetricsInstance() {
+        Metrics.Factory metricsFactory = injector.getSingleton(com.google.inject.Injector.class)
+                .getInstance(Metrics.Factory.class);
         return metricsFactory.make(pluginInstance, 10606);
     }
 

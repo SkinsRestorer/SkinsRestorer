@@ -20,7 +20,10 @@
 package net.skinsrestorer.shared.subjects.messages;
 
 import ch.jalu.configme.SettingsManager;
+import com.google.gson.JsonElement;
 import lombok.Getter;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.skinsrestorer.shared.config.MessageConfig;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRForeign;
@@ -32,6 +35,8 @@ import java.text.MessageFormat;
 import java.util.Locale;
 
 public class SkinsRestorerLocale {
+    private final GsonComponentSerializer gsonSerializer = GsonComponentSerializer.gson();
+    private final LegacyComponentSerializer legacySerializer = LegacyComponentSerializer.legacySection();
     @Inject
     private LocaleManager localeManager;
     @Inject
@@ -40,6 +45,10 @@ public class SkinsRestorerLocale {
     private final SRForeign defaultForeign = () -> settings.getProperty(MessageConfig.LOCALE);
 
     public String getMessage(SRForeign foreign, Message key, Object... args) {
+        return gsonSerializer.serialize(legacySerializer.deserialize(getMessageInternal(foreign, key, args)));
+    }
+
+    private String getMessageInternal(SRForeign foreign, Message key, Object... args) {
         SRForeign target = settings.getProperty(MessageConfig.PER_ISSUER_LOCALE) ? foreign : defaultForeign;
 
         boolean isConsole = foreign instanceof SRCommandSender && !(foreign instanceof SRPlayer);
@@ -52,7 +61,7 @@ public class SkinsRestorerLocale {
         }
 
         if (key.isPrefixed() && !settings.getProperty(MessageConfig.DISABLE_PREFIX)) {
-            message = getMessage(target, Message.PREFIX_FORMAT, message);
+            message = getMessageInternal(target, Message.PREFIX_FORMAT, message);
         }
 
         return new MessageFormat(C.c(message)).format(args);

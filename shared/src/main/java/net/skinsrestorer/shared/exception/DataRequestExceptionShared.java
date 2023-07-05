@@ -20,8 +20,6 @@
 package net.skinsrestorer.shared.exception;
 
 import net.skinsrestorer.api.exception.DataRequestException;
-import net.skinsrestorer.shared.subjects.messages.Message;
-import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 
 public class DataRequestExceptionShared extends DataRequestException {
     public DataRequestExceptionShared(String message) {
@@ -30,9 +28,5 @@ public class DataRequestExceptionShared extends DataRequestException {
 
     public DataRequestExceptionShared(Throwable cause) {
         super(cause);
-    }
-
-    public DataRequestExceptionShared(SkinsRestorerLocale locale, Message key, Object... args) {
-        this(locale.getMessage(locale.getDefaultForeign(), key, args));
     }
 }

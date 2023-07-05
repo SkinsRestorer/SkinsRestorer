@@ -21,7 +21,9 @@ package net.skinsrestorer.sponge;
 
 import ch.jalu.injector.Injector;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.commands.library.SRRegisterPayload;
@@ -55,6 +57,8 @@ import org.spongepowered.api.profile.property.ProfileProperty;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.plugin.PluginContainer;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -63,28 +67,25 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SRSpongeAdapter implements SRServerAdapter<PluginContainer> {
     private final Injector injector;
-    private final Metrics metrics;
     @Getter
     private final PluginContainer pluginContainer;
     private final Game game;
+    private static final GsonComponentSerializer GSON = GsonComponentSerializer.gson();
     private final Set<SRRegisterPayload<SRCommandSender>> commands = new HashSet<>();
 
-    public SRSpongeAdapter(Injector injector, Metrics metrics, PluginContainer container) {
-        this.injector = injector;
-        this.metrics = metrics;
-        this.pluginContainer = container;
-        this.game = injector.getSingleton(Game.class);
-
-        injector.register(SRSpongeAdapter.class, this);
-        injector.register(SRServerAdapter.class, this);
-
+    @PostConstruct
+    public void init() {
         game.eventManager().registerListeners(pluginContainer, this);
     }
 
     @Override
     public Object createMetricsInstance() {
+        Metrics metrics = injector.getSingleton(com.google.inject.Injector.class)
+                .getInstance(Metrics.Factory.class).make(11500);
+        metrics.startup(null);
         return metrics;
     }
 
@@ -238,7 +239,7 @@ public class SRSpongeAdapter implements SRServerAdapter<PluginContainer> {
                 @Override
                 public Optional<Component> shortDescription(CommandCause cause) {
                     SRCommandSender sender = wrapper.commandSender(cause);
-                    return Optional.of(serializer.deserialize(locale.getMessage(sender, payload.getMeta().getRootHelp().getCommandDescription())));
+                    return Optional.of(GSON.deserialize(locale.getMessage(sender, payload.getMeta().getRootHelp().getCommandDescription())));
                 }
 
                 @Override

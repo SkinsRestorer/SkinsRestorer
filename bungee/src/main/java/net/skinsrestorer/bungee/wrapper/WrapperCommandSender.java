@@ -20,9 +20,11 @@
 package net.skinsrestorer.bungee.wrapper;
 
 import ch.jalu.configme.SettingsManager;
+import com.google.gson.JsonElement;
 import lombok.experimental.SuperBuilder;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.skinsrestorer.bungee.SRBungeeAdapter;
 import net.skinsrestorer.shared.config.MessageConfig;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.messages.Message;
@@ -36,6 +38,8 @@ public class WrapperCommandSender implements SRCommandSender {
     private final SettingsManager settings;
     private final SkinsRestorerLocale locale;
     private final CommandSender sender;
+    private final SRBungeeAdapter adapter;
+    private final GsonComponentSerializer serializer = GsonComponentSerializer.gson();
 
     @Override
     public Locale getLocale() {
@@ -43,8 +47,8 @@ public class WrapperCommandSender implements SRCommandSender {
     }
 
     @Override
-    public void sendMessage(String message) {
-        sender.sendMessage(TextComponent.fromLegacyText(message));
+    public void sendMessage(String messageJson) {
+        adapter.getAdventure().sender(sender).sendMessage(serializer.deserialize(messageJson));
     }
 
     @Override

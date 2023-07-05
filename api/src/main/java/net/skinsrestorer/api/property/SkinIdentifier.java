@@ -67,7 +67,7 @@ public class SkinIdentifier {
      * The variant identifies a specific skin variant of the skin file.
      * If null, the plugin will use what MineSkin determines as the default variant.
      *
-     * @param url The URL of the skin.
+     * @param url         The URL of the skin.
      * @param skinVariant The variant of the skin.
      * @return A new SkinIdentifier.
      */

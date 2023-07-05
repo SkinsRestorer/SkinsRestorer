@@ -30,6 +30,10 @@ import java.util.Locale;
 
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 public class LocaleProperty implements PropertyType<Locale> {
+    public static LocaleProperty instance() {
+        return new LocaleProperty();
+    }
+
     @Override
     public @Nullable Locale convert(@Nullable Object object, @NotNull ConvertErrorRecorder errorRecorder) {
         return LocaleParser.parseLocale(object == null ? null : object.toString()).orElse(null);
@@ -38,9 +42,5 @@ public class LocaleProperty implements PropertyType<Locale> {
     @Override
     public @NotNull Object toExportValue(Locale value) {
         return value.toString();
-    }
-
-    public static LocaleProperty instance() {
-        return new LocaleProperty();
     }
 }

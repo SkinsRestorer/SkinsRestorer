@@ -17,23 +17,26 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.floodgate;
+package net.skinsrestorer.shared.commands.library;
 
-import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.log.SRLogger;
-import org.geysermc.floodgate.api.event.skin.SkinApplyEvent;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import net.skinsrestorer.shared.subjects.SRCommandSender;
+import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
 
-import javax.inject.Inject;
-import java.util.function.Consumer;
+import java.util.function.Predicate;
 
-@RequiredArgsConstructor(onConstructor_ = @Inject)
-public class FloodgateListener implements Consumer<SkinApplyEvent> {
-    private final SRLogger logger;
+@ToString
+@Setter
+@Getter
+@AllArgsConstructor
+public class PermissionPredicate<T extends SRCommandSender> implements Predicate<T> {
+    private PermissionRegistry permission;
 
     @Override
-    public void accept(SkinApplyEvent event) {
-        logger.info(event.player().getUsername());
-        logger.info(event.currentSkin().value());
-        logger.info(event.newSkin().value());
+    public boolean test(T t) {
+        return t.hasPermission(permission);
     }
 }

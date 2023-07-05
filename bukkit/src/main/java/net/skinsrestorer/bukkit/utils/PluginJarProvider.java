@@ -17,23 +17,19 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.floodgate;
+package net.skinsrestorer.bukkit.utils;
 
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.log.SRLogger;
-import org.geysermc.floodgate.api.event.skin.SkinApplyEvent;
 
-import javax.inject.Inject;
-import java.util.function.Consumer;
+import javax.inject.Provider;
+import java.nio.file.Path;
 
-@RequiredArgsConstructor(onConstructor_ = @Inject)
-public class FloodgateListener implements Consumer<SkinApplyEvent> {
-    private final SRLogger logger;
+@RequiredArgsConstructor
+public class PluginJarProvider implements Provider<Path> {
+    private final Path pluginFile;
 
     @Override
-    public void accept(SkinApplyEvent event) {
-        logger.info(event.player().getUsername());
-        logger.info(event.currentSkin().value());
-        logger.info(event.newSkin().value());
+    public Path get() {
+        return pluginFile;
     }
 }

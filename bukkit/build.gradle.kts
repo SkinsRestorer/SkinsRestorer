@@ -1,3 +1,7 @@
+plugins {
+    alias(libs.plugins.runpaper)
+}
+
 dependencies {
     implementation(projects.skinsrestorerApi)
     implementation(projects.skinsrestorerShared)
@@ -7,6 +11,8 @@ dependencies {
     implementation(projects.multiver.bukkit.paper)
     implementation(projects.multiver.bukkit.multipaper)
     implementation(projects.multiver.bukkit.v17)
+
+    implementation("net.kyori:adventure-platform-bukkit:4.3.0")
 
     setOf("1-18", "1-18-2", "1-19", "1-19-3", "1-19-4", "1-20").forEach {
         implementation(project(":mappings:mc-$it", "remapped"))
@@ -30,6 +36,10 @@ dependencies {
     testRuntimeOnly("com.mojang:authlib:1.11")
 }
 
+tasks.shadowJar {
+    configureKyoriRelocations()
+}
+
 val projectIncludes = setOf(
     rootProject.projects.multiver.bukkit.folia
 ).map { it.dependencyProject }
@@ -43,10 +53,15 @@ tasks.jar {
     }
 }
 
-tasks.shadowJar {
-    projectIncludes.forEach { include ->
-        val jarTask = include.tasks.named<Jar>("jar").get()
-        dependsOn(jarTask)
-        from(zipTree(jarTask.archiveFile))
+tasks {
+    shadowJar {
+        projectIncludes.forEach { include ->
+            val jarTask = include.tasks.named<Jar>("jar").get()
+            dependsOn(jarTask)
+            from(zipTree(jarTask.archiveFile))
+        }
+    }
+    runServer {
+        minecraftVersion(libs.versions.runpaperversion.get())
     }
 }

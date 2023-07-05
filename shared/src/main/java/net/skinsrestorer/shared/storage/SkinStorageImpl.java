@@ -22,8 +22,11 @@ package net.skinsrestorer.shared.storage;
 import ch.jalu.configme.SettingsManager;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.PropertyUtil;
 import net.skinsrestorer.api.connections.model.MineSkinResponse;
 import net.skinsrestorer.api.exception.DataRequestException;
+import net.skinsrestorer.api.exception.MineSkinException;
+import net.skinsrestorer.api.model.MojangProfileResponse;
 import net.skinsrestorer.api.property.*;
 import net.skinsrestorer.api.storage.CacheStorage;
 import net.skinsrestorer.api.storage.SkinStorage;
@@ -44,6 +47,7 @@ import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SkinStorageImpl implements SkinStorage {
+    public static final int SKINS_PER_GUI_PAGE = 36;
     private final SRLogger logger;
     private final CacheStorage cacheStorage;
     private final MojangAPIImpl mojangAPI;
@@ -61,7 +65,7 @@ public class SkinStorageImpl implements SkinStorage {
         defaultSkins.forEach(skin -> {
             try {
                 findOrCreateSkinData(skin);
-            } catch (DataRequestException e) {
+            } catch (DataRequestException | MineSkinException e) {
                 logger.debug(String.format("DefaultSkin '%s' could not be found or requested! Removing from list..", skin), e);
                 toRemove.add(skin);
             }
@@ -88,15 +92,26 @@ public class SkinStorageImpl implements SkinStorage {
             }
 
             PlayerSkinData data = optional.get();
-            if (isPlayerSkinExpired(data.getTimestamp())) {
-                Optional<SkinProperty> skinProperty = mojangAPI.getProfile(uuid); // TODO: Check if returned property is actually newer than the current one
-                if (skinProperty.isPresent()) {
-                    setPlayerSkinData(uuid, skinProperty.get(), Instant.now().getEpochSecond());
-                    return skinProperty;
-                }
+            Optional<SkinProperty> currentSkin = optional.map(PlayerSkinData::getProperty);
+
+            long timestamp = PropertyUtil.getSkinProfileData(data.getProperty()).getTimestamp();
+            if (!isPlayerSkinExpired(data.getTimestamp())) {
+                return currentSkin;
             }
 
-            return Optional.of(data.getProperty());
+            Optional<SkinProperty> skinProperty = mojangAPI.getProfile(uuid);
+            if (!skinProperty.isPresent()) {
+                return currentSkin;
+            }
+
+            MojangProfileResponse response = PropertyUtil.getSkinProfileData(skinProperty.get());
+
+            if (response.getTimestamp() <= timestamp) {
+                return currentSkin; // API returned even older skin data
+            }
+
+            setPlayerSkinData(uuid, response.getProfileName(), skinProperty.get(), Instant.now().getEpochSecond());
+            return skinProperty;
         } catch (StorageAdapter.StorageException e) {
             e.printStackTrace();
             return Optional.empty();
@@ -104,8 +119,8 @@ public class SkinStorageImpl implements SkinStorage {
     }
 
     @Override
-    public void setPlayerSkinData(UUID uuid, SkinProperty textures, long timestamp) {
-        atomicAdapter.get().setPlayerSkinData(uuid, PlayerSkinData.of(uuid, textures, timestamp));
+    public void setPlayerSkinData(UUID uuid, String lastKnownName, SkinProperty textures, long timestamp) {
+        atomicAdapter.get().setPlayerSkinData(uuid, PlayerSkinData.of(uuid, lastKnownName, textures, timestamp));
     }
 
     @Override
@@ -175,7 +190,7 @@ public class SkinStorageImpl implements SkinStorage {
     }
 
     @Override
-    public Optional<InputDataResult> findOrCreateSkinData(String input) throws DataRequestException {
+    public Optional<InputDataResult> findOrCreateSkinData(String input) throws DataRequestException, MineSkinException {
         Optional<InputDataResult> skinData = findSkinData(input);
 
         if (skinData.isPresent()) {
@@ -195,7 +210,7 @@ public class SkinStorageImpl implements SkinStorage {
                 return Optional.empty();
             }
 
-            setPlayerSkinData(data.get().getUniqueId(), data.get().getSkinProperty(), Instant.now().getEpochSecond());
+            setPlayerSkinData(data.get().getUniqueId(), input, data.get().getSkinProperty(), Instant.now().getEpochSecond());
 
             return Optional.of(InputDataResult.of(SkinIdentifier.ofPlayer(data.get().getUniqueId()), data.get().getSkinProperty()));
         }

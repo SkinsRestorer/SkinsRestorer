@@ -31,6 +31,7 @@ import java.util.UUID;
 public class PlayerSkinFile {
     private static final int CURRENT_DATA_VERSION = 1;
     private UUID uniqueId;
+    private String lastKnownName;
     private String value;
     private String signature;
     private long timestamp;
@@ -39,6 +40,7 @@ public class PlayerSkinFile {
     public static PlayerSkinFile fromPlayerSkinData(PlayerSkinData playerSkinData) {
         PlayerSkinFile playerSkinFile = new PlayerSkinFile();
         playerSkinFile.uniqueId = playerSkinData.getUniqueId();
+        playerSkinFile.lastKnownName = playerSkinData.getLastKnownName();
         playerSkinFile.value = playerSkinData.getProperty().getValue();
         playerSkinFile.signature = playerSkinData.getProperty().getSignature();
         playerSkinFile.timestamp = playerSkinData.getTimestamp();
@@ -47,6 +49,6 @@ public class PlayerSkinFile {
     }
 
     public PlayerSkinData toPlayerSkinData() {
-        return PlayerSkinData.of(uniqueId, SkinProperty.of(value, signature), timestamp);
+        return PlayerSkinData.of(uniqueId, lastKnownName, SkinProperty.of(value, signature), timestamp);
     }
 }

@@ -21,19 +21,17 @@ package net.skinsrestorer.bukkit.update;
 
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.bukkit.SRBukkitAdapter;
+import net.skinsrestorer.bukkit.utils.PluginJarProvider;
 import net.skinsrestorer.shared.exception.UpdateException;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.update.DownloadCallback;
 import net.skinsrestorer.shared.update.UpdateDownloader;
 import org.bukkit.Server;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.inject.Inject;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.channels.Channels;
@@ -50,6 +48,7 @@ public class UpdateDownloaderGithub implements UpdateDownloader {
     private final SRBukkitAdapter adapter;
     private final SRLogger logger;
     private final Server server;
+    private final PluginJarProvider jarProvider;
 
     private Runnable downloadAsync(String downloadUrl, Path file, DownloadCallback callback) {
         return () -> {
@@ -83,7 +82,7 @@ public class UpdateDownloaderGithub implements UpdateDownloader {
 
     @Override
     public boolean downloadUpdate(String downloadUrl) {
-        Path pluginFile = getPluginFile(adapter.getPluginInstance()); // /plugins/XXX.jar
+        Path pluginFile = jarProvider.get(); // /plugins/XXX.jar
         Path updateFolder = server.getUpdateFolderFile().toPath();
         try {
             Files.createDirectories(updateFolder);
@@ -109,15 +108,5 @@ public class UpdateDownloaderGithub implements UpdateDownloader {
         }));
 
         return true;
-    }
-
-    private Path getPluginFile(JavaPlugin plugin) {
-        try {
-            Method method = JavaPlugin.class.getDeclaredMethod("getFile");
-            method.setAccessible(true);
-            return ((File) method.invoke(plugin)).toPath();
-        } catch (ReflectiveOperationException e) {
-            throw new RuntimeException("Could not get plugin file", e);
-        }
     }
 }

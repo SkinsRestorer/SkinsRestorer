@@ -23,6 +23,7 @@ import ch.jalu.configme.SettingsManager;
 import ch.jalu.injector.Injector;
 import net.skinsrestorer.api.connections.model.MineSkinResponse;
 import net.skinsrestorer.api.exception.DataRequestException;
+import net.skinsrestorer.api.exception.MineSkinException;
 import net.skinsrestorer.shared.config.APIConfig;
 import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.connections.MineSkinAPIImpl;
@@ -48,7 +49,7 @@ public class MineSkinTest {
     private SkinsRestorerLocale skinsRestorerLocale;
 
     @Test
-    public void testServices(Injector injector) throws DataRequestException {
+    public void testServices(Injector injector) throws DataRequestException, MineSkinException {
         injector.register(SkinsRestorerLocale.class, skinsRestorerLocale);
 
         when(settings.getProperty(APIConfig.MINESKIN_API_KEY)).thenReturn("");

@@ -1,6 +1,6 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
-import org.gradle.api.artifacts.ExternalModuleDependency
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
@@ -40,4 +40,8 @@ fun Project.latestCommitHash(): String {
         standardOutput = byteOut
     }
     return byteOut.toString(Charsets.UTF_8.name()).trim()
+}
+
+fun ShadowJar.configureKyoriRelocations() {
+    relocate("net.kyori", "net.skinsrestorer.shadow.kyori")
 }
