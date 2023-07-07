@@ -1,1 +1,13 @@
-{}
+{
+  "skinsrestorer.help_skin": "Schimba skin-ul.",
+  "skinsrestorer.help_skins": "Deschide meniul de skin-uri.",
+  "skinsrestorer.help_sr": "Comenzi administrative pentru SkinsRestorer.",
+  "skinsrestorer.help_skin_set": "Schimba skin-ul.",
+  "skinsrestorer.help_skin_set_other": "Seteaza skin-ul pentru jucatorul mentionat.",
+  "skinsrestorer.help_skin_set_url": "Seteaza skin-ul de la un URL.",
+  "skinsrestorer.help_skin_clear": "Sterge skin-ul.",
+  "skinsrestorer.help_skin_clear_other": "Sterge skin-ul player-ului respectiv.",
+  "skinsrestorer.help_skin_update": "Modifica skin-ul.",
+  "skinsrestorer.help_skin_update_other": "Seteaza skin-ul pentru un jucator.",
+  "skinsrestorer.help_sr_reload": "Reincarca fisierul de configurare."
+}
