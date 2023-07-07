@@ -1,1 +1,15 @@
-{}
+{
+  "skinsrestorer.help_skin": "Altera a sua skin.",
+  "skinsrestorer.help_skins": "Abre a tela de skins.",
+  "skinsrestorer.help_skin_set": "Altera a sua skin.",
+  "skinsrestorer.help_skin_set_url": "Define a skin a partir de um link.",
+  "skinsrestorer.help_skin_clear": "Apaga a sua skin.",
+  "skinsrestorer.help_skin_update": "Atualiza a sua skin.",
+  "skinsrestorer.help_sr_reload": "Recarrega o arquivo de configurações.",
+  "skinsrestorer.help_sr_drop": "Apaga dados de skins ou jogadores.",
+  "skinsrestorer.help_sr_set_skin_all": "Define a skin de cada jogador.",
+  "skinsrestorer.permission_player_wildcard": "Permissões adicionais de jogadores",
+  "skinsrestorer.permission_admin_wildcard": "Permissões adicionais de administradores",
+  "skinsrestorer.permission_admincommand_reload": "Libera o acesso ao /sr reload.",
+  "skinsrestorer.permission_admincommand_status": "Libera o acesso ao /sr status."
+}

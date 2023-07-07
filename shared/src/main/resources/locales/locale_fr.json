@@ -1,1 +1,21 @@
-{}
+{
+  "skinsrestorer.help_skin": "Modifie votre skin.",
+  "skinsrestorer.help_skins": "Ouvre l'interface des skins.",
+  "skinsrestorer.help_sr": "Commandes admin pour SkinsRestorer.",
+  "skinsrestorer.help_skin_set": "Modifie votre skin.",
+  "skinsrestorer.help_skin_set_other": "Définit le skin d'un joueur cible.",
+  "skinsrestorer.help_skin_set_url": "Définit le skin d'un joueur cible à partir d'une URL.",
+  "skinsrestorer.help_skin_clear": "Efface votre skin.",
+  "skinsrestorer.help_skin_clear_other": "Efface le skin d'un joueur ciblé.",
+  "skinsrestorer.help_skin_update": "Met à jour votre skin.",
+  "skinsrestorer.help_skin_update_other": "Met à jour le skin d'un joueur cible.",
+  "skinsrestorer.help_sr_reload": "Recharge le fichier de configuration.",
+  "skinsrestorer.help_sr_status": "Vérifie les services API nécessaires au plugin.",
+  "skinsrestorer.help_sr_drop": "Supprime les joueurs ou les données de skin.",
+  "skinsrestorer.help_sr_props": "Affiche les propriétés actuelles du skin des joueurs.",
+  "skinsrestorer.help_sr_apply_skin": "Réappliquer le skin pour l'utilisateur ciblé.",
+  "skinsrestorer.help_sr_create_custom": "Créer un skin personnalisé à l'échelle du serveur.",
+  "skinsrestorer.help_sr_set_skin_all": "Applique le skin a tous les joueurs.",
+  "skinsrestorer.help_sr_apply_skin_all": "Ré-applique le skin a tous les joueurs.",
+  "skinsrestorer.help_sr_purge_old_data": "Supprimer les anciennes données de skin datant de plus de x jours avant."
+}
