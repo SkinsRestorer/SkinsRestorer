@@ -1,1 +1,17 @@
-{}
+{
+  "skinsrestorer.help_skin": "更改你的皮膚。",
+  "skinsrestorer.help_skin_set": "更改你的皮膚。",
+  "skinsrestorer.help_skin_set_other": "為指定的玩家設定皮膚。",
+  "skinsrestorer.help_skin_clear": "清除你的皮膚。",
+  "skinsrestorer.help_skin_clear_other": "為指定的玩家清除皮膚。",
+  "skinsrestorer.help_skin_search": "搜尋一個你想要的皮膚。",
+  "skinsrestorer.help_skin_update": "更新你的皮膚。",
+  "skinsrestorer.help_skin_update_other": "為指定的玩家更新皮膚。",
+  "skinsrestorer.help_sr_reload": "重新載入設定檔案。",
+  "skinsrestorer.help_sr_status": "檢查插件所需的API服務。",
+  "skinsrestorer.help_sr_drop": "清除玩家或皮膚資料。",
+  "skinsrestorer.help_sr_props": "顯示玩家目前的皮膚屬性。",
+  "skinsrestorer.help_sr_apply_skin": "為指定玩家重新套用皮膚。",
+  "skinsrestorer.help_sr_create_custom": "建立一個伺服器範圍的自訂皮膚。",
+  "skinsrestorer.help_sr_set_skin_all": "為所有玩家設定皮膚。"
+}
