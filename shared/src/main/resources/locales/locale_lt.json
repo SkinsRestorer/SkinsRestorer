@@ -47,6 +47,8 @@
   "skinsrestorer.admincommand_status_working": "<green>Įskiepis šiuo metu veikia.",
   "skinsrestorer.admincommand_status_broken": "<red>Įskiepis šiuo metu negali gauti naujų išvaizdų.<newline>Tikėtina, kad ryšys užblokuotas dėl sistemos firewall.<newline>Prašome peržiūrėti https://skinsrestorer.net/firewall dėl daugiau informacijos",
   "skinsrestorer.admincommand_status_summary_server": "<gray>Serveris: <gold><version>",
+  "skinsrestorer.admincommand_status_summary_proxymode": "<gray>Tarpinio serverio režimas: <gold><proxy_mode>",
+  "skinsrestorer.admincommand_status_summary_commit": "<gray>Pakeitimo kodas: <gold><hash>",
   "skinsrestorer.admincommand_status_summary_finished": "<gray>Baigta tikrinti paslaugas.",
   "skinsrestorer.admincommand_drop_player_not_found": "<red>Žaidėjas <yellow><player></yellow> nerastas.",
   "skinsrestorer.admincommand_drop_skin_not_found": "<red>Išvaizda <yellow><skin></yellow> nerasta.",
