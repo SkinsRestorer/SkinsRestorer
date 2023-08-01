@@ -1,5 +1,12 @@
 {
   "skinsrestorer.help_skin": "Mengubah skin-mu.",
   "skinsrestorer.help_skins": "Membuka GUI skin.",
-  "skinsrestorer.help_sr": "Perintah admin untuk SkinsRestorer."
+  "skinsrestorer.help_sr": "Perintah admin untuk SkinsRestorer.",
+  "skinsrestorer.help_skin_set": "Mengubah skin-mu.",
+  "skinsrestorer.help_skin_set_other": "Mengatur skin untuk pemain yang ditarget.",
+  "skinsrestorer.help_skin_set_url": "Mengatur skin dari sebuah url.",
+  "skinsrestorer.help_skin_clear": "Membersihkan skin-mu.",
+  "skinsrestorer.help_skin_clear_other": "Membersihkan skin pemain yang ditarget.",
+  "skinsrestorer.help_skin_search": "Mencari sebuah skin yang kamu inginkan.",
+  "skinsrestorer.help_skin_update": "Memperbarui skin-mu."
 }
