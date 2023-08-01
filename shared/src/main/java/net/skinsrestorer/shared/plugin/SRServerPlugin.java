@@ -44,18 +44,6 @@ public class SRServerPlugin {
     @Setter
     private boolean proxyMode;
 
-    @SuppressWarnings("unchecked")
-    public static Map<String, String> convertToObjectV2(byte[] byteArr) {
-        try {
-            ObjectInputStream ois = new ObjectInputStream(new GZIPInputStream(new ByteArrayInputStream(byteArr)));
-
-            return (Map<String, String>) ois.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-            return Collections.emptyMap();
-        }
-    }
-
     public void checkProxyMode() {
         proxyMode = checkProxy();
 
