@@ -32,9 +32,6 @@ import javax.inject.Inject;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.util.Map;
-import java.util.zip.GZIPOutputStream;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SRProxyPlugin {
