@@ -8,5 +8,7 @@
   "skinsrestorer.help_skin_clear": "Membersihkan skin-mu.",
   "skinsrestorer.help_skin_clear_other": "Membersihkan skin pemain yang ditarget.",
   "skinsrestorer.help_skin_search": "Mencari sebuah skin yang kamu inginkan.",
-  "skinsrestorer.help_skin_update": "Memperbarui skin-mu."
+  "skinsrestorer.help_skin_update": "Memperbarui skin-mu.",
+  "skinsrestorer.help_skin_update_other": "Memperbarui skin pemain yang ditarget.",
+  "skinsrestorer.help_sr_reload": "Menyegarkan file konfigurasi."
 }
