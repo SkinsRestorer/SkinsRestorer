@@ -20,5 +20,12 @@
   "skinsrestorer.help_sr_apply_skin_all": "Menerapkan kembali skin untuk setiap pemain.",
   "skinsrestorer.help_sr_purge_old_data": "Membersihkan data skin lama yang lebih dari x hari lalu.",
   "skinsrestorer.help_sr_dump": "Unggah data dukungan ke bytebin.lucko.me.",
-  "skinsrestorer.success_skin_change": "<dark_green>Skin-mu telah berubah."
+  "skinsrestorer.success_skin_change": "<dark_green>Skin-mu telah berubah.",
+  "skinsrestorer.success_skin_change_other": "<dark_green>Kamu mengubah skin <name>.",
+  "skinsrestorer.success_skin_clear": "<dark_green>Skin-mu telah dibersihkan.",
+  "skinsrestorer.success_skin_clear_other": "<dark_green>Skin dibersihkan untuk pemain <name>.",
+  "skinsrestorer.success_updating_skin": "<dark_green>Skin-mu telah diperbarui.",
+  "skinsrestorer.success_updating_skin_other": "<dark_green>Skin diperbarui untuk pemain <name>.",
+  "skinsrestorer.success_admin_applyskin": "<dark_green>Skin pemain telah disegarkan!",
+  "skinsrestorer.success_admin_createcustom": "<dark_green>Skin <skin> telah dibuat!"
 }
