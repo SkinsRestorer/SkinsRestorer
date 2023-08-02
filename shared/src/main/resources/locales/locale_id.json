@@ -10,5 +10,15 @@
   "skinsrestorer.help_skin_search": "Mencari sebuah skin yang kamu inginkan.",
   "skinsrestorer.help_skin_update": "Memperbarui skin-mu.",
   "skinsrestorer.help_skin_update_other": "Memperbarui skin pemain yang ditarget.",
-  "skinsrestorer.help_sr_reload": "Menyegarkan file konfigurasi."
+  "skinsrestorer.help_sr_reload": "Menyegarkan file konfigurasi.",
+  "skinsrestorer.help_sr_status": "Memeriksa layanan API yang diperlukan plugin.",
+  "skinsrestorer.help_sr_drop": "Menghapus data pemain atau skin.",
+  "skinsrestorer.help_sr_props": "Menampilkan properti skin pemain saat ini.",
+  "skinsrestorer.help_sr_apply_skin": "Menerapkan kembali skin untuk pemain yang ditarget.",
+  "skinsrestorer.help_sr_create_custom": "Membuat skin lebar server kustom.",
+  "skinsrestorer.help_sr_set_skin_all": "Atur skin untuk setiap pemain.",
+  "skinsrestorer.help_sr_apply_skin_all": "Menerapkan kembali skin untuk setiap pemain.",
+  "skinsrestorer.help_sr_purge_old_data": "Membersihkan data skin lama yang lebih dari x hari lalu.",
+  "skinsrestorer.help_sr_dump": "Unggah data dukungan ke bytebin.lucko.me.",
+  "skinsrestorer.success_skin_change": "<dark_green>Skin-mu telah berubah."
 }
