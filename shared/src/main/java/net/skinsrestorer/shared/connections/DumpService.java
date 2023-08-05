@@ -28,10 +28,7 @@ import net.skinsrestorer.shared.connections.http.HttpResponse;
 import net.skinsrestorer.shared.connections.requests.DumpInfo;
 import net.skinsrestorer.shared.connections.responses.BytebinResponse;
 import net.skinsrestorer.shared.log.SRLogger;
-import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
-import net.skinsrestorer.shared.plugin.SRProxyAdapter;
-import net.skinsrestorer.shared.plugin.SRServerAdapter;
-import net.skinsrestorer.shared.plugin.SRServerPlugin;
+import net.skinsrestorer.shared.plugin.*;
 
 import javax.inject.Inject;
 import java.io.IOException;
