@@ -25,46 +25,29 @@ import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.subjects.SRProxyPlayer;
+import net.skinsrestorer.shared.utils.MessageProtocolUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.util.Map;
-import java.util.zip.GZIPOutputStream;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SRProxyPlugin {
     private final SRLogger logger;
     private final SRPlugin plugin;
 
-    public static byte[] convertToByteArray(Map<String, String> map) {
-        ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
-
-        try {
-            try (GZIPOutputStream gzipOut = new GZIPOutputStream(byteOut)) {
-                ObjectOutputStream out = new ObjectOutputStream(gzipOut);
-                out.writeObject(map);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return byteOut.toByteArray();
-    }
-
     public void sendPage(int page, SRProxyPlayer player, SkinStorageImpl skinStorage) {
         int skinNumber = 36 * page;
 
-        byte[] ba = convertToByteArray(skinStorage.getGUISkins(skinNumber));
+        byte[] ba = MessageProtocolUtil.convertToByteArray(skinStorage.getGUISkins(skinNumber));
 
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         DataOutputStream out = new DataOutputStream(b);
 
         try {
-            out.writeUTF("returnSkinsV2");
+            out.writeUTF("returnSkinsV3");
             out.writeUTF(player.getName());
             out.writeInt(page);
 
