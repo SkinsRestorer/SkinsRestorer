@@ -33,6 +33,7 @@ import java.io.InputStream;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Locale;
 import java.util.Map;
 
@@ -53,10 +54,10 @@ public class MessageLoader {
 
     private void loadDefaultMessages() throws IOException {
         for (String localeFile : BuildData.LOCALES) {
-            String filePath = "locales/" + localeFile;
+            String resourcePath = "locales/" + localeFile;
             Locale locale = getTranslationLocale(localeFile);
 
-            try (InputStream is = adapter.getResource(filePath)) {
+            try (InputStream is = adapter.getResource(resourcePath)) {
                 for (Map.Entry<String, String> entry : TranslationReader.readJsonTranslation(is).entrySet()) {
                     logger.debug(String.format("Loaded message '%s' for locale %s", entry.getKey(), locale));
                     manager.addMessage(Message.fromKey(entry.getKey()), locale, entry.getValue());
@@ -67,12 +68,23 @@ public class MessageLoader {
 
     private void loadCustomMessages() throws IOException {
         Path localesFolder = plugin.getDataFolder().resolve("locales");
-        if (!Files.exists(localesFolder)) {
-            return;
+        Path repositoryFolder = localesFolder.resolve("repository");
+        Path customFolder = localesFolder.resolve("custom");
+
+        Files.createDirectories(repositoryFolder);
+        Files.createDirectories(customFolder);
+
+        for (String localeFile : BuildData.LOCALES) {
+            String resourcePath = "locales/" + localeFile;
+            Path filePath = repositoryFolder.resolve(localeFile);
+
+            try (InputStream is = adapter.getResource(resourcePath)) {
+                Files.copy(is, filePath, StandardCopyOption.REPLACE_EXISTING);
+            }
         }
 
-        logger.info("Found locales folder, loading custom translations...");
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(localesFolder)) {
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(customFolder)) {
+            boolean found = false;
             for (Path path : stream) {
                 Path localeFile = path.getFileName();
                 if (localeFile == null) {
@@ -82,6 +94,11 @@ public class MessageLoader {
                 String fileName = localeFile.toString();
                 if (!isJson(fileName)) {
                     continue;
+                }
+
+                if (!found) {
+                    logger.info("Found custom translations, loading...");
+                    found = true;
                 }
 
                 Locale locale = getTranslationLocale(fileName);
