@@ -20,6 +20,7 @@
 package net.skinsrestorer.shared.floodgate;
 
 import ch.jalu.injector.Injector;
+import net.skinsrestorer.shared.log.SRLogger;
 import org.geysermc.floodgate.api.FloodgateApi;
 import org.geysermc.floodgate.api.event.skin.SkinApplyEvent;
 
@@ -28,13 +29,7 @@ import java.util.UUID;
 public class FloodgateUtil {
     public static boolean isFloodgateBedrockPlayer(UUID uuid) {
         try {
-            boolean isFloodgate = FloodgateApi.getInstance().isFloodgatePlayer(uuid);
-            if (!isFloodgate) {
-                return false;
-            }
-
-            // Linked java accounts should be treated as java players
-            return !FloodgateApi.getInstance().getPlayer(uuid).isLinked();
+            return FloodgateApi.getInstance().isFloodgateId(uuid);
         } catch (Throwable t) {
             // Cancel if Floodgate isn't installed
             return false;
@@ -42,12 +37,12 @@ public class FloodgateUtil {
     }
 
     public static void registerListener(Injector injector) {
+        SRLogger logger = injector.getSingleton(SRLogger.class);
         try {
             FloodgateApi.getInstance().getEventBus()
                     .subscribe(SkinApplyEvent.class, injector.getSingleton(FloodgateListener.class));
-            System.out.println("Floodgate listener registered");
+            logger.info("Floodgate skin listener registered");
         } catch (Throwable t) {
-            t.printStackTrace();
             // Cancel if Floodgate isn't installed
         }
     }
