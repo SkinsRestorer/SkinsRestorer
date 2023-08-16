@@ -43,7 +43,7 @@ public class FloodgateUtil {
                     .subscribe(SkinApplyEvent.class, injector.getSingleton(FloodgateListener.class));
             logger.info("Floodgate skin listener registered");
         } catch (Throwable t) {
-            logger.severe("Failed to register Floodgate skin listener", t);
+            logger.severe("Failed to register Floodgate skin listener (Is floodgate and SkinsRestorer up to date?)", t);
         }
     }
 }
