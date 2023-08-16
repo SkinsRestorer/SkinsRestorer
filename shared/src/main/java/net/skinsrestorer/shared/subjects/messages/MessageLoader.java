@@ -86,6 +86,10 @@ public class MessageLoader {
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(customFolder)) {
             boolean found = false;
             for (Path path : stream) {
+                if (Files.isDirectory(path)) {
+                    continue;
+                }
+
                 Path localeFile = path.getFileName();
                 if (localeFile == null) {
                     continue;
