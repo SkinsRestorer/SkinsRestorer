@@ -23,6 +23,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.hash.Hashing;
 import net.skinsrestorer.bukkit.SRBukkitAdapter;
 import net.skinsrestorer.bukkit.utils.BukkitReflection;
+import net.skinsrestorer.bukkit.utils.OPRefreshUtil;
 import net.skinsrestorer.mappings.shared.ViaPacketData;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.log.SRLogger;
@@ -252,19 +253,7 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
 
             //todo: resend effect
 
-            // Here we fix a bug where changing your skin causes CommandBlocks to no longer work
-            // This might be FALSE REPORT by another plugin and this is NOT OP EXPLOIT
-            // This code is being used by paper in your server as well: https://github.com/PaperMC/Paper/blob/master/patches/server/0182-Player.setPlayerProfile-API.patch#L175-L178
-
-            // Here we check if the player is /OP
-            if (player.isOp()) {
-                adapter.runSyncToPlayer(player, () -> {
-                    // Here we /deOP and /OP the same player
-                    player.setOp(false);
-                    player.setOp(true);
-                });
-            }
-
+            OPRefreshUtil.refreshOP(player, adapter);
         } catch (ReflectiveOperationException e) {
             e.printStackTrace();
         }
