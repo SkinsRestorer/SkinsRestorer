@@ -36,7 +36,7 @@ public class OPRefreshUtil {
             "This method is used to refresh OP status of a player.",
             "This is used to fix a bug where changing your skin causes CommandBlocks to no longer work.",
             "This might be FALSELY REPORTED by anti-malware plugins and this is NOT A OP EXPLOIT.",
-            "This code is being used by PaperMC in their server software as well: https://github.com/PaperMC/Paper/blob/master/patches/server/0181-Player.setPlayerProfile-API.patch#L193-L196"
+            "This code is being used by PaperMC in their server software as well: https://github.com/PaperMC/Paper/blob/eb8f2bb2a183746381738b5ccf08d209efa542b8/patches/server/0181-Player.setPlayerProfile-API.patch#L193-L196"
     })
     public static void refreshOP(Player player, SRBukkitAdapter adapter) {
         // Here we check if the player is /OP
