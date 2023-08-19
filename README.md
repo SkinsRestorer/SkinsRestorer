@@ -67,36 +67,9 @@ Feel free to join our Discord community server:
 
 ## :building_construction: SkinsRestorer API
 
-:rotating_light: Please note that this API is still WIP. Expect breaking changes! :rotating_light:
-
-##### Maven repository
-
-```xml
-<repository>
-    <id>codemc-releases</id>
-    <url>https://repo.codemc.org/repository/maven-releases/</url>
-</repository>
-```
-
-##### SkinsRestorer API
-Latest Version (Without the v):
-![Latest Version](https://img.shields.io/github/v/tag/SkinsRestorer/SkinsRestorerX?label=version)
-
-```xml
-<!-- SkinsRestorer API -->
-<dependency>
-    <groupId>net.skinsrestorer</groupId>
-    <artifactId>skinsrestorer-api</artifactId>
-    <version>VERSION HERE</version>
-    <scope>provided</scope>
-</dependency>
-```
-
-##### Example Bukkit Plugin
-
-https://github.com/SkinsRestorer/SkinsRestorerAPIExample
+You can find instructions on how to use the SkinsRestorer API on [our website](https://skinsrestorer.net/docs/development/api).
 
 ### How to install? / Installation / Setup
 
-Installing SkinsRestorer can be tricky when using a proxy server. Make sure to read on how to
+Installing SkinsRestorer can be tricky when using a proxy server. Make sure to read how to
 install [here](https://github.com/SkinsRestorer/SkinsRestorerX/wiki/Installing-SkinsRestorer#Basic-Installation)
