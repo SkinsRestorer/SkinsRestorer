@@ -116,7 +116,9 @@ public class SRPlugin {
     }
 
     public void initCommands() {
-        CommandManager<SRCommandSender> manager = new CommandManager<>(adapter, logger, injector.getSingleton(SkinsRestorerLocale.class));
+        CommandManager<SRCommandSender> manager = new CommandManager<>(adapter, logger,
+                injector.getSingleton(SkinsRestorerLocale.class),
+                injector.getSingleton(SettingsManager.class));
         injector.register(CommandManager.class, manager);
 
         registerConditions(manager);

@@ -31,6 +31,4 @@ public interface CommandPlatform<T extends SRCommandSender> {
     void runAsync(Runnable runnable);
 
     Collection<SRPlayer> getOnlinePlayers();
-
-    SettingsManager getSettingsManager();
 }

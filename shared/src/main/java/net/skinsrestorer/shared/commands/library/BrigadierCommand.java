@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.shared.commands.library;
 
+import ch.jalu.configme.SettingsManager;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -38,6 +39,7 @@ public class BrigadierCommand<T extends SRCommandSender> implements Command<T> {
     private final SRLogger logger;
     private final Object command;
     private final CommandPlatform<T> platform;
+    private final SettingsManager settingsManager;
 
     @Override
     public int run(CommandContext<T> context) throws CommandSyntaxException {
@@ -79,7 +81,7 @@ public class BrigadierCommand<T extends SRCommandSender> implements Command<T> {
     }
 
     private String handleStringArgument(T source, String argument) {
-        if (platform.getSettingsManager().getProperty(CommandConfig.REMOVE_BRACKETS) &&
+        if (settingsManager.getProperty(CommandConfig.REMOVE_BRACKETS) &&
                 ((argument.startsWith("<") && argument.endsWith(">")) || (argument.startsWith("[") && argument.endsWith("]")))) {
             source.sendMessage(Message.HELP_NO_BRACKETS);
             return argument.substring(1, argument.length() - 1);

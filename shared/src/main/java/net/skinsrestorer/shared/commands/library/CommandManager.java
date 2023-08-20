@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.shared.commands.library;
 
+import ch.jalu.configme.SettingsManager;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
@@ -59,11 +60,13 @@ public class CommandManager<T extends SRCommandSender> {
     private final CommandPlatform<T> platform;
     private final SRLogger logger;
     private final SkinsRestorerLocale locale;
+    private final SettingsManager settingsManager;
 
-    public CommandManager(CommandPlatform<T> platform, SRLogger logger, SkinsRestorerLocale locale) {
+    public CommandManager(CommandPlatform<T> platform, SRLogger logger, SkinsRestorerLocale locale, SettingsManager settingsManager) {
         this.platform = platform;
         this.logger = logger;
         this.locale = locale;
+        this.settingsManager = settingsManager;
 
         // Register default conditions
         registerCondition("player-only", sender -> {
@@ -287,7 +290,7 @@ public class CommandManager<T extends SRCommandSender> {
 
         lastNode.executes(new CommandInjectHelp<>(currentHelpData,
                 new ConditionCommand<>(getConditionRegistrations(conditionTrail),
-                        new BrigadierCommand<>(method, logger, command, platform))));
+                        new BrigadierCommand<>(method, logger, command, platform, settingsManager))));
 
         if (nodes.size() > 1) {
             for (int i1 = nodes.size() - 1; i1 > 0; i1--) {
