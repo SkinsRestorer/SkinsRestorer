@@ -20,6 +20,7 @@
   "skinsrestorer.help_sr_apply_skin_all": "Újra alkalmazza a kinézetet az összes játékosra.",
   "skinsrestorer.help_sr_purge_old_data": "Törli a régi kinézet-adatot több, mint x nappal visszamenőleg.",
   "skinsrestorer.help_sr_dump": "Feltölti a támogatói-adatot a bytebin.lucko.me weboldalra.",
+  "skinsrestorer.info_no_brackets": "<bold>Ne</bold> tedd a szöveget <bold>< ></bold> és <bold>[ ]</bold> zárójel közé.<newline>Például: <dark_green>/skin<jebb></dark_green>, csak így <dark_green>/skin jebb</dark_green>",
   "skinsrestorer.success_skin_change": "<dark_green>Kinézeted meg lett változtatva.",
   "skinsrestorer.success_skin_change_other": "<dark_green>Megváltoztattad <name> kinézetét.",
   "skinsrestorer.success_skin_clear": "<dark_green>Kinézeted helyre lett állítva.",
