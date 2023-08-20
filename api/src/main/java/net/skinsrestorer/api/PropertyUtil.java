@@ -29,6 +29,9 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
+/**
+ * Utility class for retrieving information from profile properties related to skins.
+ */
 public class PropertyUtil {
     private static final Gson GSON = new Gson();
 
