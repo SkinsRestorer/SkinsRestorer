@@ -23,8 +23,10 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.shared.config.CommandConfig;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
+import net.skinsrestorer.shared.subjects.messages.Message;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -40,29 +42,49 @@ public class BrigadierCommand<T extends SRCommandSender> implements Command<T> {
     @Override
     public int run(CommandContext<T> context) throws CommandSyntaxException {
         try {
-            int i1 = 0;
             Object[] parameters = new Object[method.getParameterCount()];
+
+            int i = 0;
             for (Parameter parameter : method.getParameters()) {
-                if (i1 == 0) {
-                    parameters[i1] = context.getSource();
-                    i1++;
+                // Add the command source as the first parameter
+                if (i == 0) {
+                    parameters[i] = context.getSource();
+                    i++;
                     continue;
                 }
-                parameters[i1] = context.getArgument(parameter.getName(), parameter.getType());
-                i1++;
+
+                Object value = context.getArgument(parameter.getName(), parameter.getType());
+
+                if (value instanceof String) {
+                    value = handleStringArgument(context.getSource(), (String) value);
+                }
+
+                parameters[i] = value;
+                i++;
             }
             logger.debug(String.format("Executing command %s with method parameters %s", method.getName(), Arrays.toString(parameters)));
             platform.runAsync(() -> {
                 try {
                     method.invoke(command, parameters);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logger.severe("Error while executing command " + method.getName(), e);
                 }
             });
+
             return Command.SINGLE_SUCCESS;
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.severe("Error while executing command " + method.getName(), e);
             return 0;
         }
+    }
+
+    private String handleStringArgument(T source, String argument) {
+        if (platform.getSettingsManager().getProperty(CommandConfig.REMOVE_BRACKETS) &&
+                ((argument.startsWith("<") && argument.endsWith(">")) || (argument.startsWith("[") && argument.endsWith("]")))) {
+            source.sendMessage(Message.HELP_NO_BRACKETS);
+            return argument.substring(1, argument.length() - 1);
+        }
+
+        return argument;
     }
 }

@@ -249,6 +249,7 @@ public class CommandManager<T extends SRCommandSender> {
             ArgumentType<?> argumentType;
             // Implementing support for other types is easy, just add a new if-statement
             if (parameter.getType() == String.class) {
+                // Custom type because we want to read more than StringReader#isAllowedInUnquotedString()
                 argumentType = new ArgumentType<String>() {
                     @Override
                     public String parse(StringReader reader) {
