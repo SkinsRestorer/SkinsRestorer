@@ -23,9 +23,7 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.storage.PlayerStorage;
-import net.skinsrestorer.api.storage.SkinStorage;
 import net.skinsrestorer.shared.log.SRLogger;
-import net.skinsrestorer.shared.storage.model.skin.PlayerSkinData;
 import org.geysermc.floodgate.api.event.skin.SkinApplyEvent;
 import org.geysermc.floodgate.api.player.FloodgatePlayer;
 
