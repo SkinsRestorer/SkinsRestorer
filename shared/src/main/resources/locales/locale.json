@@ -113,6 +113,8 @@
   "skinsrestorer.skinsmenu_previous_page": "<yellow><bold>« <gray>Previous Page</gray> <bold>«</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[</bold> <gray>Remove Skin</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_select_skin": "<dark_green>Click to select this skin",
+  "skinsrestorer.sponge_metrics_consent": "Dear server admin, in order to help us decide whether we should <b>continue supporting Sponge for SkinsRestorer</b>, consider enabling metrics <newline>by executing <dark_green>/sponge metrics skinsrestorer enable</dark_green> or click this message.",
+  "skinsrestorer.sponge_metrics_hover": "<dark_green>Click to enable metrics.",
   "skinsrestorer.skin_search_message": "<dark_green>You can find skins matching <green><search></green> here: <newline><green>https://namemc.com/minecraft-skins/tag/<search> <newline><newline><dark_green>If no skins are found, you can always find some skins at https://namemc.com/minecraft-skins/tag <newline>You can set the skin using the skin link:<newline>/skin https://namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>Error<dark_gray>: <red>No skin data acquired! Does this player have a skin?",
   "skinsrestorer.outdated": "<dark_red>You are running an outdated version of SkinsRestorer!<newline><red>Please update to the latest version on Spigot: <newline><yellow>https://www.spigotmc.org/resources/skinsrestorer.2124/"
