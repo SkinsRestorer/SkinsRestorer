@@ -21,11 +21,13 @@ package net.skinsrestorer.bukkit.wrapper;
 
 import ch.jalu.configme.SettingsManager;
 import lombok.experimental.SuperBuilder;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.skinsrestorer.bukkit.SRBukkitAdapter;
 import net.skinsrestorer.shared.subjects.AbstractSRCommandSender;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.Permission;
+import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 
 @SuperBuilder
@@ -38,7 +40,15 @@ public class WrapperCommandSender extends AbstractSRCommandSender {
 
     @Override
     public void sendMessage(String messageJson) {
-        adapter.getAdventure().sender(sender).sendMessage(serializer.deserialize(messageJson));
+        Component message = serializer.deserialize(messageJson);
+
+        Runnable runnable = () -> adapter.getAdventure().sender(sender).sendMessage(message);
+        if (sender instanceof BlockCommandSender) {
+            // Command blocks require messages to be sent synchronously in Bukkit
+            adapter.runSync(runnable);
+        } else {
+            runnable.run();
+        }
     }
 
     @Override
