@@ -21,6 +21,7 @@
   "skinsrestorer.help_sr_apply_skin_all": "Re-apply the skin to every player.",
   "skinsrestorer.help_sr_purge_old_data": "Purge old skin data from over x days ago.",
   "skinsrestorer.help_sr_dump": "Upload support data to bytebin.lucko.me.",
+  "skinsrestorer.info_no_brackets": "You should <bold>not</bold> put your text between brackets <bold>< ></bold> and <bold>[ ]</bold><newline>Example: <dark_green>/skin <jebb></dark_green> to just <dark_green>/skin jebb</dark_green>",
   "skinsrestorer.success_skin_change": "<dark_green>Your skin has been changed.",
   "skinsrestorer.success_skin_change_other": "<dark_green>You changed the skin of <name>.",
   "skinsrestorer.success_skin_clear": "<dark_green>Your skin has been cleared.",
