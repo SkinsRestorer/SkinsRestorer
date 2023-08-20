@@ -83,7 +83,7 @@ public class BrigadierCommand<T extends SRCommandSender> implements Command<T> {
     private String handleStringArgument(T source, String argument) {
         if (settingsManager.getProperty(CommandConfig.REMOVE_BRACKETS) &&
                 ((argument.startsWith("<") && argument.endsWith(">")) || (argument.startsWith("[") && argument.endsWith("]")))) {
-            source.sendMessage(Message.HELP_NO_BRACKETS);
+            source.sendMessage(Message.INFO_NO_BRACKETS);
             return argument.substring(1, argument.length() - 1);
         }
 
