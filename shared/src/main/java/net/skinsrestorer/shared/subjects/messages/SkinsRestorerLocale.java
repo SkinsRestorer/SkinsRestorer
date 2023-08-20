@@ -37,7 +37,6 @@ import java.util.Optional;
 
 public class SkinsRestorerLocale {
     private final GsonComponentSerializer gsonSerializer = GsonComponentSerializer.gson();
-    private final String empty = gsonSerializer.serialize(Component.empty());
     private final MiniMessage miniMessage = MiniMessage.miniMessage();
     @Inject
     private LocaleManager localeManager;

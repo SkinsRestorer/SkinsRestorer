@@ -1,0 +1,44 @@
+package net.skinsrestorer.sponge.listeners;
+
+import lombok.RequiredArgsConstructor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.skinsrestorer.shared.subjects.SRPlayer;
+import net.skinsrestorer.shared.subjects.messages.Message;
+import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
+import net.skinsrestorer.shared.utils.Tristate;
+import net.skinsrestorer.sponge.SRSpongeAdapter;
+import net.skinsrestorer.sponge.wrapper.WrapperSponge;
+import org.spongepowered.api.entity.living.player.server.ServerPlayer;
+import org.spongepowered.api.event.EventListener;
+import org.spongepowered.api.event.network.ServerSideConnectionEvent;
+
+import javax.inject.Inject;
+
+/**
+ * Allow players nicely to enable metrics, while also complying with Sponge regulations.
+ */
+@RequiredArgsConstructor(onConstructor_ = @Inject)
+public class MetricsJoinListener implements EventListener<ServerSideConnectionEvent.Join> {
+    private final SRSpongeAdapter adapter;
+    private final SkinsRestorerLocale locale;
+    private final WrapperSponge wrapper;
+    private final GsonComponentSerializer gsonSerializer = GsonComponentSerializer.gson();
+
+    @Override
+    public void handle(ServerSideConnectionEvent.Join event) {
+        ServerPlayer player = event.player();
+        SRPlayer srPlayer = wrapper.player(player);
+
+        if (player.hasPermission("sponge.command.metrics") && adapter.getMetricsState() == Tristate.UNDEFINED) {
+            Component component = gsonSerializer.deserialize(locale.getMessage(srPlayer, Message.SPONGE_METRICS_CONSENT));
+            Component hoverComponent = gsonSerializer.deserialize(locale.getMessage(srPlayer, Message.SPONGE_METRICS_HOVER));
+            component = component.clickEvent(ClickEvent.runCommand("/sponge metrics skinsrestorer enable"));
+            component = component.hoverEvent(HoverEvent.showText(hoverComponent));
+
+            player.sendMessage(component);
+        }
+    }
+}

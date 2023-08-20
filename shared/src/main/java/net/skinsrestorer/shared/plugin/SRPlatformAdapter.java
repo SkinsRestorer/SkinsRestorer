@@ -23,6 +23,7 @@ import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.commands.library.CommandPlatform;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
+import net.skinsrestorer.shared.utils.Tristate;
 
 import java.io.InputStream;
 import java.util.Optional;
@@ -51,4 +52,8 @@ public interface SRPlatformAdapter<P> extends CommandPlatform<SRCommandSender> {
      * @param object The object to keep alive.
      */
     void extendLifeTime(P plugin, Object object);
+
+    default Tristate getMetricsState() {
+        return Tristate.TRUE;
+    }
 }

@@ -31,6 +31,7 @@ import org.spongepowered.api.Game;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.lifecycle.ConstructPluginEvent;
+import org.spongepowered.api.util.metric.MetricsConfigManager;
 import org.spongepowered.plugin.PluginContainer;
 import org.spongepowered.plugin.builtin.jvm.Plugin;
 
@@ -50,6 +51,8 @@ public class SRSpongeBootstrap {
     private Logger logger;
     @Inject
     private Game game;
+    @Inject
+    private MetricsConfigManager metricsConfigManager;
 
     @Listener
     public void onInitialize(ConstructPluginEvent event) {
@@ -58,6 +61,7 @@ public class SRSpongeBootstrap {
                     injector.register(Game.class, game);
                     injector.register(PluginContainer.class, container);
                     injector.register(Injector.class, guiceInjector);
+                    injector.register(MetricsConfigManager.class, metricsConfigManager);
                 },
                 new Log4jLoggerImpl(logger),
                 false,
