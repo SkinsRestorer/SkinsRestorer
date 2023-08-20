@@ -83,6 +83,8 @@
   "skinsrestorer.permission_command_set": "Sta toegang toe om je skin te wijzigen.",
   "skinsrestorer.permission_command_set_url": "Geeft toegang tot het wijzigen van je skin via url.",
   "skinsrestorer.permission_command_clear": "Sta toegang toe om je skin te wissen.",
+  "skinsrestorer.permission_admin_wildcard": "Joker rechten voor administratoren",
+  "skinsrestorer.permission_bypasscooldown": "Omzeilt ingestelde cooldowns in de configuratie.",
   "skinsrestorer.permission_bypassdisabled": "Geef toegang tot uitgeschakelde skins in de config.",
   "skinsrestorer.permission_ownskin": "Sta toegang toe om je eigen skin in te stellen.",
   "skinsrestorer.skinsmenu_open": "<dark_green>Open het skins menu...",
@@ -90,5 +92,6 @@
   "skinsrestorer.skinsmenu_next_page": "<green><bold>»</bold> <gray>Volgende pagina</gray> <bold>»</bold>",
   "skinsrestorer.skinsmenu_previous_page": "<yellow>\"<bold>« <gray>Vorige Pagina</gray> <bold>\"</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[</bold> <gray>Verwijder Skin</gray> <bold>]</bold>",
-  "skinsrestorer.skinsmenu_select_skin": "<dark_green>Klik om deze skin te selecteren"
+  "skinsrestorer.skinsmenu_select_skin": "<dark_green>Klik om deze skin te selecteren",
+  "skinsrestorer.outdated": "<dark_red>Je gebruikt een verouderde versie van SkinsRestorer!<newline><red>Update aub naar de laatste versie op Spigot: \n<newline><yellow>https&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/"
 }
