@@ -23,6 +23,8 @@ import com.google.common.collect.ImmutableList;
 import net.skinsrestorer.mappings.mapping1_18.Mapping1_18;
 import net.skinsrestorer.mappings.mapping1_18_2.Mapping1_18_2;
 import net.skinsrestorer.mappings.mapping1_19.Mapping1_19;
+import net.skinsrestorer.mappings.mapping1_19_1.Mapping1_19_1;
+import net.skinsrestorer.mappings.mapping1_19_2.Mapping1_19_2;
 import net.skinsrestorer.mappings.mapping1_19_3.Mapping1_19_3;
 import net.skinsrestorer.mappings.mapping1_19_4.Mapping1_19_4;
 import net.skinsrestorer.mappings.mapping1_20.Mapping1_20;
@@ -38,6 +40,8 @@ public class MappingManager {
             .add(new Mapping1_18())
             .add(new Mapping1_18_2())
             .add(new Mapping1_19())
+            .add(new Mapping1_19_1())
+            .add(new Mapping1_19_2())
             .add(new Mapping1_19_3())
             .add(new Mapping1_19_4())
             .add(new Mapping1_20())
