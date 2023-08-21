@@ -45,6 +45,10 @@ public class SkinsRestorerLocale {
     @Getter
     private final SRForeign defaultForeign = () -> settings.getProperty(MessageConfig.LOCALE);
 
+    public String getMessage(SRForeign foreign, Message key) {
+        return getMessage(foreign, key, TagResolver.empty());
+    }
+
     public String getMessage(SRForeign foreign, Message key, TagResolver... tagResolver) {
         Component component = getMessageInternal(foreign, key, TagResolver.resolver(tagResolver))
                 .orElseGet(Component::empty);

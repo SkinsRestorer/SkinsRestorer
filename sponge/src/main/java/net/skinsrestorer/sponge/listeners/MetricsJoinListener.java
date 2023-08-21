@@ -54,7 +54,7 @@ public class MetricsJoinListener implements EventListener<ServerSideConnectionEv
         if (player.hasPermission("sponge.command.metrics") && adapter.getMetricsState() == Tristate.UNDEFINED) {
             Component component = gsonSerializer.deserialize(locale.getMessage(srPlayer, Message.SPONGE_METRICS_CONSENT));
             Component hoverComponent = gsonSerializer.deserialize(locale.getMessage(srPlayer, Message.SPONGE_METRICS_HOVER));
-            component = component.clickEvent(ClickEvent.runCommand("/sponge metrics skinsrestorer enable"));
+            component = component.clickEvent(ClickEvent.runCommand("/srmetricsenable"));
             component = component.hoverEvent(HoverEvent.showText(hoverComponent));
 
             player.sendMessage(component);
