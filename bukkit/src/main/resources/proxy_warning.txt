@@ -25,5 +25,5 @@ keep in mind that connecting mysql to the same database as the proxy is required
 
 ProxyMode:
 Warning: Disable ProxyMode will force the backend to handle everything including applying skin on join. This is not recommended as the proxy would only need to apply the skin once.
-How to urn off proxy mode: create a file called disableProxyMode.txt in SkinsRestorer folder (backend server -> ./plugins/SkinsRestorer/disableProxyMode.txt)
+How to turn off proxy mode: create a file called disableProxyMode.txt in SkinsRestorer folder (backend server -> ./plugins/SkinsRestorer/disableProxyMode.txt)
 This will force disable proxy mode on next restart.
