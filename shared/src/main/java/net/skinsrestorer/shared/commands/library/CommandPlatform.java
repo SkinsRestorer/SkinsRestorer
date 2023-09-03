@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.shared.commands.library;
 
+import ch.jalu.configme.SettingsManager;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 

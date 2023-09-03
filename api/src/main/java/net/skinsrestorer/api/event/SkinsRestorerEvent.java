@@ -19,5 +19,20 @@
  */
 package net.skinsrestorer.api.event;
 
+import java.util.function.Consumer;
+
+/**
+ * The SkinsRestorerEvent interface represents an event that can be triggered
+ * by the SkinsRestorer plugin. All event classes that are part of the
+ * SkinsRestorer event system should implement this interface.
+ *
+ * <p>
+ * To listen for SkinsRestorer events, you can create a class that implements
+ * the corresponding event listener interface, and register your listener using
+ * the {@link EventBus#subscribe(Object, Class, Consumer)} method.
+ * </p>
+ *
+ * @see EventBus
+ */
 public interface SkinsRestorerEvent {
 }

@@ -20,6 +20,9 @@
 package net.skinsrestorer.shared.plugin;
 
 public interface SRServerPlatformInit extends SRPlatformInit {
+    default void initMetricsJoinListener() {
+    }
+
     void initPermissions();
 
     void initGUIListener();

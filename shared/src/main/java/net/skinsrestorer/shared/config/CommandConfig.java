@@ -51,6 +51,7 @@ public class CommandConfig implements SettingsHolder {
     })
     public static final Property<Boolean> ENABLE_CUSTOM_HELP = newProperty("commands.enableCustomHelp", false);
     public static final Property<Boolean> RESTRICT_SKIN_URLS_ENABLED = newProperty("commands.restrictSkinUrls.enabled", false);
+    @SuppressWarnings("HttpUrlsUsage")
     public static final Property<List<String>> RESTRICT_SKIN_URLS_LIST = newListProperty("commands.restrictSkinUrls.list",
             "https://i.imgur.com",
             "http://i.imgur.com",
@@ -70,6 +71,13 @@ public class CommandConfig implements SettingsHolder {
             "[!] Only enable if you have set up permissions properly and know what you are doing."
     })
     public static final Property<Boolean> PER_SKIN_PERMISSIONS = newProperty("commands.perSkinPermissions", false);
+    @Comment({
+            "Removes < > and [ ] encasing from command arguments.",
+            "Example: /skin set <skin> will become /skin set skin if this is enabled.",
+            "This is useful to prevent players from incorrectly using the command, as those brackets are not supposed to be there.",
+            "This will also send a message to the player that they incorrectly use the command, but the command will still run fixed arguments."
+    })
+    public static final Property<Boolean> REMOVE_BRACKETS = newProperty("commands.removeBrackets", true);
 
     @Override
     public void registerComments(CommentsConfiguration conf) {

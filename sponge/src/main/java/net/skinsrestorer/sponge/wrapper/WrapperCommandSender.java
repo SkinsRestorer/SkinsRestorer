@@ -24,13 +24,10 @@ import lombok.experimental.SuperBuilder;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
-import net.skinsrestorer.shared.config.MessageConfig;
 import net.skinsrestorer.shared.subjects.AbstractSRCommandSender;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.Permission;
 import org.spongepowered.api.service.permission.Subject;
-
-import java.util.Locale;
 
 @SuperBuilder
 public class WrapperCommandSender extends AbstractSRCommandSender {
@@ -39,11 +36,6 @@ public class WrapperCommandSender extends AbstractSRCommandSender {
     private final Subject subject;
     private final Audience audience;
     private final GsonComponentSerializer serializer = GsonComponentSerializer.gson();
-
-    @Override
-    public Locale getLocale() {
-        return settings.getProperty(MessageConfig.LOCALE);
-    }
 
     @Override
     public void sendMessage(String messageJson) {
@@ -58,5 +50,10 @@ public class WrapperCommandSender extends AbstractSRCommandSender {
     @Override
     protected SkinsRestorerLocale getSRLocale() {
         return locale;
+    }
+
+    @Override
+    protected SettingsManager getSettings() {
+        return settings;
     }
 }

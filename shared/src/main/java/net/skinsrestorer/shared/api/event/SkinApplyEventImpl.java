@@ -27,13 +27,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+@Getter
 public class SkinApplyEventImpl implements SkinApplyEvent {
-    @Getter
     @Nullable
     private final Object player;
-    @Getter
     private SkinProperty property;
-    @Getter
     @Setter
     private boolean cancelled;
 

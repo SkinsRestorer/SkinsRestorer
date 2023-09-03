@@ -33,6 +33,7 @@ import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.utils.IOExceptionConsumer;
+import net.skinsrestorer.shared.utils.Tristate;
 import net.skinsrestorer.sponge.gui.SkinsGUI;
 import net.skinsrestorer.sponge.listeners.ForceAliveListener;
 import net.skinsrestorer.sponge.wrapper.WrapperSponge;
@@ -54,6 +55,7 @@ import org.spongepowered.api.event.lifecycle.RegisterCommandEvent;
 import org.spongepowered.api.item.inventory.menu.InventoryMenu;
 import org.spongepowered.api.network.channel.raw.RawDataChannel;
 import org.spongepowered.api.profile.property.ProfileProperty;
+import org.spongepowered.api.util.metric.MetricsConfigManager;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.plugin.PluginContainer;
 
@@ -74,6 +76,7 @@ public class SRSpongeAdapter implements SRServerAdapter<PluginContainer> {
     @Getter
     private final PluginContainer pluginContainer;
     private final Game game;
+    private final MetricsConfigManager metricsConfigManager;
     private final Set<SRRegisterPayload<SRCommandSender>> commands = new HashSet<>();
 
     @PostConstruct
@@ -182,6 +185,16 @@ public class SRSpongeAdapter implements SRServerAdapter<PluginContainer> {
                 .order(Order.POST)
                 .plugin(plugin)
                 .listener(new ForceAliveListener(object)).build());
+    }
+
+    @Override
+    public Tristate getMetricsState() {
+        Boolean collectionState = metricsConfigManager.effectiveCollectionState(pluginContainer).asNullableBoolean();
+        if (collectionState == null) {
+            return Tristate.UNDEFINED;
+        }
+
+        return collectionState ? Tristate.TRUE : Tristate.FALSE;
     }
 
     @Override

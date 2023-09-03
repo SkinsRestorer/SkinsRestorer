@@ -22,6 +22,7 @@ package net.skinsrestorer.sponge;
 import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.plugin.SRServerPlatformInit;
 import net.skinsrestorer.shared.subjects.messages.Message;
@@ -30,6 +31,7 @@ import net.skinsrestorer.shared.subjects.permissions.Permission;
 import net.skinsrestorer.shared.subjects.permissions.PermissionGroup;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
 import net.skinsrestorer.sponge.listeners.LoginListener;
+import net.skinsrestorer.sponge.listeners.MetricsJoinListener;
 import net.skinsrestorer.sponge.listeners.ServerMessageListener;
 import net.skinsrestorer.sponge.wrapper.WrapperSponge;
 import org.spongepowered.api.Game;
@@ -56,6 +58,7 @@ public class SRSpongeInit implements SRServerPlatformInit {
     private final Game game;
     private final WrapperSponge wrapper;
     private final SkinsRestorerLocale locale;
+    private final SRLogger logger;
 
     @Override
     public void initSkinApplier() {
@@ -69,6 +72,17 @@ public class SRSpongeInit implements SRServerPlatformInit {
                 .plugin(adapter.getPluginContainer())
                 .order(Order.DEFAULT)
                 .listener(injector.newInstance(LoginListener.class)).build());
+    }
+
+    @Override
+    public void initMetricsJoinListener() {
+        logger.info("Dear server admin, in order to help us decide whether we should continue supporting Sponge for SkinsRestorer, consider enabling metrics by executing /sponge metrics skinsrestorer enable");
+
+        game.eventManager().registerListener(EventListenerRegistration
+                .builder(ServerSideConnectionEvent.Join.class)
+                .plugin(adapter.getPluginContainer())
+                .order(Order.DEFAULT)
+                .listener(injector.newInstance(MetricsJoinListener.class)).build());
     }
 
     @Override

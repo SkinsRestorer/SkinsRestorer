@@ -29,7 +29,7 @@ import net.skinsrestorer.api.connections.MineSkinAPI;
 import net.skinsrestorer.api.connections.model.MineSkinResponse;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.exception.MineSkinException;
-import net.skinsrestorer.api.interfaces.SkinApplier;
+import net.skinsrestorer.api.property.SkinApplier;
 import net.skinsrestorer.api.model.MojangProfileResponse;
 import net.skinsrestorer.api.property.InputDataResult;
 import net.skinsrestorer.api.property.SkinProperty;

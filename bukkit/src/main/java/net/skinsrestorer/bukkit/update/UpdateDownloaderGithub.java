@@ -30,6 +30,7 @@ import net.skinsrestorer.shared.update.UpdateDownloader;
 import org.bukkit.Server;
 
 import javax.inject.Inject;
+import javax.net.ssl.HttpsURLConnection;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -38,6 +39,7 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
 /**
  * Parts taken from <a href="https://github.com/InventivetalentDev/SpigetUpdater">SpigetUpdater</a>
@@ -61,20 +63,23 @@ public class UpdateDownloaderGithub implements UpdateDownloader {
         };
     }
 
-    private void download(String downloadUrl, Path file) throws UpdateException {
+    private void download(String downloadUrl, Path targetFile) throws UpdateException {
         try {
-            HttpURLConnection connection = (HttpURLConnection) new URL(downloadUrl).openConnection();
+            HttpsURLConnection connection = (HttpsURLConnection) new URL(downloadUrl).openConnection();
             connection.setRequestProperty("User-Agent", plugin.getUserAgent());
             if (connection.getResponseCode() != 200) {
                 throw new UpdateException("Download returned status code " + connection.getResponseCode());
             }
 
+            Path tempFile = Files.createTempFile("skinsrestorer", ".jar");
             ReadableByteChannel channel = Channels.newChannel(connection.getInputStream());
 
-            try (FileOutputStream output = new FileOutputStream(file.toFile())) {
+            try (FileOutputStream output = new FileOutputStream(tempFile.toFile())) {
                 output.getChannel().transferFrom(channel, 0, Long.MAX_VALUE);
                 output.flush();
             }
+
+            Files.move(tempFile, targetFile, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             throw new UpdateException("Download failed", e);
         }
@@ -87,7 +92,7 @@ public class UpdateDownloaderGithub implements UpdateDownloader {
         try {
             Files.createDirectories(updateFolder);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.warning("[GitHubUpdate] Could not create update folder", e);
             return false;
         }
 

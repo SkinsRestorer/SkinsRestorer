@@ -20,20 +20,51 @@
 package net.skinsrestorer.shared.floodgate;
 
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.exception.DataRequestException;
+import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.api.storage.PlayerStorage;
 import net.skinsrestorer.shared.log.SRLogger;
 import org.geysermc.floodgate.api.event.skin.SkinApplyEvent;
+import org.geysermc.floodgate.api.player.FloodgatePlayer;
 
 import javax.inject.Inject;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class FloodgateListener implements Consumer<SkinApplyEvent> {
     private final SRLogger logger;
+    private final PlayerStorage playerStorage;
 
     @Override
     public void accept(SkinApplyEvent event) {
-        logger.info(event.player().getUsername());
-        logger.info(event.currentSkin().value());
-        logger.info(event.newSkin().value());
+        FloodgatePlayer floodgatePlayer = event.player();
+        logger.debug("Handling Floodgate skin apply for " + floodgatePlayer.getCorrectUsername() + " (" + floodgatePlayer.getCorrectUniqueId() + ")");
+        try {
+            Optional<SkinProperty> optional =
+                    playerStorage.getSkinForPlayer(floodgatePlayer.getCorrectUniqueId(), floodgatePlayer.getCorrectUsername(), true);
+
+            optional.ifPresent(skinProperty ->
+                    event.newSkin(new SkinDataImpl(skinProperty.getValue(), skinProperty.getSignature())));
+        } catch (DataRequestException e) {
+            logger.warning("Failed to get skin for " + floodgatePlayer.getCorrectUsername() + " (" + floodgatePlayer.getCorrectUniqueId() + ")", e);
+        }
+    }
+
+    @SuppressWarnings("NullableProblems") // Suppress missing annotations
+    @RequiredArgsConstructor
+    private static class SkinDataImpl implements SkinApplyEvent.SkinData {
+        private final String value;
+        private final String signature;
+
+        @Override
+        public String value() {
+            return value;
+        }
+
+        @Override
+        public String signature() {
+            return signature;
+        }
     }
 }

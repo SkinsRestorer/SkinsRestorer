@@ -17,11 +17,9 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api.interfaces;
+package net.skinsrestorer.api.property;
 
 import net.skinsrestorer.api.exception.DataRequestException;
-import net.skinsrestorer.api.property.SkinIdentifier;
-import net.skinsrestorer.api.property.SkinProperty;
 
 /**
  * Applies skins to players.

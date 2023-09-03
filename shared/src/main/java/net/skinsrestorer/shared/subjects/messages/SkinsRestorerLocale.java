@@ -37,7 +37,6 @@ import java.util.Optional;
 
 public class SkinsRestorerLocale {
     private final GsonComponentSerializer gsonSerializer = GsonComponentSerializer.gson();
-    private final String empty = gsonSerializer.serialize(Component.empty());
     private final MiniMessage miniMessage = MiniMessage.miniMessage();
     @Inject
     private LocaleManager localeManager;
@@ -45,6 +44,10 @@ public class SkinsRestorerLocale {
     private SettingsManager settings;
     @Getter
     private final SRForeign defaultForeign = () -> settings.getProperty(MessageConfig.LOCALE);
+
+    public String getMessage(SRForeign foreign, Message key) {
+        return getMessage(foreign, key, TagResolver.empty());
+    }
 
     public String getMessage(SRForeign foreign, Message key, TagResolver... tagResolver) {
         Component component = getMessageInternal(foreign, key, TagResolver.resolver(tagResolver))

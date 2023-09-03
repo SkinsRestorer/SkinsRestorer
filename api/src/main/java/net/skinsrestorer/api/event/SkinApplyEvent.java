@@ -21,6 +21,10 @@ package net.skinsrestorer.api.event;
 
 import net.skinsrestorer.api.property.SkinProperty;
 
+/**
+ * SkinApplyEvent interface represents an event that is fired when a skin is being applied to a player.
+ * It extends the SkinsRestorerEvent interface.
+ */
 public interface SkinApplyEvent extends SkinsRestorerEvent {
     <P> P getPlayer(Class<P> playerClass);
 

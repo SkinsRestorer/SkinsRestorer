@@ -21,15 +21,14 @@ package net.skinsrestorer.bukkit.wrapper;
 
 import ch.jalu.configme.SettingsManager;
 import lombok.experimental.SuperBuilder;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.skinsrestorer.bukkit.SRBukkitAdapter;
-import net.skinsrestorer.shared.config.MessageConfig;
 import net.skinsrestorer.shared.subjects.AbstractSRCommandSender;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.Permission;
+import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
-
-import java.util.Locale;
 
 @SuperBuilder
 public class WrapperCommandSender extends AbstractSRCommandSender {
@@ -40,13 +39,16 @@ public class WrapperCommandSender extends AbstractSRCommandSender {
     private final GsonComponentSerializer serializer = GsonComponentSerializer.gson();
 
     @Override
-    public Locale getLocale() {
-        return settings.getProperty(MessageConfig.LOCALE);
-    }
-
-    @Override
     public void sendMessage(String messageJson) {
-        adapter.getAdventure().sender(sender).sendMessage(serializer.deserialize(messageJson));
+        Component message = serializer.deserialize(messageJson);
+
+        Runnable runnable = () -> adapter.getAdventure().sender(sender).sendMessage(message);
+        if (sender instanceof BlockCommandSender) {
+            // Command blocks require messages to be sent synchronously in Bukkit
+            adapter.runSync(runnable);
+        } else {
+            runnable.run();
+        }
     }
 
     @Override
@@ -57,5 +59,10 @@ public class WrapperCommandSender extends AbstractSRCommandSender {
     @Override
     protected SkinsRestorerLocale getSRLocale() {
         return locale;
+    }
+
+    @Override
+    protected SettingsManager getSettings() {
+        return settings;
     }
 }

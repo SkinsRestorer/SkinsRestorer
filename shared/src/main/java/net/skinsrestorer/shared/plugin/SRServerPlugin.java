@@ -105,6 +105,8 @@ public class SRServerPlugin {
     }
 
     public void startupPlatform(SRServerPlatformInit init) throws InitializeException {
+        init.initMetricsJoinListener();
+
         init.initPermissions();
 
         init.initGUIListener();
