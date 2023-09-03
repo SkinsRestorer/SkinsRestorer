@@ -20,6 +20,7 @@
   "skinsrestorer.help_sr_apply_skin_all": "Ponownie ustaw skina dla każdego gracza.",
   "skinsrestorer.help_sr_purge_old_data": "Wyczyść stare dane skina z x dni temu.",
   "skinsrestorer.help_sr_dump": "Prześlij dane pomocnicze na bytebin.lucko.me.",
+  "skinsrestorer.info_no_brackets": "Powinieneś <bold>nie</bold> umieszczać tekstu między nawiasami <bold><</bold> i <bold>[ ]</bold><newline>Przykład: <dark_green>/skin <jebb></dark_green > po prostu <dark_green>/skin jebb</dark_green>",
   "skinsrestorer.success_skin_change": "<dark_green>Twój skin został zmieniony.",
   "skinsrestorer.success_skin_change_other": "<dark_green>Ustawiłeś skina gracza <name>.",
   "skinsrestorer.success_skin_clear": "<dark_green>Twój skin został zresetowany.",
@@ -110,6 +111,8 @@
   "skinsrestorer.skinsmenu_previous_page": "<yellow><bold>«<gray> Poprzednia Strona</gray><bold> «</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[ <gray>Usuń Skina</gray><bold> ]</bold>",
   "skinsrestorer.skinsmenu_select_skin": "<dark_green>Kliknij aby wybrać tego skina",
+  "skinsrestorer.sponge_metrics_consent": "Drogi administratorze serwera, aby pomóc nam zdecydować, czy powinniśmy <b>kontynuować wspieranie Sponge for SkinsRestorer</b>, rozważ włączenie metryk <newline>poprzez wykonanie <dark_green>/srmetricsenable</dark_green> lub kliknij tę wiadomość.",
+  "skinsrestorer.sponge_metrics_hover": "<dark_green>Kliknij, aby włączyć metryki.",
   "skinsrestorer.skin_search_message": "<dark_green>Możesz znaleźć skiny pasujące <green><search></green> tutaj: <newline><green>https://namemc.com/minecraft-skins/tag/<search> <newline><newline><dark_green>Jeśli nie znaleziono skinów, zawsze znajdziesz kilka skinów na https://namemc.com/minecraft-skins/tag <newline>Możesz ustawić skórkę za pomocą linku skórki:<newline> /skin https://namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>Błąd<dark_gray>: <red>Nie uzyskano żadnych danych skina! Czy ten gracz posiada skina?",
   "skinsrestorer.outdated": "<dark_red>Korzystasz z przestarzałej wersji SkinsRestorer!<newline><red>Zaktualizuj do najnowszej wersji na Spigot: <newline><yellow>https://www.spigotmc.org/resources/skinsrestorer.2124/"
