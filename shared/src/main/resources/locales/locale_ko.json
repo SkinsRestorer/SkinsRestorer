@@ -20,6 +20,7 @@
   "skinsrestorer.help_sr_apply_skin_all": "모든 플레이어의 스킨을 다시 적용해요.",
   "skinsrestorer.help_sr_purge_old_data": "x일 지난 예전 스킨 데이터를 정리해요.",
   "skinsrestorer.help_sr_dump": "bytebin.lucko.me로 지원 데이터를 업로드해요.",
+  "skinsrestorer.info_no_brackets": "<bold>부등호</bold>나 <bold>대괄호</bold> 사이에 텍스트를 <bold>넣지 말아야 해요</bold><newline>예: <dark_green>/skin <jebb></dark_green>은 <dark_green>/skin jebb이라고 적어야 해요</dark_green>",
   "skinsrestorer.success_skin_change": "<dark_green>스킨을 변경했어요.",
   "skinsrestorer.success_skin_change_other": "<dark_green><name>의 스킨을 변경했어요.",
   "skinsrestorer.success_skin_clear": "<dark_green>스킨을 재설정했어요.",
@@ -108,7 +109,9 @@
   "skinsrestorer.skinsmenu_next_page": "<green><bold>»</bold> <gray>다음 페이지</gray> <bold>»</bold>",
   "skinsrestorer.skinsmenu_previous_page": "<yellow><bold>« <gray>이전 페이지</gray> <bold>«</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[</bold> <gray>스킨 제거</gray> <bold>]</bold>",
-  "skinsrestorer.skinsmenu_select_skin": "<dark_green>이 스킨을 선택하려면 클릭하세요",
+  "skinsrestorer.skinsmenu_select_skin": "<dark_green>이 스킨을 선택하려면 누르세요",
+  "skinsrestorer.sponge_metrics_consent": "서버 관리자님, <b>SkinsRestorer용 Sponge를 지원할지 결정하기 위해</b>, 측정을 사용할지 고려해 주세요 <newline>측정을 사용하려면, <dark_green>/srmetricsenable</dark_green> 명령어를 실행하거나 또는 이 메시지를 누르세요.",
+  "skinsrestorer.sponge_metrics_hover": "<dark_green>눌러서 측정 사용하기.",
   "skinsrestorer.skin_search_message": "<green><search></green><dark_green>와(과) 일치하는 스킨을 아래에서 찾아보세요.<newline><green>https://https://namemc.com/minecraft-skins/tag/<search><newline><newline><dark_green>어떠한 스킨도 찾지 못한 경우, https://namemc.com/minecraft-skins/tag 에서 언제든지 스킨을 찾을 수 있어요.<newline>스킨의 링크를 사용해서 스킨을 설정할 수도 있어요.<newline>/skin https://namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>오류<dark_gray>: <red>수집한 스킨 데이터가 없어요! 이 플레이어가 스킨이 있는 건가요?",
   "skinsrestorer.outdated": "<dark_red>SkinRestorer 구버전을 사용 중이에요!\n<newline><red>Spigot에서 최신 버전으로 업데이트하세요.\n<newline><yellow>https://www.spigotmc.org/resources/skinsrestorer.2124/"
