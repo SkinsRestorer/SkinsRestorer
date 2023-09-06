@@ -118,7 +118,7 @@ public class SRBukkitInit implements SRServerPlatformInit {
     }
 
     @Override
-    public void initPrePlatformInit() {
+    public void prePlatformInit() {
         server.getHelpMap().registerHelpTopicFactory(SRBukkitCommand.class, command ->
                 new SRHelpTopic((SRBukkitCommand) command, wrapper, locale));
     }

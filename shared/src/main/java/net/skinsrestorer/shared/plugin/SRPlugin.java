@@ -265,9 +265,11 @@ public class SRPlugin {
 
         logger.info("Moving old file " + path.getFileName() + " to archive folder.");
         Path archive = dataFolder.resolve("archive");
+        Path target = archive.resolve(path.getFileName().toString() + "_" + System.currentTimeMillis());
+
         try {
             Files.createDirectories(archive);
-            Files.move(path, archive.resolve(path.getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
+            Files.move(path, target, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -390,7 +392,7 @@ public class SRPlugin {
 
         platformInit.checkPluginSupport();
 
-        platformInit.initPrePlatformInit();
+        platformInit.prePlatformInit();
 
         if (serverPlugin != null) {
             serverPlugin.startupPlatform((SRServerPlatformInit) platformInit);
