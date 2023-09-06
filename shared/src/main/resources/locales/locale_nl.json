@@ -88,6 +88,7 @@
   "skinsrestorer.permission_command_search": "Sta toegang toe om je skin te zoeken.",
   "skinsrestorer.permission_command_gui": "Geeft toegang tot skins GUI.",
   "skinsrestorer.permission_admin_wildcard": "Joker rechten voor administratoren",
+  "skinsrestorer.permission_admincommand": "Geeft toegang tot de \"/sr\" hub commando.",
   "skinsrestorer.permission_bypasscooldown": "Omzeilt ingestelde cooldowns in de configuratie.",
   "skinsrestorer.permission_bypassdisabled": "Geef toegang tot uitgeschakelde skins in de config.",
   "skinsrestorer.permission_ownskin": "Sta toegang toe om je eigen skin in te stellen.",
