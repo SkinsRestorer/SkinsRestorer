@@ -74,6 +74,13 @@ public final class SkinCommand {
 
     @RootCommand
     private void onDefault(SRCommandSender sender) {
+        if (settings.getProperty(CommandConfig.CUSTOM_HELP_ENABLED)) {
+            for (String line : settings.getProperty(CommandConfig.CUSTOM_HELP_MESSAGE)) {
+                sender.sendMessage(ComponentHelper.parseMiniMessageToJsonString(line));
+            }
+            return;
+        }
+
         commandManager.getHelpMessage("skin", sender).forEach(sender::sendMessage);
     }
 
