@@ -219,6 +219,19 @@ public final class SkinCommand {
     @CommandPermission(PermissionRegistry.SKIN_SET_URL)
     @Description(Message.HELP_SKIN_SET_URL)
     @CommandConditions("cooldown")
+    private void onSkinSetUrlShort(SRPlayer player, String url) {
+        if (!C.validUrl(url)) {
+            player.sendMessage(Message.ERROR_INVALID_URLSKIN);
+            return;
+        }
+
+        onSkinSetOther(player, url, player, null);
+    }
+
+    @Subcommand("url")
+    @CommandPermission(PermissionRegistry.SKIN_SET_URL)
+    @Description(Message.HELP_SKIN_SET_URL)
+    @CommandConditions("cooldown")
     private void onSkinSetUrl(SRPlayer player, String url, SkinVariant skinVariant) {
         if (!C.validUrl(url)) {
             player.sendMessage(Message.ERROR_INVALID_URLSKIN);
