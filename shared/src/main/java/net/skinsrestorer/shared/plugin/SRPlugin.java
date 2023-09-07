@@ -125,15 +125,21 @@ public class SRPlugin {
 
         adapter.runRepeatAsync(injector.getSingleton(CooldownStorage.class)::cleanup, 60, 60, TimeUnit.SECONDS);
 
-        manager.registerCommand(injector.newInstance(SkinCommand.class));
         manager.registerCommand(injector.newInstance(SRCommand.class));
 
-        if (injector.getIfAvailable(SRServerPlugin.class) != null) {
-            manager.registerCommand(injector.newInstance(ServerGUICommand.class));
-        } else if (injector.getIfAvailable(SRProxyPlugin.class) != null) {
-            manager.registerCommand(injector.newInstance(ProxyGUICommand.class));
-        } else {
-            throw new IllegalStateException("Unknown platform");
+        SettingsManager settings = injector.getSingleton(SettingsManager.class);
+        if (!settings.getProperty(CommandConfig.DISABLE_SKIN_COMMAND)) {
+            manager.registerCommand(injector.newInstance(SkinCommand.class));
+        }
+
+        if (!settings.getProperty(CommandConfig.DISABLE_GUI_COMMAND)) {
+            if (injector.getIfAvailable(SRServerPlugin.class) != null) {
+                manager.registerCommand(injector.newInstance(ServerGUICommand.class));
+            } else if (injector.getIfAvailable(SRProxyPlugin.class) != null) {
+                manager.registerCommand(injector.newInstance(ProxyGUICommand.class));
+            } else {
+                throw new IllegalStateException("Unknown platform");
+            }
         }
     }
 

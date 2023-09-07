@@ -87,6 +87,20 @@ public class CommandConfig implements SettingsHolder {
             "<gray>---------------------",
             "<gray>/skin set <skin> - <yellow>Set your skin"
     );
+    @Comment({
+            "<!! Warning !!>",
+            "This option will disable the /skin command from being registered on the server.",
+            "Do not disable this unless you are overriding the /skin command with a different plugin or you don't want the skin command.",
+            "Requires a server restart to take effect."
+    })
+    public static final Property<Boolean> DISABLE_SKIN_COMMAND = newProperty("commands.disableSkinCommand", false);
+    @Comment({
+            "<!! Warning !!>",
+            "This option will disable the /skins command from being registered on the server.",
+            "Do not disable this unless you are overriding the /skins command with a different plugin or you don't want the GUI command.",
+            "Requires a server restart to take effect."
+    })
+    public static final Property<Boolean> DISABLE_GUI_COMMAND = newProperty("commands.disableGUICommand", false);
 
     @Override
     public void registerComments(CommentsConfiguration conf) {
