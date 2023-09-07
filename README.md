@@ -49,15 +49,10 @@ Implementation:
 - [Website](https://skinsrestorer.net)
 - [Crowdin](https://translate.skinsrestorer.net)
 
-## :scroll: License
+## 📥 How to install? / Installation / Setup
 
-SkinsRestorer is licensed under GNU General Public License v3.0. Please
-see [`LICENSE.txt`](https://github.com/SkinsRestorer/SkinsRestorerX/blob/HEAD/LICENSE) for more info.
-
-## :family: Authors
-
-See [Contributors](https://github.com/SkinsRestorer/SkinsRestorerX/graphs/contributors) for a list of people that have
-supported this project by contributing.
+You can [read on our website](https://skinsrestorer.net/docs/installation) how to
+install SkinsRestorer. Make sure to follow all steps before reporting issues!
 
 ## 🌈 Community
 
@@ -69,7 +64,12 @@ Feel free to join our Discord community server:
 
 You can find instructions on how to use the SkinsRestorer API on [our website](https://skinsrestorer.net/docs/development/api).
 
-### How to install? / Installation / Setup
+## :family: Authors
 
-Installing SkinsRestorer can be tricky when using a proxy server. Make sure to read how to
-install [here](https://github.com/SkinsRestorer/SkinsRestorerX/wiki/Installing-SkinsRestorer#Basic-Installation)
+See [Contributors](https://github.com/SkinsRestorer/SkinsRestorerX/graphs/contributors) for a list of people that have
+supported this project by contributing.
+
+## :scroll: License
+
+SkinsRestorer is licensed under GNU General Public License v3.0. Please
+see [`LICENSE`](https://github.com/SkinsRestorer/SkinsRestorerX/blob/HEAD/LICENSE) for more info.
