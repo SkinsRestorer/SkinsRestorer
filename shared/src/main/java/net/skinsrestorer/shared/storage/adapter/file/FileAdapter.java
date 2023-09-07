@@ -76,12 +76,12 @@ public class FileAdapter implements StorageAdapter {
         this.legacyFolder = dataFolder.resolve("legacy");
         this.settings = settings;
         this.logger = logger;
-        init();
         try {
             migrate(dataFolder);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        init();
     }
 
     private static String hashSHA256(String input) {

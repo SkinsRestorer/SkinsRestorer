@@ -261,6 +261,7 @@ public class SRPlugin {
 
         moveToArchive(dataFolder.resolve("messages.yml"));
         moveToArchive(dataFolder.resolve("command-messages.properties"));
+        moveToArchive(dataFolder.resolve("command.properties"));
         moveToArchive(dataFolder.resolve("languages"));
     }
 
