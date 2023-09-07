@@ -91,7 +91,7 @@
   "skinsrestorer.permission_command_gui": "Allows access to open skins GUI.",
   "skinsrestorer.permission_admin_wildcard": "Wildcard permission for admins",
   "skinsrestorer.permission_admincommand": "Allows access to the main \"/sr\" commands.",
-  "skinsrestorer.permission_command_set_other": "Allows access to set another players skin.",
+  "skinsrestorer.permission_command_set_other": "Allows access to set another player skin.",
   "skinsrestorer.permission_command_clear_other": "Allows access to clear another player skin.",
   "skinsrestorer.permission_command_update_other": "Allows access to update another player skin.",
   "skinsrestorer.permission_admincommand_reload": "Allows access to \"/sr reload\".",
