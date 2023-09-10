@@ -1,1 +1,22 @@
-{}
+{
+  "skinsrestorer.help_skin": "スキンを変更します。",
+  "skinsrestorer.help_skins": "スキンGUIを開きます。",
+  "skinsrestorer.help_sr": "SkinsRestorerの管理者コマンドです。",
+  "skinsrestorer.help_skin_set": "スキンを変更します。",
+  "skinsrestorer.help_skin_set_other": "対象のプレイヤーのスキンを設定します。",
+  "skinsrestorer.help_skin_set_url": "URLからスキンを設定します。",
+  "skinsrestorer.help_skin_clear": "スキンを消去します。",
+  "skinsrestorer.help_skin_clear_other": "対象のプレイヤーのスキンを消去します。",
+  "skinsrestorer.help_skin_search": "任意のスキンを検索します。",
+  "skinsrestorer.help_skin_update": "スキンを更新します。",
+  "skinsrestorer.help_skin_update_other": "対象のプレイヤーのスキンを更新します。",
+  "skinsrestorer.help_sr_reload": "設定ファイルを再読み込みします。",
+  "skinsrestorer.help_sr_status": "プラグインに必要なAPIサービスを確認します。",
+  "skinsrestorer.help_sr_drop": "プレイヤーまたはスキンのデータを削除します。",
+  "skinsrestorer.help_sr_props": "プレイヤーに設定されているスキンのプロパティを表示します。",
+  "skinsrestorer.help_sr_apply_skin": "対象のプレイヤーのスキンを再適用します。",
+  "skinsrestorer.help_sr_set_skin_all": "すべてのプレイヤーにスキンを設定します。",
+  "skinsrestorer.help_sr_apply_skin_all": "すべてのプレイヤーにスキンを再適用します。",
+  "skinsrestorer.help_sr_purge_old_data": "x 日以上前のスキンのデータを削除します。",
+  "skinsrestorer.help_sr_dump": "「bytebin.lucko.me」にサポートデータをアップロードします。"
+}
