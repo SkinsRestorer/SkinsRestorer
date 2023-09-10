@@ -125,15 +125,21 @@ public class SRPlugin {
 
         adapter.runRepeatAsync(injector.getSingleton(CooldownStorage.class)::cleanup, 60, 60, TimeUnit.SECONDS);
 
-        manager.registerCommand(injector.newInstance(SkinCommand.class));
         manager.registerCommand(injector.newInstance(SRCommand.class));
 
-        if (injector.getIfAvailable(SRServerPlugin.class) != null) {
-            manager.registerCommand(injector.newInstance(ServerGUICommand.class));
-        } else if (injector.getIfAvailable(SRProxyPlugin.class) != null) {
-            manager.registerCommand(injector.newInstance(ProxyGUICommand.class));
-        } else {
-            throw new IllegalStateException("Unknown platform");
+        SettingsManager settings = injector.getSingleton(SettingsManager.class);
+        if (!settings.getProperty(CommandConfig.DISABLE_SKIN_COMMAND)) {
+            manager.registerCommand(injector.newInstance(SkinCommand.class));
+        }
+
+        if (!settings.getProperty(CommandConfig.DISABLE_GUI_COMMAND)) {
+            if (injector.getIfAvailable(SRServerPlugin.class) != null) {
+                manager.registerCommand(injector.newInstance(ServerGUICommand.class));
+            } else if (injector.getIfAvailable(SRProxyPlugin.class) != null) {
+                manager.registerCommand(injector.newInstance(ProxyGUICommand.class));
+            } else {
+                throw new IllegalStateException("Unknown platform");
+            }
         }
     }
 
@@ -255,6 +261,7 @@ public class SRPlugin {
 
         moveToArchive(dataFolder.resolve("messages.yml"));
         moveToArchive(dataFolder.resolve("command-messages.properties"));
+        moveToArchive(dataFolder.resolve("command.properties"));
         moveToArchive(dataFolder.resolve("languages"));
     }
 
@@ -265,9 +272,11 @@ public class SRPlugin {
 
         logger.info("Moving old file " + path.getFileName() + " to archive folder.");
         Path archive = dataFolder.resolve("archive");
+        Path target = archive.resolve(path.getFileName().toString() + "_" + System.currentTimeMillis());
+
         try {
             Files.createDirectories(archive);
-            Files.move(path, archive.resolve(path.getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
+            Files.move(path, target, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -390,7 +399,7 @@ public class SRPlugin {
 
         platformInit.checkPluginSupport();
 
-        platformInit.initPrePlatformInit();
+        platformInit.prePlatformInit();
 
         if (serverPlugin != null) {
             serverPlugin.startupPlatform((SRServerPlatformInit) platformInit);

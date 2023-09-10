@@ -45,11 +45,6 @@ public class CommandConfig implements SettingsHolder {
     public static final Property<Integer> SKIN_CHANGE_COOLDOWN = newProperty("commands.skinChangeCooldown", 30);
 
     public static final Property<Integer> SKIN_ERROR_COOLDOWN = newProperty("commands.skinErrorCooldown", 5);
-    @Comment({
-            "True will make use of the 'CUSTOM_HELP_IF_ENABLED' & `SR_LINE` in messages.yml.",
-            "This is more customizable, but at the cost of permission specific help."
-    })
-    public static final Property<Boolean> ENABLE_CUSTOM_HELP = newProperty("commands.enableCustomHelp", false);
     public static final Property<Boolean> RESTRICT_SKIN_URLS_ENABLED = newProperty("commands.restrictSkinUrls.enabled", false);
     @SuppressWarnings("HttpUrlsUsage")
     public static final Property<List<String>> RESTRICT_SKIN_URLS_LIST = newListProperty("commands.restrictSkinUrls.list",
@@ -78,6 +73,34 @@ public class CommandConfig implements SettingsHolder {
             "This will also send a message to the player that they incorrectly use the command, but the command will still run fixed arguments."
     })
     public static final Property<Boolean> REMOVE_BRACKETS = newProperty("commands.removeBrackets", true);
+    @Comment({
+            "Override the automatically generated translated help message with a custom one.",
+            "This is useful if you want to have a custom help message for your server.",
+            "This only affects the base help message when running /skin with no parameters, not the error/subcommand help messages."
+    })
+    public static final Property<Boolean> CUSTOM_HELP_ENABLED = newProperty("commands.customHelp.enabled", false);
+    @Comment({
+            "The custom help message to send to the player when running /skin with no parameters."
+    })
+    public static final Property<List<String>> CUSTOM_HELP_MESSAGE = newListProperty("commands.customHelp.message",
+            "<yellow>Skin plugin Help",
+            "<gray>---------------------",
+            "<gray>/skin set <skin> - <yellow>Set your skin"
+    );
+    @Comment({
+            "<!! Warning !!>",
+            "This option will disable the /skin command from being registered on the server.",
+            "Do not disable this unless you are overriding the /skin command with a different plugin or you don't want the skin command.",
+            "Requires a server restart to take effect."
+    })
+    public static final Property<Boolean> DISABLE_SKIN_COMMAND = newProperty("commands.disableSkinCommand", false);
+    @Comment({
+            "<!! Warning !!>",
+            "This option will disable the /skins command from being registered on the server.",
+            "Do not disable this unless you are overriding the /skins command with a different plugin or you don't want the GUI command.",
+            "Requires a server restart to take effect."
+    })
+    public static final Property<Boolean> DISABLE_GUI_COMMAND = newProperty("commands.disableGUICommand", false);
 
     @Override
     public void registerComments(CommentsConfiguration conf) {

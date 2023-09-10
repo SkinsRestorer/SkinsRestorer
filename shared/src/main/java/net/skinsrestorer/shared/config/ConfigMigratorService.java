@@ -95,7 +95,7 @@ public class ConfigMigratorService implements MigrationService {
         migrated |= moveProperty(oldSkinErrorCooldownProperty, CommandConfig.SKIN_ERROR_COOLDOWN, reader, configData);
 
         Property<Boolean> oldEnableCustomHelpProperty = newProperty("EnableCustomHelp", false);
-        migrated |= moveProperty(oldEnableCustomHelpProperty, CommandConfig.ENABLE_CUSTOM_HELP, reader, configData);
+        migrated |= moveProperty(oldEnableCustomHelpProperty, CommandConfig.CUSTOM_HELP_ENABLED, reader, configData);
 
         Property<Boolean> oldDisablePrefixProperty = newProperty("DisablePrefix", false);
         migrated |= moveProperty(oldDisablePrefixProperty, MessageConfig.DISABLE_PREFIX, reader, configData);

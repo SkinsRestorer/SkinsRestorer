@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.bukkit;
 
+import ch.jalu.configme.SettingsManager;
 import ch.jalu.injector.Injector;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -27,12 +28,14 @@ import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.bukkit.command.SRBukkitCommand;
 import net.skinsrestorer.bukkit.gui.SkinsGUI;
 import net.skinsrestorer.bukkit.listener.ForceAliveListener;
+import net.skinsrestorer.bukkit.paper.PaperTabCompleteEvent;
 import net.skinsrestorer.bukkit.paper.PaperUtil;
 import net.skinsrestorer.bukkit.spigot.SpigotUtil;
 import net.skinsrestorer.bukkit.utils.BukkitSchedulerProvider;
 import net.skinsrestorer.bukkit.utils.SchedulerProvider;
 import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
 import net.skinsrestorer.shared.commands.library.SRRegisterPayload;
+import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.gui.SharedGUI;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
 import net.skinsrestorer.shared.provider.ProviderSelector;
@@ -209,9 +212,18 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin> {
 
     @Override
     public void registerCommand(SRRegisterPayload<SRCommandSender> payload) {
+        SettingsManager settingsManager = injector.getSingleton(SettingsManager.class);
+        WrapperBukkit wrapper = injector.getSingleton(WrapperBukkit.class);
+
         try {
             CommandMap commandMap = (CommandMap) ReflectionUtil.invokeMethod(server, "getCommandMap");
             SRBukkitCommand command = new SRBukkitCommand(payload, pluginInstance, injector.getSingleton(WrapperBukkit.class));
+
+            if (settingsManager.getProperty(AdvancedConfig.ENABLE_PAPER_ASYNC_TAB_LISTENER)
+                    && ReflectionUtil.classExists("com.destroystokyo.paper.event.server.AsyncTabCompleteEvent")) {
+                server.getPluginManager().registerEvents(
+                        new PaperTabCompleteEvent(payload, wrapper::commandSender), pluginInstance);
+            }
 
             commandMap.register(payload.getMeta().getRootName(), "skinsrestorer", command);
         } catch (ReflectiveOperationException e) {

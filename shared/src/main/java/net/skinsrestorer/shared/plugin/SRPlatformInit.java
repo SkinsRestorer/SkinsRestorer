@@ -29,6 +29,6 @@ public interface SRPlatformInit {
 
     void initLoginProfileListener();
 
-    default void initPrePlatformInit() {
+    default void prePlatformInit() {
     }
 }

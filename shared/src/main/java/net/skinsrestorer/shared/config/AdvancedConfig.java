@@ -34,13 +34,20 @@ public class AdvancedConfig implements SettingsHolder {
     })
     public static final Property<Boolean> DISABLE_ON_JOIN_SKINS = newProperty("advanced.disableOnJoinSkins", false);
     @Comment({
-            "<!! Warning Experimental !!>",
-            "This enables the experimental PaperMC join event integration that allows instant skins on join.",
-            "It is not as tested as the default implementation, but it is smoother and should not lag the server.",
+            "<!! Warning !!>",
+            "This enables the PaperMC join event integration that allows instant skins on join.",
+            "It is recommended over the fallback listener because it is smoother and should not lag the server.",
             "It also fixes all resource pack skin apply issues.",
             "If your players are experiencing extremely long loading screens, try disabling this."
     })
     public static final Property<Boolean> ENABLE_PAPER_JOIN_LISTENER = newProperty("advanced.enablePaperJoinListener", true);
+    @Comment({
+            "<!! Warning !!>",
+            "This enables the PaperMC async tab event integration that allows async command tab completions.",
+            "It is recommended over the bukkit command system as tab completions will not lag the server using it.",
+            "Only disable this if you're overriding a SkinsRestorer command like /skin with a different plugin."
+    })
+    public static final Property<Boolean> ENABLE_PAPER_ASYNC_TAB_LISTENER = newProperty("advanced.enablePaperAsyncTabListener", true);
     @Comment({
             "<!! Warning !!>",
             "When enabled if a skin gets applied on the proxy, the new texture will be forwarded to the backend as well.",
