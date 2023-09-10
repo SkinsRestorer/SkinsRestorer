@@ -67,5 +67,7 @@
   "skinsrestorer.player_has_no_permission_url": "<dark_red>エラー<dark_gray>：<red>URLからスキンを設定する権限がありません。",
   "skinsrestorer.not_premium": "<dark_red>エラー<dark_gray>：<red>その名前のプレイヤーは存在しません。",
   "skinsrestorer.only_allowed_on_console": "<dark_red>エラー<dark_gray>：<red>そのコマンドはコンソールのみ実行できます。",
-  "skinsrestorer.only_allowed_on_player": "<dark_red>エラー<dark_gray>：<red>そのコマンドはプレイヤーのみ実行できます。"
+  "skinsrestorer.only_allowed_on_player": "<dark_red>エラー<dark_gray>：<red>そのコマンドはプレイヤーのみ実行できます。",
+  "skinsrestorer.invalid_player": "<dark_red>エラー<dark_gray>：<red>「<input>」は有効なユーザー名またはURLではありません。",
+  "skinsrestorer.skin_cooldown": "<dark_red>エラー<dark_gray>：<red><yellow><time></yellow>秒後にスキンを変更できます。"
 }
