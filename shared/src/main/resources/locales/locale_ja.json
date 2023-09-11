@@ -29,6 +29,7 @@
   "skinsrestorer.success_admin_applyskin": "<dark_green>プレイヤーのスキンが再読み込みされました。",
   "skinsrestorer.success_admin_createcustom": "<dark_green>スキン「<skin>」が作成されました。",
   "skinsrestorer.success_admin_drop": "<dark_green><target>の<type>のデータが削除されました。",
+  "skinsrestorer.success_admin_reload": "<dark_green>設定と言語が再読み込みされました。",
   "skinsrestorer.error_skin_disabled": "<dark_red>エラー<dark_gray>：<red>このスキンは管理者によって無効になっています。",
   "skinsrestorer.error_skinurl_disallowed": "<dark_red>エラー<dark_gray>：<red>このドメインは管理者によって無効になっています。",
   "skinsrestorer.error_updating_skin": "<dark_red>エラー<dark_gray>：<red>スキンの更新中にエラーが発生しました。後でもう一度お試しください。",
@@ -69,5 +70,19 @@
   "skinsrestorer.only_allowed_on_console": "<dark_red>エラー<dark_gray>：<red>そのコマンドはコンソールのみ実行できます。",
   "skinsrestorer.only_allowed_on_player": "<dark_red>エラー<dark_gray>：<red>そのコマンドはプレイヤーのみ実行できます。",
   "skinsrestorer.invalid_player": "<dark_red>エラー<dark_gray>：<red>「<input>」は有効なユーザー名またはURLではありません。",
-  "skinsrestorer.skin_cooldown": "<dark_red>エラー<dark_gray>：<red><yellow><time></yellow>秒後にスキンを変更できます。"
+  "skinsrestorer.skin_cooldown": "<dark_red>エラー<dark_gray>：<red><yellow><time></yellow>秒後にスキンを変更してください。",
+  "skinsrestorer.ms_updating_skin": "<dark_green>スキンをアップロードしています。しばらくお待ちください…（しばらく時間がかかる可能性があります）",
+  "skinsrestorer.generic_error": "<dark_red>エラー<dark_gray>：<red>スキンのデータのリクエスト中にエラーが発生しました。後でもう一度お試しください。",
+  "skinsrestorer.wait_a_minute": "<dark_red>エラー<dark_gray>：<red>しばらく待ってからスキンをリクエストしてください。（レート制限あり）",
+  "skinsrestorer.permission_command": "メインの「/skin」コマンドを使用するアクセスを許可します。",
+  "skinsrestorer.permission_command_set": "スキンを変更するアクセスを許可します。",
+  "skinsrestorer.permission_command_set_url": "URLからスキンを変更するアクセスを許可します。",
+  "skinsrestorer.permission_command_clear": "スキンを消去するアクセスを許可します。",
+  "skinsrestorer.permission_command_update": "スキンを更新するアクセスを許可します。",
+  "skinsrestorer.permission_command_search": "スキンを検索するアクセスを許可します。",
+  "skinsrestorer.permission_command_gui": "スキンGUIを開くアクセスを許可します。",
+  "skinsrestorer.permission_admincommand": "メインの「/sr」コマンドを使用するアクセスを許可します。",
+  "skinsrestorer.permission_command_set_other": "プレイヤーのスキンを設定するアクセスを許可します。",
+  "skinsrestorer.permission_command_clear_other": "プレイヤーのスキンを消去するアクセスを許可します。",
+  "skinsrestorer.permission_command_update_other": "プレイヤーのスキンを更新するアクセスを許可します。"
 }
