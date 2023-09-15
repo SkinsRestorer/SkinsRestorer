@@ -32,6 +32,7 @@
   "skinsrestorer.success_admin_reload": "<dark_green>Konfigürasyon ve Dil yeniden yüklendi!",
   "skinsrestorer.error_skin_disabled": "<dark_red>Hata<dark_gray>:<red>Bu kostüm bir yönetici tarafından yasaklandı.",
   "skinsrestorer.error_skinurl_disallowed": "<dark_red>Hata<dark_gray>:<red>Kostüm url'sine izin verilemiyor.",
+  "skinsrestorer.error_updating_skin": "<dark_red>Hata <dark_gray>: <red>Cildinizi güncellerken bir hata oluştu. Lütfen daha sonra tekrar deneyin!",
   "skinsrestorer.admincommand_status_summary_server": "<gray>Sunucu: <gold><version>",
   "skinsrestorer.admincommand_status_summary_proxymode": "<gray>Proxy Modu: <gold><proxy_mode>"
 }
