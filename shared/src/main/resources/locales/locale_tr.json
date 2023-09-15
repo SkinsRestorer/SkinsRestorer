@@ -33,6 +33,9 @@
   "skinsrestorer.error_skin_disabled": "<dark_red>Hata<dark_gray>:<red>Bu kostüm bir yönetici tarafından yasaklandı.",
   "skinsrestorer.error_skinurl_disallowed": "<dark_red>Hata<dark_gray>:<red>Kostüm url'sine izin verilemiyor.",
   "skinsrestorer.error_updating_skin": "<dark_red>Hata <dark_gray>: <red>Cildinizi güncellerken bir hata oluştu. Lütfen daha sonra tekrar deneyin!",
+  "skinsrestorer.error_updating_url": "<dark_red>Hata<dark_gray>: <red>Özel url görünümlerini güncelleyemezsiniz! <newline <red>Skin URL'sini kullanarak tekrar talepte bulunun",
+  "skinsrestorer.error_updating_customskin": "<dark_red>Hata<dark_gray>: <red> Kullanmak istediğiniz dış görünüm özel olduğu için güncellenemiyor.",
   "skinsrestorer.admincommand_status_summary_server": "<gray>Sunucu: <gold><version>",
-  "skinsrestorer.admincommand_status_summary_proxymode": "<gray>Proxy Modu: <gold><proxy_mode>"
+  "skinsrestorer.admincommand_status_summary_proxymode": "<gray>Proxy Modu: <gold><proxy_mode>",
+  "skinsrestorer.sponge_metrics_hover": "<dark_green>Metricsleri etkinleştirmek için tıklayın."
 }
