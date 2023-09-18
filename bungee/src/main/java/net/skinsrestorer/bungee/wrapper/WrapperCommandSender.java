@@ -27,6 +27,7 @@ import net.skinsrestorer.bungee.SRBungeeAdapter;
 import net.skinsrestorer.shared.subjects.AbstractSRCommandSender;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.Permission;
+import net.skinsrestorer.shared.utils.Tristate;
 
 @SuperBuilder
 public class WrapperCommandSender extends AbstractSRCommandSender {
@@ -43,7 +44,15 @@ public class WrapperCommandSender extends AbstractSRCommandSender {
 
     @Override
     public boolean hasPermission(Permission permission) {
-        return permission.checkPermission(settings, sender::hasPermission);
+        return permission.checkPermission(settings, p -> {
+            if (sender.hasPermission(p)) {
+                return Tristate.TRUE;
+            } else {
+                // We don't know if the permission is explicitly set to false or if it's undefined.
+                // So we return undefined to check the groups as well before returning false.
+                return Tristate.UNDEFINED;
+            }
+        });
     }
 
     @Override

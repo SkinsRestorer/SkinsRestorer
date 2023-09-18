@@ -23,4 +23,12 @@ public enum Tristate {
     FALSE,
     TRUE,
     UNDEFINED;
+
+    public static Tristate fromBoolean(boolean value) {
+        return value ? TRUE : FALSE;
+    }
+
+    public boolean asBoolean() {
+        return this == TRUE;
+    }
 }
