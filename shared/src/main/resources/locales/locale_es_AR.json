@@ -20,6 +20,7 @@
   "skinsrestorer.help_sr_apply_skin_all": "Replica la skin para cada jugador.",
   "skinsrestorer.help_sr_purge_old_data": "Purga los datos de skins antiguos de hace más de x días.",
   "skinsrestorer.help_sr_dump": "Sube datos de soporte a bytebin.lucko.me.",
+  "skinsrestorer.info_no_brackets": "Deberías <bold>no</bold> poner tu texto entre corchetes <bold>< ><><bold> y <bold>[ ]</bold><newline>Ejemplo: <dark_green>/skin <jebb></dark_green > a solo <dark_green>/skin jebb</dark_green>",
   "skinsrestorer.success_skin_change": "<dark_green>Tu skin ha sido cambiada.",
   "skinsrestorer.success_skin_change_other": "<dark_green>Has cambiado la skin de <name>.",
   "skinsrestorer.success_skin_clear": "<dark_green>Tu skin ha sido eliminada.",
@@ -110,6 +111,8 @@
   "skinsrestorer.skinsmenu_previous_page": "<yellow><bold>»<gray> Anterior pagina</gray><bold> »</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[ <gray>Eliminar Skin</gray><bold> ]</bold>",
   "skinsrestorer.skinsmenu_select_skin": "<dark_green>Clic para seleccionar esta skin.",
+  "skinsrestorer.sponge_metrics_consent": "Estimado administrador del servidor, para ayudarnos a decidir si debemos <b>seguir admitiendo Sponge para SkinsRestorer</b>, considere habilitar las métricas <newline>ejecutando <dark_green>/srmetricsenable</dark_green> o haga clic en este mensaje.",
+  "skinsrestorer.sponge_metrics_hover": "<dark_green>Haga clic para habilitar métricas.",
   "skinsrestorer.skin_search_message": "<dark_green>Puede encontrar skins que coincidan con <green><search></green> aquí: <newline><green>https://namemc.com/minecraft-skins/tag/<search> <newline><newline><dark_green>Si no se encuentran skins, siempre puede encontrar algunas skins en https://namemc.com/minecraft-skins/tag <newline>Puede configurar la skin usando el enlace de la skin:<newline> /skin https://namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>Error<dark_gray>: <red>¡No se han adquirido datos de skin! ¿Este jugador tiene una skin?",
   "skinsrestorer.outdated": "<dark_red>Estas usando una versión vieja de SkinsRestorer!<newline><red>Puede actualizarlo mediante el siguiente link: <newline><yellow>https://www.spigotmc.org/resources/skinsrestorer.2124/"
