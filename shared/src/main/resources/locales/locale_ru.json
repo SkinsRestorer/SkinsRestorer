@@ -10,7 +10,7 @@
   "skinsrestorer.help_skin_search": "Найти нужный вам скин.",
   "skinsrestorer.help_skin_update": "Обновляет ваш скин.",
   "skinsrestorer.help_skin_update_other": "Обновляет скин выбранного игрока.",
-  "skinsrestorer.help_sr_reload": "Перезагружает файл настроек.",
+  "skinsrestorer.help_sr_reload": "Перезагружает конфигурационный файл.",
   "skinsrestorer.help_sr_status": "Проверяет необходимые плагину API-сервисы.",
   "skinsrestorer.help_sr_drop": "Удаляет данные об игроке или скине.",
   "skinsrestorer.help_sr_props": "Отображает свойства текущего скина игрока.",
