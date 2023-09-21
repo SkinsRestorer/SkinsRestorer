@@ -18,7 +18,7 @@
   "skinsrestorer.help_sr_create_custom": "Создаёт пользовательский скин для всего сервера.",
   "skinsrestorer.help_sr_set_skin_all": "Устанавливает скин всем игрокам.",
   "skinsrestorer.help_sr_apply_skin_all": "Переустанавливает скин каждому игроку.",
-  "skinsrestorer.help_sr_purge_old_data": "Удаляет данные старых скинов, которые старше чем x дней.",
+  "skinsrestorer.help_sr_purge_old_data": "Удаляет старые скины, полученные более x дней назад.",
   "skinsrestorer.help_sr_dump": "Загрузка вспомогательных данных на bytebin.lucko.me.",
   "skinsrestorer.info_no_brackets": "Вы <bold>не</bold> должны помещать текст между скобками <bold>< ></bold> и <bold>[ ]</bold><newline>Пример: не <dark_green>/skin <jebb></dark_green>, а просто <dark_green>/skin jebb</dark_green>",
   "skinsrestorer.success_skin_change": "<dark_green>Ваш скин был изменён.",
