@@ -7,7 +7,22 @@
   "skinsrestorer.help_skin_set_url": "Seteaza skin-ul de la un URL.",
   "skinsrestorer.help_skin_clear": "Sterge skin-ul.",
   "skinsrestorer.help_skin_clear_other": "Sterge skin-ul player-ului respectiv.",
+  "skinsrestorer.help_skin_search": "Cauta un skin pe care il doresti.",
   "skinsrestorer.help_skin_update": "Modifica skin-ul.",
   "skinsrestorer.help_skin_update_other": "Seteaza skin-ul pentru un jucator.",
-  "skinsrestorer.help_sr_reload": "Reincarca fisierul de configurare."
+  "skinsrestorer.help_sr_reload": "Reincarca fisierul de configurare.",
+  "skinsrestorer.help_sr_status": "Verifică serviciile API necesare plugin-ului.",
+  "skinsrestorer.help_sr_drop": "Elimină datele jucătorilor sau skin-urile.",
+  "skinsrestorer.help_sr_props": "Afișează proprietățile skin-ului curent al jucătorilor.",
+  "skinsrestorer.help_sr_apply_skin": "Reaplicați skin-ul pentru jucătorul țintă.",
+  "skinsrestorer.help_sr_create_custom": "Creează un skin personalizat pentru un server.",
+  "skinsrestorer.help_sr_set_skin_all": "Setează skin-ul pentru toți jucătorii.",
+  "skinsrestorer.help_sr_apply_skin_all": "Reaplicați skin-ul pentru toți jucătorii.",
+  "skinsrestorer.help_sr_purge_old_data": "Șterge datele skin-ului vechi de peste x zile în urmă.",
+  "skinsrestorer.help_sr_dump": "Încărcați datele de suport pe bytebin.lucko.me.",
+  "skinsrestorer.info_no_brackets": "<bold>Nu</bold> ar trebui sa scrii textul intre paranteze <bold><></bold> si <bold> [] </bold><newline>Exemplu: <dark_green>/skin<jebb></dark_green> doar in <dark_green>/skin jebb</dark_green>",
+  "skinsrestorer.success_skin_change": "<dark_green> Skin-ul tău a fost schimbat.",
+  "skinsrestorer.success_skin_change_other": "<dark_green>Ai schimbat skin-ul jucătorului <name>.",
+  "skinsrestorer.success_skin_clear": "<dark_green> Skin-ul tău a fost resetat.",
+  "skinsrestorer.success_skin_clear_other": "<dark_green>Skin resetat pentru jucătorul <name>."
 }
