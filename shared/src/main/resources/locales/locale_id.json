@@ -1,5 +1,4 @@
 {
-  "skinsrestorer.help_skin": "Mengubah skin-mu.",
   "skinsrestorer.help_skins": "Membuka GUI skin.",
   "skinsrestorer.help_sr": "Perintah admin untuk SkinsRestorer.",
   "skinsrestorer.help_skin_set": "Mengubah skin-mu.",
@@ -28,6 +27,5 @@
   "skinsrestorer.success_updating_skin": "<dark_green>Skin-mu telah diperbarui.",
   "skinsrestorer.success_updating_skin_other": "<dark_green>Skin diperbarui untuk pemain <name>.",
   "skinsrestorer.success_admin_applyskin": "<dark_green>Skin pemain telah disegarkan!",
-  "skinsrestorer.success_admin_createcustom": "<dark_green>Skin <skin> telah dibuat!",
-  "skinsrestorer.success_admin_drop": "."
+  "skinsrestorer.success_admin_createcustom": "<dark_green>Skin <skin> telah dibuat!"
 }
