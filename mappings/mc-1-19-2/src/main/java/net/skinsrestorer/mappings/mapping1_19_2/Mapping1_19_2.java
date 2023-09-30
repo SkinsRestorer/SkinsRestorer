@@ -19,7 +19,6 @@
  */
 package net.skinsrestorer.mappings.mapping1_19_2;
 
-import com.google.common.collect.ImmutableList;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.server.level.ServerLevel;
@@ -33,6 +32,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -51,8 +51,8 @@ public class Mapping1_19_2 implements IMapping {
         try {
             ServerPlayer entityPlayer = MappingReflection.getHandle(player, ServerPlayer.class);
 
-            ClientboundPlayerInfoPacket removePlayer = new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.REMOVE_PLAYER, ImmutableList.of(entityPlayer));
-            ClientboundPlayerInfoPacket addPlayer = new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, ImmutableList.of(entityPlayer));
+            ClientboundPlayerInfoPacket removePlayer = new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.REMOVE_PLAYER, List.of(entityPlayer));
+            ClientboundPlayerInfoPacket addPlayer = new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, List.of(entityPlayer));
 
             // Slowly getting from object to object till we get what is needed for
             // the respawn packet

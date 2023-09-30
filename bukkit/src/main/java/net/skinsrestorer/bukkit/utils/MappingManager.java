@@ -19,7 +19,6 @@
  */
 package net.skinsrestorer.bukkit.utils;
 
-import com.google.common.collect.ImmutableList;
 import net.skinsrestorer.mappings.mapping1_18.Mapping1_18;
 import net.skinsrestorer.mappings.mapping1_18_2.Mapping1_18_2;
 import net.skinsrestorer.mappings.mapping1_19.Mapping1_19;
@@ -29,6 +28,7 @@ import net.skinsrestorer.mappings.mapping1_19_3.Mapping1_19_3;
 import net.skinsrestorer.mappings.mapping1_19_4.Mapping1_19_4;
 import net.skinsrestorer.mappings.mapping1_20.Mapping1_20;
 import net.skinsrestorer.mappings.shared.IMapping;
+import net.skinsrestorer.shared.utils.FluentList;
 import org.bukkit.Server;
 
 import java.lang.reflect.Method;
@@ -36,16 +36,16 @@ import java.util.List;
 import java.util.Optional;
 
 public class MappingManager {
-    private static final List<IMapping> mappings = ImmutableList.<IMapping>builder()
-            .add(new Mapping1_18())
-            .add(new Mapping1_18_2())
-            .add(new Mapping1_19())
-            .add(new Mapping1_19_1())
-            .add(new Mapping1_19_2())
-            .add(new Mapping1_19_3())
-            .add(new Mapping1_19_4())
-            .add(new Mapping1_20())
-            .build();
+    private static final List<IMapping> mappings = FluentList.of(
+            new Mapping1_18(),
+            new Mapping1_18_2(),
+            new Mapping1_19(),
+            new Mapping1_19_1(),
+            new Mapping1_19_2(),
+            new Mapping1_19_3(),
+            new Mapping1_19_4(),
+            new Mapping1_20()
+    );
 
     public static Optional<IMapping> getMapping(Server server) {
         Optional<String> mappingVersion = getMappingsVersion(server);

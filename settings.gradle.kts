@@ -45,9 +45,6 @@ dependencyResolutionManagement {
         maven("https://repo.codemc.org/repository/nms/") {
             name = "CodeMC NMS Repository"
         }
-        maven("https://repo.aikar.co/content/groups/aikar/") {
-            name = "Aikar Repository"
-        }
         maven("https://repo.viaversion.com/") {
             name = "ViaVersion Repository"
         }

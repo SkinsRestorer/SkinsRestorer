@@ -19,7 +19,6 @@
  */
 package net.skinsrestorer.mappings.mapping1_20;
 
-import com.google.common.collect.ImmutableList;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.server.level.ServerLevel;
@@ -52,7 +51,7 @@ public class Mapping1_20 implements IMapping {
         try {
             ServerPlayer entityPlayer = MappingReflection.getHandle(player, ServerPlayer.class);
 
-            ClientboundPlayerInfoRemovePacket removePlayer = new ClientboundPlayerInfoRemovePacket(ImmutableList.of(entityPlayer.getUUID()));
+            ClientboundPlayerInfoRemovePacket removePlayer = new ClientboundPlayerInfoRemovePacket(List.of(entityPlayer.getUUID()));
             ClientboundPlayerInfoUpdatePacket addPlayer = ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(entityPlayer));
 
             // Slowly getting from object to object till we get what is needed for

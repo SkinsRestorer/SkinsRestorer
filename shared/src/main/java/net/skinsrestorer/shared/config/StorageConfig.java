@@ -32,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
-import static net.skinsrestorer.shared.utils.FluentList.listOf;
+import static net.skinsrestorer.shared.utils.FluentList.of;
 
 public class StorageConfig implements SettingsHolder {
     public static final Property<Boolean> DEFAULT_SKINS_ENABLED = newProperty("storage.defaultSkins.enabled", false);
@@ -47,7 +47,7 @@ public class StorageConfig implements SettingsHolder {
         public @Nullable Object toExportValue(String value) {
             return value;
         }
-    }, listOf("xknat", "pistonmaster"));
+    }, of("xknat", "pistonmaster"));
     @Comment({
             "<!! Warning !!>",
             "Enable this will require players to run \"/skin update\" to update their skin."

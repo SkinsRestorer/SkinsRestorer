@@ -28,7 +28,7 @@ import java.util.List;
 
 import static ch.jalu.configme.properties.PropertyInitializer.newListProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
-import static net.skinsrestorer.shared.utils.FluentList.listOf;
+import static net.skinsrestorer.shared.utils.FluentList.of;
 
 public class ProxyConfig implements SettingsHolder {
     public static final Property<Boolean> NOT_ALLOWED_COMMAND_SERVERS_ENABLED = newProperty("proxy.notAllowedCommandServers.enabled", true);
@@ -36,7 +36,7 @@ public class ProxyConfig implements SettingsHolder {
     public static final Property<Boolean> NOT_ALLOWED_COMMAND_SERVERS_ALLOWLIST = newProperty("proxy.notAllowedCommandServers.allowList", false);
     @Comment("Block players from executing SkinsRestorer commands before having joined a server. (RECOMMENDED)")
     public static final Property<Boolean> NOT_ALLOWED_COMMAND_SERVERS_IF_NONE_BLOCK_COMMAND = newProperty("proxy.notAllowedCommandServers.ifNoServerBlockCommand", false);
-    public static final Property<List<String>> NOT_ALLOWED_COMMAND_SERVERS = newListProperty("proxy.notAllowedCommandServers.list", listOf("auth"));
+    public static final Property<List<String>> NOT_ALLOWED_COMMAND_SERVERS = newListProperty("proxy.notAllowedCommandServers.list", of("auth"));
 
     @Override
     public void registerComments(CommentsConfiguration conf) {

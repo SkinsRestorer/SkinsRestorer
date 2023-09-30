@@ -266,7 +266,7 @@ public class CommandManager<T extends SRCommandSender> {
 
                     @Override
                     public Collection<String> getExamples() {
-                        return FluentList.listOf("example", "example2");
+                        return FluentList.of("example", "example2");
                     }
                 };
             } else if (parameter.getType() == int.class) {

@@ -49,7 +49,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import static net.skinsrestorer.shared.utils.FluentList.listOf;
+import static net.skinsrestorer.shared.utils.FluentList.of;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SkinsGUI implements GUIManager<InventoryMenu> {
@@ -62,7 +62,7 @@ public class SkinsGUI implements GUIManager<InventoryMenu> {
     private static ItemStack createSkull(SkinsRestorerLocale locale, SRForeign player, String name, String property) {
         return ItemStack.builder()
                 .itemType(ItemTypes.PLAYER_HEAD)
-                .add(Keys.LORE, listOf(GSON.deserialize(locale.getMessage(player, Message.SKINSMENU_SELECT_SKIN))))
+                .add(Keys.LORE, of(GSON.deserialize(locale.getMessage(player, Message.SKINSMENU_SELECT_SKIN))))
                 .add(Keys.GAME_PROFILE, GameProfile.of(UUID.randomUUID(), null).withProperty(ProfileProperty.of(SkinProperty.TEXTURES_NAME, property)))
                 .add(Keys.CUSTOM_NAME, Component.text(name))
                 .build();
