@@ -79,7 +79,7 @@ public class FileAdapter implements StorageAdapter {
         try {
             migrate(dataFolder);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
         init();
     }
@@ -126,6 +126,10 @@ public class FileAdapter implements StorageAdapter {
     }
 
     private void migratePlayers() {
+        if (!Files.exists(playersFolder)) {
+            return;
+        }
+
         Path legacyPlayersFolder = legacyFolder.resolve("players");
         boolean generatedFolder = false;
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(playersFolder, "*.player")) {
@@ -170,6 +174,10 @@ public class FileAdapter implements StorageAdapter {
     }
 
     private void migrateSkins() {
+        if (!Files.exists(skinsFolder)) {
+            return;
+        }
+
         Path legacySkinsFolder = legacyFolder.resolve("skins");
         boolean generatedFolder = false;
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(skinsFolder, "*.skin")) {
