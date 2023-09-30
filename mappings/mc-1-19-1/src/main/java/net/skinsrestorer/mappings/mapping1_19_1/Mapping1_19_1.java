@@ -24,6 +24,7 @@ import net.minecraft.network.protocol.game.*;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.level.biome.BiomeManager;
 import net.skinsrestorer.mappings.shared.IMapping;
 import net.skinsrestorer.mappings.shared.MappingReflection;
@@ -95,8 +96,8 @@ public class Mapping1_19_1 implements IMapping {
             triggerHealthUpdate(player);
 
             // Resend their effects
-            for (net.minecraft.world.effect.MobEffectInstance mobEffect : MappingReflection.getHandle(player, ServerPlayer.class).getActiveEffects()) {
-                ClientboundUpdateMobEffectPacket effect = new ClientboundUpdateMobEffectPacket(MappingReflection.getHandle(player, ServerPlayer.class).getId(), mobEffect);
+            for (MobEffectInstance mobEffect : entityPlayer.getActiveEffects()) {
+                ClientboundUpdateMobEffectPacket effect = new ClientboundUpdateMobEffectPacket(entityPlayer.getId(), mobEffect);
                 sendPacket(entityPlayer, effect);
             }
         } catch (ReflectiveOperationException e) {

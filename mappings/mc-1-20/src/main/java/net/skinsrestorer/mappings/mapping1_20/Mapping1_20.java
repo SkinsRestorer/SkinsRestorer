@@ -24,6 +24,7 @@ import net.minecraft.network.protocol.game.*;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.level.biome.BiomeManager;
 import net.skinsrestorer.mappings.shared.IMapping;
 import net.skinsrestorer.mappings.shared.MappingReflection;
@@ -96,8 +97,8 @@ public class Mapping1_20 implements IMapping {
             triggerHealthUpdate(player);
 
             // Resend their effects
-            for (net.minecraft.world.effect.MobEffectInstance mobEffect : MappingReflection.getHandle(player, ServerPlayer.class).getActiveEffects()) {
-                ClientboundUpdateMobEffectPacket effect = new ClientboundUpdateMobEffectPacket(MappingReflection.getHandle(player, ServerPlayer.class).getId(), mobEffect);
+            for (MobEffectInstance mobEffect : entityPlayer.getActiveEffects()) {
+                ClientboundUpdateMobEffectPacket effect = new ClientboundUpdateMobEffectPacket(entityPlayer.getId(), mobEffect);
                 sendPacket(entityPlayer, effect);
             }
         } catch (ReflectiveOperationException e) {
@@ -110,7 +111,8 @@ public class Mapping1_20 implements IMapping {
     public Set<String> getSupportedVersions() {
         return Set.of(
                 "34f399b4f2033891290b7f0700e9e47b", // 1.20
-                "bcf3dcb22ad42792794079f9443df2c0" // 1.20.1
+                "bcf3dcb22ad42792794079f9443df2c0", // 1.20.1
+                "3478a65bfd04b15b431fe107b3617dfc" // 1.20.2
         );
     }
 }
