@@ -20,6 +20,7 @@
   "skinsrestorer.help_sr_apply_skin_all": "为每个玩家重新应用皮肤。",
   "skinsrestorer.help_sr_purge_old_data": "清除超过 x 天前的旧皮肤数据。",
   "skinsrestorer.help_sr_dump": "上传支持数据到 bytebin.lucko.me。",
+  "skinsrestorer.info_no_brackets": "",
   "skinsrestorer.success_skin_change": "<dark_green>你的皮肤已改变。",
   "skinsrestorer.success_skin_change_other": "<dark_green>你改变了 <name> 的皮肤。",
   "skinsrestorer.success_skin_clear": "<dark_green>你的皮肤已清除。",
