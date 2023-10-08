@@ -198,10 +198,19 @@ public class FileAdapter implements StorageAdapter {
                     }
 
                     String[] lines = new String(Files.readAllBytes(path), StandardCharsets.UTF_8).split("\n");
+                    String skinValue = lines[1].trim();
+                    String skinSignature = lines[2].trim();
+                    SkinProperty skinProperty = SkinProperty.of(skinValue, skinSignature);
+                    long timestamp = Long.parseLong(lines[3].trim());
 
-                    LegacySkinData legacySkinData = LegacySkinData.of(skinName, SkinProperty.of(lines[0], lines[1]));
+                    // Remove this logic in like 50 years ;)
+                    if (isLegacyCustomSkinTimestamp(timestamp)) {
+                        setCustomSkinData(skinName, CustomSkinData.of(skinName, skinProperty));
+                    } else {
+                        LegacySkinData legacySkinData = LegacySkinData.of(skinName, skinProperty);
 
-                    Files.write(legacySkinFile, gson.toJson(LegacySkinFile.fromLegacySkinData(legacySkinData)).getBytes(StandardCharsets.UTF_8));
+                        Files.write(legacySkinFile, gson.toJson(LegacySkinFile.fromLegacySkinData(legacySkinData)).getBytes(StandardCharsets.UTF_8));
+                    }
 
                     Files.deleteIfExists(path);
                 } catch (Exception e) {
@@ -215,6 +224,12 @@ public class FileAdapter implements StorageAdapter {
         if (generatedFolder) {
             logger.info("Skin files migration complete!");
         }
+    }
+
+    private boolean isLegacyCustomSkinTimestamp(long timestamp) {
+        if (timestamp == 0L || timestamp == -1L) {
+            return true;
+        } else return timestamp >= 4102444800000L; // 2100-01-01
     }
 
     @Override
