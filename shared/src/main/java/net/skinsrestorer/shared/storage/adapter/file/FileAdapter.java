@@ -198,10 +198,10 @@ public class FileAdapter implements StorageAdapter {
                     }
 
                     String[] lines = new String(Files.readAllBytes(path), StandardCharsets.UTF_8).split("\n");
-                    String skinValue = lines[1].trim();
-                    String skinSignature = lines[2].trim();
+                    String skinValue = lines[0].trim();
+                    String skinSignature = lines[1].trim();
                     SkinProperty skinProperty = SkinProperty.of(skinValue, skinSignature);
-                    long timestamp = Long.parseLong(lines[3].trim());
+                    long timestamp = Long.parseLong(lines[2].trim());
 
                     // Remove this logic in like 50 years ;)
                     if (isLegacyCustomSkinTimestamp(timestamp)) {
@@ -224,12 +224,6 @@ public class FileAdapter implements StorageAdapter {
         if (generatedFolder) {
             logger.info("Skin files migration complete!");
         }
-    }
-
-    private boolean isLegacyCustomSkinTimestamp(long timestamp) {
-        if (timestamp == 0L || timestamp == -1L) {
-            return true;
-        } else return timestamp >= 4102444800000L; // 2100-01-01
     }
 
     @Override
