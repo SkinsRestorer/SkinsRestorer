@@ -19,7 +19,10 @@
  */
 package net.skinsrestorer.builddata;
 
+import org.jetbrains.annotations.ApiStatus;
+
 // The constants are replaced before compilation
+@ApiStatus.Internal
 public class BuildData {
 
     public static final String VERSION = "{version}";

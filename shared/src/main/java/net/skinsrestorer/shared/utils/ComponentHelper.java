@@ -63,7 +63,7 @@ public class ComponentHelper {
         if (t instanceof TranslatableException) {
             sender.sendMessage(((TranslatableException) t).getMessage(sender, locale));
         } else {
-            sender.sendMessage(parseMiniMessageToJsonString(SharedMethods.getRootCause(t).getMessage()));
+            sender.sendMessage(parseMiniMessageToJsonString(SRHelpers.getRootCause(t).getMessage()));
         }
     }
 }

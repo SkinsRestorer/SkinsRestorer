@@ -152,9 +152,15 @@ public class MySQLAdapter implements StorageAdapter {
                 String name = crs.getString("Nick");
                 String value = crs.getString("Value");
                 String signature = crs.getString("Signature");
+                long timestamp = Long.parseLong(crs.getString("timestamp"));
 
-                mysql.execute("INSERT INTO " + resolveLegacySkinTable() + " (name, value, signature) VALUES (?, ?, ?)",
-                        name, value, signature);
+                // Remove this logic in like 50 years ;)
+                if (isLegacyCustomSkinTimestamp(timestamp)) {
+                    setCustomSkinData(name, CustomSkinData.of(name, SkinProperty.of(value, signature)));
+                } else {
+                    mysql.execute("INSERT INTO " + resolveLegacySkinTable() + " (name, value, signature) VALUES (?, ?, ?)",
+                            name, value, signature);
+                }
             }
         } catch (SQLException e) {
             throw new IOException(e);

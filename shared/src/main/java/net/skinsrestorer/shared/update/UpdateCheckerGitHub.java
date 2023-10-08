@@ -29,7 +29,7 @@ import net.skinsrestorer.shared.exception.DataRequestExceptionShared;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.plugin.SRServerPlugin;
-import net.skinsrestorer.shared.serverinfo.SemanticVersion;
+import net.skinsrestorer.api.semver.SemanticVersion;
 import net.skinsrestorer.shared.update.model.GitHubAssetInfo;
 import net.skinsrestorer.shared.update.model.GitHubReleaseInfo;
 

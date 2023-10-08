@@ -19,15 +19,15 @@
  */
 package net.skinsrestorer.bukkit.skinrefresher;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.hash.Hashing;
 import net.skinsrestorer.bukkit.SRBukkitAdapter;
 import net.skinsrestorer.bukkit.utils.BukkitReflection;
 import net.skinsrestorer.bukkit.utils.OPRefreshUtil;
 import net.skinsrestorer.mappings.shared.ViaPacketData;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.log.SRLogger;
+import net.skinsrestorer.shared.utils.FluentList;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
+import net.skinsrestorer.shared.utils.SRHelpers;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -112,8 +112,8 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
             Object removePlayer;
             Object addPlayer;
             try {
-                removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, removePlayerEnum, ImmutableList.of(entityPlayer));
-                addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, addPlayerEnum, ImmutableList.of(entityPlayer));
+                removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, removePlayerEnum, FluentList.of(entityPlayer));
+                addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, addPlayerEnum, FluentList.of(entityPlayer));
             } catch (ReflectiveOperationException e) {
                 int ping = ReflectionUtil.getObject(entityPlayer, "ping", int.class);
                 removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, player.getPlayerListName(), false, 9999);
@@ -171,7 +171,7 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
                         // Minecraft 1.15 changes
                         // PacketPlayOutRespawn now needs the world seed
 
-                        long seedEncrypted = Hashing.sha256().hashString(String.valueOf(player.getWorld().getSeed()), StandardCharsets.UTF_8).asLong();
+                        long seedEncrypted = SRHelpers.hashSha256String(String.valueOf(player.getWorld().getSeed()));
                         try {
                             respawn = ReflectionUtil.invokeConstructor(playOutRespawn, dimensionManager, seedEncrypted, worldType, enumGamemode);
                         } catch (ReflectiveOperationException ignored5) {
@@ -230,7 +230,7 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
 
                     sendRespawnPacketDirectly = ViaWorkaround.sendCustomPacketVia(new ViaPacketData(player,
                             dimension,
-                            Hashing.sha256().hashString(String.valueOf(player.getWorld().getSeed()), StandardCharsets.UTF_8).asLong(),
+                            SRHelpers.hashSha256String(String.valueOf(player.getWorld().getSeed())),
                             ((Integer) gamemodeId).shortValue(),
                             flat));
                 } catch (Exception e) {

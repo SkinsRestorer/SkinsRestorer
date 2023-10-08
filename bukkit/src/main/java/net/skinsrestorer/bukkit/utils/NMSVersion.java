@@ -19,7 +19,7 @@
  */
 package net.skinsrestorer.bukkit.utils;
 
-import net.skinsrestorer.shared.serverinfo.SemanticVersion;
+import net.skinsrestorer.api.semver.SemanticVersion;
 
 public class NMSVersion {
     public static final SemanticVersion SERVER_VERSION;

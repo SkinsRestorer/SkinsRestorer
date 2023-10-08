@@ -56,7 +56,7 @@ public class SRPlayerArgumentType implements ArgumentType<SRPlayer> {
 
     @Override
     public Collection<String> getExamples() {
-        return FluentList.listOf("Pistonmaster", "xknat");
+        return FluentList.of("Pistonmaster", "xknat");
     }
 
     @Override

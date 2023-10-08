@@ -19,7 +19,9 @@ dependencies {
     api("com.github.SkinsRestorer:ConfigMe:beefdbdf7e")
     api("ch.jalu:injector:1.0")
 
-    compileOnly("org.bstats:bstats-base:3.0.2")
+    compileOnly("org.bstats:bstats-base:3.0.2") {
+        isTransitive = false
+    }
 
     compileOnly("org.geysermc.floodgate:api:2.2.2-SNAPSHOT")
 

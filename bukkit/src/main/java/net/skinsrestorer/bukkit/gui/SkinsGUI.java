@@ -43,7 +43,7 @@ import javax.inject.Inject;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import static net.skinsrestorer.shared.utils.FluentList.listOf;
+import static net.skinsrestorer.shared.utils.FluentList.of;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SkinsGUI implements GUIManager<Inventory> {
@@ -66,7 +66,7 @@ public class SkinsGUI implements GUIManager<Inventory> {
         }
 
         skullMeta.setDisplayName(name);
-        skullMeta.setLore(listOf(ComponentHelper.convertJsonToLegacy(locale.getMessage(player, Message.SKINSMENU_SELECT_SKIN))));
+        skullMeta.setLore(of(ComponentHelper.convertJsonToLegacy(locale.getMessage(player, Message.SKINSMENU_SELECT_SKIN))));
 
         try {
             SkullUtils.applySkin(skullMeta, property);

@@ -20,20 +20,25 @@ dependencies {
     testImplementation(testFixtures(projects.skinsrestorerShared))
 
     compileOnly("org.spigotmc:spigot-api:1.19.3-R0.1-SNAPSHOT") {
-        exclude("com.google.code.gson", "gson")
+        isTransitive = false
     }
 
     implementation("org.bstats:bstats-bukkit:3.0.2")
     implementation("com.github.cryptomorin:XSeries:9.4.0")
 
-    compileOnly("com.viaversion:viabackwards-common:4.7.0")
-    compileOnly("com.viaversion:viaversion:4.4.1")
-    compileOnly("com.mojang:authlib:1.11")
+    compileOnly("com.viaversion:viabackwards-common:4.7.0") {
+        isTransitive = false
+    }
+    compileOnly("com.viaversion:viaversion:4.4.1") {
+        isTransitive = false
+    }
+
+    compileOnly("com.mojang:authlib:2.0.27")
 
     testImplementation("org.spigotmc:spigot-api:1.19-R0.1-SNAPSHOT") {
-        exclude("com.google.code.gson", "gson")
+        isTransitive = false
     }
-    testRuntimeOnly("com.mojang:authlib:1.11")
+    testRuntimeOnly("com.mojang:authlib:2.0.27")
 }
 
 tasks.shadowJar {
