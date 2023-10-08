@@ -1,6 +1,7 @@
 plugins {
     id("sr.formatting-logic")
     id("net.kyori.blossom")
+    id("sr.core-dependencies")
 }
 
 java {

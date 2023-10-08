@@ -41,7 +41,7 @@ import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.log.SRLogLevel;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.serverinfo.ClassInfo;
-import net.skinsrestorer.shared.serverinfo.SemanticVersion;
+import net.skinsrestorer.api.semver.SemanticVersion;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.bukkit.Server;
 import org.bukkit.entity.Entity;
