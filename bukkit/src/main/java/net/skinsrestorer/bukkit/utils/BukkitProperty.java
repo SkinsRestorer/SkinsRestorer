@@ -23,6 +23,8 @@ import com.mojang.authlib.properties.Property;
 import lombok.ToString;
 import net.skinsrestorer.api.property.IProperty;
 
+import java.lang.reflect.Method;
+
 @ToString
 public class BukkitProperty implements IProperty {
     private final Property property;
@@ -47,11 +49,31 @@ public class BukkitProperty implements IProperty {
 
     @Override
     public String getValue() {
-        return property.getValue();
+        try {
+            return property.getValue();
+        } catch (NoSuchMethodError e) {
+            try {
+                Method method = property.getClass().getMethod("value");
+
+                return (String) method.invoke(property);
+            } catch (ReflectiveOperationException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
     }
 
     @Override
     public String getSignature() {
-        return property.getSignature();
+        try {
+            return property.getSignature();
+        } catch (NoSuchMethodError e) {
+            try {
+                Method method = property.getClass().getMethod("signature");
+
+                return (String) method.invoke(property);
+            } catch (ReflectiveOperationException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
     }
 }
