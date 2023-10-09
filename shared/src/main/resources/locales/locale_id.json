@@ -1,5 +1,4 @@
 {
-  "skinsrestorer.help_skin": "Mengubah skin-mu.",
   "skinsrestorer.help_skins": "Membuka GUI skin.",
   "skinsrestorer.help_sr": "Perintah admin untuk SkinsRestorer.",
   "skinsrestorer.help_skin_set": "Mengubah skin-mu.",
@@ -20,6 +19,7 @@
   "skinsrestorer.help_sr_apply_skin_all": "Menerapkan kembali skin untuk setiap pemain.",
   "skinsrestorer.help_sr_purge_old_data": "Membersihkan data skin lama yang lebih dari x hari lalu.",
   "skinsrestorer.help_sr_dump": "Unggah data dukungan ke bytebin.lucko.me.",
+  "skinsrestorer.info_no_brackets": "</dark_green></bold><dark_green></bold>",
   "skinsrestorer.success_skin_change": "<dark_green>Skin-mu telah berubah.",
   "skinsrestorer.success_skin_change_other": "<dark_green>Kamu mengubah skin <name>.",
   "skinsrestorer.success_skin_clear": "<dark_green>Skin-mu telah dibersihkan.",
