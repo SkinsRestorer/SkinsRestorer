@@ -26,6 +26,7 @@ import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.reflection.exception.ReflectionException;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.Method;
 import java.util.*;
 
 public class BukkitPropertyApplier {
@@ -62,7 +63,7 @@ public class BukkitPropertyApplier {
                 List<IProperty> list = new ArrayList<>();
 
                 for (Property property : entry.getValue()) {
-                    list.add(new BukkitProperty(property.getName(), property.getValue(), property.getSignature()));
+                    list.add(new BukkitProperty(getName(property), getValue(property), getSignature(property)));
                 }
 
                 properties.put(entry.getKey(), list);
@@ -72,6 +73,47 @@ public class BukkitPropertyApplier {
         } catch (ReflectionException e) {
             e.printStackTrace();
             return Collections.emptyMap();
+        }
+    }
+    private static String getName(Property property){
+        try {
+            return property.getName();
+        } catch (NoSuchMethodError e) {
+            try {
+                Method method = property.getClass().getMethod("name");
+
+                return (String) method.invoke(property);
+            } catch (ReflectiveOperationException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+    }
+
+    private static String getValue(Property property){
+        try {
+            return property.getValue();
+        } catch (NoSuchMethodError e) {
+            try {
+                Method method = property.getClass().getMethod("value");
+
+                return (String) method.invoke(property);
+            } catch (ReflectiveOperationException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+    }
+
+    private static String getSignature(Property property){
+        try {
+            return property.getSignature();
+        } catch (NoSuchMethodError e) {
+            try {
+                Method method = property.getClass().getMethod("signature");
+
+                return (String) method.invoke(property);
+            } catch (ReflectiveOperationException ex) {
+                throw new RuntimeException(ex);
+            }
         }
     }
 }
