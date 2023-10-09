@@ -25,6 +25,7 @@ import net.minecraft.network.protocol.game.*;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.biome.BiomeManager;
 import net.skinsrestorer.mappings.shared.IMapping;
 import net.skinsrestorer.mappings.shared.ViaPacketData;
@@ -58,17 +59,22 @@ public class Mapping1_20_2 implements IMapping {
             ServerLevel world = entityPlayer.serverLevel();
             ServerPlayerGameMode gamemode = entityPlayer.gameMode;
 
+            long seed = BiomeManager.obfuscateSeed(world.getSeed());
+            boolean flat = world.isFlat();
+            GameType gameModeForPlayer = gamemode.getGameModeForPlayer();
             ClientboundRespawnPacket respawn = new ClientboundRespawnPacket(
-                    world.dimensionTypeId(),
-                    world.dimension(),
-                    BiomeManager.obfuscateSeed(world.getSeed()),
-                    gamemode.getGameModeForPlayer(),
-                    gamemode.getPreviousGameModeForPlayer(),
-                    world.isDebug(),
-                    world.isFlat(),
-                    (byte) 3,
-                    entityPlayer.getLastDeathLocation(),
-                    entityPlayer.getPortalCooldown()
+                    new CommonPlayerSpawnInfo(
+                            world.dimensionTypeId(),
+                            world.dimension(),
+                            BiomeManager.obfuscateSeed(world.getSeed()),
+                            gameModeForPlayer,
+                            gamemode.getPreviousGameModeForPlayer(),
+                            world.isDebug(),
+                            world.isFlat(),
+                            entityPlayer.getLastDeathLocation(),
+                            entityPlayer.getPortalCooldown()
+                    ),
+                    (byte) 3
             );
 
             Location l = player.getLocation();
@@ -81,7 +87,7 @@ public class Mapping1_20_2 implements IMapping {
             @SuppressWarnings("deprecation")
             int dimension = player.getWorld().getEnvironment().getId();
 
-            if (Boolean.TRUE.equals(viaFunction.test(new ViaPacketData(player, dimension, respawn.getSeed(), (short) respawn.getPlayerGameType().getId(), respawn.isFlat())))) {
+            if (Boolean.TRUE.equals(viaFunction.test(new ViaPacketData(player, dimension, seed, (short) gameModeForPlayer.getId(), flat)))) {
                 sendPacket(entityPlayer, respawn);
             }
 
