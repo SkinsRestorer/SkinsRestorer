@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.bukkit;
 
+import co.aikar.commands.BukkitCommandManager;
 import co.aikar.commands.CommandManager;
 import co.aikar.commands.PaperCommandManager;
 import io.papermc.lib.PaperLib;
@@ -328,6 +329,9 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
 
     private void initCommands() {
         sharedInitCommands();
+
+        // Workaround for 1.20.2
+        ((BukkitCommandManager) manager).usePerIssuerLocale(false, false);
 
         manager.registerCommand(skinCommand);
         manager.registerCommand(new SrCommand(this));
