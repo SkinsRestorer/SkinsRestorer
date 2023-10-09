@@ -44,7 +44,17 @@ public class BukkitProperty implements IProperty {
 
     @Override
     public String getName() {
-        return property.getName();
+        try {
+            return property.getName();
+        } catch (NoSuchMethodError e) {
+            try {
+                Method method = property.getClass().getMethod("name");
+
+                return (String) method.invoke(property);
+            } catch (ReflectiveOperationException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
     }
 
     @Override
