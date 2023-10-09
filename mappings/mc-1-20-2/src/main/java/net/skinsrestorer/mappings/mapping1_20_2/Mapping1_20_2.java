@@ -17,7 +17,7 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.mappings.mapping1_20;
+package net.skinsrestorer.mappings.mapping1_20_2;
 
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.*;
@@ -25,6 +25,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.biome.BiomeManager;
 import net.skinsrestorer.mappings.shared.IMapping;
 import net.skinsrestorer.mappings.shared.MappingReflection;
@@ -37,7 +38,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
-public class Mapping1_20 implements IMapping {
+public class Mapping1_20_2 implements IMapping {
     private static void sendPacket(ServerPlayer player, Packet<?> packet) {
         player.connection.send(packet);
     }
@@ -60,17 +61,22 @@ public class Mapping1_20 implements IMapping {
             ServerLevel world = entityPlayer.serverLevel();
             ServerPlayerGameMode gamemode = entityPlayer.gameMode;
 
+            long seed = BiomeManager.obfuscateSeed(world.getSeed());
+            boolean flat = world.isFlat();
+            GameType gameModeForPlayer = gamemode.getGameModeForPlayer();
             ClientboundRespawnPacket respawn = new ClientboundRespawnPacket(
-                    world.dimensionTypeId(),
-                    world.dimension(),
-                    BiomeManager.obfuscateSeed(world.getSeed()),
-                    gamemode.getGameModeForPlayer(),
-                    gamemode.getPreviousGameModeForPlayer(),
-                    world.isDebug(),
-                    world.isFlat(),
-                    (byte) 3,
-                    entityPlayer.getLastDeathLocation(),
-                    entityPlayer.getPortalCooldown()
+                    new CommonPlayerSpawnInfo(
+                            world.dimensionTypeId(),
+                            world.dimension(),
+                            seed,
+                            gameModeForPlayer,
+                            gamemode.getPreviousGameModeForPlayer(),
+                            world.isDebug(),
+                            flat,
+                            entityPlayer.getLastDeathLocation(),
+                            entityPlayer.getPortalCooldown()
+                    ),
+                    (byte) 3
             );
 
             Location l = player.getLocation();
@@ -83,7 +89,7 @@ public class Mapping1_20 implements IMapping {
             @SuppressWarnings("deprecation")
             int dimension = player.getWorld().getEnvironment().getId();
 
-            if (Boolean.TRUE.equals(viaFunction.test(new ViaPacketData(player, dimension, respawn.getSeed(), (short) respawn.getPlayerGameType().getId(), respawn.isFlat())))) {
+            if (Boolean.TRUE.equals(viaFunction.test(new ViaPacketData(player, dimension, seed, (short) gameModeForPlayer.getId(), flat)))) {
                 sendPacket(entityPlayer, respawn);
             }
 
@@ -110,8 +116,7 @@ public class Mapping1_20 implements IMapping {
     @Override
     public Set<String> getSupportedVersions() {
         return Set.of(
-                "34f399b4f2033891290b7f0700e9e47b", // 1.20
-                "bcf3dcb22ad42792794079f9443df2c0" // 1.20.1
+                "3478a65bfd04b15b431fe107b3617dfc" // 1.20.2
         );
     }
 }
