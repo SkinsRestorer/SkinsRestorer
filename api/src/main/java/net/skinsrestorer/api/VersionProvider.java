@@ -20,7 +20,6 @@
 package net.skinsrestorer.api;
 
 import net.skinsrestorer.api.semver.SemanticVersion;
-import net.skinsrestorer.builddata.BuildData;
 
 /**
  * This class is a helper class for third-party plugins to check whether their used API version is compatible with the
@@ -31,8 +30,11 @@ import net.skinsrestorer.builddata.BuildData;
  * @since 15.0.0
  */
 public class VersionProvider {
-    private static final String VERSION_INFO = String.format("SkinsRestorer %s (%s)", BuildData.VERSION, BuildData.COMMIT_SHORT);
-    private static final SemanticVersion SEMANTIC_VERSION = SemanticVersion.fromString(BuildData.VERSION);
+    private static final String VERSION = SkinsRestorerProvider.get().getVersion();
+    private static final String COMMIT = SkinsRestorerProvider.get().getCommit();
+    private static final String COMMIT_SHORT = SkinsRestorerProvider.get().getCommitShort();
+    private static final String VERSION_INFO = String.format("SkinsRestorer %s (%s)", VERSION, COMMIT_SHORT);
+    private static final SemanticVersion SEMANTIC_VERSION = SemanticVersion.fromString(VERSION);
 
     /**
      * Checks whether the given API version is compatible with the version of SkinsRestorer installed on the server.
@@ -89,7 +91,7 @@ public class VersionProvider {
      *         (e.g. {@code "15.1.2"})
      */
     public static String getVersion() {
-        return BuildData.VERSION;
+        return VERSION;
     }
 
     /**
@@ -98,6 +100,6 @@ public class VersionProvider {
      * @return The 40 letter git commit of SkinsRestorer installed on the server.
      */
     public static String getCommit() {
-        return BuildData.COMMIT;
+        return COMMIT;
     }
 }

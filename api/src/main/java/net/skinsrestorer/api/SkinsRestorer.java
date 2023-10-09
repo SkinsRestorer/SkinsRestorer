@@ -26,6 +26,7 @@ import net.skinsrestorer.api.property.SkinApplier;
 import net.skinsrestorer.api.storage.CacheStorage;
 import net.skinsrestorer.api.storage.PlayerStorage;
 import net.skinsrestorer.api.storage.SkinStorage;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * SkinsRestorer API <br>
@@ -78,4 +79,31 @@ public interface SkinsRestorer {
      * @see EventBus for more info
      */
     EventBus getEventBus();
+
+    /**
+     * Return the version of SkinsRestorer installed on the server.
+     *
+     * @return The version of SkinsRestorer installed on the server.
+     * @see VersionProvider for the official version provider.
+     */
+    @ApiStatus.Internal
+    String getVersion();
+
+    /**
+     * Return the commit of SkinsRestorer installed on the server.
+     *
+     * @return The commit of SkinsRestorer installed on the server.
+     * @see VersionProvider for the official version provider.
+     */
+    @ApiStatus.Internal
+    String getCommit();
+
+    /**
+     * Return the short commit of SkinsRestorer installed on the server.
+     *
+     * @return The short commit of SkinsRestorer installed on the server.
+     * @see VersionProvider for the official version provider.
+     */
+    @ApiStatus.Internal
+    String getCommitShort();
 }

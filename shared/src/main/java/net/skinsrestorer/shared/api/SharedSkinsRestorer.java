@@ -29,6 +29,7 @@ import net.skinsrestorer.api.property.SkinApplier;
 import net.skinsrestorer.api.storage.CacheStorage;
 import net.skinsrestorer.api.storage.PlayerStorage;
 import net.skinsrestorer.api.storage.SkinStorage;
+import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.shared.api.event.EventBusImpl;
 
 import javax.inject.Inject;
@@ -61,5 +62,20 @@ public class SharedSkinsRestorer implements SkinsRestorer {
     @Override
     public EventBus getEventBus() {
         return eventBus;
+    }
+
+    @Override
+    public String getVersion() {
+        return BuildData.VERSION;
+    }
+
+    @Override
+    public String getCommit() {
+        return BuildData.COMMIT;
+    }
+
+    @Override
+    public String getCommitShort() {
+        return BuildData.COMMIT_SHORT;
     }
 }
