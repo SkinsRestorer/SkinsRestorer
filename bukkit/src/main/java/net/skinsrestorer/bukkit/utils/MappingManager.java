@@ -26,6 +26,7 @@ import net.skinsrestorer.mappings.mapping1_19.Mapping1_19;
 import net.skinsrestorer.mappings.mapping1_19_3.Mapping1_19_3;
 import net.skinsrestorer.mappings.mapping1_19_4.Mapping1_19_4;
 import net.skinsrestorer.mappings.mapping1_20.Mapping1_20;
+import net.skinsrestorer.mappings.mapping1_20_2.Mapping1_20_2;
 import net.skinsrestorer.mappings.shared.IMapping;
 import org.bukkit.Bukkit;
 
@@ -42,6 +43,7 @@ public class MappingManager {
             .add(new Mapping1_19_3())
             .add(new Mapping1_19_4())
             .add(new Mapping1_20())
+            .add(new Mapping1_20_2())
             .build();
 
     public static Optional<IMapping> getMapping() {
