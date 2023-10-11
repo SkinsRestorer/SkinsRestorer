@@ -159,19 +159,11 @@ public class SRSpongeAdapter implements SRServerAdapter<PluginContainer> {
     }
 
     @Override
-    public void sendToMessageChannel(SRPlayer player, IOExceptionConsumer<DataOutputStream> consumer) {
-        try {
-            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-            DataOutputStream out = new DataOutputStream(bytes);
-
-            consumer.accept(out);
-
-            game.channelManager().ofType(ResourceKey.of("sr", "messagechannel"), RawDataChannel.class)
-                    .play().sendTo(player.getAs(ServerPlayer.class), buf -> buf.writeBytes(bytes.toByteArray()));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void sendMessageToChannel(SRPlayer player, byte[] data) {
+        game.channelManager().ofType(ResourceKey.of("sr", "messagechannel"), RawDataChannel.class)
+                .play().sendTo(player.getAs(ServerPlayer.class), buf -> buf.writeBytes(data));
     }
+
 
     @Override
     public void runRepeatAsync(Runnable runnable, int delay, int interval, TimeUnit timeUnit) {
