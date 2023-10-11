@@ -39,8 +39,12 @@ public class ServerGUICommand {
 
     @RootCommand
     private void onDefault(SRPlayer srPlayer) {
+        //TODO: Fix /skins command
+        srPlayer.sendMessage("This command is currently in maintenance");
+
+        /*
         srPlayer.sendMessage(Message.SKINSMENU_OPEN);
 
-        plugin.openServerGUI(srPlayer, 0);
+        plugin.openServerGUI(srPlayer, 0);*/
     }
 }

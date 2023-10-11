@@ -57,8 +57,20 @@
   "skinsrestorer.admincommand_props_skin_texture": "<green>Textura da Skin: <yellow><skin_texture>",
   "skinsrestorer.admincommand_props_more_info_in_console": "<red>Mais informações no console!",
   "skinsrestorer.admincommand_setskinall_not_found": "<dark_red>Skin não encontrada....",
+  "skinsrestorer.player_has_no_permission_skin": "<dark_red>Erro<dark_gray>: <red>Você não tem permissão para usar essa skin.",
+  "skinsrestorer.player_has_no_permission_url": "<dark_red>Erro<dark_gray>: <red>Você não tem permissão para definir skins por URL.",
+  "skinsrestorer.not_premium": "<dark_red>Erro<dark_gray>: <red>Não há uma conta de minecraft com este nome.",
+  "skinsrestorer.only_allowed_on_console": "<dark_red>Erro<dark_gray>: <red>Este comando é apenas para o console!",
+  "skinsrestorer.only_allowed_on_player": "<dark_red>Erro<dark_gray>: <red>Apenas jogadores podem usar este comando!",
+  "skinsrestorer.invalid_player": "<dark_red>Erro<dark_gray>: <red><input> não é um nome de usuário/URL válido.",
   "skinsrestorer.permission_player_wildcard": "Permissões adicionais de jogadores",
+  "skinsrestorer.permission_command_gui": "Permite acesso ao menu de skins.",
   "skinsrestorer.permission_admin_wildcard": "Permissões adicionais de administradores",
+  "skinsrestorer.permission_admincommand": "Permite acesso ao comando principal \"/sr\".",
   "skinsrestorer.permission_admincommand_reload": "Libera o acesso ao /sr reload.",
-  "skinsrestorer.permission_admincommand_status": "Libera o acesso ao /sr status."
+  "skinsrestorer.permission_admincommand_status": "Libera o acesso ao /sr status.",
+  "skinsrestorer.permission_bypasscooldown": "Ignora qualquer intervalo da configuração.",
+  "skinsrestorer.permission_ownskin": "Permite alterar sua própria skin.",
+  "skinsrestorer.skinsmenu_open": "<dark_green>Abrindo menu de skins...",
+  "skinsrestorer.skinsmenu_title_new": "<blue>Menu de Skins — Página <page_number>"
 }
