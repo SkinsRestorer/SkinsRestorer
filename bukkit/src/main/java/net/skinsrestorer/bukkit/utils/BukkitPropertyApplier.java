@@ -48,7 +48,7 @@ public class BukkitPropertyApplier implements SkinApplyBukkitAdapter {
 
             return properties
                     .stream()
-                    .filter(property -> property.getName().equals(SkinProperty.TEXTURES_NAME))
+                    .filter(property -> getPropertyName(property).equals(SkinProperty.TEXTURES_NAME))
                     .map(this::convertToSRProperty)
                     .findFirst();
         } catch (ReflectiveOperationException e) {
@@ -67,6 +67,21 @@ public class BukkitPropertyApplier implements SkinApplyBukkitAdapter {
                 Method signatureMethod = property.getClass().getMethod("signature");
 
                 return SkinProperty.of((String) valueMethod.invoke(property), (String) signatureMethod.invoke(property));
+            } catch (ReflectiveOperationException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    private String getPropertyName(Property property) {
+        try {
+            return property.getName();
+        } catch (NoSuchMethodError t) {
+            // New authlib
+            try {
+                Method nameMethod = property.getClass().getMethod("name");
+
+                return (String) nameMethod.invoke(property);
             } catch (ReflectiveOperationException e) {
                 throw new RuntimeException(e);
             }
