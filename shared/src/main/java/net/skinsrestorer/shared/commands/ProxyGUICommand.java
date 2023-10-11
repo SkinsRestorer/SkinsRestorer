@@ -45,13 +45,9 @@ public final class ProxyGUICommand {
         if (!(player instanceof SRProxyPlayer)) {
             throw new IllegalStateException("Player is not a proxy player");
         }
-        //TODO: Fix /skins command
-        player.sendMessage("This command is currently in maintenance");
 
-
-        /*
         player.sendMessage(Message.SKINSMENU_OPEN);
 
-        proxyPlugin.sendPage(0, (SRProxyPlayer) player, skinStorage); */
+        proxyPlugin.sendPage(0, (SRProxyPlayer) player, skinStorage);
     }
 }
