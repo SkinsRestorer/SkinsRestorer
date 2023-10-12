@@ -76,7 +76,9 @@ public class SRPlaceholderAPIExpansion extends PlaceholderExpansion {
             if (params.startsWith("skin_name_")) {
                 String subString = params.substring("skin_name_".length());
 
-                if (subString.equalsIgnoreCase("or_player_name")) {
+                if (subString.equalsIgnoreCase("or_empty")) {
+                    return "";
+                } else if (subString.equalsIgnoreCase("or_player_name")) {
                     return offlinePlayer.getName();
                 }
             }
