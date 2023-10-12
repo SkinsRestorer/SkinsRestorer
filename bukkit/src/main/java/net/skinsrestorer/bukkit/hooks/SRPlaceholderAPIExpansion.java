@@ -84,7 +84,7 @@ public class SRPlaceholderAPIExpansion extends PlaceholderExpansion {
             return "Error";
         }
 
-        if (params.toLowerCase().startsWith("texture_url")) {
+        if (params.startsWith("texture_url")) {
             try {
                 Optional<SkinProperty> skin = storage.getSkinForPlayer(offlinePlayer.getUniqueId(), offlinePlayer.getName());
 
@@ -110,7 +110,7 @@ public class SRPlaceholderAPIExpansion extends PlaceholderExpansion {
             return "Error";
         }
 
-        if (params.toLowerCase().startsWith("texture_id")) {
+        if (params.startsWith("texture_id")) {
             try {
                 Optional<SkinProperty> skin = storage.getSkinForPlayer(offlinePlayer.getUniqueId(), offlinePlayer.getName());
 
