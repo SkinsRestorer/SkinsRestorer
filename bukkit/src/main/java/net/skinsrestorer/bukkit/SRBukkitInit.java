@@ -22,8 +22,10 @@ package net.skinsrestorer.bukkit;
 import ch.jalu.configme.SettingsManager;
 import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.SkinsRestorerProvider;
 import net.skinsrestorer.bukkit.command.SRBukkitCommand;
 import net.skinsrestorer.bukkit.command.SRHelpTopic;
+import net.skinsrestorer.bukkit.hooks.SRPlaceholderAPIExpansion;
 import net.skinsrestorer.bukkit.listener.InventoryListener;
 import net.skinsrestorer.bukkit.listener.PlayerJoin;
 import net.skinsrestorer.bukkit.listener.PlayerResourcePackStatus;
@@ -219,5 +221,16 @@ public class SRBukkitInit implements SRServerPlatformInit {
         server.getMessenger().registerOutgoingPluginChannel(adapter.getPluginInstance(), "sr:messagechannel");
         server.getMessenger().registerIncomingPluginChannel(adapter.getPluginInstance(), "sr:messagechannel",
                 injector.getSingleton(ServerMessageListener.class));
+    }
+
+    @Override
+    public void postAPIInitHook() {
+        if (adapter.isPluginEnabled("PlaceholderAPI")) {
+            new SRPlaceholderAPIExpansion(
+                    SkinsRestorerProvider.get(),
+                    adapter.getPluginInstance().getDescription()
+            ).register();
+            logger.info("PlaceholderAPI expansion registered!");
+        }
     }
 }

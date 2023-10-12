@@ -21,7 +21,7 @@ package net.skinsrestorer.shared.connections;
 
 import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.PropertyUtil;
+import net.skinsrestorer.api.PropertyUtils;
 import net.skinsrestorer.api.connections.MineSkinAPI;
 import net.skinsrestorer.api.connections.model.MineSkinResponse;
 import net.skinsrestorer.api.exception.DataRequestException;
@@ -122,7 +122,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                 SkinProperty property = SkinProperty.of(urlResponse.getData().getTexture().getValue(),
                         urlResponse.getData().getTexture().getSignature());
                 return Optional.of(MineSkinResponse.of(property, urlResponse.getIdStr(),
-                        skinVariant, PropertyUtil.getSkinVariant(property)));
+                        skinVariant, PropertyUtils.getSkinVariant(property)));
             }
             case 500:
             case 400: {

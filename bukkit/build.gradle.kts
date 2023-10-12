@@ -28,6 +28,11 @@ dependencies {
         isTransitive = false
     }
 
+    // PAPI API hook
+    compileOnly("me.clip:placeholderapi:2.11.4") {
+        isTransitive = false
+    }
+
     compileOnly("com.viaversion:viabackwards-common:4.7.0") {
         isTransitive = false
     }
