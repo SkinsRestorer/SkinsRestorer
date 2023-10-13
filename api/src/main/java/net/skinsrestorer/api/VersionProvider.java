@@ -73,7 +73,7 @@ public class VersionProvider {
     }
 
     /**
-     * Returns the semantic version of SkinsRestorer installed on the server for a third-party plugin for a third-party
+     * Returns the semantic version of SkinsRestorer installed on the server for a third-party
      * plugin to use for detecting the version of SkinsRestorer installed on the server to find the right API implementation
      * to use.
      *
