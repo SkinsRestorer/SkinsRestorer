@@ -31,7 +31,7 @@ import org.jetbrains.annotations.ApiStatus;
 /**
  * SkinsRestorer API <br>
  * API Example: <a href="https://github.com/SkinsRestorer/SkinsRestorerAPIExample">https://github.com/SkinsRestorer/SkinsRestorerAPIExample</a> <br>
- * For more info please refer first to <a href="https://github.com/SkinsRestorer/SkinsRestorerX/wiki/SkinsRestorerAPI">https://github.com/SkinsRestorer/SkinsRestorerX/wiki/SkinsRestorerAPI</a> <br>
+ * For more info please refer first to <a href="https://skinsrestorer.net/docs/development/api">SkinsRestorer API Docs</a> <br>
  * Advanced help or getting problems? join our discord before submitting issues!!
  */
 @SuppressWarnings({"unused"})
