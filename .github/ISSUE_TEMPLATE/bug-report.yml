@@ -27,7 +27,7 @@ body:
     attributes:
       label: Installed conforming to our guide?
       description: |
-        Please check conduct our installation guide and check if all step's have been performed at [SkinsRestorer/Wiki/Installation](https://github.com/SkinsRestorer/SkinsRestorerX/wiki/Installing-SkinsRestorer#Basic-Installation)
+        Please check conduct our installation guide and check if all step's have been performed at the [installation guide](https://skinsrestorer.net/docs/installation)
         
         Unsure or have questions? -> Ask in our [SkinsRestorer discord server](https://skinsrestorer.net/discord)
       options:
