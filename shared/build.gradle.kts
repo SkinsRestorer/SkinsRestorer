@@ -14,8 +14,6 @@ dependencies {
     implementation("net.kyori:adventure-text-serializer-plain:4.14.0")
     api("net.kyori:adventure-text-minimessage:4.14.0")
 
-    implementation("org.fusesource.jansi:jansi:2.4.0")
-
     api("com.github.SkinsRestorer:ConfigMe:beefdbdf7e")
     api("ch.jalu:injector:1.0")
 
