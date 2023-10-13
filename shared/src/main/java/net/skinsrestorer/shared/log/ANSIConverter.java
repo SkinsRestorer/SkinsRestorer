@@ -26,10 +26,6 @@ public class ANSIConverter {
     private static final Map<SRChatColor, String> replacements = new EnumMap<>(SRChatColor.class);
     private static final SRChatColor[] colors = SRChatColor.values();
 
-    public static void main(String[] args) {
-        System.out.println(replacements);
-    }
-
     static {
         replacements.put(SRChatColor.BLACK, AnsiBuilder.ansi().fg(AnsiBuilder.Color.BLACK).boldOff().toString());
         replacements.put(SRChatColor.DARK_BLUE, AnsiBuilder.ansi().fg(AnsiBuilder.Color.BLUE).boldOff().toString());
