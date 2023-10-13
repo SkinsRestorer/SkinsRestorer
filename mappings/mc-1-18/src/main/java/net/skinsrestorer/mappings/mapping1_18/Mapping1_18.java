@@ -19,12 +19,12 @@
  */
 package net.skinsrestorer.mappings.mapping1_18;
 
-import com.google.common.collect.ImmutableList;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.level.biome.BiomeManager;
 import net.skinsrestorer.mappings.shared.IMapping;
 import net.skinsrestorer.mappings.shared.MappingReflection;
@@ -33,6 +33,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -51,8 +52,8 @@ public class Mapping1_18 implements IMapping {
         try {
             ServerPlayer entityPlayer = MappingReflection.getHandle(player, ServerPlayer.class);
 
-            ClientboundPlayerInfoPacket removePlayer = new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.REMOVE_PLAYER, ImmutableList.of(entityPlayer));
-            ClientboundPlayerInfoPacket addPlayer = new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, ImmutableList.of(entityPlayer));
+            ClientboundPlayerInfoPacket removePlayer = new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.REMOVE_PLAYER, List.of(entityPlayer));
+            ClientboundPlayerInfoPacket addPlayer = new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, List.of(entityPlayer));
 
             // Slowly getting from object to object till we get what is needed for
             // the respawn packet
@@ -93,8 +94,8 @@ public class Mapping1_18 implements IMapping {
             triggerHealthUpdate(player);
 
             // Resend their effects
-            for (net.minecraft.world.effect.MobEffectInstance mobEffect : MappingReflection.getHandle(player, ServerPlayer.class).getActiveEffects()) {
-                ClientboundUpdateMobEffectPacket effect = new ClientboundUpdateMobEffectPacket(MappingReflection.getHandle(player, ServerPlayer.class).getId(), mobEffect);
+            for (MobEffectInstance mobEffect : entityPlayer.getActiveEffects()) {
+                ClientboundUpdateMobEffectPacket effect = new ClientboundUpdateMobEffectPacket(entityPlayer.getId(), mobEffect);
                 sendPacket(entityPlayer, effect);
             }
         } catch (ReflectiveOperationException e) {

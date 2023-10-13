@@ -24,37 +24,50 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.config.CommandConfig;
+import net.skinsrestorer.shared.utils.Tristate;
 
 import java.util.Collection;
-import java.util.function.Predicate;
+import java.util.function.Function;
 
+@Getter
 @RequiredArgsConstructor(staticName = "of", access = AccessLevel.PROTECTED)
 public class Permission {
-    @Getter
     private final String permissionString;
 
-    public boolean checkPermission(SettingsManager settings, Predicate<String> predicate) {
+    public boolean checkPermission(SettingsManager settings, Function<String, Tristate> predicate) {
         Collection<PermissionGroup> permissionGroups = PermissionGroup.getGrantedBy(this);
         if (permissionGroups.isEmpty()) {
-            return internalCheckPermission(predicate);
+            return internalCheckPermission(predicate).asBoolean();
         }
 
-        if (permissionGroups.contains(PermissionGroup.getDefaultGroup())
-                && settings.getProperty(CommandConfig.FORCE_DEFAULT_PERMISSIONS)) {
-            return true;
+        Tristate tristate = internalCheckPermission(predicate);
+
+        // The permission was set explicitly, so we don't need to check the groups.
+        if (tristate != Tristate.UNDEFINED) {
+            return tristate.asBoolean();
         }
 
         for (PermissionGroup permissionGroup : permissionGroups) {
-            if (permissionGroup.getBasePermission().internalCheckPermission(predicate)
-                    || permissionGroup.getWildcard().internalCheckPermission(predicate)) {
+            if (permissionGroup == PermissionGroup.getDefaultGroup()
+                    && settings.getProperty(CommandConfig.FORCE_DEFAULT_PERMISSIONS)) {
                 return true;
+            }
+
+            Tristate groupTristate = permissionGroup.getBasePermission().internalCheckPermission(predicate);
+            if (groupTristate != Tristate.UNDEFINED) {
+                return groupTristate.asBoolean();
+            }
+
+            Tristate wildcardTristate = permissionGroup.getWildcard().internalCheckPermission(predicate);
+            if (wildcardTristate != Tristate.UNDEFINED) {
+                return wildcardTristate.asBoolean();
             }
         }
 
-        return internalCheckPermission(predicate);
+        return false;
     }
 
-    public boolean internalCheckPermission(Predicate<String> predicate) {
-        return predicate.test(permissionString);
+    public Tristate internalCheckPermission(Function<String, Tristate> predicate) {
+        return predicate.apply(permissionString);
     }
 }

@@ -251,11 +251,6 @@ public final class SkinCommand {
     private boolean setSkin(SRCommandSender sender, SRPlayer target, String skinInput, SkinVariant skinVariant) {
         Optional<SkinIdentifier> oldSkinId = playerStorage.getSkinIdOfPlayer(target.getUniqueId());
         if (C.validUrl(skinInput)) {
-            if (!sender.hasPermission(PermissionRegistry.SKIN_SET_URL)) { // TODO: Maybe we should do this in the command itself?
-                sender.sendMessage(Message.PLAYER_HAS_NO_PERMISSION_URL);
-                return false;
-            }
-
             if (!allowedSkinUrl(skinInput)) {
                 sender.sendMessage(Message.ERROR_SKINURL_DISALLOWED);
                 return false;
@@ -341,6 +336,11 @@ public final class SkinCommand {
             }
 
             sender.sendMessage(Message.PLAYER_HAS_NO_PERMISSION_SKIN);
+            return false;
+        }
+
+        if (C.validUrl(skinName) && !sender.hasPermission(PermissionRegistry.SKIN_SET_URL)) {
+            sender.sendMessage(Message.PLAYER_HAS_NO_PERMISSION_URL);
             return false;
         }
 

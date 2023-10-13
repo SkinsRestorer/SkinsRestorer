@@ -17,17 +17,19 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.serverinfo;
+package net.skinsrestorer.api.semver;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Arrays;
 
 @Getter
 @RequiredArgsConstructor
 @EqualsAndHashCode
+@ApiStatus.Internal
 public class SemanticVersion {
     private final int[] version;
 

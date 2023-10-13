@@ -76,12 +76,12 @@ public class FileAdapter implements StorageAdapter {
         this.legacyFolder = dataFolder.resolve("legacy");
         this.settings = settings;
         this.logger = logger;
-        init();
         try {
             migrate(dataFolder);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
+        init();
     }
 
     private static String hashSHA256(String input) {
@@ -126,6 +126,10 @@ public class FileAdapter implements StorageAdapter {
     }
 
     private void migratePlayers() {
+        if (!Files.exists(playersFolder)) {
+            return;
+        }
+
         Path legacyPlayersFolder = legacyFolder.resolve("players");
         boolean generatedFolder = false;
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(playersFolder, "*.player")) {
@@ -170,6 +174,10 @@ public class FileAdapter implements StorageAdapter {
     }
 
     private void migrateSkins() {
+        if (!Files.exists(skinsFolder)) {
+            return;
+        }
+
         Path legacySkinsFolder = legacyFolder.resolve("skins");
         boolean generatedFolder = false;
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(skinsFolder, "*.skin")) {
@@ -190,10 +198,19 @@ public class FileAdapter implements StorageAdapter {
                     }
 
                     String[] lines = new String(Files.readAllBytes(path), StandardCharsets.UTF_8).split("\n");
+                    String skinValue = lines[0].trim();
+                    String skinSignature = lines[1].trim();
+                    SkinProperty skinProperty = SkinProperty.of(skinValue, skinSignature);
+                    long timestamp = Long.parseLong(lines[2].trim());
 
-                    LegacySkinData legacySkinData = LegacySkinData.of(skinName, SkinProperty.of(lines[0], lines[1]));
+                    // Remove this logic in like 50 years ;)
+                    if (isLegacyCustomSkinTimestamp(timestamp)) {
+                        setCustomSkinData(skinName, CustomSkinData.of(skinName, skinProperty));
+                    } else {
+                        LegacySkinData legacySkinData = LegacySkinData.of(skinName, skinProperty);
 
-                    Files.write(legacySkinFile, gson.toJson(LegacySkinFile.fromLegacySkinData(legacySkinData)).getBytes(StandardCharsets.UTF_8));
+                        Files.write(legacySkinFile, gson.toJson(LegacySkinFile.fromLegacySkinData(legacySkinData)).getBytes(StandardCharsets.UTF_8));
+                    }
 
                     Files.deleteIfExists(path);
                 } catch (Exception e) {

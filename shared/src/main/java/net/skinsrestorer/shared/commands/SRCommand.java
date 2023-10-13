@@ -23,7 +23,7 @@ import ch.jalu.configme.SettingsManager;
 import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.skinsrestorer.api.PropertyUtil;
+import net.skinsrestorer.api.PropertyUtils;
 import net.skinsrestorer.api.SkinsRestorer;
 import net.skinsrestorer.api.connections.MineSkinAPI;
 import net.skinsrestorer.api.connections.model.MineSkinResponse;
@@ -208,7 +208,7 @@ public final class SRCommand {
                 return;
             }
 
-            MojangProfileResponse profile = PropertyUtil.getSkinProfileData(properties.get());
+            MojangProfileResponse profile = PropertyUtils.getSkinProfileData(properties.get());
             String decodedSkin = profile.getTextures().getSKIN().getUrl();
             long timestamp = profile.getTimestamp();
             String requestTime = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new Date(timestamp));

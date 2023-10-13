@@ -19,8 +19,13 @@
  */
 package net.skinsrestorer.shared.utils;
 
-public class SharedMethods {
-    private SharedMethods() {
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+public class SRHelpers {
+    private SRHelpers() {
     }
 
     public static Throwable getRootCause(Throwable throwable) {
@@ -28,5 +33,16 @@ public class SharedMethods {
             return getRootCause(throwable.getCause());
 
         return throwable;
+    }
+
+    public static long hashSha256String(String str) {
+        try {
+            MessageDigest md = java.security.MessageDigest.getInstance("SHA-256");
+            md.update(str.getBytes(StandardCharsets.UTF_8));
+            byte[] digest = md.digest();
+            return ByteBuffer.wrap(digest).getLong();
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("Failed to get SHA-256 hash algorithm", e);
+        }
     }
 }

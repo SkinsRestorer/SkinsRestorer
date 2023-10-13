@@ -22,13 +22,14 @@ package net.skinsrestorer.bukkit.utils;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Optional;
 
 public class BukkitPropertyApplier implements SkinApplyBukkitAdapter {
-    @SuppressWarnings("unchecked")
     @Override
     public void applyProperty(Player player, SkinProperty property) {
         try {
@@ -40,7 +41,6 @@ public class BukkitPropertyApplier implements SkinApplyBukkitAdapter {
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Optional<SkinProperty> getSkinProperty(Player player) {
         try {
@@ -48,12 +48,43 @@ public class BukkitPropertyApplier implements SkinApplyBukkitAdapter {
 
             return properties
                     .stream()
-                    .filter(property -> property.getName().equals(SkinProperty.TEXTURES_NAME))
-                    .map(property -> SkinProperty.of(property.getValue(), property.getSignature()))
+                    .filter(property -> getPropertyName(property).equals(SkinProperty.TEXTURES_NAME))
+                    .map(this::convertToSRProperty)
                     .findFirst();
         } catch (ReflectiveOperationException e) {
             e.printStackTrace();
             return Optional.empty();
+        }
+    }
+
+    private SkinProperty convertToSRProperty(Property property) {
+        try {
+            return SkinProperty.of(property.getValue(), property.getSignature());
+        } catch (NoSuchMethodError t) {
+            // New authlib
+            try {
+                Method valueMethod = property.getClass().getMethod("value");
+                Method signatureMethod = property.getClass().getMethod("signature");
+
+                return SkinProperty.of((String) valueMethod.invoke(property), (String) signatureMethod.invoke(property));
+            } catch (ReflectiveOperationException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    private String getPropertyName(Property property) {
+        try {
+            return property.getName();
+        } catch (NoSuchMethodError t) {
+            // New authlib
+            try {
+                Method nameMethod = property.getClass().getMethod("name");
+
+                return (String) nameMethod.invoke(property);
+            } catch (ReflectiveOperationException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }

@@ -27,6 +27,7 @@ import net.skinsrestorer.bukkit.SRBukkitAdapter;
 import net.skinsrestorer.shared.subjects.AbstractSRCommandSender;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.Permission;
+import net.skinsrestorer.shared.utils.Tristate;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 
@@ -53,7 +54,13 @@ public class WrapperCommandSender extends AbstractSRCommandSender {
 
     @Override
     public boolean hasPermission(Permission permission) {
-        return permission.checkPermission(settings, sender::hasPermission);
+        return permission.checkPermission(settings, p -> {
+            boolean hasPermission = sender.hasPermission(p);
+
+            // If a platform makes a permission false or true, return that value
+            boolean explicit = hasPermission || sender.isPermissionSet(p);
+            return explicit ? Tristate.fromBoolean(hasPermission) : Tristate.UNDEFINED;
+        });
     }
 
     @Override

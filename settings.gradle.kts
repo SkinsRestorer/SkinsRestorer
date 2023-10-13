@@ -45,11 +45,11 @@ dependencyResolutionManagement {
         maven("https://repo.codemc.org/repository/nms/") {
             name = "CodeMC NMS Repository"
         }
-        maven("https://repo.aikar.co/content/groups/aikar/") {
-            name = "Aikar Repository"
-        }
         maven("https://repo.viaversion.com/") {
             name = "ViaVersion Repository"
+        }
+        maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") {
+            name = "PlaceholderAPI Repository"
         }
         maven("https://jitpack.io/") {
             name = "JitPack Repository"
@@ -82,7 +82,7 @@ gradleEnterprise {
     }
 }
 
-setOf("shared", "1-18", "1-18-2", "1-19", "1-19-1", "1-19-2", "1-19-3", "1-19-4", "1-20").forEach {
+setOf("shared", "1-18", "1-18-2", "1-19", "1-19-1", "1-19-2", "1-19-3", "1-19-4", "1-20", "1-20-2").forEach {
     include("mappings:mc-$it")
 }
 

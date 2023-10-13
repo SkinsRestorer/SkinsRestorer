@@ -86,17 +86,8 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin> {
     }
 
     @Override
-    public void sendToMessageChannel(SRPlayer player, IOExceptionConsumer<DataOutputStream> consumer) {
-        try {
-            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-            DataOutputStream out = new DataOutputStream(bytes);
-
-            consumer.accept(out);
-
-            player.getAs(Player.class).sendPluginMessage(pluginInstance, "sr:messagechannel", bytes.toByteArray());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void sendMessageToChannel(SRPlayer player, byte[] data) {
+        player.getAs(Player.class).sendPluginMessage(pluginInstance, "sr:messagechannel", data);
     }
 
     @Override

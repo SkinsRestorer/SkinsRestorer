@@ -22,7 +22,7 @@ package net.skinsrestorer.shared.storage;
 import ch.jalu.configme.SettingsManager;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.PropertyUtil;
+import net.skinsrestorer.api.PropertyUtils;
 import net.skinsrestorer.api.connections.model.MineSkinResponse;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.exception.MineSkinException;
@@ -94,7 +94,7 @@ public class SkinStorageImpl implements SkinStorage {
             PlayerSkinData data = optional.get();
             Optional<SkinProperty> currentSkin = optional.map(PlayerSkinData::getProperty);
 
-            long timestamp = PropertyUtil.getSkinProfileData(data.getProperty()).getTimestamp();
+            long timestamp = PropertyUtils.getSkinProfileData(data.getProperty()).getTimestamp();
             if (!isPlayerSkinExpired(data.getTimestamp())) {
                 return currentSkin;
             }
@@ -104,7 +104,7 @@ public class SkinStorageImpl implements SkinStorage {
                 return currentSkin;
             }
 
-            MojangProfileResponse response = PropertyUtil.getSkinProfileData(skinProperty.get());
+            MojangProfileResponse response = PropertyUtils.getSkinProfileData(skinProperty.get());
 
             if (response.getTimestamp() <= timestamp) {
                 return currentSkin; // API returned even older skin data

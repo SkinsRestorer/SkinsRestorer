@@ -25,7 +25,7 @@ import java.util.List;
 
 public class FluentList {
     @SafeVarargs
-    public static <T> List<T> listOf(T... elements) {
+    public static <T> List<T> of(T... elements) {
         List<T> list = new ArrayList<>();
         Collections.addAll(list, elements);
         return Collections.unmodifiableList(list);
