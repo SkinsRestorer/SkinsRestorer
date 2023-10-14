@@ -32,7 +32,6 @@
   "skinsrestorer.success_admin_createcustom": "<dark_green>Skin <skin> has been created!",
   "skinsrestorer.success_admin_drop": "<dark_green><type> data dropped for <target>.",
   "skinsrestorer.success_admin_reload": "<dark_green>Config and Locale has been reloaded!",
-  "skinsrestorer.error_player_not_found": "<dark_green>Config and Locale has been reloaded!",
   "skinsrestorer.error_skin_disabled": "<dark_red>Error<dark_gray>: <red>This skin is disabled by an administrator.",
   "skinsrestorer.error_skinurl_disallowed": "<dark_red>Error<dark_gray>: <red>This domain has not been allowed by the administrator.",
   "skinsrestorer.error_updating_skin": "<dark_red>Error<dark_gray>: <red>An error occurred while updating your skin. Please try again later!",

@@ -31,7 +31,6 @@
   "skinsrestorer.success_admin_createcustom": "<dark_green>Skin <skin> został utworzony!",
   "skinsrestorer.success_admin_drop": "<dark_green><type> dane zostały usunięte dla <target>.",
   "skinsrestorer.success_admin_reload": "<dark_green>Pliki konfiguracyjne i językowe zostały przeładowane!",
-  "skinsrestorer.error_player_not_found": "<dark_green>Pliki konfiguracyjne i językowe zostały ponownie załadowane!",
   "skinsrestorer.error_skin_disabled": "<dark_red>Błąd<dark_gray>: <red>Ten skin został wyłączony przez administratora.",
   "skinsrestorer.error_skinurl_disallowed": "<dark_red>Błąd<dark_gray>: <red>Ta domena nie została dozwolona przez administratora.",
   "skinsrestorer.error_updating_skin": "<dark_red>Błąd<dark_gray>: <red>Wystąpił błąd podczas aktualizacji twojego skina. Spróbuj ponownie później!",
