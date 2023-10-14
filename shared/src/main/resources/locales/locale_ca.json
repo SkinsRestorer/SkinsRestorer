@@ -1,17 +1,11 @@
 {
-  "skinsrestorer.help_skin": "Cambia la teva pell.",
-  "skinsrestorer.help_skins": "Obra el menu de pells.",
   "skinsrestorer.help_sr": "Comandaments d'administrador per SkinsRestorer.",
   "skinsrestorer.help_skin_set": "Cambia la teva pell.",
   "skinsrestorer.help_skin_set_other": "Estableix la pell per a un jugador.",
-  "skinsrestorer.help_skin_set_url": "Posa la pell d'un enllaç.",
   "skinsrestorer.help_skin_clear": "Neteja la teva pell.",
   "skinsrestorer.help_skin_clear_other": "Neteja la pell d'un altre jugador.",
   "skinsrestorer.help_skin_search": "Busca la pell que tu vols.",
   "skinsrestorer.help_skin_update": "Actualitza la teva pell.",
   "skinsrestorer.help_skin_update_other": "Actualitza la pell d'un jugador.",
-  "skinsrestorer.help_sr_reload": "Recarrega l'arxiu de configuració.",
-  "skinsrestorer.help_sr_status": "Comprova els serveis API del plugin.",
-  "skinsrestorer.help_sr_drop": "Elimina la informació de la pell o jugador.",
-  "skinsrestorer.help_sr_props": "Mostra les propietats actuals de la pell dels jugadors."
+  "skinsrestorer.help_sr_reload": "Recarrega l'arxiu de configuració."
 }
