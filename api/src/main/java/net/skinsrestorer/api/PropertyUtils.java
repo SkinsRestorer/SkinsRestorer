@@ -32,7 +32,7 @@ import java.util.Base64;
 /**
  * Utility class for retrieving information from profile properties related to skins.
  */
-public class PropertyUtil {
+public class PropertyUtils {
     private static final Gson GSON = new Gson();
 
     /**

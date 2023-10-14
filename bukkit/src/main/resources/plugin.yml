@@ -5,6 +5,6 @@ version: ${version}
 description: ${description}
 website: https://skinsrestorer.net/
 authors: [ "knat", "AlexProgrammerDE", "Th3Tr0LLeR", "McLive", "DoNotSpamPls" ]
-softdepend: [ "ProtocolLib", "ViaVersion", "ViaBackwards", "ProtocolSupport", "MundoSK", "floodgate" ]
+softdepend: [ "ProtocolLib", "ViaVersion", "ViaBackwards", "ProtocolSupport", "MundoSK", "floodgate", "PlaceholderAPI" ]
 api-version: 1.13
 folia-supported: true

@@ -48,6 +48,9 @@ dependencyResolutionManagement {
         maven("https://repo.viaversion.com/") {
             name = "ViaVersion Repository"
         }
+        maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") {
+            name = "PlaceholderAPI Repository"
+        }
         maven("https://jitpack.io/") {
             name = "JitPack Repository"
         }

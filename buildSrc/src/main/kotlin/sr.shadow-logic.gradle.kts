@@ -13,7 +13,6 @@ plugins {
 }
 
 val packages = mapOf<String, String>(
-    "org.fusesource.jansi" to "net.skinsrestorer.shadow.jansi",
     "org.mariadb.jdbc" to "net.skinsrestorer.shadow.mariadb"
 )
 
@@ -62,7 +61,6 @@ class ShadowResourceTransformer : Transformer {
         val pathString: String = element?.relativePath?.pathString!!
 
         return pathString.contains("META-INF/services")
-                || pathString.contains("META-INF/native-image/jansi")
     }
 
     override fun transform(context: TransformerContext?) {
@@ -104,7 +102,6 @@ tasks {
         exclude("META-INF/SPONGEPO.SF", "META-INF/SPONGEPO.DSA", "META-INF/SPONGEPO.RSA")
         minimize() {
             exclude(dependency("org.mariadb.jdbc:mariadb-java-client"))
-            exclude(dependency("org.fusesource.jansi:jansi"))
         }
         configureRelocations()
         transform(ShadowResourceTransformer())
@@ -122,7 +119,6 @@ fun ShadowJar.configureRelocations() {
 
     relocate("com.cryptomorin.xseries", "net.skinsrestorer.shadow.xseries")
     relocate("org.bstats", "net.skinsrestorer.shadow.bstats")
-    relocate("org.fusesource.jansi", "net.skinsrestorer.shadow.jansi")
 
     relocate("org.mariadb.jdbc", "net.skinsrestorer.shadow.mariadb")
 

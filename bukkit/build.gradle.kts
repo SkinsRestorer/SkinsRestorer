@@ -24,7 +24,14 @@ dependencies {
     }
 
     implementation("org.bstats:bstats-bukkit:3.0.2")
-    implementation("com.github.cryptomorin:XSeries:9.4.0")
+    implementation("com.github.cryptomorin:XSeries:9.6.1.1") {
+        isTransitive = false
+    }
+
+    // PAPI API hook
+    compileOnly("me.clip:placeholderapi:2.11.4") {
+        isTransitive = false
+    }
 
     compileOnly("com.viaversion:viabackwards-common:4.7.0") {
         isTransitive = false

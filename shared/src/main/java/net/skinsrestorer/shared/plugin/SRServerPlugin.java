@@ -115,6 +115,7 @@ public class SRServerPlugin {
             if (Files.exists(plugin.getDataFolder().resolve("enableSkinStorageAPI.txt"))) {
                 plugin.loadStorage();
                 plugin.registerAPI();
+                init.postAPIInitHook();
             }
 
             init.initMessageChannel();
@@ -123,6 +124,7 @@ public class SRServerPlugin {
 
             // Init API
             plugin.registerAPI();
+            init.postAPIInitHook();
 
             // Init commands
             plugin.initCommands();

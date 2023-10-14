@@ -39,7 +39,7 @@ public class ClassInfo {
         spigot = ReflectionUtil.classExists("org.spigotmc.SpigotConfig");
         paper = ReflectionUtil.classExists("com.destroystokyo.paper.PaperConfig", "io.papermc.paper.configuration.Configuration");
         craftBukkit = ReflectionUtil.classExists("org.bukkit.Bukkit");
-        folia = ReflectionUtil.classExists("io.papermc.paper.threadedregions.scheduler.AsyncScheduler");
+        folia = ReflectionUtil.classExists("io.papermc.paper.threadedregions.RegionizedServerInitEvent");
         spongeVanilla = ReflectionUtil.classExists("org.spongepowered.server.SpongeVanilla");
         spongeForge = ReflectionUtil.classExists("org.spongepowered.mod.SpongeCoremod");
         spongeAPI = ReflectionUtil.classExists("org.spongepowered.api.Sponge");

@@ -22,7 +22,9 @@ package net.skinsrestorer.shared.plugin;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.utils.IOExceptionConsumer;
 
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
 
@@ -47,5 +49,18 @@ public interface SRServerAdapter<P> extends SRPlatformAdapter<P> {
         });
     }
 
-    void sendToMessageChannel(SRPlayer player, IOExceptionConsumer<DataOutputStream> consumer);
+    default void sendToMessageChannel(SRPlayer player, IOExceptionConsumer<DataOutputStream> consumer) {
+        try {
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            DataOutputStream out = new DataOutputStream(bytes);
+
+            consumer.accept(out);
+
+            sendMessageToChannel(player, bytes.toByteArray());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void sendMessageToChannel(SRPlayer player, byte[] data);
 }

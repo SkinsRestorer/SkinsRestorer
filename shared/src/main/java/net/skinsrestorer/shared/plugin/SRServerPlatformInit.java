@@ -28,4 +28,10 @@ public interface SRServerPlatformInit extends SRPlatformInit {
     void initGUIListener();
 
     void initMessageChannel();
+
+    /**
+     * Called after API is initialized.
+     */
+    default void postAPIInitHook() {
+    }
 }

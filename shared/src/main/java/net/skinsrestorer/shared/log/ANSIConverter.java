@@ -19,40 +19,36 @@
  */
 package net.skinsrestorer.shared.log;
 
-import org.fusesource.jansi.Ansi;
-
 import java.util.EnumMap;
 import java.util.Map;
-
-import static org.fusesource.jansi.Ansi.Attribute;
 
 public class ANSIConverter {
     private static final Map<SRChatColor, String> replacements = new EnumMap<>(SRChatColor.class);
     private static final SRChatColor[] colors = SRChatColor.values();
 
     static {
-        replacements.put(SRChatColor.BLACK, Ansi.ansi().fg(Ansi.Color.BLACK).boldOff().toString());
-        replacements.put(SRChatColor.DARK_BLUE, Ansi.ansi().fg(Ansi.Color.BLUE).boldOff().toString());
-        replacements.put(SRChatColor.DARK_GREEN, Ansi.ansi().fg(Ansi.Color.GREEN).boldOff().toString());
-        replacements.put(SRChatColor.DARK_AQUA, Ansi.ansi().fg(Ansi.Color.CYAN).boldOff().toString());
-        replacements.put(SRChatColor.DARK_RED, Ansi.ansi().fg(Ansi.Color.RED).boldOff().toString());
-        replacements.put(SRChatColor.DARK_PURPLE, Ansi.ansi().fg(Ansi.Color.MAGENTA).boldOff().toString());
-        replacements.put(SRChatColor.GOLD, Ansi.ansi().fg(Ansi.Color.YELLOW).boldOff().toString());
-        replacements.put(SRChatColor.GRAY, Ansi.ansi().fg(Ansi.Color.WHITE).boldOff().toString());
-        replacements.put(SRChatColor.DARK_GRAY, Ansi.ansi().fg(Ansi.Color.BLACK).bold().toString());
-        replacements.put(SRChatColor.BLUE, Ansi.ansi().fg(Ansi.Color.BLUE).bold().toString());
-        replacements.put(SRChatColor.GREEN, Ansi.ansi().fg(Ansi.Color.GREEN).bold().toString());
-        replacements.put(SRChatColor.AQUA, Ansi.ansi().fg(Ansi.Color.CYAN).bold().toString());
-        replacements.put(SRChatColor.RED, Ansi.ansi().fg(Ansi.Color.RED).bold().toString());
-        replacements.put(SRChatColor.LIGHT_PURPLE, Ansi.ansi().fg(Ansi.Color.MAGENTA).bold().toString());
-        replacements.put(SRChatColor.YELLOW, Ansi.ansi().fg(Ansi.Color.YELLOW).bold().toString());
-        replacements.put(SRChatColor.WHITE, Ansi.ansi().fg(Ansi.Color.WHITE).bold().toString());
-        replacements.put(SRChatColor.MAGIC, Ansi.ansi().a(Attribute.BLINK_SLOW).toString());
-        replacements.put(SRChatColor.BOLD, Ansi.ansi().a(Attribute.UNDERLINE_DOUBLE).toString());
-        replacements.put(SRChatColor.STRIKETHROUGH, Ansi.ansi().a(Attribute.STRIKETHROUGH_ON).toString());
-        replacements.put(SRChatColor.UNDERLINE, Ansi.ansi().a(Attribute.UNDERLINE).toString());
-        replacements.put(SRChatColor.ITALIC, Ansi.ansi().a(Attribute.ITALIC).toString());
-        replacements.put(SRChatColor.RESET, Ansi.ansi().a(Attribute.RESET).fg(Ansi.Color.DEFAULT).toString());
+        replacements.put(SRChatColor.BLACK, AnsiBuilder.ansi().fg(AnsiBuilder.Color.BLACK).boldOff().toString());
+        replacements.put(SRChatColor.DARK_BLUE, AnsiBuilder.ansi().fg(AnsiBuilder.Color.BLUE).boldOff().toString());
+        replacements.put(SRChatColor.DARK_GREEN, AnsiBuilder.ansi().fg(AnsiBuilder.Color.GREEN).boldOff().toString());
+        replacements.put(SRChatColor.DARK_AQUA, AnsiBuilder.ansi().fg(AnsiBuilder.Color.CYAN).boldOff().toString());
+        replacements.put(SRChatColor.DARK_RED, AnsiBuilder.ansi().fg(AnsiBuilder.Color.RED).boldOff().toString());
+        replacements.put(SRChatColor.DARK_PURPLE, AnsiBuilder.ansi().fg(AnsiBuilder.Color.MAGENTA).boldOff().toString());
+        replacements.put(SRChatColor.GOLD, AnsiBuilder.ansi().fg(AnsiBuilder.Color.YELLOW).boldOff().toString());
+        replacements.put(SRChatColor.GRAY, AnsiBuilder.ansi().fg(AnsiBuilder.Color.WHITE).boldOff().toString());
+        replacements.put(SRChatColor.DARK_GRAY, AnsiBuilder.ansi().fg(AnsiBuilder.Color.BLACK).bold().toString());
+        replacements.put(SRChatColor.BLUE, AnsiBuilder.ansi().fg(AnsiBuilder.Color.BLUE).bold().toString());
+        replacements.put(SRChatColor.GREEN, AnsiBuilder.ansi().fg(AnsiBuilder.Color.GREEN).bold().toString());
+        replacements.put(SRChatColor.AQUA, AnsiBuilder.ansi().fg(AnsiBuilder.Color.CYAN).bold().toString());
+        replacements.put(SRChatColor.RED, AnsiBuilder.ansi().fg(AnsiBuilder.Color.RED).bold().toString());
+        replacements.put(SRChatColor.LIGHT_PURPLE, AnsiBuilder.ansi().fg(AnsiBuilder.Color.MAGENTA).bold().toString());
+        replacements.put(SRChatColor.YELLOW, AnsiBuilder.ansi().fg(AnsiBuilder.Color.YELLOW).bold().toString());
+        replacements.put(SRChatColor.WHITE, AnsiBuilder.ansi().fg(AnsiBuilder.Color.WHITE).bold().toString());
+        replacements.put(SRChatColor.MAGIC, AnsiBuilder.ansi().a(AnsiBuilder.Attribute.BLINK_SLOW).toString());
+        replacements.put(SRChatColor.BOLD, AnsiBuilder.ansi().a(AnsiBuilder.Attribute.UNDERLINE_DOUBLE).toString());
+        replacements.put(SRChatColor.STRIKETHROUGH, AnsiBuilder.ansi().a(AnsiBuilder.Attribute.STRIKETHROUGH_ON).toString());
+        replacements.put(SRChatColor.UNDERLINE, AnsiBuilder.ansi().a(AnsiBuilder.Attribute.UNDERLINE).toString());
+        replacements.put(SRChatColor.ITALIC, AnsiBuilder.ansi().a(AnsiBuilder.Attribute.ITALIC).toString());
+        replacements.put(SRChatColor.RESET, AnsiBuilder.ansi().a(AnsiBuilder.Attribute.RESET).fg(AnsiBuilder.Color.DEFAULT).toString());
     }
 
     public static String convertToAnsi(String minecraftMessage) {
