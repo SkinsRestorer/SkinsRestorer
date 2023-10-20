@@ -1,1 +1,26 @@
-{}
+{
+  "skinsrestorer.help_skins": "Skins GUI खुलता है |",
+  "skinsrestorer.help_sr": "SkinsRestorer के लिए एडमिन कमांड्स।",
+  "skinsrestorer.help_skin_set": "आपकी स्किन बदले।",
+  "skinsrestorer.help_skin_set_other": "दूसरे की स्किन बदले।",
+  "skinsrestorer.help_skin_set_url": "URL से खुदकी स्किन बदले।",
+  "skinsrestorer.help_skin_clear": "आपकी स्किन हटा दे।",
+  "skinsrestorer.help_skin_clear_other": "किसी और की स्किन हटाए।",
+  "skinsrestorer.help_skin_search": "आपके अनुसार स्किन ढूंढे।",
+  "skinsrestorer.help_skin_update": "आपकी स्किन बदले।",
+  "skinsrestorer.help_skin_update_other": "दूसरे की स्किन बदले।",
+  "skinsrestorer.help_sr_reload": "Configuration file को reload करें।",
+  "skinsrestorer.help_sr_status": "आवश्यक प्लगिन API सर्विसेस चेक करें।",
+  "skinsrestorer.help_sr_drop": "डेटाबेस से प्लेयर या स्किन डाटा को हटाए।",
+  "skinsrestorer.help_sr_props": "दूसरे प्लेयर की स्किन के बारे में जाने।",
+  "skinsrestorer.help_sr_apply_skin": "चुने हुए प्लेयर पे पुनः स्किन लगाए।",
+  "skinsrestorer.help_sr_create_custom": "पूरे सर्वर के लिए मन मुताबिक स्किन बनाए।",
+  "skinsrestorer.help_sr_set_skin_all": "सभी प्लेयर पे एक ही स्किन लगाए।",
+  "skinsrestorer.help_sr_apply_skin_all": "सभी प्लेयर पर पुनः स्किन लगाए।",
+  "skinsrestorer.help_sr_purge_old_data": "x दिन पहले का पुराना स्किन डेटा मिटाएँ।",
+  "skinsrestorer.help_sr_dump": "सपोर्ट डाटा को bytebin.lucko.me पे अपलोड करें।",
+  "skinsrestorer.success_skin_change": "<dark_green>आपकी स्किन बदल गईं है।",
+  "skinsrestorer.success_skin_change_other": "<dark_green>आपने <name> की स्किन बदल दी हैं।",
+  "skinsrestorer.success_skin_clear": "<dark_green>आपकी स्किन हट चुकी हैं।",
+  "skinsrestorer.success_skin_clear_other": "<dark_green>आपने <name> की स्किन हटा दी हैं।"
+}
