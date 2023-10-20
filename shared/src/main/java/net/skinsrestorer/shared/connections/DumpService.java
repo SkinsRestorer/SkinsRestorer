@@ -66,7 +66,10 @@ public class DumpService {
                 proxyModeInfo,
                 adapter.getPlatformVersion(),
                 plugin.getServerInfo(),
-                platformType
+                platformType,
+                new DumpInfo.OSInfo(),
+                new DumpInfo.JavaInfo(),
+                new DumpInfo.UserInfo()
         );
 
         HttpResponse response = httpClient.execute("https://bytebin.lucko.me/post",

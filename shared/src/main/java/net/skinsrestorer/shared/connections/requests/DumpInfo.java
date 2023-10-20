@@ -32,9 +32,38 @@ public class DumpInfo {
     private String platformVersion;
     private ServerInfo serverInfo;
     private DumpInfo.PlatformType platformType;
+    private OSInfo osInfo;
+    private JavaInfo javaInfo;
+    private UserInfo userInfo;
 
     public enum PlatformType {
         SERVER,
         PROXY
+    }
+
+    @SuppressWarnings("unused")
+    @SuppressFBWarnings({"UWF_UNWRITTEN_FIELD", "URF_UNREAD_FIELD"})
+    public static class OSInfo {
+        private final String name = System.getProperty("os.name");
+        private final String version = System.getProperty("os.version");
+        private final String arch = System.getProperty("os.arch");
+    }
+
+    @SuppressWarnings("unused")
+    @SuppressFBWarnings({"UWF_UNWRITTEN_FIELD", "URF_UNREAD_FIELD"})
+    public static class JavaInfo {
+        private final String version = System.getProperty("java.version");
+        private final String vendor = System.getProperty("java.vendor");
+        private final String vmVersion = System.getProperty("java.vm.version");
+        private final String vmVendor = System.getProperty("java.vm.vendor");
+        private final String vmName = System.getProperty("java.vm.name");
+    }
+
+    @SuppressWarnings("unused")
+    @SuppressFBWarnings({"UWF_UNWRITTEN_FIELD", "URF_UNREAD_FIELD"})
+    public static class UserInfo {
+        private final String name = System.getProperty("user.name");
+        private final String home = System.getProperty("user.home");
+        private final String dir = System.getProperty("user.dir");
     }
 }
