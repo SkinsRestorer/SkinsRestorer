@@ -41,6 +41,7 @@ public class DumpInfo {
         PROXY
     }
 
+    // Helps to figure out OS-specific issues
     @SuppressWarnings("unused")
     @SuppressFBWarnings({"UWF_UNWRITTEN_FIELD", "URF_UNREAD_FIELD"})
     public static class OSInfo {
@@ -49,6 +50,7 @@ public class DumpInfo {
         private final String arch = System.getProperty("os.arch");
     }
 
+    // Helps to figure out java version related issues
     @SuppressWarnings("unused")
     @SuppressFBWarnings({"UWF_UNWRITTEN_FIELD", "URF_UNREAD_FIELD"})
     public static class JavaInfo {
@@ -59,6 +61,7 @@ public class DumpInfo {
         private final String vmName = System.getProperty("java.vm.name");
     }
 
+    // Helps to figure out whether the server is running on a VPS/container or not
     @SuppressWarnings("unused")
     @SuppressFBWarnings({"UWF_UNWRITTEN_FIELD", "URF_UNREAD_FIELD"})
     public static class UserInfo {
