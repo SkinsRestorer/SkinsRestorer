@@ -8,12 +8,18 @@ java {
     javaTarget(8)
 }
 
-blossom {
-    replaceToken("{version}", version)
-    replaceToken("{description}", rootProject.description)
-    replaceToken("{url}", "https://skinsrestorer.net")
-    replaceToken("{commit}", rootProject.latestCommitHash())
+sourceSets {
+    main {
+        blossom {
+            javaSources {
+                property("version", version.toString())
+                property("description", rootProject.description)
+                property("url", "https://skinsrestorer.net")
+                property("commit", rootProject.latestCommitHash())
 
-    val sharedResources = rootDir.resolve("shared").resolve("src").resolve("main").resolve("resources")
-    replaceToken("{locales}", sharedResources.resolve("locales").list()?.joinToString("|"))
+                val sharedResources = rootDir.resolve("shared").resolve("src").resolve("main").resolve("resources")
+                property("locales", sharedResources.resolve("locales").list()?.joinToString("|"))
+            }
+        }
+    }
 }
