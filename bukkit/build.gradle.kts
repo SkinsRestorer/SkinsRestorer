@@ -24,7 +24,7 @@ dependencies {
     }
 
     implementation("org.bstats:bstats-bukkit:3.0.2")
-    implementation("com.github.cryptomorin:XSeries:9.6.1.1") {
+    implementation("com.github.cryptomorin:XSeries:9.7.0") {
         isTransitive = false
     }
 
