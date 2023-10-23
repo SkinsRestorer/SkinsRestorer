@@ -12,7 +12,7 @@ dependencies {
     compileOnly("net.md-5:bungeecord-proxy:1.19-R0.1-SNAPSHOT") {
         isTransitive = false
     }
-    compileOnly("net.md-5:bungeecord-protocol:1.19-R0.1-SNAPSHOT") {
+    compileOnly("net.md-5:bungeecord-protocol:1.20-R0.1") {
         isTransitive = false
     }
 }
