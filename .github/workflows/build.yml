@@ -28,7 +28,7 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build test --stacktrace
       - name: Upload artifact
-        uses: actions/upload-artifact@v3.1.2
+        uses: actions/upload-artifact@v3.1.3
         with:
           name: SkinsRestorer
           path: ./build/libs/SkinsRestorer.jar
