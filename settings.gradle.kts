@@ -15,7 +15,7 @@ pluginManagement {
         id("net.kyori.indra.publishing") version "3.1.1"
         id("net.kyori.blossom") version "2.1.0"
         id("io.github.patrick.remapper") version "1.4.0"
-        id("com.diffplug.spotless") version "6.19.0"
+        id("com.diffplug.spotless") version "6.22.0"
         id("com.github.spotbugs") version "5.0.14"
         id("io.freefair.lombok") version "8.0.1"
     }
