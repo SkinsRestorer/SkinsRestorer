@@ -90,7 +90,7 @@
   "skinsrestorer.no_skin_data": "<dark_red>Hata<dark_gray>: <red>Dış görünüm verisi bulunamadı! Bu oyuncunun Skini var mı?",
   "skinsrestorer.info_no_brackets": "<bold>Metninizi <bold>< ></bold> ve <bold>[ ]</bold><newline>parantezleri arasına koymayın</bold>Örnek: <dark_green>/skin <jebb></dark_green> yerine sadece <dark_green>/skin jebb</dark_green>",
   "skinsrestorer.outdated": "<dark_red>SkinsRestorer'ın eski bir sürümünü çalıştırıyorsunuz!<newline><red>Lütfen Spigot'taki en son sürüme güncelleyin: <newline><yellow>https://www.spigotmc.org/resources/skinsrestorer.2124/",
-  "skinsrestorer.permission_player_wildcard": "Oyuncular için joker izni",
+  "skinsrestorer.permission_player_wildcard": "Oyuncular için Wildcard izni",
   "skinsrestorer.permission_command": "Ana \"/skin\" komutlarına erişim sağlar.",
   "skinsrestorer.permission_command_set": "Cildinizi değiştirmek için erişim sağlar.",
   "skinsrestorer.permission_command_set_url": "Cildinizi URL ile değiştirmek için erişim sağlar.",
@@ -108,5 +108,11 @@
   "skinsrestorer.permission_admincommand_drop": "Bir .SKIN dosyasını kaldırmak için erişim sağlar.",
   "skinsrestorer.permission_admincommand_props": "Başka bir oyuncunun skinprops'unu almak için erişim sağlar.",
   "skinsrestorer.permission_admincommand_applyskin": "Başka bir oyuncunun görünümünü yeniden uygulamak için erişim sağlar.",
-  "skinsrestorer.permission_admincommand_createcustom": "URL'ye göre özel bir global dış görünüm oluşturmak için erişim sağlar."
+  "skinsrestorer.permission_admincommand_createcustom": "URL'ye göre özel bir global dış görünüm oluşturmak için erişim sağlar.",
+  "skinsrestorer.permission_admincommand_applyskinall": "Tüm oyunculara bir görünüm uygulamak için erişim sağlar.",
+  "skinsrestorer.permission_admincommand_purgeolddata": "Eski cilt verilerini temizlemek için erişim sağlar.",
+  "skinsrestorer.permission_admincommand_dump": "\"/sr dump\" aracılığıyla sunucu bilgilerini yüklemek için erişim sağlar.",
+  "skinsrestorer.permission_bypasscooldown": "Yapılandırmada ayarlanan herhangi bir komut bekleme süresini atlar.",
+  "skinsrestorer.permission_bypassdisabled": "Yapılandırmada ayarlanmış tüm devre dışı bırakılmış görünümleri atlar.",
+  "skinsrestorer.permission_ownskin": "Kendi dış görünümünüzü ayarlamak için erişim sağlar."
 }
