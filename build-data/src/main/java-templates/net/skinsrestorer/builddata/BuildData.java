@@ -25,15 +25,15 @@ import org.jetbrains.annotations.ApiStatus;
 @ApiStatus.Internal
 public class BuildData {
 
-    public static final String VERSION = "{version}";
-    public static final String DESCRIPTION = "{description}";
-    public static final String URL = "{url}";
-    public static final String COMMIT = "{commit}";
+    public static final String VERSION = "{{ version }}";
+    public static final String DESCRIPTION = "{{ description }}";
+    public static final String URL = "{{ url }}";
+    public static final String COMMIT = "{{ commit }}";
     public static final String COMMIT_SHORT = COMMIT.substring(0, 7);
     public static final String[] LOCALES = supportedLocales();
 
     private static String[] supportedLocales() {
-        String values = "{locales}";
+        String values = "{{ locales }}";
         return values.split("\\|");
     }
 }

@@ -12,7 +12,7 @@ dependencies {
     implementation(projects.multiver.bukkit.multipaper)
     implementation(projects.multiver.bukkit.v17)
 
-    implementation("net.kyori:adventure-platform-bukkit:4.3.0")
+    implementation("net.kyori:adventure-platform-bukkit:4.3.1")
 
     setOf("1-18", "1-18-2", "1-19", "1-19-1", "1-19-2", "1-19-3", "1-19-4", "1-20", "1-20-2").forEach {
         implementation(project(":mappings:mc-$it", "remapped"))
@@ -24,7 +24,7 @@ dependencies {
     }
 
     implementation("org.bstats:bstats-bukkit:3.0.2")
-    implementation("com.github.cryptomorin:XSeries:9.6.1.1") {
+    implementation("com.github.cryptomorin:XSeries:9.7.0") {
         isTransitive = false
     }
 
@@ -33,7 +33,7 @@ dependencies {
         isTransitive = false
     }
 
-    compileOnly("com.viaversion:viabackwards-common:4.7.0") {
+    compileOnly("com.viaversion:viabackwards-common:4.8.1") {
         isTransitive = false
     }
     compileOnly("com.viaversion:viaversion:4.4.1") {
