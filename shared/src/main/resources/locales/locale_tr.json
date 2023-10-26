@@ -1,10 +1,10 @@
 {
-  "skinsrestorer.help_skin": "Skininizi Değistirir.",
-  "skinsrestorer.help_skins": "Dış görünüm GUI'sini açar.",
+  "skinsrestorer.help_skin": "Kostümünü değistirir.",
+  "skinsrestorer.help_skins": "Kostümler GUI'sini açar.",
   "skinsrestorer.help_sr": "SkinsRestorer için yönetici komutları.",
   "skinsrestorer.help_skin_set": "Kostümünü değiştirir.",
   "skinsrestorer.help_skin_set_other": "Hedef oyuncunun kostümünü değiştir.",
-  "skinsrestorer.help_skin_set_url": "Cildinizi bir URL'den değiştirir.",
+  "skinsrestorer.help_skin_set_url": "Kostümünüzü bir URL'den değiştirir.",
   "skinsrestorer.help_skin_clear": "Kostümünü temizler.",
   "skinsrestorer.help_skin_clear_other": "Hedef oyuncunun kostümünü temizler.",
   "skinsrestorer.help_skin_search": "İstediğin bir kostümü ara.",
