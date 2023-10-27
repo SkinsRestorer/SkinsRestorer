@@ -35,5 +35,10 @@
   "skinsrestorer.error_updating_skin": "<dark_red>Kesalahan<dark_gray>: <red>Terjadi sebuah kesalahan ketika memperbarui skin-mu. Harap coba lagi nanti!",
   "skinsrestorer.error_updating_url": "<dark_red>Kesalahan<dark_gray>: <red>Kamu tidak dapat memperbarui skin URL kustom! <newline><red>Minta lagi menggunakan /skin url",
   "skinsrestorer.error_updating_customskin": "<dark_red>Kesalahan<dark_gray>: <red>Skin tidak dapat diperbarui karena itu kustom.",
-  "skinsrestorer.error_invalid_urlskin": "<dark_red>Kesalahan<dark_gray>: <red>URL atau format skin tidak valid, <newline><red>Coba unggah skin-mu ke imgur dan klik kanan 'copy image address' <newline><red>Untuk panduan cek: <red><underlined>skinsrestorer.net/skinurl"
+  "skinsrestorer.error_invalid_urlskin": "<dark_red>Kesalahan<dark_gray>: <red>URL atau format skin tidak valid, <newline><red>Coba unggah skin-mu ke imgur dan klik kanan 'copy image address' <newline><red>Untuk panduan cek: <red><underlined>skinsrestorer.net/skinurl",
+  "skinsrestorer.error_admin_applyskin": "<dark_red>Kesalahan<dark_gray>: <red>Skin pemain tidak dapat disegarkan!",
+  "skinsrestorer.error_ms_unknown": "<dark_red>Kesalahan<dark_gray>: <red>Kesalahan MineSkin tidak diketahui!",
+  "skinsrestorer.not_connected_to_server": "<red>Kamu tidak tersambung ke server manapun.",
+  "skinsrestorer.admincommand_status_checking": "<gray>Pengecekan layanan perlu dilakukan untuk SR dapat bekerja dengan baik...",
+  "skinsrestorer.admincommand_status_summary_server": "<gray>Server: <gold><version>"
 }
