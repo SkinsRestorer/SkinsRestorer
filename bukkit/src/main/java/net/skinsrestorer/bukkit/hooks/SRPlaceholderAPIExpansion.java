@@ -40,6 +40,7 @@ public class SRPlaceholderAPIExpansion extends PlaceholderExpansion {
     private final PluginDescriptionFile description;
     private static final String STEVE_URL = "https://textures.minecraft.net/texture/6d3b06c38504ffc0229b9492147c69fcf59fd2ed7885f78502152f77b4d50de1";
     private static final String ALEX_URL = "https://textures.minecraft.net/texture/fb9ab3483f8106ecc9e76bd47c71312b0f16a58784d606864f3b3e9cb1fd7b6c";
+    private static final String ERROR_MESSAGE = "Error";
 
     @Override
     public @NotNull String getIdentifier() {
@@ -62,11 +63,15 @@ public class SRPlaceholderAPIExpansion extends PlaceholderExpansion {
     }
 
     @Override
-    public String onRequest(@NotNull OfflinePlayer offlinePlayer, @NotNull String params) {
+    public String onRequest(OfflinePlayer offlinePlayer, @NotNull String params) {
         params = params.toLowerCase(Locale.ROOT);
         PlayerStorage storage = api.getPlayerStorage();
 
         if (params.startsWith("skin_name")) {
+            if (offlinePlayer == null) {
+                return ERROR_MESSAGE;
+            }
+
             Optional<SkinIdentifier> skin = storage.getSkinIdOfPlayer(offlinePlayer.getUniqueId());
 
             if (skin.isPresent()) {
@@ -83,10 +88,14 @@ public class SRPlaceholderAPIExpansion extends PlaceholderExpansion {
                 }
             }
 
-            return "Error";
+            return ERROR_MESSAGE;
         }
 
         if (params.startsWith("texture_url")) {
+            if (offlinePlayer == null) {
+                return ERROR_MESSAGE;
+            }
+
             try {
                 Optional<SkinProperty> skin = storage.getSkinForPlayer(offlinePlayer.getUniqueId(), offlinePlayer.getName());
 
@@ -109,10 +118,14 @@ public class SRPlaceholderAPIExpansion extends PlaceholderExpansion {
                 e.printStackTrace();
             }
 
-            return "Error";
+            return ERROR_MESSAGE;
         }
 
         if (params.startsWith("texture_id")) {
+            if (offlinePlayer == null) {
+                return ERROR_MESSAGE;
+            }
+
             try {
                 Optional<SkinProperty> skin = storage.getSkinForPlayer(offlinePlayer.getUniqueId(), offlinePlayer.getName());
 
@@ -135,7 +148,7 @@ public class SRPlaceholderAPIExpansion extends PlaceholderExpansion {
                 e.printStackTrace();
             }
 
-            return "Error";
+            return ERROR_MESSAGE;
         }
 
         return null;
