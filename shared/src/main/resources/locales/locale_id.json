@@ -40,5 +40,6 @@
   "skinsrestorer.error_ms_unknown": "<dark_red>Kesalahan<dark_gray>: <red>Kesalahan MineSkin tidak diketahui!",
   "skinsrestorer.not_connected_to_server": "<red>Kamu tidak tersambung ke server manapun.",
   "skinsrestorer.admincommand_status_checking": "<gray>Pengecekan layanan perlu dilakukan untuk SR dapat bekerja dengan baik...",
+  "skinsrestorer.admincommand_status_working": "<green>Plugin saat ini dalam keadaan bekerja.",
   "skinsrestorer.admincommand_status_summary_server": "<gray>Server: <gold><version>"
 }
