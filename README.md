@@ -22,7 +22,7 @@
 <a href="https://ci.codemc.io/job/SkinsRestorer/job/SkinsRestorerX-DEV/lastSuccessfulBuild/artifact/build/libs/SkinsRestorer.jar"><img src="https://img.shields.io/badge/DOWNLOAD-DEV__BUILD-important?style=for-the-badge" alt="download2 badge"></a>
 </p>
 
-This is the development repository for [SkinsRestorer](https://www.spigotmc.org/resources/skinsrestorer.2124/) (Minecraft plugin).
+This is the development repository for [SkinsRestorer](https://skinsrestorer.net/) (Minecraft plugin).
 
 Restoring offline mode skins & changing skins for Bukkit/Spigot/paper, BungeeCord/Waterfall, Sponge, CatServer and Velocity
 servers.
@@ -41,12 +41,15 @@ Implementation:
 
 ## :link: Links
 
-- [Spigot Page](https://www.spigotmc.org/resources/2124)
-- [Sponge Ore Page](https://ore.spongepowered.org/SRTeam/SkinsRestorer)
-- [Wiki](https://github.com/SkinsRestorer/SkinsRestorerX/wiki)
+- [SpigotMC](https://www.spigotmc.org/resources/2124)
+- [Ore](https://ore.spongepowered.org/SRTeam/SkinsRestorer)
+- [Hangar](https://hangar.papermc.io/SRTeam/SkinsRestorer)
+- [BuiltByBit](https://builtbybit.com/resources/skinsrestorer.21982/)
+- [Mcbbs](https://www.mcbbs.net/forum.php?mod=viewthread&tid=805404)
 - [Jenkins](https://ci.codemc.io/job/SkinsRestorer/job/SkinsRestorerX-DEV/)
-- [Discord](https://discord.me/skinsrestorer/)
+- [Discord](https://skinsrestorer.net/discord)
 - [Website](https://skinsrestorer.net)
+- [Documentation](https://skinsrestorer.net/docs)
 - [Crowdin](https://translate.skinsrestorer.net)
 
 ## 📥 How to install? / Installation / Setup

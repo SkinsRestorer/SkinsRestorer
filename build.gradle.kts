@@ -5,8 +5,8 @@ plugins {
 
 allprojects {
     group = "net.skinsrestorer"
-    version = "15.0.0-SNAPSHOT"
-    description = "Ability to restore/change skins on servers! (Offline and Online Mode)"
+    version = "15.0.0"
+    description = "Ability to restore/change skins on servers!"
 }
 
 val platforms = setOf(
