@@ -62,6 +62,7 @@
   "skinsrestorer.admincommand_applyskinall_player_error": "<red>¡Error al aplicar skin a <player>!",
   "skinsrestorer.admincommand_applyskinall_success": "<green>Reaplicada la skin de todos los jugadores conectados",
   "skinsrestorer.admincommand_purgeolddata_success": "<green>¡Se han purgado las skins antiguas exitosamente!",
+  "skinsrestorer.admincommand_purgeolddata_error": "<dark_red>A ocurrido un error mientras se purgaban las skins viejas!",
   "skinsrestorer.wait_a_minute": "<dark_red>Error<dark_gray>: <red>Espera un minuto antes de solicitar esta skin nuevamente. (Tarifa limitada)",
   "skinsrestorer.skinsmenu_open": "Abriendo el menu de skins...",
   "skinsrestorer.skinsmenu_title_new": "Skins Menu - Pagina",
