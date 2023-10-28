@@ -202,10 +202,9 @@ public class FileAdapter implements StorageAdapter {
                     String skinValue = lines[0].trim();
                     String skinSignature = lines[1].trim();
                     SkinProperty skinProperty = SkinProperty.of(skinValue, skinSignature);
-                    long timestamp = Long.parseLong(lines[2].trim());
 
                     // Remove this logic in like 50 years ;)
-                    if (isLegacyCustomSkinTimestamp(timestamp)) {
+                    if (lines.length == 2 || isLegacyCustomSkinTimestamp(Long.parseLong(lines[2].trim()))) {
                         setCustomSkinData(skinName, CustomSkinData.of(skinName, skinProperty));
                     } else {
                         LegacySkinData legacySkinData = LegacySkinData.of(skinName, skinProperty);

@@ -29,7 +29,7 @@ dependencies {
     }
 
     // PAPI API hook
-    compileOnly("me.clip:placeholderapi:2.11.4") {
+    compileOnly("me.clip:placeholderapi:2.11.5") {
         isTransitive = false
     }
 
