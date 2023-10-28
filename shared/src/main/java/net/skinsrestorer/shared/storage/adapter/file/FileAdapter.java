@@ -21,6 +21,7 @@ package net.skinsrestorer.shared.storage.adapter.file;
 
 import ch.jalu.configme.SettingsManager;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinProperty;
@@ -64,7 +65,7 @@ public class FileAdapter implements StorageAdapter {
     private final Path cacheFolder;
     private final Path legacyFolder;
     private final SettingsManager settings;
-    private final Gson gson = new Gson();
+    private final Gson gson = new GsonBuilder().disableHtmlEscaping().create();
     private final SRLogger logger;
 
     @Inject
