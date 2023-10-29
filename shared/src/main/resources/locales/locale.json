@@ -43,6 +43,7 @@
   "skinsrestorer.error_ms_api_key_invalid": "<dark_red>Error<dark_gray>: <red>Invalid MineSkin API key!, contact the server owner about this!",
   "skinsrestorer.error_ms_unknown": "<dark_red>Error<dark_gray>: <red>Unknown MineSkin Error!",
   "skinsrestorer.not_connected_to_server": "<red>You are not connected to any server.",
+  "skinsrestorer.invalid_command_syntax": "<red>Your command syntax is invalid.",
   "skinsrestorer.admincommand_status_checking": "<gray>Checking needed services for SR to work properly...",
   "skinsrestorer.admincommand_status_working_count": "<gray>Working <count> API count",
   "skinsrestorer.admincommand_status_working": "<green>The plugin is currently in a working state.",

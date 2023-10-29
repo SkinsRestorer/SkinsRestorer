@@ -411,7 +411,11 @@ public class CommandManager<T extends SRCommandSender> {
         try {
             dispatcher.execute(input, executor);
         } catch (CommandSyntaxException e) {
-            executor.sendMessage(ComponentHelper.parseMiniMessageToJsonString(e.getRawMessage().getString()));
+            if (e.getRawMessage().getString().equals(CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownCommand().toString())) {
+                executor.sendMessage(Message.INVALID_COMMAND_SYNTAX);
+            } else {
+                executor.sendMessage(ComponentHelper.parseMiniMessageToJsonString(e.getMessage()));
+            }
         }
     }
 
