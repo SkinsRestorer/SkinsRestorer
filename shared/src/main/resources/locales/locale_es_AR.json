@@ -68,7 +68,7 @@
   "skinsrestorer.admincommand_dump_success": "<green>¡Subida completada! <yellow><url>",
   "skinsrestorer.admincommand_dump_error": "<red>Ocurrió un error mientras se subían los datos a bytebin.lucko.me",
   "skinsrestorer.command_server_not_allowed_message": "<dark_red>Error<dark_gray>: <red>El comando han sido deshabilitado para el servidor <server>.",
-  "skinsrestorer.player_has_no_permission_skin": "<dark_red>Error<dark_gray>: <red>No tienes permisos para establecerte esta skin.",
+  "skinsrestorer.player_has_no_permission_skin": "<dark_red>Error<dark_gray>: <red>No tenés permisos para ponerte esta skin.",
   "skinsrestorer.player_has_no_permission_url": "<dark_red>Error<dark_gray>: <red>No tienes permisos para establecerte una skin por URL.",
   "skinsrestorer.not_premium": "<dark_red>Error<dark_gray>: <red>No existe un jugador premium con ese nombre.",
   "skinsrestorer.only_allowed_on_console": "<dark_red>Error<dark_gray>: <red>Solo la consola puede ejecutar este comando!",
@@ -102,5 +102,6 @@
   "skinsrestorer.permission_admincommand_drop": "Permite el acceso a eliminar un archivo .SKIN.",
   "skinsrestorer.permission_admincommand_applyskinall": "Permite el acceso para aplicar una skin a todos los jugadores.",
   "skinsrestorer.permission_admincommand_purgeolddata": "Permite el acceso para purgar datos de skins antiguos.",
+  "skinsrestorer.permission_admincommand_dump": "Permite el acceso a información de subida del servidor mediante \"/sr dump\".",
   "skinsrestorer.permission_ownskin": "Permite el acceso para establecer tu propia skin."
 }
