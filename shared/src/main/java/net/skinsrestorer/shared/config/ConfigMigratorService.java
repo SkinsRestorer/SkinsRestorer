@@ -188,7 +188,7 @@ public class ConfigMigratorService implements MigrationService {
                     Files.write(plugin.getDataFolder().resolve("legacy_skin_table.txt"),
                             oldMySQLSkinTable.determineValue(reader).getValue().getBytes(StandardCharsets.UTF_8));
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.severe("Failed to write legacy_skin_table.txt", e);
                 }
             }
 
@@ -198,7 +198,7 @@ public class ConfigMigratorService implements MigrationService {
                     Files.write(plugin.getDataFolder().resolve("legacy_player_table.txt"),
                             oldMySQLPlayerTable.determineValue(reader).getValue().getBytes(StandardCharsets.UTF_8));
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.severe("Failed to write legacy_player_table.txt", e);
                 }
             }
         }

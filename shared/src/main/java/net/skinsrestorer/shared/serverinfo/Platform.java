@@ -23,5 +23,5 @@ public enum Platform {
     BUKKIT,
     BUNGEE_CORD,
     SPONGE,
-    VELOCITY;
+    VELOCITY
 }
