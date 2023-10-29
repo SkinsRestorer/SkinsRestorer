@@ -29,7 +29,7 @@ import net.skinsrestorer.shared.config.StorageConfig;
 import net.skinsrestorer.shared.connections.MojangAPIImpl;
 import net.skinsrestorer.shared.exception.DataRequestExceptionShared;
 import net.skinsrestorer.shared.log.SRLogger;
-import net.skinsrestorer.shared.storage.adapter.AtomicAdapter;
+import net.skinsrestorer.shared.storage.adapter.AdapterReference;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.storage.model.cache.MojangCacheData;
 import net.skinsrestorer.shared.utils.C;
@@ -44,7 +44,7 @@ public class CacheStorageImpl implements CacheStorage {
     private final SRLogger logger;
     private final MojangAPIImpl mojangAPI;
     private final SettingsManager settings;
-    private final AtomicAdapter atomicAdapter;
+    private final AdapterReference adapterReference;
 
     @Override
     public Optional<MojangSkinDataResult> getSkin(String playerName, boolean allowExpired) throws DataRequestException {
@@ -65,7 +65,7 @@ public class CacheStorageImpl implements CacheStorage {
             }
 
             Optional<MojangSkinDataResult> optional = mojangAPI.getSkin(playerName);
-            atomicAdapter.get().setCachedUUID(playerName,
+            adapterReference.get().setCachedUUID(playerName,
                     MojangCacheData.of(optional.isPresent(),
                             optional.map(MojangSkinDataResult::getUniqueId).orElse(null),
                             Instant.now().getEpochSecond()));
@@ -92,7 +92,7 @@ public class CacheStorageImpl implements CacheStorage {
             try {
                 Optional<UUID> uuid = mojangAPI.getUUID(playerName);
 
-                atomicAdapter.get().setCachedUUID(playerName,
+                adapterReference.get().setCachedUUID(playerName,
                         MojangCacheData.of(uuid.isPresent(), uuid.orElse(null), Instant.now().getEpochSecond()));
 
                 return uuid;
@@ -108,7 +108,7 @@ public class CacheStorageImpl implements CacheStorage {
     }
 
     private Optional<MojangCacheData> getCachedData(String playerName, boolean allowExpired) throws StorageAdapter.StorageException {
-        Optional<MojangCacheData> optional = atomicAdapter.get().getCachedUUID(playerName);
+        Optional<MojangCacheData> optional = adapterReference.get().getCachedUUID(playerName);
 
         if (optional.isPresent() && (allowExpired || isValidUUIDTimestamp(optional.get().getTimestamp()))) {
             return optional;

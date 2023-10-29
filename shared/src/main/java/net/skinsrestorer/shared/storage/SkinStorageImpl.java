@@ -34,7 +34,7 @@ import net.skinsrestorer.shared.config.StorageConfig;
 import net.skinsrestorer.shared.connections.MineSkinAPIImpl;
 import net.skinsrestorer.shared.connections.MojangAPIImpl;
 import net.skinsrestorer.shared.log.SRLogger;
-import net.skinsrestorer.shared.storage.adapter.AtomicAdapter;
+import net.skinsrestorer.shared.storage.adapter.AdapterReference;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.storage.model.skin.*;
 import net.skinsrestorer.shared.utils.C;
@@ -53,7 +53,7 @@ public class SkinStorageImpl implements SkinStorage {
     private final MojangAPIImpl mojangAPI;
     private final MineSkinAPIImpl mineSkinAPI;
     private final SettingsManager settings;
-    private final AtomicAdapter atomicAdapter;
+    private final AdapterReference adapterReference;
 
     public void preloadDefaultSkins() {
         if (!settings.getProperty(StorageConfig.DEFAULT_SKINS_ENABLED)) {
@@ -85,7 +85,7 @@ public class SkinStorageImpl implements SkinStorage {
     @Override
     public Optional<SkinProperty> updatePlayerSkinData(UUID uuid) throws DataRequestException {
         try {
-            Optional<PlayerSkinData> optional = atomicAdapter.get().getPlayerSkinData(uuid);
+            Optional<PlayerSkinData> optional = adapterReference.get().getPlayerSkinData(uuid);
 
             if (!optional.isPresent()) {
                 return Optional.empty();
@@ -120,39 +120,39 @@ public class SkinStorageImpl implements SkinStorage {
 
     @Override
     public void setPlayerSkinData(UUID uuid, String lastKnownName, SkinProperty textures, long timestamp) {
-        atomicAdapter.get().setPlayerSkinData(uuid, PlayerSkinData.of(uuid, lastKnownName, textures, timestamp));
+        adapterReference.get().setPlayerSkinData(uuid, PlayerSkinData.of(uuid, lastKnownName, textures, timestamp));
     }
 
     @Override
     public void setURLSkinData(String url, String mineSkinId, SkinProperty textures, SkinVariant skinVariant) {
-        atomicAdapter.get().setURLSkinData(url, URLSkinData.of(url, mineSkinId, textures, skinVariant));
+        adapterReference.get().setURLSkinData(url, URLSkinData.of(url, mineSkinId, textures, skinVariant));
     }
 
     @Override
     public void setURLSkinIndex(String url, SkinVariant skinVariant) {
-        atomicAdapter.get().setURLSkinIndex(url, URLIndexData.of(url, skinVariant));
+        adapterReference.get().setURLSkinIndex(url, URLIndexData.of(url, skinVariant));
     }
 
     @Override
     public void setCustomSkinData(String skinName, SkinProperty textures) {
-        atomicAdapter.get().setCustomSkinData(skinName, CustomSkinData.of(skinName, textures));
+        adapterReference.get().setCustomSkinData(skinName, CustomSkinData.of(skinName, textures));
     }
 
     public Map<String, String> getGUISkins(int offset) {
-        return atomicAdapter.get().getStoredGUISkins(offset);
+        return adapterReference.get().getStoredGUISkins(offset);
     }
 
     @Override
     public Optional<InputDataResult> findSkinData(String input) {
         try {
             if (C.validUrl(input)) {
-                Optional<URLIndexData> urlSkinIndex = atomicAdapter.get().getURLSkinIndex(input);
+                Optional<URLIndexData> urlSkinIndex = adapterReference.get().getURLSkinIndex(input);
 
                 if (!urlSkinIndex.isPresent()) {
                     return Optional.empty();
                 }
 
-                return atomicAdapter.get().getURLSkinData(input, urlSkinIndex.get().getSkinVariant()).map(data ->
+                return adapterReference.get().getURLSkinData(input, urlSkinIndex.get().getSkinVariant()).map(data ->
                         InputDataResult.of(SkinIdentifier.ofURL(data.getUrl(), urlSkinIndex.get().getSkinVariant()),
                                 data.getProperty()));
             } else {
@@ -162,7 +162,7 @@ public class SkinStorageImpl implements SkinStorage {
                     return result;
                 }
 
-                Optional<CustomSkinData> customSkinData = atomicAdapter.get().getCustomSkinData(input);
+                Optional<CustomSkinData> customSkinData = adapterReference.get().getCustomSkinData(input);
 
                 if (customSkinData.isPresent()) {
                     return customSkinData.map(data ->
@@ -175,7 +175,7 @@ public class SkinStorageImpl implements SkinStorage {
                     return Optional.empty();
                 }
 
-                Optional<PlayerSkinData> playerSkinData = atomicAdapter.get().getPlayerSkinData(uuid.get());
+                Optional<PlayerSkinData> playerSkinData = adapterReference.get().getPlayerSkinData(uuid.get());
 
                 if (playerSkinData.isPresent()) {
                     return playerSkinData.map(data ->
@@ -221,13 +221,13 @@ public class SkinStorageImpl implements SkinStorage {
         try {
             switch (identifier.getSkinType()) {
                 case PLAYER:
-                    return atomicAdapter.get().getPlayerSkinData(UUID.fromString(identifier.getIdentifier()))
+                    return adapterReference.get().getPlayerSkinData(UUID.fromString(identifier.getIdentifier()))
                             .map(PlayerSkinData::getProperty);
                 case URL:
-                    return atomicAdapter.get().getURLSkinData(identifier.getIdentifier(), identifier.getSkinVariant())
+                    return adapterReference.get().getURLSkinData(identifier.getIdentifier(), identifier.getSkinVariant())
                             .map(URLSkinData::getProperty);
                 case CUSTOM:
-                    Optional<SkinProperty> skinProperty = atomicAdapter.get().getCustomSkinData(identifier.getIdentifier())
+                    Optional<SkinProperty> skinProperty = adapterReference.get().getCustomSkinData(identifier.getIdentifier())
                             .map(CustomSkinData::getProperty);
                     if (skinProperty.isPresent()) {
                         return skinProperty;
@@ -236,7 +236,7 @@ public class SkinStorageImpl implements SkinStorage {
                                 .map(InputDataResult::getProperty);
                     }
                 case LEGACY:
-                    return atomicAdapter.get().getLegacySkinData(identifier.getIdentifier())
+                    return adapterReference.get().getLegacySkinData(identifier.getIdentifier())
                             .map(LegacySkinData::getProperty);
                 default:
                     throw new IllegalStateException("Unexpected value: " + identifier.getSkinType());
@@ -252,16 +252,16 @@ public class SkinStorageImpl implements SkinStorage {
     public void removeSkinData(SkinIdentifier identifier) {
         switch (identifier.getSkinType()) {
             case PLAYER:
-                atomicAdapter.get().removePlayerSkinData(UUID.fromString(identifier.getIdentifier()));
+                adapterReference.get().removePlayerSkinData(UUID.fromString(identifier.getIdentifier()));
                 break;
             case URL:
-                atomicAdapter.get().removeURLSkinData(identifier.getIdentifier(), identifier.getSkinVariant());
+                adapterReference.get().removeURLSkinData(identifier.getIdentifier(), identifier.getSkinVariant());
                 break;
             case CUSTOM:
-                atomicAdapter.get().removeCustomSkinData(identifier.getIdentifier());
+                adapterReference.get().removeCustomSkinData(identifier.getIdentifier());
                 break;
             case LEGACY:
-                atomicAdapter.get().removeLegacySkinData(identifier.getIdentifier());
+                adapterReference.get().removeLegacySkinData(identifier.getIdentifier());
                 break;
         }
     }
@@ -288,7 +288,7 @@ public class SkinStorageImpl implements SkinStorage {
         long targetPurgeTimestamp = Instant.now().minus(days, ChronoUnit.DAYS).toEpochMilli();
 
         try {
-            atomicAdapter.get().purgeStoredOldSkins(targetPurgeTimestamp);
+            adapterReference.get().purgeStoredOldSkins(targetPurgeTimestamp);
             return true; // TODO: Do better than true/false return
         } catch (StorageAdapter.StorageException e) {
             e.printStackTrace();
