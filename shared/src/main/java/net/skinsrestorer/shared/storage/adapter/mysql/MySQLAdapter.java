@@ -452,7 +452,7 @@ public class MySQLAdapter implements StorageAdapter {
                 skins.put(name, SkinProperty.of(value, signature).getValue());
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.warning("Failed to get stored skins", e);
         }
         return skins;
     }

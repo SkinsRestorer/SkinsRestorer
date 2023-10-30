@@ -28,7 +28,7 @@ import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.config.LoginConfig;
 import net.skinsrestorer.shared.listeners.event.SRLoginProfileEvent;
 import net.skinsrestorer.shared.log.SRLogger;
-import net.skinsrestorer.shared.storage.adapter.AtomicAdapter;
+import net.skinsrestorer.shared.storage.adapter.AdapterReference;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 
 import javax.inject.Inject;
@@ -39,7 +39,7 @@ public final class LoginProfileListenerAdapter<R> {
     private final SettingsManager settings;
     private final PlayerStorage playerStorage;
     private final SRLogger logger;
-    private final AtomicAdapter atomicAdapter;
+    private final AdapterReference adapterReference;
 
     public R handleLogin(SRLoginProfileEvent<R> event) {
         logger.debug("Handling login for " + event.getPlayerName() + " (" + event.getPlayerUniqueId() + ")");
@@ -62,7 +62,7 @@ public final class LoginProfileListenerAdapter<R> {
 
     private Optional<SkinProperty> handleAsync(SRLoginProfileEvent<R> event) throws DataRequestException {
         try {
-            atomicAdapter.get().migrateLegacyPlayer(event.getPlayerName(), event.getPlayerUniqueId());
+            adapterReference.get().migrateLegacyPlayer(event.getPlayerName(), event.getPlayerUniqueId());
         } catch (StorageAdapter.StorageException e) {
             logger.severe("There was a bug while migrating a legacy player to the new format, " +
                     "contact us on discord and provide this error message:", e);

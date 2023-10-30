@@ -45,13 +45,14 @@ public class DumpService {
     private final Gson gson = new Gson();
 
     public Optional<String> dump() throws IOException, DataRequestException {
-        String proxyModeInfo;
+        Boolean proxyMode;
         SRServerPlugin serverPlugin = injector.getIfAvailable(SRServerPlugin.class);
         if (serverPlugin == null) {
-            proxyModeInfo = null;
+            proxyMode = null;
         } else {
-            proxyModeInfo = String.valueOf(serverPlugin.isProxyMode());
+            proxyMode = serverPlugin.isProxyMode();
         }
+
         DumpInfo.PlatformType platformType;
         if (adapter instanceof SRServerAdapter) {
             platformType = DumpInfo.PlatformType.SERVER;
@@ -63,7 +64,7 @@ public class DumpService {
 
         DumpInfo dumpInfo = new DumpInfo(
                 plugin.getVersion(),
-                proxyModeInfo,
+                proxyMode,
                 adapter.getPlatformVersion(),
                 plugin.getServerInfo(),
                 platformType,

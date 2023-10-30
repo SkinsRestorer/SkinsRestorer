@@ -162,11 +162,11 @@ public class FileAdapter implements StorageAdapter {
 
                     Files.deleteIfExists(path);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logger.warning("Failed to migrate legacy player file: " + path.getFileName(), e);
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.warning("Failed to migrate legacy player files", e);
         }
 
         if (generatedFolder) {
@@ -214,11 +214,11 @@ public class FileAdapter implements StorageAdapter {
 
                     Files.deleteIfExists(path);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logger.warning("Failed to migrate legacy skin file: " + path.getFileName(), e);
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.warning("Failed to migrate legacy skin files", e);
         }
 
         if (generatedFolder) {
@@ -253,7 +253,7 @@ public class FileAdapter implements StorageAdapter {
 
             Files.write(playerFile, gson.toJson(file).getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.warning("Failed to save player data for " + uuid, e);
         }
     }
 
@@ -283,7 +283,7 @@ public class FileAdapter implements StorageAdapter {
         try {
             Files.deleteIfExists(skinFile);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.warning("Failed to remove player skin data for " + uuid, e);
         }
     }
 
@@ -299,7 +299,7 @@ public class FileAdapter implements StorageAdapter {
             UserDefinedFileAttributeView view = Files.getFileAttributeView(skinFile, UserDefinedFileAttributeView.class);
             view.write(LAST_KNOW_NAME_ATTRIBUTE, StandardCharsets.UTF_8.encode(skinData.getLastKnownName()));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.warning("Failed to save player skin data for " + uuid, e);
         }
     }
 
@@ -329,7 +329,7 @@ public class FileAdapter implements StorageAdapter {
         try {
             Files.deleteIfExists(skinFile);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.warning("Failed to remove URL skin data for " + url, e);
         }
     }
 
@@ -342,7 +342,7 @@ public class FileAdapter implements StorageAdapter {
 
             Files.write(skinFile, gson.toJson(file).getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.warning("Failed to save URL skin data for " + url, e);
         }
     }
 
@@ -372,7 +372,7 @@ public class FileAdapter implements StorageAdapter {
         try {
             Files.deleteIfExists(skinFile);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.warning("Failed to remove URL skin index for " + url, e);
         }
     }
 
@@ -385,7 +385,7 @@ public class FileAdapter implements StorageAdapter {
 
             Files.write(skinFile, gson.toJson(file).getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.warning("Failed to save URL skin index for " + url, e);
         }
     }
 
@@ -417,7 +417,7 @@ public class FileAdapter implements StorageAdapter {
         try {
             Files.deleteIfExists(skinFile);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.warning("Failed to remove custom skin data for " + skinName, e);
         }
     }
 
@@ -431,7 +431,7 @@ public class FileAdapter implements StorageAdapter {
 
             Files.write(skinFile, gson.toJson(file).getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.warning("Failed to save custom skin data for " + skinName, e);
         }
     }
 
@@ -463,7 +463,7 @@ public class FileAdapter implements StorageAdapter {
         try {
             Files.deleteIfExists(skinFile);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.warning("Failed to remove legacy skin data for " + skinName, e);
         }
     }
 
@@ -495,7 +495,7 @@ public class FileAdapter implements StorageAdapter {
         try {
             Files.deleteIfExists(legacyFile);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.warning("Failed to remove legacy player data for " + playerName, e);
         }
     }
 
@@ -516,14 +516,14 @@ public class FileAdapter implements StorageAdapter {
                     getPlayerSkinData(UUID.fromString(entry.getValue().getFileName()))
                             .ifPresent(skinData -> list.put(entry.getKey(), skinData.getProperty().getValue()));
                 } catch (StorageException e) {
-                    e.printStackTrace();
+                    logger.warning("Failed to load player skin data for " + entry.getValue().getFileName(), e);
                 }
             } else if (entry.getValue().getSkinType() == SkinType.CUSTOM) {
                 try {
                     getCustomSkinData(entry.getValue().getFileName())
                             .ifPresent(skinData -> list.put(entry.getKey(), skinData.getProperty().getValue()));
                 } catch (StorageException e) {
-                    e.printStackTrace();
+                    logger.warning("Failed to load custom skin data for " + entry.getValue().getFileName(), e);
                 }
             }
 
@@ -594,7 +594,7 @@ public class FileAdapter implements StorageAdapter {
                 i++;
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.warning("Failed to load GUI files", e);
         }
 
         return files;
@@ -612,7 +612,7 @@ public class FileAdapter implements StorageAdapter {
             buffer.flip();
             return Optional.of(StandardCharsets.UTF_8.decode(buffer).toString());
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.warning("Failed to load last known name for " + path.getFileName(), e);
             return Optional.empty();
         }
     }
@@ -669,7 +669,7 @@ public class FileAdapter implements StorageAdapter {
 
             Files.write(cacheFile, gson.toJson(file).getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.warning("Failed to save cached UUID for " + playerName, e);
         }
     }
 

@@ -69,8 +69,7 @@ public class MySQLProvider {
                 return;
             }
 
-            e.printStackTrace();
-            logger.warning("MySQL error: " + e.getMessage());
+            logger.warning("MySQL error: " + e.getMessage(), e);
 
             // If there is an error in unit tests, we want to know about it
             assert false;

@@ -45,6 +45,8 @@ import net.skinsrestorer.shared.utils.ComponentHelper;
 import net.skinsrestorer.shared.utils.FluentList;
 
 import java.lang.annotation.Annotation;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -182,6 +184,13 @@ public class CommandManager<T extends SRCommandSender> {
         Collections.reverse(sortedMethods);
 
         for (Method method : sortedMethods) {
+            MethodHandle methodHandle;
+            try {
+                 methodHandle = MethodHandles.lookup().unreflect(method);
+            } catch (IllegalAccessException e) {
+                throw new IllegalStateException("Error while registering command " + method.getName(), e);
+            }
+
             Optional<RootCommand> def = getAnnotation(RootCommand.class, method);
             Optional<Subcommand> names = getAnnotation(Subcommand.class, method);
             if (!def.isPresent() && !names.isPresent()) {
@@ -192,7 +201,7 @@ public class CommandManager<T extends SRCommandSender> {
 
             Set<String> commandConditions = insertPlayerCondition(insertAnnotationConditions(conditionTrail, method), method);
             if (def.isPresent()) {
-                registerParameters(node, rootPermission, commandConditions, command, method, currentHelpData);
+                registerParameters(node, rootPermission, commandConditions, command, method, methodHandle, currentHelpData);
             } else {
                 String[] namesArray = names.get().value();
                 if (namesArray.length == 0) {
@@ -212,7 +221,7 @@ public class CommandManager<T extends SRCommandSender> {
 
                 CommandHelpData commandHelpData = getHelpData(name, method);
 
-                registerParameters(childNode, subPermission, commandConditions, command, method, commandHelpData);
+                registerParameters(childNode, subPermission, commandConditions, command, method, methodHandle, commandHelpData);
 
                 LiteralCommandNode<T> registeredNode = childNode.build();
                 RecursiveCustomMerger.mergeThen(node, registeredNode);
@@ -239,7 +248,7 @@ public class CommandManager<T extends SRCommandSender> {
     }
 
     private void registerParameters(ArgumentBuilder<T, ?> node, PermissionRegistry subPermission,
-                                    Set<String> conditionTrail, Object command, Method method, CommandHelpData currentHelpData) {
+                                    Set<String> conditionTrail, Object command, Method method, MethodHandle methodHandle, CommandHelpData currentHelpData) {
         List<ArgumentBuilder<T, ?>> nodes = new ArrayList<>();
         nodes.add(node);
         int i = 0;
@@ -290,7 +299,7 @@ public class CommandManager<T extends SRCommandSender> {
 
         lastNode.executes(new CommandInjectHelp<>(currentHelpData,
                 new ConditionCommand<>(getConditionRegistrations(conditionTrail),
-                        new BrigadierCommand<>(method, logger, command, platform, settingsManager))));
+                        new BrigadierCommand<>(method, methodHandle, logger, command, platform, settingsManager))));
 
         if (nodes.size() > 1) {
             for (int i1 = nodes.size() - 1; i1 > 0; i1--) {
@@ -411,7 +420,11 @@ public class CommandManager<T extends SRCommandSender> {
         try {
             dispatcher.execute(input, executor);
         } catch (CommandSyntaxException e) {
-            executor.sendMessage(ComponentHelper.parseMiniMessageToJsonString(e.getRawMessage().getString()));
+            if (e.getRawMessage().getString().equals(CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownCommand().toString())) {
+                executor.sendMessage(Message.INVALID_COMMAND_SYNTAX);
+            } else {
+                executor.sendMessage(ComponentHelper.parseMiniMessageToJsonString(e.getMessage()));
+            }
         }
     }
 

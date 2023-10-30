@@ -23,7 +23,7 @@ import lombok.Setter;
 
 import javax.inject.Provider;
 
-public class AtomicAdapter implements Provider<StorageAdapter> {
+public class AdapterReference implements Provider<StorageAdapter> {
     @Setter
     private StorageAdapter adapter;
 

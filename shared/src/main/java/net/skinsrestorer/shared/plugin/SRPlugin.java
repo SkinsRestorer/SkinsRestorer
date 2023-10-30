@@ -55,7 +55,7 @@ import net.skinsrestorer.shared.storage.CacheStorageImpl;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.PlayerStorageImpl;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
-import net.skinsrestorer.shared.storage.adapter.AtomicAdapter;
+import net.skinsrestorer.shared.storage.adapter.AdapterReference;
 import net.skinsrestorer.shared.storage.adapter.file.FileAdapter;
 import net.skinsrestorer.shared.storage.adapter.mysql.MySQLAdapter;
 import net.skinsrestorer.shared.storage.adapter.mysql.MySQLProvider;
@@ -298,9 +298,9 @@ public class SRPlugin {
 
                 logger.info("Connected to MySQL!");
 
-                injector.getSingleton(AtomicAdapter.class).setAdapter(adapter);
+                injector.getSingleton(AdapterReference.class).setAdapter(adapter);
             } else {
-                injector.getSingleton(AtomicAdapter.class).setAdapter(injector.getSingleton(FileAdapter.class));
+                injector.getSingleton(AdapterReference.class).setAdapter(injector.getSingleton(FileAdapter.class));
             }
 
             // Preload default skins

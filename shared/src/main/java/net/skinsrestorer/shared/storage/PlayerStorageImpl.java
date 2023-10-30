@@ -32,7 +32,7 @@ import net.skinsrestorer.shared.config.LoginConfig;
 import net.skinsrestorer.shared.config.StorageConfig;
 import net.skinsrestorer.shared.floodgate.FloodgateUtil;
 import net.skinsrestorer.shared.log.SRLogger;
-import net.skinsrestorer.shared.storage.adapter.AtomicAdapter;
+import net.skinsrestorer.shared.storage.adapter.AdapterReference;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.storage.model.player.PlayerData;
 
@@ -48,12 +48,12 @@ public class PlayerStorageImpl implements PlayerStorage {
     private final SkinStorage skinStorage;
     private final CacheStorageImpl cacheStorage;
     private final SRLogger logger;
-    private final AtomicAdapter atomicAdapter;
+    private final AdapterReference adapterReference;
 
     @Override
     public Optional<SkinIdentifier> getSkinIdOfPlayer(UUID uuid) {
         try {
-            Optional<PlayerData> optional = atomicAdapter.get().getPlayerData(uuid);
+            Optional<PlayerData> optional = adapterReference.get().getPlayerData(uuid);
 
             if (optional.isPresent()) {
                 PlayerData playerData = optional.get();
@@ -69,14 +69,14 @@ public class PlayerStorageImpl implements PlayerStorage {
     @Override
     public void setSkinIdOfPlayer(UUID uuid, SkinIdentifier identifier) {
         try {
-            Optional<PlayerData> optional = atomicAdapter.get().getPlayerData(uuid);
+            Optional<PlayerData> optional = adapterReference.get().getPlayerData(uuid);
 
             if (optional.isPresent()) {
                 PlayerData playerData = optional.get();
                 playerData.setSkinIdentifier(identifier);
-                atomicAdapter.get().setPlayerData(uuid, playerData);
+                adapterReference.get().setPlayerData(uuid, playerData);
             } else {
-                atomicAdapter.get().setPlayerData(uuid, PlayerData.of(uuid, identifier));
+                adapterReference.get().setPlayerData(uuid, PlayerData.of(uuid, identifier));
             }
         } catch (StorageAdapter.StorageException e) {
             e.printStackTrace();
@@ -86,12 +86,12 @@ public class PlayerStorageImpl implements PlayerStorage {
     @Override
     public void removeSkinIdOfPlayer(UUID uuid) {
         try {
-            Optional<PlayerData> optional = atomicAdapter.get().getPlayerData(uuid);
+            Optional<PlayerData> optional = adapterReference.get().getPlayerData(uuid);
 
             if (optional.isPresent()) {
                 PlayerData playerData = optional.get();
                 playerData.setSkinIdentifier(null);
-                atomicAdapter.get().setPlayerData(uuid, playerData);
+                adapterReference.get().setPlayerData(uuid, playerData);
             }
         } catch (StorageAdapter.StorageException e) {
             e.printStackTrace();

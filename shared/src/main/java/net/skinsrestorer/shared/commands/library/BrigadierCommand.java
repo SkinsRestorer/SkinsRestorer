@@ -29,6 +29,7 @@ import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.messages.Message;
 
+import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Arrays;
@@ -36,6 +37,7 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class BrigadierCommand<T extends SRCommandSender> implements Command<T> {
     private final Method method;
+    private final MethodHandle methodHandle;
     private final SRLogger logger;
     private final Object command;
     private final CommandPlatform<T> platform;
@@ -44,12 +46,13 @@ public class BrigadierCommand<T extends SRCommandSender> implements Command<T> {
     @Override
     public int run(CommandContext<T> context) throws CommandSyntaxException {
         try {
-            Object[] parameters = new Object[method.getParameterCount()];
+            Object[] parameters = new Object[1 + method.getParameterCount()];
+            parameters[0] = command;
 
-            int i = 0;
+            int i = 1;
             for (Parameter parameter : method.getParameters()) {
                 // Add the command source as the first parameter
-                if (i == 0) {
+                if (i == 1) {
                     parameters[i] = context.getSource();
                     i++;
                     continue;
@@ -67,9 +70,9 @@ public class BrigadierCommand<T extends SRCommandSender> implements Command<T> {
             logger.debug(String.format("Executing command %s with method parameters %s", method.getName(), Arrays.toString(parameters)));
             platform.runAsync(() -> {
                 try {
-                    method.invoke(command, parameters);
-                } catch (Exception e) {
-                    logger.severe("Error while executing command " + method.getName(), e);
+                    methodHandle.invokeWithArguments(parameters);
+                } catch (Throwable t) {
+                    logger.severe("Error while executing command " + method.getName(), t);
                 }
             });
 

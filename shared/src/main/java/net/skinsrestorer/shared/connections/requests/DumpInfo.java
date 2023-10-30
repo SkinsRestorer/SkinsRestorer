@@ -28,7 +28,7 @@ import net.skinsrestorer.shared.serverinfo.ServerInfo;
 @SuppressFBWarnings({"UWF_UNWRITTEN_FIELD", "URF_UNREAD_FIELD"})
 public class DumpInfo {
     private String pluginVersion;
-    private String proxyMode;
+    private Boolean proxyMode;
     private String platformVersion;
     private ServerInfo serverInfo;
     private DumpInfo.PlatformType platformType;
