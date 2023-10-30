@@ -42,6 +42,7 @@
   "skinsrestorer.error_ms_api_key_invalid": "<dark_red>Błąd<dark_gray>: <red>Nieprawidłowy klucz API MineSkin!, skontaktuj się w tej sprawie z właścicielem serwera!",
   "skinsrestorer.error_ms_unknown": "<dark_red>Błąd<dark_gray>: <red>Nieznany błąd MineSkin!",
   "skinsrestorer.not_connected_to_server": "<red>Nie jesteś połączony z żadnym serwerem.",
+  "skinsrestorer.invalid_command_syntax": "<red>Składnia twojego polecenia jest nieprawidłowa.",
   "skinsrestorer.admincommand_status_checking": "<gray>Sprawdzanie usług potrzebnych do prawidłowego działania SR...",
   "skinsrestorer.admincommand_status_working_count": "<gray>Działające <count> interfejsów API",
   "skinsrestorer.admincommand_status_working": "<green>Wtyczka jest obecnie w stanie roboczym.",
