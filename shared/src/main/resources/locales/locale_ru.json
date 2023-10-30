@@ -13,8 +13,11 @@
   "skinsrestorer.help_sr_reload": "Перезагружает конфигурационный файл.",
   "skinsrestorer.help_sr_status": "Проверяет необходимые API службы плагинов.",
   "skinsrestorer.help_sr_drop": "Удаляет данные игрока или скина из базы данных.",
+  "skinsrestorer.help_sr_props": "Отображает параметры текущего скина игрока.",
   "skinsrestorer.help_sr_apply_skin": "Повторно применить скин для выбранного игрока.",
   "skinsrestorer.help_sr_create_custom": "Создаёт пользовательский скин для всего сервера.",
+  "skinsrestorer.help_sr_set_skin_all": "Устанавливает один скин для каждого игрока.",
+  "skinsrestorer.help_sr_apply_skin_all": "Переустанавливает скин всем игрокам.",
   "skinsrestorer.help_sr_purge_old_data": "Удаляет старые скины, полученные более x дней назад.",
   "skinsrestorer.help_sr_dump": "Загрузка вспомогательных данных на bytebin.lucko.me.",
   "skinsrestorer.success_skin_change": "<dark_green>Ваш скин был изменён.",
@@ -99,7 +102,10 @@
   "skinsrestorer.permission_admincommand_reload": "Позволяет получить доступ к команде \"/sr reload\".",
   "skinsrestorer.permission_admincommand_status": "Позволяет получить доступ к команде \"/sr status\".",
   "skinsrestorer.permission_admincommand_drop": "Разрешает удалять .SKIN файл.",
+  "skinsrestorer.permission_admincommand_createcustom": "Разрешает доступ к созданию собственного глобального скина через URL.",
   "skinsrestorer.permission_admincommand_applyskinall": "Разрешает применение скина ко всем игрокам.",
   "skinsrestorer.permission_admincommand_purgeolddata": "Позволяет удалять старые данные о скине.",
+  "skinsrestorer.permission_bypasscooldown": "Обходит любые задержки для команд в файле конфигураций.",
+  "skinsrestorer.permission_bypassdisabled": "Обходит выключенные скины в файле конфигураций.",
   "skinsrestorer.permission_ownskin": "Разрешает установить ваш собственный скин."
 }
