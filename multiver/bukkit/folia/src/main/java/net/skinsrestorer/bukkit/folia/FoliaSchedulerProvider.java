@@ -55,6 +55,11 @@ public class FoliaSchedulerProvider implements SchedulerProvider {
 
     @Override
     public boolean isAvailable() {
-        return ClassInfo.get().isFolia();
+        try {
+            Server.class.getMethod("getAsyncScheduler");
+            return true;
+        } catch (NoSuchMethodException e) {
+            return false;
+        }
     }
 }

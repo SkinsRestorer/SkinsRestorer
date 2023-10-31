@@ -36,6 +36,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class MessageLoader {
@@ -60,7 +61,14 @@ public class MessageLoader {
             try (InputStream is = adapter.getResource(resourcePath)) {
                 for (Map.Entry<String, String> entry : TranslationReader.readJsonTranslation(is).entrySet()) {
                     logger.debug(String.format("Loaded message '%s' for locale %s", entry.getKey(), locale));
-                    manager.addMessage(Message.fromKey(entry.getKey()), locale, entry.getValue());
+                    manager.addMessage(
+                            Message.fromKey(entry.getKey())
+                                    .orElseThrow(() -> new IllegalArgumentException(
+                                            String.format("No message enum found for key %s", entry.getKey())
+                                    )),
+                            locale,
+                            entry.getValue()
+                    );
                 }
             }
         }
@@ -109,8 +117,13 @@ public class MessageLoader {
 
                 try (InputStream is = Files.newInputStream(path)) {
                     for (Map.Entry<String, String> entry : TranslationReader.readJsonTranslation(is).entrySet()) {
-                        logger.debug(String.format("Loaded custom message '%s' for locale %s", entry.getKey(), locale));
-                        manager.addMessage(Message.fromKey(entry.getKey()), locale, entry.getValue());
+                        Optional<Message> message = Message.fromKey(entry.getKey());
+                        if (!message.isPresent()) {
+                            logger.warning("Skipping unknown message key " + entry.getKey());
+                        } else {
+                            logger.debug(String.format("Loaded custom message '%s' for locale %s", entry.getKey(), locale));
+                            manager.addMessage(message.get(), locale, entry.getValue());
+                        }
                     }
                 }
             }

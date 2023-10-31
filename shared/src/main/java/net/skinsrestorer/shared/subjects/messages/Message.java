@@ -23,6 +23,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Locale;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public enum Message {
@@ -154,13 +155,13 @@ public enum Message {
         this(false);
     }
 
-    public static Message fromKey(String key) {
+    public static Optional<Message> fromKey(String key) {
         for (Message message : values()) {
             if (message.key.equals(key)) {
-                return message;
+                return Optional.of(message);
             }
         }
 
-        throw new IllegalArgumentException(String.format("No message enum found for key %s", key));
+        return Optional.empty();
     }
 }

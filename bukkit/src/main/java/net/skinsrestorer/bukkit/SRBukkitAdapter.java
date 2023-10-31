@@ -22,7 +22,6 @@ package net.skinsrestorer.bukkit;
 import ch.jalu.configme.SettingsManager;
 import ch.jalu.injector.Injector;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.bukkit.command.SRBukkitCommand;
@@ -37,12 +36,12 @@ import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
 import net.skinsrestorer.shared.commands.library.SRRegisterPayload;
 import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.gui.SharedGUI;
+import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
 import net.skinsrestorer.shared.provider.ProviderSelector;
 import net.skinsrestorer.shared.serverinfo.ClassInfo;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
-import net.skinsrestorer.shared.utils.IOExceptionConsumer;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Server;
@@ -53,9 +52,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.inject.Inject;
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -66,7 +62,6 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin> {
     private final Injector injector;
     private final Server server;
@@ -75,10 +70,21 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin> {
     @Getter
     private final BukkitAudiences adventure;
     @Getter
-    private final SchedulerProvider schedulerProvider = ProviderSelector.builder(SchedulerProvider.class)
-            .add("net.skinsrestorer.bukkit.folia.FoliaSchedulerProvider") // Compiled with java 17, which the bukkit module is not.
-            .add(new BukkitSchedulerProvider())
-            .buildAndGet();
+    private final SchedulerProvider schedulerProvider;
+    private final SRLogger logger;
+
+    @Inject
+    public SRBukkitAdapter(Injector injector, Server server, JavaPlugin pluginInstance, BukkitAudiences adventure) {
+        this.injector = injector;
+        this.server = server;
+        this.pluginInstance = pluginInstance;
+        this.adventure = adventure;
+        this.logger = injector.getSingleton(SRLogger.class);
+        this.schedulerProvider = ProviderSelector.builder(SchedulerProvider.class, logger)
+                .add("net.skinsrestorer.bukkit.folia.FoliaSchedulerProvider") // Compiled with java 17, which the bukkit module is not.
+                .add(new BukkitSchedulerProvider())
+                .buildAndGet();
+    }
 
     @Override
     public Object createMetricsInstance() {
@@ -218,7 +224,7 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin> {
 
             commandMap.register(payload.getMeta().getRootName(), "skinsrestorer", command);
         } catch (ReflectiveOperationException e) {
-            e.printStackTrace();
+            logger.severe("Encountered a error while registering a command", e);
         }
     }
 }

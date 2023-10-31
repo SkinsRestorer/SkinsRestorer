@@ -21,18 +21,20 @@ package net.skinsrestorer.shared.provider;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.shared.log.SRLogger;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class ProviderSelector<P extends FeatureProvider> {
     private final Class<P> providerType;
     private final List<P> providers;
 
-    public static <P extends FeatureProvider> Builder<P> builder(Class<P> providerType) {
-        return new Builder<>(providerType);
+    public static <P extends FeatureProvider> Builder<P> builder(Class<P> providerType, SRLogger logger) {
+        return new Builder<>(providerType, logger);
     }
 
     public P get() {
@@ -46,13 +48,18 @@ public class ProviderSelector<P extends FeatureProvider> {
     @RequiredArgsConstructor
     public static class Builder<P extends FeatureProvider> {
         private final Class<P> providerType;
+        private final SRLogger logger;
         private final List<P> providers = new ArrayList<>();
 
         public Builder<P> add(String providerClass) {
             try {
                 add(Class.forName(providerClass).asSubclass(providerType));
             } catch (Throwable t) {
-                t.printStackTrace(); // TODO: debug log
+                if (t instanceof ClassNotFoundException || t instanceof UnsupportedClassVersionError) {
+                    logger.debug("Did not load provider " + providerClass + " because of java version issues");
+                } else {
+                    logger.debug("Failed to load provider " + providerClass, t);
+                }
             }
             return this;
         }
@@ -63,7 +70,7 @@ public class ProviderSelector<P extends FeatureProvider> {
                 P provider = providerType.cast(constructor.newInstance());
                 add(provider);
             } catch (Throwable t) {
-                t.printStackTrace(); // TODO: debug log
+                logger.debug("Failed to load provider " + providerClass.getName(), t);
             }
             return this;
         }

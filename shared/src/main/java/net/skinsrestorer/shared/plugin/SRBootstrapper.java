@@ -58,13 +58,11 @@ public class SRBootstrapper {
             injector.getSingleton(srPlatformClass);
 
             srPlugin.startup(initCLass);
-        } catch (Throwable e) {
-            isrLogger.log(SRLogLevel.SEVERE, "An unexpected error occurred while starting the plugin. Please check the console for more details.");
+        } catch (Throwable t) {
+            isrLogger.log(SRLogLevel.SEVERE, "An unexpected error occurred while starting the plugin. Please check the console for more details.", t);
 
             if (SRPlugin.isUnitTest()) {
-                throw new AssertionError(e);
-            } else {
-                e.printStackTrace();
+                throw new AssertionError(t);
             }
         }
 
@@ -72,8 +70,8 @@ public class SRBootstrapper {
             isrLogger.log(SRLogLevel.WARNING, "Updater was not initialized, a error occurred while starting the plugin. Forcing updater to initialize.");
             try {
                 srPlugin.initUpdateCheck(UpdateCheckInit.InitCause.ERROR);
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (Throwable t) {
+                isrLogger.log(SRLogLevel.SEVERE, "An unexpected error occurred while initializing the updater. Please check the console for more details.", t);
             }
         }
     }
