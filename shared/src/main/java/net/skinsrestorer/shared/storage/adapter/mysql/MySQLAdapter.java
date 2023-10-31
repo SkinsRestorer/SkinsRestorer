@@ -111,7 +111,7 @@ public class MySQLAdapter implements StorageAdapter {
         }
 
         if (!tableExists(legacyPlayerTable.get())) {
-            logger.info("Old player table to seems to no longer exist, this may be because it was already migrated! Skipping player table migration...");
+            logger.info("Legacy player table to seems to no longer exist, this may be because it was already migrated! Skipping player table migration...");
             plugin.moveToArchive(getLegacyPlayerTableFilePath());
             return;
         }
@@ -147,7 +147,7 @@ public class MySQLAdapter implements StorageAdapter {
         }
 
         if (!tableExists(legacySkinTable.get())) {
-            logger.info("Old skin table to seems to no longer exist, this may be because it was already migrated! Skipping skin table migration...");
+            logger.info("Legacy skin table to seems to no longer exist, this may be because it was already migrated! Skipping skin table migration...");
             plugin.moveToArchive(getLegacySkinTableFilePath());
             return;
         }
