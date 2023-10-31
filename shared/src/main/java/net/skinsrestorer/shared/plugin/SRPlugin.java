@@ -265,7 +265,7 @@ public class SRPlugin {
         moveToArchive(dataFolder.resolve("languages"));
     }
 
-    private void moveToArchive(Path path) {
+    public void moveToArchive(Path path) {
         if (!Files.exists(path)) {
             return;
         }

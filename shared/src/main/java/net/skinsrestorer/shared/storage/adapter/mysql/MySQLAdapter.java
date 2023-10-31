@@ -110,6 +110,12 @@ public class MySQLAdapter implements StorageAdapter {
             return;
         }
 
+        if (!tableExists(legacyPlayerTable.get())) {
+            logger.info("Old player table to seems to no longer exist, this may be because it was already migrated! Skipping player table migration...");
+            plugin.moveToArchive(getLegacyPlayerTableFilePath());
+            return;
+        }
+
         logger.info("Migrating legacy player table to new format...");
         mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolveLegacyPlayerTable() + "` ("
                 + "`name` varchar(17) NOT NULL,"
@@ -137,6 +143,12 @@ public class MySQLAdapter implements StorageAdapter {
     private void migrateLegacySkinTable() throws IOException {
         Optional<String> legacySkinTable = getLegacySkinTableFile();
         if (!legacySkinTable.isPresent()) {
+            return;
+        }
+
+        if (!tableExists(legacySkinTable.get())) {
+            logger.info("Old skin table to seems to no longer exist, this may be because it was already migrated! Skipping skin table migration...");
+            plugin.moveToArchive(getLegacySkinTableFilePath());
             return;
         }
 
