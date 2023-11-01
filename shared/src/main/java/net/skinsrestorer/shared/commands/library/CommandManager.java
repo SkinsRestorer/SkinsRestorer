@@ -435,7 +435,7 @@ public class CommandManager<T extends SRCommandSender> {
         // Manually adding the root command after setting the redirect doesn't fix it.
         // See https://github.com/Mojang/brigadier/issues/46). Manually clone the node instead.
         LiteralArgumentBuilder<T> builder = LiteralArgumentBuilder
-                .<T>literal(alias.toLowerCase(Locale.ENGLISH))
+                .<T>literal(alias.toLowerCase(Locale.ROOT))
                 .requires(destination.getRequirement())
                 .forward(destination.getRedirect(), destination.getRedirectModifier(), destination.isFork())
                 .executes(destination.getCommand());

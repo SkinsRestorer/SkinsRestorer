@@ -37,6 +37,6 @@ public class CustomSkinData {
     }
 
     public static String sanitizeCustomSkinName(String skinName) {
-        return skinName.toLowerCase(Locale.ENGLISH);
+        return skinName.toLowerCase(Locale.ROOT);
     }
 }

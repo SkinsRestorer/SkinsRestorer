@@ -147,7 +147,7 @@ public enum Message {
     NO_SKIN_DATA(true),
     OUTDATED(true);
 
-    private final String key = "skinsrestorer." + this.name().toLowerCase(Locale.ENGLISH);
+    private final String key = "skinsrestorer." + this.name().toLowerCase(Locale.ROOT);
     @Getter
     private final boolean prefixed;
 

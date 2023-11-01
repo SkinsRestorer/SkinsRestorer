@@ -84,7 +84,7 @@ public class SkinIdentifier {
      * @return A new SkinIdentifier.
      */
     public static SkinIdentifier ofCustom(String skinName) {
-        return new SkinIdentifier(skinName.toLowerCase(Locale.ENGLISH), null, SkinType.CUSTOM);
+        return new SkinIdentifier(skinName.toLowerCase(Locale.ROOT), null, SkinType.CUSTOM);
     }
 
     /**
