@@ -392,7 +392,9 @@ public class CommandManager<T extends SRCommandSender> {
         String plainPrefix = ComponentHelper.convertToPlain(prefix);
         boolean prefixEmpty = plainPrefix.isEmpty();
 
-        if (node.getCommand() != null && !prefixEmpty && !first) {
+        // Sometimes our first is actually the only thing we *can* print, so let's print it
+        boolean printEvenIfFirst = node.getChildren().isEmpty();
+        if (node.getCommand() != null && !prefixEmpty && (!first || printEvenIfFirst)) {
             TextComponent clickableCommand = addEventsCommandComponent(prefix, source);
 
             CommandInjectHelp<T> command = (CommandInjectHelp<T>) node.getCommand();
