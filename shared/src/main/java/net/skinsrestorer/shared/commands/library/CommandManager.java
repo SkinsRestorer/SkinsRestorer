@@ -27,11 +27,14 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
+import com.mojang.brigadier.context.ParsedCommandNode;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
 import net.skinsrestorer.shared.commands.library.annotations.*;
 import net.skinsrestorer.shared.commands.library.types.EnumArgumentType;
 import net.skinsrestorer.shared.commands.library.types.SRPlayerArgumentType;
@@ -186,7 +189,7 @@ public class CommandManager<T extends SRCommandSender> {
         for (Method method : sortedMethods) {
             MethodHandle methodHandle;
             try {
-                 methodHandle = MethodHandles.lookup().unreflect(method);
+                methodHandle = MethodHandles.lookup().unreflect(method);
             } catch (IllegalAccessException e) {
                 throw new IllegalStateException("Error while registering command " + method.getName(), e);
             }
@@ -367,21 +370,17 @@ public class CommandManager<T extends SRCommandSender> {
     }
 
     public List<String> getHelpMessage(String command, T source) {
-        return getHelpMessageNodeStart(dispatcher.getRoot().getChild(command), "/" + command, source)
+        return getHelpMessageNodeStart(dispatcher.getRoot().getChild(command), Component.text("/" + command), source)
                 .stream().map(ComponentHelper::convertToJsonString).collect(Collectors.toList());
     }
 
-    protected List<Component> getHelpMessageNodeStart(CommandNode<T> node, String commandPrefix, T source) {
-        TextComponent prefixComponent = Component.text(commandPrefix + ARGUMENT_SEPARATOR);
+    protected List<TextComponent> getHelpMessageNodeStart(CommandNode<T> node, TextComponent commandPrefix, T source) {
         List<TextComponent> result = new ArrayList<>();
-        getAllUsage(node, source, result, Component.empty());
-        return result.stream()
-                .filter(c -> !ComponentHelper.convertToPlain(c).isEmpty())
-                .map(prefixComponent::append)
-                .collect(Collectors.toList());
+        getAllUsage(node, source, result, commandPrefix, true);
+        return result;
     }
 
-    private void getAllUsage(CommandNode<T> node, T source, List<TextComponent> result, TextComponent prefix) {
+    private void getAllUsage(CommandNode<T> node, T source, List<TextComponent> result, TextComponent prefix, boolean first) {
         if (!node.canUse(source)) {
             return;
         }
@@ -390,16 +389,19 @@ public class CommandManager<T extends SRCommandSender> {
             return;
         }
 
-        boolean prefixEmpty = ComponentHelper.convertToPlain(prefix).isEmpty();
+        String plainPrefix = ComponentHelper.convertToPlain(prefix);
+        boolean prefixEmpty = plainPrefix.isEmpty();
 
-        if (node.getCommand() != null && !prefixEmpty) {
+        if (node.getCommand() != null && !prefixEmpty && !first) {
+            TextComponent clickableCommand = addEventsCommandComponent(prefix, source);
+
             CommandInjectHelp<T> command = (CommandInjectHelp<T>) node.getCommand();
             if (command.getHelpData() != null) {
-                result.add(prefix
+                result.add(clickableCommand
                         .append(Component.text(" - "))
                         .append(ComponentHelper.convertJsonToComponent(locale.getMessage(source, command.getHelpData().getCommandDescription()))));
             } else {
-                result.add(prefix);
+                result.add(clickableCommand);
             }
         }
 
@@ -410,9 +412,25 @@ public class CommandManager<T extends SRCommandSender> {
             for (CommandNode<T> child : node.getChildren()) {
                 TextComponent resultPrefix = prefixEmpty ? prefix : prefix.append(Component.text(ARGUMENT_SEPARATOR));
 
-                getAllUsage(child, source, result, resultPrefix.append(Component.text(child.getUsageText())));
+                getAllUsage(child, source, result, resultPrefix.append(Component.text(child.getUsageText())), false);
             }
         }
+    }
+
+    private TextComponent addEventsCommandComponent(TextComponent component, T source) {
+        String plainPrefix = ComponentHelper.convertToPlain(component);
+
+        int firstRequiredArgument = plainPrefix.indexOf('<');
+        String completedPrefix;
+        if (firstRequiredArgument == -1) {
+            completedPrefix = plainPrefix;
+        } else {
+            completedPrefix = plainPrefix.substring(0, firstRequiredArgument);
+        }
+
+        return component.clickEvent(ClickEvent.suggestCommand(completedPrefix))
+                .hoverEvent(HoverEvent.showText(ComponentHelper.convertJsonToComponent(
+                        locale.getMessage(source, Message.COMMAND_CLICK_TO_SUGGEST))));
     }
 
     public void executeCommand(T executor, String input) {
@@ -420,8 +438,21 @@ public class CommandManager<T extends SRCommandSender> {
         try {
             dispatcher.execute(input, executor);
         } catch (CommandSyntaxException e) {
-            if (e.getRawMessage().getString().equals(CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownCommand().toString())) {
-                executor.sendMessage(Message.INVALID_COMMAND_SYNTAX);
+            String rawMessage = e.getRawMessage().getString();
+            if (rawMessage.equals(CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownCommand().toString())
+                    || rawMessage.equals(CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownArgument().toString())) {
+                List<ParsedCommandNode<T>> parsedNodes = dispatcher.parse(input, executor).getContext().getNodes();
+
+                if (parsedNodes.isEmpty()) {
+                    return;
+                }
+
+                ParsedCommandNode<T> topNode = parsedNodes.get(parsedNodes.size() - 1);
+                for (Component component : getHelpMessageNodeStart(topNode.getNode(),
+                        Component.text("/" + String.join(ARGUMENT_SEPARATOR, dispatcher.getPath(topNode.getNode()))),
+                        executor)) {
+                    executor.sendMessage(ComponentHelper.convertToJsonString(component));
+                }
             } else {
                 executor.sendMessage(ComponentHelper.parseMiniMessageToJsonString(e.getMessage()));
             }
