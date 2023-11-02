@@ -70,7 +70,6 @@
   "skinsrestorer.command_server_not_allowed_message": "<red>A parancsok le vannak tiltva a(z) <server> szerveren.",
   "skinsrestorer.command_click_to_suggest": "<yellow>Kattints a javaslathoz",
   "skinsrestorer.command_help_header": "<yellow>[<dark_green>SkinsRestorer</dark_green>]<aqua>Következő parancs súgójának megjelenítése: <green><command>",
-  "skinsrestorer.command_help_format": "<dark_green><hover:show_text:'<command_click_to_suggest>'><click:suggest_command:'<suggestion>'><command></click></hover> <yellow>- <description>",
   "skinsrestorer.player_has_no_permission_skin": "<dark_red>Hiba<dark_gray>: <red>Nincs engedélyed beállítani ezt a kinézetet.",
   "skinsrestorer.player_has_no_permission_url": "<dark_red>Hiba<dark_gray>: <red>Nincs engedélyed a kinézet URL-ről való beállításához.",
   "skinsrestorer.not_premium": "<dark_red>Hiba<dark_gray>: <red>Nincs premium játékos ezzel a névvel.",
