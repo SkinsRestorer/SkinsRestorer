@@ -68,6 +68,7 @@
   "skinsrestorer.admincommand_dump_success": "<green>Yükleme başarılı! <yellow><url>",
   "skinsrestorer.admincommand_dump_error": "<red> bytebin.lucko.me adresine veri yüklenirken hata oluştu",
   "skinsrestorer.command_server_not_allowed_message": "<red>Komutlar <server> sunucusu için devre dışı bırakıldı.",
+  "skinsrestorer.command_click_to_suggest": "<yellow>Önermek için tıklayın",
   "skinsrestorer.player_has_no_permission_skin": "<dark_red>Hata<dark_gray>: <red>Bu görünümü ayarlamak için izniniz yok.",
   "skinsrestorer.player_has_no_permission_url": "<dark_red>Hata<dark_gray>: <red>Dış görünümleri URL'ye göre ayarlama izniniz yok.",
   "skinsrestorer.not_premium": "<dark_red>Hata<dark_gray>: <red>Bu isimde bir premium oyuncu mevcut değil.",
