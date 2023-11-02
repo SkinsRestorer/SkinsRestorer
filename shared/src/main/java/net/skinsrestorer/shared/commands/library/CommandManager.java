@@ -398,16 +398,26 @@ public class CommandManager<T extends SRCommandSender> {
         // Sometimes our first is actually the only thing we *can* print, so let's print it
         boolean printEvenIfFirst = node.getChildren().isEmpty();
         if (node.getCommand() != null && !prefixEmpty && (!first || printEvenIfFirst)) {
-            Component clickableCommand = addEventsCommandComponent(prefix, source);
+            int firstRequiredArgument = plainPrefix.indexOf('<');
+            String completedPrefix;
+            if (firstRequiredArgument == -1) {
+                completedPrefix = plainPrefix;
+            } else {
+                completedPrefix = plainPrefix.substring(0, firstRequiredArgument);
+            }
 
             CommandInjectHelp<T> command = (CommandInjectHelp<T>) node.getCommand();
             if (command.getHelpData() != null) {
                 result.add(ComponentHelper.convertJsonToComponent(locale.getMessage(source, Message.COMMAND_HELP_FORMAT, TagResolver.resolver(
-                        Placeholder.component("command", clickableCommand),
+                        Placeholder.component("command_click_to_suggest", ComponentHelper.convertJsonToComponent(
+                                locale.getMessage(source, Message.COMMAND_CLICK_TO_SUGGEST))),
+                        Placeholder.parsed("suggestion", completedPrefix),
+                        Placeholder.component("command", prefix),
                         Placeholder.component("description", ComponentHelper.convertJsonToComponent(locale.getMessage(source, command.getHelpData().getCommandDescription())))
                 ))));
             } else {
-                result.add(clickableCommand);
+                // Should normally not happen
+                result.add(prefix);
             }
         }
 
@@ -421,22 +431,6 @@ public class CommandManager<T extends SRCommandSender> {
                 getAllUsage(child, source, result, resultPrefix.append(Component.text(child.getUsageText())), false);
             }
         }
-    }
-
-    private Component addEventsCommandComponent(Component component, T source) {
-        String plainPrefix = ComponentHelper.convertToPlain(component);
-
-        int firstRequiredArgument = plainPrefix.indexOf('<');
-        String completedPrefix;
-        if (firstRequiredArgument == -1) {
-            completedPrefix = plainPrefix;
-        } else {
-            completedPrefix = plainPrefix.substring(0, firstRequiredArgument);
-        }
-
-        return component.clickEvent(ClickEvent.suggestCommand(completedPrefix))
-                .hoverEvent(HoverEvent.showText(ComponentHelper.convertJsonToComponent(
-                        locale.getMessage(source, Message.COMMAND_CLICK_TO_SUGGEST))));
     }
 
     public void executeCommand(T executor, String input) {

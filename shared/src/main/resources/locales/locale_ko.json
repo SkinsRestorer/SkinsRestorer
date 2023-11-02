@@ -70,7 +70,7 @@
   "skinsrestorer.command_server_not_allowed_message": "<red><server> 서버에서는 명령어를 사용할 수 없어요.",
   "skinsrestorer.command_click_to_suggest": "<yellow>눌러서 자동 완성하기",
   "skinsrestorer.command_help_header": "<yellow>[<dark_green>SkinsRestorer</dark_green>] <aqua>다음 명령어의 도움말 표시 중: <green><command>",
-  "skinsrestorer.command_help_format": "<dark_green><command> <yellow>- <description>",
+  "skinsrestorer.command_help_format": "<dark_green><hover:show_text:'<command_click_to_suggest>'><click:suggest_command:'<suggestion>'><command></click></hover> <yellow>- <description>",
   "skinsrestorer.player_has_no_permission_skin": "<dark_red>오류<dark_gray>: <red>이 스킨을 설정할 권한이 없어요.",
   "skinsrestorer.player_has_no_permission_url": "<dark_red>오류<dark_gray>: <red>URL로 스킨을 설정할 권한이 없어요.",
   "skinsrestorer.not_premium": "<dark_red>오류<dark_gray>: <red>그 이름을 지닌 프리미엄 플레이어가 존재하지 않아요.",
