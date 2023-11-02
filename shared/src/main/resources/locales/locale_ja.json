@@ -42,7 +42,6 @@
   "skinsrestorer.error_ms_api_key_invalid": "<dark_red>エラー<dark_gray>：<red>無効なMineSkin APIキーです。サーバーの所有者にお問い合わせください。",
   "skinsrestorer.error_ms_unknown": "<dark_red>エラー<dark_gray>：<red>不明なMineSkinエラーです。",
   "skinsrestorer.not_connected_to_server": "<red>サーバーに接続していません。",
-  "skinsrestorer.invalid_command_syntax": "<red>無効なコマンドの構文です。",
   "skinsrestorer.admincommand_status_checking": "<gray>SRが正しく動作するために必要なサービスを確認中…",
   "skinsrestorer.admincommand_status_working_count": "<gray>動作中のAPIの数：<count>",
   "skinsrestorer.admincommand_status_working": "<green>現在プラグインは動作しています。",
