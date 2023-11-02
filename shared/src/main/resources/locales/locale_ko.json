@@ -42,7 +42,6 @@
   "skinsrestorer.error_ms_api_key_invalid": "<dark_red>오류<dark_gray>: <red>잘못된 MineSkin API 키예요! 서버 소유자에게 이걸 말해주세요!",
   "skinsrestorer.error_ms_unknown": "<dark_red>오류<dark_gray>: <red>알 수 없는 MineSkin 오류예요!",
   "skinsrestorer.not_connected_to_server": "<red>어떤 서버에도 연결하지 않았어요.",
-  "skinsrestorer.invalid_command_syntax": "<red>명령어 구문이 잘못됐어요.",
   "skinsrestorer.admincommand_status_checking": "<gray>SkinsRestorer이 적절히 작동하기 위해 필요한 서비스를 확인 중이에요...",
   "skinsrestorer.admincommand_status_working_count": "<gray>작동 중인 API <count>개",
   "skinsrestorer.admincommand_status_working": "<green>플러그인이 현재 작동 중인 상태예요.",
