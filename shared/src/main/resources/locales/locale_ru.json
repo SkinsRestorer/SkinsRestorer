@@ -37,7 +37,6 @@
   "skinsrestorer.error_ms_api_key_invalid": "<dark_red>Ошибка<dark_gray>:<red> Неправильный Mineskin API key! Сообщите об этом владельцу сервера!",
   "skinsrestorer.error_ms_unknown": "<dark_red>Ошибка<dark_gray>: <red>Неизвестная ошибка MineSkin!",
   "skinsrestorer.not_connected_to_server": "<red>Вы не подключены ни к одному серверу.",
-  "skinsrestorer.invalid_command_syntax": "<red>Ваш синтаксис команды неверен.",
   "skinsrestorer.admincommand_status_checking": "<gray>Проверка необходимых сервисов для корректной работы SR...",
   "skinsrestorer.admincommand_status_working_count": "<gray>Количество работающих API <count>",
   "skinsrestorer.admincommand_status_working": "<green>Плагин сейчас в рабочем состоянии.",
