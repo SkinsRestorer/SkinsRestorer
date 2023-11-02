@@ -21,7 +21,6 @@
   "skinsrestorer.success_admin_drop": "<dark_green><target> өчен <type> мәгълүматы ташлатылды.",
   "skinsrestorer.success_admin_reload": "<dark_green>Көйләүләр һәм тел яңадан йөкләнде!",
   "skinsrestorer.error_ms_unknown": "<dark_red>Хата<dark_gray>: <red>Билгесез MineSkin хатасы!",
-  "skinsrestorer.invalid_command_syntax": "<red>Сезнең боерык синтаксисы хаталы.",
   "skinsrestorer.admincommand_status_working_count": "<gray>Эшли торган API саны: <count>",
   "skinsrestorer.admincommand_status_summary_server": "<gray>Сервер: <gold><version>",
   "skinsrestorer.admincommand_status_summary_proxymode": "<gray>Прокси шарты: <gold><proxy_mode>",
