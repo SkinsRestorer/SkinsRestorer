@@ -111,7 +111,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
     }
 
     private Optional<MineSkinResponse> genSkinInternal(String url, @Nullable SkinVariant skinVariant) throws DataRequestException, MineSkinException, IOException, InterruptedException {
-        String skinVariantString = skinVariant != null ? "&variant=" + skinVariant.name().toLowerCase(Locale.ENGLISH) : "";
+        String skinVariantString = skinVariant != null ? "&variant=" + skinVariant.name().toLowerCase(Locale.ROOT) : "";
 
         HttpResponse response = queryURL("url=" + URLEncoder.encode(url, "UTF-8") + skinVariantString);
         logger.debug("MineSkinAPI: Response: " + response);

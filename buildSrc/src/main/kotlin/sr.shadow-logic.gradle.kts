@@ -102,6 +102,7 @@ tasks {
         exclude("META-INF/SPONGEPO.SF", "META-INF/SPONGEPO.DSA", "META-INF/SPONGEPO.RSA")
         minimize() {
             exclude(dependency("org.mariadb.jdbc:mariadb-java-client"))
+            exclude(project(":skinsrestorer-api"))
         }
         configureRelocations()
         transform(ShadowResourceTransformer())

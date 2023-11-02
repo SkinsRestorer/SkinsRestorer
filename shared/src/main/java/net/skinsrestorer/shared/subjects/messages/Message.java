@@ -72,7 +72,6 @@ public enum Message {
     ERROR_MS_API_KEY_INVALID(true),
     ERROR_MS_UNKNOWN(true),
     NOT_CONNECTED_TO_SERVER(true),
-    INVALID_COMMAND_SYNTAX(true),
     ADMINCOMMAND_STATUS_CHECKING(true),
     ADMINCOMMAND_STATUS_WORKING_COUNT(true),
     ADMINCOMMAND_STATUS_WORKING(true),
@@ -100,6 +99,9 @@ public enum Message {
     ADMINCOMMAND_DUMP_SUCCESS(true),
     ADMINCOMMAND_DUMP_ERROR(true),
     COMMAND_SERVER_NOT_ALLOWED_MESSAGE(true),
+    COMMAND_CLICK_TO_SUGGEST,
+    COMMAND_HELP_HEADER,
+    COMMAND_HELP_FORMAT,
     PLAYER_HAS_NO_PERMISSION_SKIN(true),
     PLAYER_HAS_NO_PERMISSION_URL(true),
     NOT_PREMIUM(true),
@@ -147,7 +149,7 @@ public enum Message {
     NO_SKIN_DATA(true),
     OUTDATED(true);
 
-    private final String key = "skinsrestorer." + this.name().toLowerCase(Locale.ENGLISH);
+    private final String key = "skinsrestorer." + this.name().toLowerCase(Locale.ROOT);
     @Getter
     private final boolean prefixed;
 
