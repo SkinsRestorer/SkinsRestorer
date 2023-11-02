@@ -455,7 +455,7 @@ public class CommandManager<T extends SRCommandSender> {
 
                 ParsedCommandNode<T> topNode = parsedNodes.get(parsedNodes.size() - 1);
                 for (Component component : getHelpMessageNodeStart(topNode.getNode(),
-                        Component.text("/" + String.join(ARGUMENT_SEPARATOR, dispatcher.getPath(topNode.getNode()))),
+                        Component.text("/" + mergeToUsageHelp(parsedNodes)),
                         executor)) {
                     executor.sendMessage(ComponentHelper.convertToJsonString(component));
                 }
@@ -463,6 +463,13 @@ public class CommandManager<T extends SRCommandSender> {
                 executor.sendMessage(ComponentHelper.parseMiniMessageToJsonString(e.getMessage()));
             }
         }
+    }
+
+    private static <T> String mergeToUsageHelp(List<ParsedCommandNode<T>> list) {
+        return list.stream()
+                .map(ParsedCommandNode::getNode)
+                .map(CommandNode::getUsageText)
+                .collect(Collectors.joining(ARGUMENT_SEPARATOR));
     }
 
     // Taken from https://github.com/PaperMC/Velocity/blob/8abc9c80a69158ebae0121fda78b55c865c0abad/proxy/src/main/java/com/velocitypowered/proxy/util/BrigadierUtils.java#L38
