@@ -42,7 +42,6 @@
   "skinsrestorer.error_ms_api_key_invalid": "<dark_red>Hiba<dark_gray>: <red>Helytelen MineSkin API kulcs! Értesítsd erről a szerver tulajdonosát!",
   "skinsrestorer.error_ms_unknown": "<dark_red>Hiba<dark_gray>: <red>Ismeretlen MineSkin Hiba!",
   "skinsrestorer.not_connected_to_server": "<red>Nem csatlakoztál fel egy szerverre sem.",
-  "skinsrestorer.invalid_command_syntax": "<red>Helytelen parancs szintaxis.",
   "skinsrestorer.admincommand_status_checking": "<gray>Az SR megfelelő működéséhez szükséges szolgáltatások ellenőrzése...",
   "skinsrestorer.admincommand_status_working_count": "<gray><count> működő API számítás",
   "skinsrestorer.admincommand_status_working": "<green>A plugin jelenleg működő állapotban van.",
