@@ -377,6 +377,8 @@ public class CommandManager<T extends SRCommandSender> {
 
     protected List<Component> getHelpMessageNodeStart(CommandNode<T> node, Component commandPrefix, T source) {
         List<Component> result = new ArrayList<>();
+        result.add(ComponentHelper.convertJsonToComponent(locale.getMessage(source, Message.COMMAND_HELP_HEADER,
+                Placeholder.unparsed("command", ComponentHelper.convertToPlain(commandPrefix)))));
         getAllUsage(node, source, result, commandPrefix, true);
         return result;
     }
