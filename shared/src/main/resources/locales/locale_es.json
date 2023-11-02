@@ -42,7 +42,6 @@
   "skinsrestorer.error_ms_api_key_invalid": "<dark_red>Error<dark_gray>: <red>¡Llave del API de MineSkin no valida! ¡Informa al dueño del servidor sobre esto!",
   "skinsrestorer.error_ms_unknown": "<dark_red>Error<dark_gray>: <red>¡Error desconocido de MineSkin!",
   "skinsrestorer.not_connected_to_server": "<red>No estás conectado a ningún servidor.",
-  "skinsrestorer.invalid_command_syntax": "<red>La sintaxis de tu comando no es válida.",
   "skinsrestorer.admincommand_status_checking": "<gray>Comprobrando los servicios necesarios para que SR funcione correctamente...",
   "skinsrestorer.admincommand_status_working_count": "<gray>Recuento de <count> API en funcionamiento",
   "skinsrestorer.admincommand_status_working": "<green>El plugin se encuentra actualmente en funcionamiento.",
