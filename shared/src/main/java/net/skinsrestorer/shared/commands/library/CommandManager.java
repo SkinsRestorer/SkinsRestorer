@@ -32,9 +32,10 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.skinsrestorer.shared.commands.library.annotations.*;
 import net.skinsrestorer.shared.commands.library.types.EnumArgumentType;
 import net.skinsrestorer.shared.commands.library.types.SRPlayerArgumentType;
@@ -374,13 +375,13 @@ public class CommandManager<T extends SRCommandSender> {
                 .stream().map(ComponentHelper::convertToJsonString).collect(Collectors.toList());
     }
 
-    protected List<TextComponent> getHelpMessageNodeStart(CommandNode<T> node, TextComponent commandPrefix, T source) {
-        List<TextComponent> result = new ArrayList<>();
+    protected List<Component> getHelpMessageNodeStart(CommandNode<T> node, Component commandPrefix, T source) {
+        List<Component> result = new ArrayList<>();
         getAllUsage(node, source, result, commandPrefix, true);
         return result;
     }
 
-    private void getAllUsage(CommandNode<T> node, T source, List<TextComponent> result, TextComponent prefix, boolean first) {
+    private void getAllUsage(CommandNode<T> node, T source, List<Component> result, Component prefix, boolean first) {
         if (!node.canUse(source)) {
             return;
         }
@@ -395,13 +396,14 @@ public class CommandManager<T extends SRCommandSender> {
         // Sometimes our first is actually the only thing we *can* print, so let's print it
         boolean printEvenIfFirst = node.getChildren().isEmpty();
         if (node.getCommand() != null && !prefixEmpty && (!first || printEvenIfFirst)) {
-            TextComponent clickableCommand = addEventsCommandComponent(prefix, source);
+            Component clickableCommand = addEventsCommandComponent(prefix, source);
 
             CommandInjectHelp<T> command = (CommandInjectHelp<T>) node.getCommand();
             if (command.getHelpData() != null) {
-                result.add(clickableCommand
-                        .append(Component.text(" - "))
-                        .append(ComponentHelper.convertJsonToComponent(locale.getMessage(source, command.getHelpData().getCommandDescription()))));
+                result.add(ComponentHelper.convertJsonToComponent(locale.getMessage(source, Message.COMMAND_HELP_FORMAT, TagResolver.resolver(
+                        Placeholder.component("command", clickableCommand),
+                        Placeholder.component("description", ComponentHelper.convertJsonToComponent(locale.getMessage(source, command.getHelpData().getCommandDescription())))
+                ))));
             } else {
                 result.add(clickableCommand);
             }
@@ -412,14 +414,14 @@ public class CommandManager<T extends SRCommandSender> {
             result.add(Component.text(prefixEmpty ? node.getUsageText() + ARGUMENT_SEPARATOR + redirect : prefix + ARGUMENT_SEPARATOR + redirect));
         } else if (!node.getChildren().isEmpty()) {
             for (CommandNode<T> child : node.getChildren()) {
-                TextComponent resultPrefix = prefixEmpty ? prefix : prefix.append(Component.text(ARGUMENT_SEPARATOR));
+                Component resultPrefix = prefixEmpty ? prefix : prefix.append(Component.text(ARGUMENT_SEPARATOR));
 
                 getAllUsage(child, source, result, resultPrefix.append(Component.text(child.getUsageText())), false);
             }
         }
     }
 
-    private TextComponent addEventsCommandComponent(TextComponent component, T source) {
+    private Component addEventsCommandComponent(Component component, T source) {
         String plainPrefix = ComponentHelper.convertToPlain(component);
 
         int firstRequiredArgument = plainPrefix.indexOf('<');
