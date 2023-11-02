@@ -71,6 +71,8 @@
   "skinsrestorer.admincommand_dump_error": "<red>Error while uploading data to bytebin.lucko.me",
   "skinsrestorer.command_server_not_allowed_message": "<red>Commands have been disabled for the server <server>.",
   "skinsrestorer.command_click_to_suggest": "<yellow>Click to suggest",
+  "skinsrestorer.command_help_header": "<yellow>[<dark_green>SkinsRestorer</dark_green>] <aqua>Showing help for: <green><command>",
+  "skinsrestorer.command_help_format": "<dark_green><command> <yellow>- <description>",
   "skinsrestorer.player_has_no_permission_skin": "<dark_red>Error<dark_gray>: <red>You don't have permission to set this skin.",
   "skinsrestorer.player_has_no_permission_url": "<dark_red>Error<dark_gray>: <red>You don't have permission to set skins by URL.",
   "skinsrestorer.not_premium": "<dark_red>Error<dark_gray>: <red>Premium player with that name does not exist.",
