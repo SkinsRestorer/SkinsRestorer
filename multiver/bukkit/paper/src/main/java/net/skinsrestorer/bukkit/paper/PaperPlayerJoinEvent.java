@@ -40,6 +40,15 @@ public class PaperPlayerJoinEvent implements Listener {
         adapter.handleLogin(wrap(event));
     }
 
+    public static boolean isAvailable() {
+        try {
+            AsyncPlayerPreLoginEvent.class.getMethod("getPlayerProfile");
+            return true;
+        } catch (ReflectiveOperationException e) {
+            return false;
+        }
+    }
+
     private SRLoginProfileEvent<Void> wrap(AsyncPlayerPreLoginEvent event) {
         return new SRLoginProfileEvent<Void>() {
             @Override

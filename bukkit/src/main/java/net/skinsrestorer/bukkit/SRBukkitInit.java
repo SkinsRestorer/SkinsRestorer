@@ -106,8 +106,7 @@ public class SRBukkitInit implements SRServerPlatformInit {
 
     @Override
     public void initLoginProfileListener() {
-        if (settingsManager.getProperty(AdvancedConfig.ENABLE_PAPER_JOIN_LISTENER)
-                && ReflectionUtil.classExists("com.destroystokyo.paper.event.profile.PreFillProfileEvent")) {
+        if (PaperPlayerJoinEvent.isAvailable() && settingsManager.getProperty(AdvancedConfig.ENABLE_PAPER_JOIN_LISTENER)) {
             logger.info("Using paper join listener!");
             server.getPluginManager().registerEvents(injector.newInstance(PaperPlayerJoinEvent.class), adapter.getPluginInstance());
         } else {
