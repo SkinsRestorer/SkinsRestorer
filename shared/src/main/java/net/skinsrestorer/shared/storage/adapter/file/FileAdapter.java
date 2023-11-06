@@ -538,7 +538,7 @@ public class FileAdapter implements StorageAdapter {
 
         Map<String, GUIFileData> files = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         try (Stream<Path> stream = Files.walk(skinsFolder, 1)) {
-            int i = 0;
+            int skinIndex = 0;
             for (Iterator<Path> it = stream.iterator(); it.hasNext(); ) {
                 Path path = it.next();
                 if (Files.isDirectory(path)) {
@@ -578,8 +578,8 @@ public class FileAdapter implements StorageAdapter {
                 }
 
                 // We offset only valid skin files
-                if (i < offset) {
-                    i++;
+                if (skinIndex < offset) {
+                    skinIndex++;
                     continue;
                 }
 
@@ -592,7 +592,7 @@ public class FileAdapter implements StorageAdapter {
                 }
 
                 // We got max skins now, stop
-                if (files.size() >= SharedGUI.HEAD_COUNT_PER_PAGE) {
+                if (skinIndex++ == offset + SharedGUI.HEAD_COUNT_PER_PAGE) {
                     break;
                 }
             }
