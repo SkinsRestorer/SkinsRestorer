@@ -28,6 +28,7 @@ import net.skinsrestorer.api.property.SkinType;
 import net.skinsrestorer.api.property.SkinVariant;
 import net.skinsrestorer.shared.config.DatabaseConfig;
 import net.skinsrestorer.shared.config.GUIConfig;
+import net.skinsrestorer.shared.gui.SharedGUI;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
@@ -452,7 +453,7 @@ public class MySQLAdapter implements StorageAdapter {
             }
         }
 
-        query.append(") AS skins LIMIT ").append(offset).append(", ").append(SkinStorageImpl.SKINS_PER_GUI_PAGE);
+        query.append(") AS skins LIMIT ").append(offset).append(", ").append(SharedGUI.HEAD_COUNT_PER_PAGE);
 
         Map<String, String> skins = new LinkedHashMap<>();
         try (ResultSet crs = mysql.query(query.toString())) {

@@ -47,7 +47,6 @@ import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SkinStorageImpl implements SkinStorage {
-    public static final int SKINS_PER_GUI_PAGE = 36;
     private final SRLogger logger;
     private final CacheStorage cacheStorage;
     private final MojangAPIImpl mojangAPI;

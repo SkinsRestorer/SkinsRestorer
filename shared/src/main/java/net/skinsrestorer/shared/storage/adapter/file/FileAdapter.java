@@ -28,6 +28,7 @@ import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.property.SkinType;
 import net.skinsrestorer.api.property.SkinVariant;
 import net.skinsrestorer.shared.config.GUIConfig;
+import net.skinsrestorer.shared.gui.SharedGUI;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
@@ -505,12 +506,7 @@ public class FileAdapter implements StorageAdapter {
 
         Map<String, GUIFileData> files = getGUIFilesSorted(offset);
 
-        int i = 0;
         for (Map.Entry<String, GUIFileData> entry : files.entrySet()) {
-            if (i > SkinStorageImpl.SKINS_PER_GUI_PAGE) {
-                break;
-            }
-
             if (entry.getValue().getSkinType() == SkinType.PLAYER) {
                 try {
                     getPlayerSkinData(UUID.fromString(entry.getValue().getFileName()))
@@ -526,8 +522,6 @@ public class FileAdapter implements StorageAdapter {
                     logger.warning("Failed to load custom skin data for " + entry.getValue().getFileName(), e);
                 }
             }
-
-            i++;
         }
 
         return list;
@@ -552,11 +546,13 @@ public class FileAdapter implements StorageAdapter {
                 }
 
                 String fileName = path.getFileName().toString();
-                String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
-                String name = fileName.substring(0, fileName.length() - extension.length() - 1);
+                int lastDotIndex = fileName.lastIndexOf(".");
+                if (lastDotIndex == -1) {
+                    continue;
+                }
 
-                System.out.println("name: " + name);
-                System.out.println("extension: " + extension);
+                String extension = fileName.substring(lastDotIndex + 1);
+                String name = fileName.substring(0, lastDotIndex);
 
                 boolean isPlayerSkin = extension.equals("playerskin");
                 boolean isCustomSkin = extension.equals("customskin");
@@ -581,6 +577,7 @@ public class FileAdapter implements StorageAdapter {
                     continue;
                 }
 
+                // We offset only valid skin files
                 if (i < offset) {
                     i++;
                     continue;
@@ -594,7 +591,10 @@ public class FileAdapter implements StorageAdapter {
                     files.put(name, data);
                 }
 
-                i++;
+                // We got max skins now, stop
+                if (files.size() >= SharedGUI.HEAD_COUNT_PER_PAGE) {
+                    break;
+                }
             }
         } catch (IOException e) {
             logger.warning("Failed to load GUI files", e);
