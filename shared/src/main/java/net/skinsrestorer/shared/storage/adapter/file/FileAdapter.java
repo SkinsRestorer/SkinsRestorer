@@ -538,13 +538,13 @@ public class FileAdapter implements StorageAdapter {
         boolean customOnly = settings.getProperty(GUIConfig.CUSTOM_GUI_ONLY);
         List<String> customSkins = settings.getProperty(GUIConfig.CUSTOM_GUI_SKINS)
                 .stream()
-                .map(String::toLowerCase)
+                .map(s -> s.toLowerCase(Locale.ROOT))
                 .distinct() // No duplicates
                 .collect(Collectors.toList());
 
-        int i = 0;
         Map<String, GUIFileData> files = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         try (Stream<Path> stream = Files.walk(skinsFolder, 1)) {
+            int i = 0;
             for (Iterator<Path> it = stream.iterator(); it.hasNext(); ) {
                 Path path = it.next();
                 if (Files.isDirectory(path)) {
@@ -554,6 +554,9 @@ public class FileAdapter implements StorageAdapter {
                 String fileName = path.getFileName().toString();
                 String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
                 String name = fileName.substring(0, fileName.length() - extension.length() - 1);
+
+                System.out.println("name: " + name);
+                System.out.println("extension: " + extension);
 
                 boolean isPlayerSkin = extension.equals("playerskin");
                 boolean isCustomSkin = extension.equals("customskin");
@@ -574,7 +577,7 @@ public class FileAdapter implements StorageAdapter {
                 }
 
                 // Only allow specific custom skins if enabled
-                if (customEnabled && customOnly && !customSkins.contains(name.toLowerCase())) {
+                if (customEnabled && customOnly && !customSkins.contains(name.toLowerCase(Locale.ROOT))) {
                     continue;
                 }
 

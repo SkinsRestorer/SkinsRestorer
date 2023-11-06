@@ -36,8 +36,9 @@ public class GUIConfig implements SettingsHolder {
     @Override
     public void registerComments(CommentsConfiguration conf) {
         conf.setComment("customGUI",
-                "Custom list for the /skins GUI.",
-                "customGUI.showOnlyCustomGUI will only show customGUI.list in the GUI."
+                "Custom skins for the /skins GUI.",
+                "This setting will allow custom skins to be shown in the GUI.",
+                "customGUI.showOnlyCustomGUI will allow only custom skins from customGUI.list to show up in the GUI."
         );
     }
 }

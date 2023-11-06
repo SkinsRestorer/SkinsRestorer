@@ -33,6 +33,7 @@ import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.utils.FluentList;
 
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -43,7 +44,7 @@ public class SRPlayerArgumentType implements ArgumentType<SRPlayer> {
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
         for (SRPlayer player : platform.getOnlinePlayers()) {
-            if (player.getName().toLowerCase().startsWith(builder.getRemaining().toLowerCase())) {
+            if (player.getName().toLowerCase(Locale.ROOT).startsWith(builder.getRemaining().toLowerCase(Locale.ROOT))) {
                 if (context.getSource() instanceof SRPlayer && !((SRPlayer) context.getSource()).canSee(player)) {
                     continue;
                 }
@@ -73,7 +74,7 @@ public class SRPlayerArgumentType implements ArgumentType<SRPlayer> {
         }
 
         Optional<SRPlayer> player = platform.getOnlinePlayers().stream()
-                .filter(p -> p.getName().equalsIgnoreCase(string.toLowerCase()))
+                .filter(p -> p.getName().equalsIgnoreCase(string))
                 .findFirst();
 
         if (player.isPresent()) {
