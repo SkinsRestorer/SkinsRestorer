@@ -39,6 +39,8 @@
   "skinsrestorer.admincommand_applyskinall_success": "<green>Барлык челтәрдәге уенчы өчен кыяфәтләр яңадан кулланылды",
   "skinsrestorer.admincommand_dump_uploading": "<green>bytebin.lucko.me сайтына мәгълүматны йөкләтү...",
   "skinsrestorer.admincommand_dump_success": "<green>Йөкләтелде! <yellow><url>",
+  "skinsrestorer.command_click_to_suggest": "<yellow>Тәкъдим итү өчен басыгыз",
+  "skinsrestorer.command_help_header": "<yellow>[<dark_green>SkinsRestorer</dark_green>] <green><command> өчен<aqua> ярдәмне күрсәтү",
   "skinsrestorer.not_premium": "<dark_red>Хата<dark_gray>: <red>Бу исемле премиум-уенчы юк.",
   "skinsrestorer.only_allowed_on_console": "<dark_red>Хата<dark_gray>: <red>Консоль генә бу боерыкны кабыза ала!",
   "skinsrestorer.only_allowed_on_player": "<dark_red>Хата<dark_gray>: <red>Уенчылар гына бу боерыкны кабыза ала!",
