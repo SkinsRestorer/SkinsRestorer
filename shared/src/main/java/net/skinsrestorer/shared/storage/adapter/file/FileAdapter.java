@@ -592,7 +592,7 @@ public class FileAdapter implements StorageAdapter {
                 }
 
                 // We got max skins now, stop
-                if (skinIndex++ == offset + SharedGUI.HEAD_COUNT_PER_PAGE) {
+                if (skinIndex++ >= offset + SharedGUI.HEAD_COUNT_PER_PAGE) {
                     break;
                 }
             }
