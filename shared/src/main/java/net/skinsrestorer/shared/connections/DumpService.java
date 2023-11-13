@@ -21,6 +21,7 @@ package net.skinsrestorer.shared.connections;
 
 import ch.jalu.injector.Injector;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.shared.connections.http.HttpClient;
@@ -42,7 +43,9 @@ public class DumpService {
     private final SRPlatformAdapter<?> adapter;
     private final Injector injector;
     private final HttpClient httpClient;
-    private final Gson gson = new Gson();
+    private final Gson gson = new GsonBuilder()
+            .serializeNulls()
+            .create();
 
     public Optional<String> dump() throws IOException, DataRequestException {
         Boolean proxyMode;
@@ -79,7 +82,8 @@ public class DumpService {
                 plugin.getUserAgent(),
                 HttpClient.HttpMethod.POST,
                 Collections.emptyMap(),
-                20_000);
+                20_000
+        );
 
         if (response.getStatusCode() != 201) {
             logger.warning("Failed to dump data to bytebin. Response code: " + response.getStatusCode());
