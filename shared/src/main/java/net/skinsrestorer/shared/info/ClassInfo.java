@@ -17,7 +17,7 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.serverinfo;
+package net.skinsrestorer.shared.info;
 
 import lombok.Data;
 import net.skinsrestorer.shared.utils.ReflectionUtil;

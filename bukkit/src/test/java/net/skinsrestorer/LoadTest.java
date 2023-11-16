@@ -29,7 +29,6 @@ import net.skinsrestorer.bukkit.utils.PluginJarProvider;
 import net.skinsrestorer.shared.log.JavaLoggerImpl;
 import net.skinsrestorer.shared.plugin.SRBootstrapper;
 import net.skinsrestorer.shared.plugin.SRServerPlugin;
-import net.skinsrestorer.shared.serverinfo.Platform;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.CommandMap;
@@ -123,7 +122,6 @@ public class LoadTest {
                     SRServerPlugin.class,
                     BuildData.VERSION,
                     configDir,
-                    Platform.BUKKIT,
                     SRBukkitInit.class
             );
 

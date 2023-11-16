@@ -21,7 +21,8 @@ package net.skinsrestorer.shared.connections.requests;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.AllArgsConstructor;
-import net.skinsrestorer.shared.serverinfo.ServerInfo;
+import net.skinsrestorer.shared.info.EnvironmentInfo;
+import net.skinsrestorer.shared.info.PlatformInfo;
 
 @AllArgsConstructor
 @SuppressWarnings("unused")
@@ -29,17 +30,11 @@ import net.skinsrestorer.shared.serverinfo.ServerInfo;
 public class DumpInfo {
     private String pluginVersion;
     private Boolean proxyMode;
-    private String platformVersion;
-    private ServerInfo serverInfo;
-    private DumpInfo.PlatformType platformType;
+    private EnvironmentInfo environmentInfo;
+    private PlatformInfo platformInfo;
     private OSInfo osInfo;
     private JavaInfo javaInfo;
     private UserInfo userInfo;
-
-    public enum PlatformType {
-        SERVER,
-        PROXY
-    }
 
     // Helps to figure out OS-specific issues
     @SuppressWarnings("unused")

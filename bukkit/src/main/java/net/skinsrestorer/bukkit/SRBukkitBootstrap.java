@@ -27,15 +27,14 @@ import net.skinsrestorer.bukkit.utils.PluginJarProvider;
 import net.skinsrestorer.shared.log.JavaLoggerImpl;
 import net.skinsrestorer.shared.plugin.SRBootstrapper;
 import net.skinsrestorer.shared.plugin.SRServerPlugin;
-import net.skinsrestorer.shared.serverinfo.Platform;
 import org.bukkit.Server;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.nio.file.Path;
 
+@Getter
 @SuppressWarnings("unused")
 public class SRBukkitBootstrap extends JavaPlugin {
-    @Getter
     private BukkitAudiences adventure;
 
     @Override
@@ -58,8 +57,8 @@ public class SRBukkitBootstrap extends JavaPlugin {
                 SRServerPlugin.class,
                 getDescription().getVersion(),
                 getDataFolder().toPath(),
-                Platform.BUKKIT,
-                SRBukkitInit.class);
+                SRBukkitInit.class
+        );
     }
 
     @Override

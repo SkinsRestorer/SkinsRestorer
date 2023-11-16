@@ -28,8 +28,12 @@ import net.skinsrestorer.shared.connections.http.HttpClient;
 import net.skinsrestorer.shared.connections.http.HttpResponse;
 import net.skinsrestorer.shared.connections.requests.DumpInfo;
 import net.skinsrestorer.shared.connections.responses.BytebinResponse;
+import net.skinsrestorer.shared.info.EnvironmentInfo;
+import net.skinsrestorer.shared.info.PlatformInfo;
 import net.skinsrestorer.shared.log.SRLogger;
-import net.skinsrestorer.shared.plugin.*;
+import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
+import net.skinsrestorer.shared.plugin.SRPlugin;
+import net.skinsrestorer.shared.plugin.SRServerPlugin;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -56,21 +60,19 @@ public class DumpService {
             proxyMode = serverPlugin.isProxyMode();
         }
 
-        DumpInfo.PlatformType platformType;
-        if (adapter instanceof SRServerAdapter) {
-            platformType = DumpInfo.PlatformType.SERVER;
-        } else if (adapter instanceof SRProxyAdapter) {
-            platformType = DumpInfo.PlatformType.PROXY;
-        } else {
-            throw new IllegalStateException("Unknown platform type: " + adapter.getClass().getName());
-        }
+        EnvironmentInfo environmentInfo = EnvironmentInfo.determineEnvironment(adapter);
+        PlatformInfo platformInfo = new PlatformInfo(
+                adapter.getPlatformName(),
+                adapter.getPlatformVendor(),
+                adapter.getPlatformVersion(),
+                adapter.getPlugins()
+        );
 
         DumpInfo dumpInfo = new DumpInfo(
                 plugin.getVersion(),
                 proxyMode,
-                adapter.getPlatformVersion(),
-                plugin.getServerInfo(),
-                platformType,
+                environmentInfo,
+                platformInfo,
                 new DumpInfo.OSInfo(),
                 new DumpInfo.JavaInfo(),
                 new DumpInfo.UserInfo()

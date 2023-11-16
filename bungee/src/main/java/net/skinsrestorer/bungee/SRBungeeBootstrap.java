@@ -27,7 +27,6 @@ import net.skinsrestorer.bungee.logger.BungeeConsoleImpl;
 import net.skinsrestorer.shared.log.JavaLoggerImpl;
 import net.skinsrestorer.shared.plugin.SRBootstrapper;
 import net.skinsrestorer.shared.plugin.SRProxyPlugin;
-import net.skinsrestorer.shared.serverinfo.Platform;
 import net.skinsrestorer.shared.update.SharedUpdateCheckInit;
 
 @SuppressWarnings("unused")
@@ -53,8 +52,8 @@ public class SRBungeeBootstrap extends Plugin {
                 SRProxyPlugin.class,
                 getDescription().getVersion(),
                 getDataFolder().toPath(),
-                Platform.BUNGEE_CORD,
-                SRBungeeInit.class);
+                SRBungeeInit.class
+        );
     }
 
     @Override

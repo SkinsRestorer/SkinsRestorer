@@ -17,25 +17,31 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.serverinfo;
+package net.skinsrestorer.shared.info;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 
 @Getter
 @RequiredArgsConstructor
-public class ServerInfo {
+public class EnvironmentInfo {
     private final boolean hybrid;
     private final Platform platform;
+    private final PlatformType platformType;
     private final ClassInfo classInfo;
 
-    public static ServerInfo determineEnvironment(Platform platform) {
+    public static EnvironmentInfo determineEnvironment(SRPlatformAdapter<?> adapter) {
         ClassInfo info = ClassInfo.get();
-        boolean hybrid2 = (platform == Platform.BUNGEE_CORD && info.isVelocity())
+
+        Platform platform = adapter.getPlatform();
+
+        // Find common hybrid class mixes
+        boolean hybrid = (platform == Platform.BUNGEE_CORD && info.isVelocity())
                 || (platform == Platform.VELOCITY && info.isBungeecord())
                 || (platform == Platform.SPONGE && info.isCraftBukkit())
                 || (platform == Platform.BUKKIT && (info.isSpongeVanilla() || info.isSpongeForge()));
 
-        return new ServerInfo(hybrid2, platform, info);
+        return new EnvironmentInfo(hybrid, platform, platform.getPlatformType(), info);
     }
 }

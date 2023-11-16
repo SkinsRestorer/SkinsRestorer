@@ -24,7 +24,6 @@ import ch.jalu.injector.InjectorBuilder;
 import net.skinsrestorer.shared.log.SRLogLevel;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.log.SRPlatformLogger;
-import net.skinsrestorer.shared.serverinfo.Platform;
 import net.skinsrestorer.shared.update.UpdateCheckInit;
 
 import java.nio.file.Path;
@@ -36,7 +35,7 @@ public class SRBootstrapper {
             SRPlatformLogger isrLogger, boolean loggerColor,
             Class<? extends SRPlatformAdapter<?>> adapterClass,
             Class<? extends UpdateCheckInit> updateCheck, Class<?> srPlatformClass,
-            String version, Path dataFolder, Platform platform,
+            String version, Path dataFolder,
             Class<? extends SRPlatformInit> initCLass) {
         SRPlugin srPlugin = null;
         try {
@@ -54,7 +53,7 @@ public class SRBootstrapper {
                 injector.register(SRProxyAdapter.class, (SRProxyAdapter<?>) adapter);
             }
 
-            srPlugin = new SRPlugin(injector, version, dataFolder, platform, updateCheck);
+            srPlugin = new SRPlugin(injector, version, dataFolder, updateCheck);
             injector.getSingleton(srPlatformClass);
 
             srPlugin.startup(initCLass);

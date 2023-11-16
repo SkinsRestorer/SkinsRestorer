@@ -31,6 +31,8 @@ import net.skinsrestorer.bungee.command.SRBungeeCommand;
 import net.skinsrestorer.bungee.listeners.ForceAliveListener;
 import net.skinsrestorer.bungee.wrapper.WrapperBungee;
 import net.skinsrestorer.shared.commands.library.SRRegisterPayload;
+import net.skinsrestorer.shared.info.Platform;
+import net.skinsrestorer.shared.info.PluginInfo;
 import net.skinsrestorer.shared.plugin.SRProxyAdapter;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
@@ -40,6 +42,7 @@ import org.bstats.bungeecord.Metrics;
 import javax.inject.Inject;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -86,6 +89,33 @@ public class SRBungeeAdapter implements SRProxyAdapter<Plugin> {
     @Override
     public String getPlatformVersion() {
         return proxy.getVersion();
+    }
+
+    @Override
+    public String getPlatformName() {
+        return proxy.getName();
+    }
+
+    @Override
+    public String getPlatformVendor() {
+        return "N/A";
+    }
+
+    @Override
+    public Platform getPlatform() {
+        return Platform.BUNGEE_CORD;
+    }
+
+    @Override
+    public List<PluginInfo> getPlugins() {
+        return proxy.getPluginManager().getPlugins().stream()
+                .map(p -> new PluginInfo(
+                        true,
+                        p.getDescription().getName(),
+                        p.getDescription().getVersion(),
+                        p.getDescription().getMain(),
+                        new String[]{p.getDescription().getAuthor()}
+                )).collect(Collectors.toList());
     }
 
     @Override

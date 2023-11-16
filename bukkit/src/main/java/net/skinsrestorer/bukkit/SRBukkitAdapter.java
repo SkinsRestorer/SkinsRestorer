@@ -36,10 +36,12 @@ import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
 import net.skinsrestorer.shared.commands.library.SRRegisterPayload;
 import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.gui.SharedGUI;
+import net.skinsrestorer.shared.info.ClassInfo;
+import net.skinsrestorer.shared.info.Platform;
+import net.skinsrestorer.shared.info.PluginInfo;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
 import net.skinsrestorer.shared.provider.ProviderSelector;
-import net.skinsrestorer.shared.serverinfo.ClassInfo;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
@@ -56,9 +58,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -194,6 +194,33 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin> {
     @Override
     public String getPlatformVersion() {
         return server.getVersion();
+    }
+
+    @Override
+    public String getPlatformName() {
+        return server.getName();
+    }
+
+    @Override
+    public String getPlatformVendor() {
+        return server.getBukkitVersion();
+    }
+
+    @Override
+    public Platform getPlatform() {
+        return Platform.BUKKIT;
+    }
+
+    @Override
+    public List<PluginInfo> getPlugins() {
+        return Arrays.stream(server.getPluginManager().getPlugins())
+                .map(plugin -> new PluginInfo(
+                        plugin.isEnabled(),
+                        plugin.getName(),
+                        plugin.getDescription().getVersion(),
+                        plugin.getDescription().getMain(),
+                        plugin.getDescription().getAuthors().toArray(new String[0])
+                )).collect(Collectors.toList());
     }
 
     @Override

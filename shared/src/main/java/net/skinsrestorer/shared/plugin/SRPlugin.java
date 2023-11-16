@@ -49,8 +49,6 @@ import net.skinsrestorer.shared.connections.ServiceCheckerService;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.floodgate.FloodgateUtil;
 import net.skinsrestorer.shared.log.SRLogger;
-import net.skinsrestorer.shared.serverinfo.Platform;
-import net.skinsrestorer.shared.serverinfo.ServerInfo;
 import net.skinsrestorer.shared.storage.CacheStorageImpl;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.PlayerStorageImpl;
@@ -97,13 +95,11 @@ public class SRPlugin {
     private final String version;
     private final Injector injector;
     @Getter
-    private final ServerInfo serverInfo;
-    @Getter
     private boolean outdated = false;
     @Getter
     private boolean updaterInitialized = false;
 
-    public SRPlugin(Injector injector, String version, Path dataFolder, Platform platform, Class<? extends UpdateCheckInit> updateCheck) {
+    public SRPlugin(Injector injector, String version, Path dataFolder, Class<? extends UpdateCheckInit> updateCheck) {
         injector.register(SRPlugin.class, this);
 
         this.injector = injector;
@@ -112,7 +108,6 @@ public class SRPlugin {
         this.updateCheck = updateCheck;
         this.version = version;
         this.dataFolder = dataFolder;
-        this.serverInfo = ServerInfo.determineEnvironment(platform);
     }
 
     public void initCommands() {
@@ -432,6 +427,6 @@ public class SRPlugin {
     }
 
     public String getUserAgent() {
-        return String.format(USER_AGENT, version, serverInfo.getPlatform());
+        return String.format(USER_AGENT, version, adapter.getPlatform());
     }
 }

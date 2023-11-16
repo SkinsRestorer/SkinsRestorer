@@ -21,11 +21,14 @@ package net.skinsrestorer.shared.plugin;
 
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.commands.library.CommandPlatform;
+import net.skinsrestorer.shared.info.Platform;
+import net.skinsrestorer.shared.info.PluginInfo;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.utils.Tristate;
 
 import java.io.InputStream;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -39,6 +42,14 @@ public interface SRPlatformAdapter<P> extends CommandPlatform<SRCommandSender> {
     boolean isPluginEnabled(String pluginName);
 
     String getPlatformVersion();
+
+    String getPlatformName();
+
+    String getPlatformVendor();
+
+    Platform getPlatform();
+
+    List<PluginInfo> getPlugins();
 
     Optional<SkinProperty> getSkinProperty(SRPlayer player);
 

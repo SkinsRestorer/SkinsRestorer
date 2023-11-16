@@ -17,11 +17,18 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.serverinfo;
+package net.skinsrestorer.shared.info;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@RequiredArgsConstructor
 public enum Platform {
-    BUKKIT,
-    BUNGEE_CORD,
-    SPONGE,
-    VELOCITY
+    BUKKIT(PlatformType.SERVER),
+    BUNGEE_CORD(PlatformType.PROXY),
+    SPONGE(PlatformType.SERVER),
+    VELOCITY(PlatformType.PROXY);
+
+    private final PlatformType platformType;
 }

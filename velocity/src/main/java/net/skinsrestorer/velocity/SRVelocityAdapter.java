@@ -33,6 +33,8 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.commands.library.CommandUtils;
 import net.skinsrestorer.shared.commands.library.SRRegisterPayload;
+import net.skinsrestorer.shared.info.Platform;
+import net.skinsrestorer.shared.info.PluginInfo;
 import net.skinsrestorer.shared.plugin.SRProxyAdapter;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
@@ -92,6 +94,32 @@ public class SRVelocityAdapter implements SRProxyAdapter<PluginContainer> {
     @Override
     public String getPlatformVersion() {
         return proxy.getVersion().getVersion();
+    }
+
+    @Override
+    public String getPlatformName() {
+        return proxy.getVersion().getName();
+    }
+
+    @Override
+    public String getPlatformVendor() {
+        return proxy.getVersion().getVendor();
+    }
+
+    @Override
+    public Platform getPlatform() {
+        return Platform.VELOCITY;
+    }
+
+    @Override
+    public List<PluginInfo> getPlugins() {
+        return proxy.getPluginManager().getPlugins().stream().map(p -> new PluginInfo(
+                p.getInstance().isPresent(),
+                p.getDescription().getName().orElseGet(() -> p.getDescription().getId()),
+                p.getDescription().getVersion().orElse("Unknown"),
+                "N/A",
+                p.getDescription().getAuthors().toArray(new String[0])
+        )).collect(Collectors.toList());
     }
 
     @Override

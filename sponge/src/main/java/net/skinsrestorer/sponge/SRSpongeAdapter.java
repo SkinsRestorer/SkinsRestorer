@@ -28,11 +28,12 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.commands.library.SRRegisterPayload;
 import net.skinsrestorer.shared.gui.SharedGUI;
+import net.skinsrestorer.shared.info.Platform;
+import net.skinsrestorer.shared.info.PluginInfo;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
-import net.skinsrestorer.shared.utils.IOExceptionConsumer;
 import net.skinsrestorer.shared.utils.Tristate;
 import net.skinsrestorer.sponge.gui.SkinsGUI;
 import net.skinsrestorer.sponge.listeners.ForceAliveListener;
@@ -58,12 +59,10 @@ import org.spongepowered.api.profile.property.ProfileProperty;
 import org.spongepowered.api.util.metric.MetricsConfigManager;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.plugin.PluginContainer;
+import org.spongepowered.plugin.metadata.model.PluginContributor;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -195,11 +194,38 @@ public class SRSpongeAdapter implements SRServerAdapter<PluginContainer> {
     }
 
     @Override
+    public String getPlatformName() {
+        return game.platform().container(org.spongepowered.api.Platform.Component.IMPLEMENTATION).metadata().name().orElse("N/A");
+    }
+
+    @Override
+    public String getPlatformVendor() {
+        return "N/A";
+    }
+
+    @Override
+    public Platform getPlatform() {
+        return Platform.SPONGE;
+    }
+
+    @Override
+    public List<PluginInfo> getPlugins() {
+        return game.pluginManager().plugins().stream().map(p -> new PluginInfo(
+                p.instance() != null,
+                p.metadata().name().orElseGet(() -> p.metadata().id()),
+                p.metadata().version().getQualifier(),
+                p.metadata().entrypoint(),
+                p.metadata().contributors().stream().map(PluginContributor::name).toArray(String[]::new)
+        )).collect(Collectors.toList());
+    }
+
+    @Override
     public Optional<SkinProperty> getSkinProperty(SRPlayer player) {
         return player.getAs(Player.class).profile().properties().stream()
                 .filter(property -> property.name().equals(SkinProperty.TEXTURES_NAME))
                 .filter(ProfileProperty::hasSignature)
-                .map(property -> SkinProperty.of(property.value(), property.signature().orElseThrow(() -> new IllegalStateException("Signature is missing"))))
+                .map(property -> SkinProperty.of(property.value(), property.signature()
+                        .orElseThrow(() -> new IllegalStateException("Signature is missing"))))
                 .findFirst();
     }
 

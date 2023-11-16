@@ -23,7 +23,6 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import net.skinsrestorer.shared.plugin.SRBootstrapper;
 import net.skinsrestorer.shared.plugin.SRServerPlugin;
-import net.skinsrestorer.shared.serverinfo.Platform;
 import net.skinsrestorer.shared.update.SharedUpdateCheckInit;
 import net.skinsrestorer.sponge.logger.Log4jLoggerImpl;
 import org.apache.logging.log4j.Logger;
@@ -70,7 +69,6 @@ public class SRSpongeBootstrap {
                 SRServerPlugin.class,
                 container.metadata().version().toString(),
                 dataFolder,
-                Platform.SPONGE,
                 SRSpongeInit.class
         );
     }
