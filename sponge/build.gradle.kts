@@ -12,3 +12,9 @@ dependencies {
 
     compileOnly("org.spongepowered:spongeapi:8.2.0")
 }
+
+indra {
+    javaVersions {
+        target(17)
+    }
+}
