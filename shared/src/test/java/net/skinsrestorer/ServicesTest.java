@@ -23,7 +23,6 @@ import ch.jalu.configme.SettingsManager;
 import ch.jalu.injector.Injector;
 import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.connections.ServiceCheckerService;
-import net.skinsrestorer.shared.info.Platform;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
@@ -56,7 +55,7 @@ public class ServicesTest {
 
         injector.register(SettingsManager.class, settings);
 
-        new SRPlugin(injector, "UnitTest", null, Platform.BUKKIT, SharedUpdateCheckInit.class);
+        new SRPlugin(injector, "UnitTest", null, SharedUpdateCheckInit.class);
 
         MetricsCounter metricsCounter = injector.getSingleton(MetricsCounter.class);
         ServiceCheckerService.ServiceCheckResponse serviceChecker = injector.getSingleton(ServiceCheckerService.class).checkServices();
