@@ -70,6 +70,7 @@
   "skinsrestorer.command_server_not_allowed_message": "<red>Les commandes ont été désactivées pour ce serveur <server>.",
   "skinsrestorer.command_click_to_suggest": "<yellow>Cliquer pour suggérer",
   "skinsrestorer.command_help_header": "<yellow>[<dark_green>SkinsRestorer</dark_green>] <aqua>Afficher l'aide pour: <green><command>",
+  "skinsrestorer.command_help_format": "<dark_green><hover:show_text:'<command_click_to_suggest><click:suggest_command:'<suggestion><command> </click> </hover>",
   "skinsrestorer.player_has_no_permission_skin": "<dark_red>Erreur<dark_gray> : <red>Vous n'avez pas les permissions pour mettre ce skin.",
   "skinsrestorer.player_has_no_permission_url": "<dark_red>Erreur<dark_gray> : <red>Vous n'avez pas les permissions de mettre des skins par URL.",
   "skinsrestorer.not_premium": "<dark_red>Erreur<dark_gray> : <red>Aucun joueur Premium avec ce nom existe.",
