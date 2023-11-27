@@ -13,7 +13,7 @@ pluginManagement {
         id("net.kyori.blossom") version "2.1.0"
         id("io.github.patrick.remapper") version "1.4.0"
         id("com.diffplug.spotless") version "6.23.0"
-        id("com.github.spotbugs") version "5.2.3"
+        id("com.github.spotbugs") version "5.2.4"
         id("io.freefair.lombok") version "8.4"
     }
 }
