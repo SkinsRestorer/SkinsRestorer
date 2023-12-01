@@ -45,6 +45,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URLEncoder;
 import java.time.Duration;
 import java.time.Instant;
@@ -57,7 +58,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class MineSkinAPIImpl implements MineSkinAPI {
-    private static final String MINESKIN_ENDPOINT = "https://api.mineskin.org/generate/url/";
+    private static final URI MINESKIN_ENDPOINT = URI.create("https://api.mineskin.org/generate/url/");
     private static final String NAMEMC_SKIN_URL = "https://namemc.com/skin/";
     private static final String NAMEMC_IMG_URL = "https://s.namemc.com/i/%s.png";
     private final ExecutorService executorService = Executors.newSingleThreadExecutor((Runnable r) -> {
@@ -72,8 +73,8 @@ public class MineSkinAPIImpl implements MineSkinAPI {
     private final HttpClient httpClient;
 
     @Override
-    public MineSkinResponse genSkin(String url, @Nullable SkinVariant skinVariant) throws DataRequestException, MineSkinException {
-        String resultUrl = url.startsWith(NAMEMC_SKIN_URL) ? NAMEMC_IMG_URL.replace("%s", url.substring(24)) : url; // Fix NameMC skins
+    public MineSkinResponse genSkin(String imageUrl, @Nullable SkinVariant skinVariant) throws DataRequestException, MineSkinException {
+        String resultUrl = imageUrl.startsWith(NAMEMC_SKIN_URL) ? NAMEMC_IMG_URL.replace("%s", imageUrl.substring(24)) : imageUrl; // Fix NameMC skins
         AtomicInteger retryAttempts = new AtomicInteger(0);
 
         do {
@@ -84,7 +85,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                     } catch (DataRequestException | MineSkinException e) {
                         throw new CompletionException(e);
                     } catch (IOException e) {
-                        logger.debug(SRLogLevel.WARNING, "[ERROR] MineSkin Failed! IOException (connection/disk): (" + url + ")", e);
+                        logger.debug(SRLogLevel.WARNING, "[ERROR] MineSkin Failed! IOException (connection/disk): (" + resultUrl + ")", e);
                         throw new CompletionException(new DataRequestExceptionShared(e));
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
@@ -110,10 +111,10 @@ public class MineSkinAPIImpl implements MineSkinAPI {
         throw new MineSkinExceptionShared(locale, Message.ERROR_MS_API_FAILED);
     }
 
-    private Optional<MineSkinResponse> genSkinInternal(String url, @Nullable SkinVariant skinVariant) throws DataRequestException, MineSkinException, IOException, InterruptedException {
+    private Optional<MineSkinResponse> genSkinInternal(String imageUrl, @Nullable SkinVariant skinVariant) throws DataRequestException, MineSkinException, IOException, InterruptedException {
         String skinVariantString = skinVariant != null ? "&variant=" + skinVariant.name().toLowerCase(Locale.ROOT) : "";
 
-        HttpResponse response = queryURL("url=" + URLEncoder.encode(url, "UTF-8") + skinVariantString);
+        HttpResponse response = queryURL("url=" + URLEncoder.encode(imageUrl, "UTF-8") + skinVariantString);
         logger.debug("MineSkinAPI: Response: " + response);
 
         switch (response.getStatusCode()) {
@@ -128,7 +129,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
             case 400: {
                 MineSkinErrorResponse errorResponse = response.getBodyAs(MineSkinErrorResponse.class);
                 String error = errorResponse.getErrorCode();
-                logger.debug(String.format("[ERROR] MineSkin Failed! Reason: %s Url: %s", error, url));
+                logger.debug(String.format("[ERROR] MineSkin Failed! Reason: %s Image URL: %s", error, imageUrl));
                 switch (error) {
                     case "failed_to_create_id":
                     case "skin_change_failed":
@@ -190,7 +191,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                 return Optional.empty(); // try again after nextRequest
             }
             default:
-                logger.debug("[ERROR] MineSkin Failed! Unknown error: (" + url + ") " + response.getStatusCode());
+                logger.debug("[ERROR] MineSkin Failed! Unknown error: (Image URL: " + imageUrl + ") " + response.getStatusCode());
                 throw new MineSkinExceptionShared(locale, Message.ERROR_MS_API_FAILED);
         }
     }

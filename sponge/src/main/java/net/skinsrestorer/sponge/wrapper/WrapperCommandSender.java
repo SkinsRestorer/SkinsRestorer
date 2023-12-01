@@ -22,7 +22,6 @@ package net.skinsrestorer.sponge.wrapper;
 import ch.jalu.configme.SettingsManager;
 import lombok.experimental.SuperBuilder;
 import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.skinsrestorer.shared.subjects.AbstractSRCommandSender;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
@@ -40,7 +39,7 @@ public class WrapperCommandSender extends AbstractSRCommandSender {
 
     @Override
     public void sendMessage(String messageJson) {
-        audience.sendMessage(Identity.nil(), serializer.deserialize(messageJson));
+        audience.sendMessage(serializer.deserialize(messageJson));
     }
 
     @Override

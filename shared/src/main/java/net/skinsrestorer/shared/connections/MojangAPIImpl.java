@@ -37,9 +37,11 @@ import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.MetricsCounter;
+import net.skinsrestorer.shared.utils.UUIDUtils;
 
 import javax.inject.Inject;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
@@ -56,19 +58,6 @@ public class MojangAPIImpl implements MojangAPI {
     private final SRLogger logger;
     private final SRPlugin plugin;
     private final HttpClient httpClient;
-
-    public static UUID convertToDashed(String noDashes) {
-        StringBuilder idBuff = new StringBuilder(noDashes);
-        idBuff.insert(20, '-');
-        idBuff.insert(16, '-');
-        idBuff.insert(12, '-');
-        idBuff.insert(8, '-');
-        return UUID.fromString(idBuff.toString());
-    }
-
-    public static String convertToNoDashes(UUID uuid) {
-        return uuid.toString().replace("-", "");
-    }
 
     @Override
     public Optional<MojangSkinDataResult> getSkin(String playerName) throws DataRequestException {
@@ -119,7 +108,7 @@ public class MojangAPIImpl implements MojangAPI {
     }
 
     protected Optional<MojangSkinDataResult> getDataAshcon(String uuidOrName) throws DataRequestException {
-        HttpResponse httpResponse = readURL(ASHCON.replace("%uuidOrName%", uuidOrName), MetricsCounter.Service.ASHCON);
+        HttpResponse httpResponse = readURL(URI.create(ASHCON.replace("%uuidOrName%", uuidOrName)), MetricsCounter.Service.ASHCON);
         AshconResponse response = httpResponse.getBodyAs(AshconResponse.class);
 
         if (response.getCode() == 404) {
@@ -158,7 +147,7 @@ public class MojangAPIImpl implements MojangAPI {
     }
 
     public Optional<UUID> getUUIDMojang(String playerName) throws DataRequestException {
-        HttpResponse httpResponse = readURL(UUID_MOJANG.replace("%playerName%", playerName), MetricsCounter.Service.MOJANG);
+        HttpResponse httpResponse = readURL(URI.create(UUID_MOJANG.replace("%playerName%", playerName)), MetricsCounter.Service.MOJANG);
 
         if (httpResponse.getStatusCode() == 204 || httpResponse.getStatusCode() == 404 || httpResponse.getBody().isEmpty()) {
             return Optional.empty();
@@ -170,11 +159,11 @@ public class MojangAPIImpl implements MojangAPI {
         }
 
         return Optional.ofNullable(response.getId())
-                .map(MojangAPIImpl::convertToDashed);
+                .map(UUIDUtils::convertToDashed);
     }
 
     protected Optional<UUID> getUUIDMineTools(String playerName) throws DataRequestException {
-        HttpResponse httpResponse = readURL(UUID_MINETOOLS.replace("%playerName%", playerName), MetricsCounter.Service.MINE_TOOLS, 10_000);
+        HttpResponse httpResponse = readURL(URI.create(UUID_MINETOOLS.replace("%playerName%", playerName)), MetricsCounter.Service.MINE_TOOLS, 10_000);
         MineToolsUUIDResponse response = httpResponse.getBodyAs(MineToolsUUIDResponse.class);
 
         if (response.getStatus() != null && response.getStatus().equals("ERR")) {
@@ -182,7 +171,7 @@ public class MojangAPIImpl implements MojangAPI {
         }
 
         return Optional.ofNullable(response.getId())
-                .map(MojangAPIImpl::convertToDashed);
+                .map(UUIDUtils::convertToDashed);
     }
 
     public Optional<SkinProperty> getProfile(UUID uuid) throws DataRequestException {
@@ -204,7 +193,7 @@ public class MojangAPIImpl implements MojangAPI {
     }
 
     public Optional<SkinProperty> getProfileMojang(UUID uuid) throws DataRequestException {
-        HttpResponse httpResponse = readURL(PROFILE_MOJANG.replace("%uuid%", convertToNoDashes(uuid)), MetricsCounter.Service.MOJANG);
+        HttpResponse httpResponse = readURL(URI.create(PROFILE_MOJANG.replace("%uuid%", UUIDUtils.convertToNoDashes(uuid))), MetricsCounter.Service.MOJANG);
         MojangProfileResponse response = httpResponse.getBodyAs(MojangProfileResponse.class);
         if (response.getProperties() == null) {
             return Optional.empty();
@@ -219,7 +208,7 @@ public class MojangAPIImpl implements MojangAPI {
     }
 
     protected Optional<SkinProperty> getProfileMineTools(UUID uuid) throws DataRequestException {
-        HttpResponse httpResponse = readURL(PROFILE_MINETOOLS.replace("%uuid%", convertToNoDashes(uuid)), MetricsCounter.Service.MINE_TOOLS, 10_000);
+        HttpResponse httpResponse = readURL(URI.create(PROFILE_MINETOOLS.replace("%uuid%", UUIDUtils.convertToNoDashes(uuid))), MetricsCounter.Service.MINE_TOOLS, 10_000);
         MineToolsProfileResponse response = httpResponse.getBodyAs(MineToolsProfileResponse.class);
         if (response.getRaw() == null) {
             return Optional.empty();
@@ -238,16 +227,16 @@ public class MojangAPIImpl implements MojangAPI {
         return Optional.of(SkinProperty.of(property.getValue(), property.getSignature()));
     }
 
-    private HttpResponse readURL(String url, MetricsCounter.Service service) throws DataRequestException {
-        return readURL(url, service, 5_000);
+    private HttpResponse readURL(URI uri, MetricsCounter.Service service) throws DataRequestException {
+        return readURL(uri, service, 5_000);
     }
 
-    private HttpResponse readURL(String url, MetricsCounter.Service service, int timeout) throws DataRequestException {
+    private HttpResponse readURL(URI uri, MetricsCounter.Service service, int timeout) throws DataRequestException {
         metricsCounter.increment(service);
 
         try {
             return httpClient.execute(
-                    url,
+                    uri,
                     null,
                     HttpClient.HttpType.JSON,
                     plugin.getUserAgent(),
@@ -256,7 +245,7 @@ public class MojangAPIImpl implements MojangAPI {
                     timeout
             );
         } catch (IOException e) {
-            logger.debug("Error while reading URL: " + url, e);
+            logger.debug("Error while reading URL: " + uri, e);
             throw new DataRequestExceptionShared(e);
         }
     }

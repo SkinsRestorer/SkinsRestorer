@@ -22,6 +22,7 @@ package net.skinsrestorer.shared.update;
 import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.DataRequestException;
+import net.skinsrestorer.api.semver.SemanticVersion;
 import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.shared.connections.http.HttpClient;
 import net.skinsrestorer.shared.connections.http.HttpResponse;
@@ -29,12 +30,12 @@ import net.skinsrestorer.shared.exception.DataRequestExceptionShared;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.plugin.SRServerPlugin;
-import net.skinsrestorer.api.semver.SemanticVersion;
 import net.skinsrestorer.shared.update.model.GitHubAssetInfo;
 import net.skinsrestorer.shared.update.model.GitHubReleaseInfo;
 
 import javax.inject.Inject;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -43,7 +44,7 @@ import java.util.Optional;
  */
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class UpdateCheckerGitHub {
-    private static final String RELEASES_URL_LATEST = "https://api.github.com/repos/SkinsRestorer/SkinsRestorerX/releases/latest";
+    private static final URI RELEASES_URL_LATEST = URI.create("https://api.github.com/repos/SkinsRestorer/SkinsRestorerX/releases/latest");
     private static final String JAR_ASSET_NAME = "SkinsRestorer.jar";
     private static final String LOG_ROW = "§a----------------------------------------------";
     private final SRLogger logger;

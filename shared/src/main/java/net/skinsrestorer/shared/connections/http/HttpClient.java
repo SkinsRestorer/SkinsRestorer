@@ -26,11 +26,12 @@ import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.log.SRLogger;
 
 import javax.inject.Inject;
+import javax.net.ssl.HttpsURLConnection;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.util.Map;
 
@@ -39,14 +40,21 @@ public class HttpClient {
     private final SRLogger logger;
     private final SettingsManager settings;
 
-    public HttpResponse execute(String url, RequestBody requestBody, HttpType accepts,
+    public HttpResponse execute(URI uri, RequestBody requestBody, HttpType accepts,
                                 String userAgent, HttpMethod method,
                                 Map<String, String> headers, int timeout) throws IOException {
         if (settings.getProperty(AdvancedConfig.NO_CONNECTIONS)) {
             throw new IOException("Connections are disabled.");
         }
 
-        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+        URL url = uri.toURL();
+
+        // Ensure we're never sending a request to a non-HTTPS URL.
+        if (!url.getProtocol().equals("https")) {
+            throw new IOException("Only HTTPS is supported.");
+        }
+
+        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
         connection.setRequestMethod(method.name());
         connection.setConnectTimeout(timeout);
         connection.setReadTimeout(timeout);

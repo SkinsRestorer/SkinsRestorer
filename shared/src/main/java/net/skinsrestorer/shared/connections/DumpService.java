@@ -37,11 +37,13 @@ import net.skinsrestorer.shared.plugin.SRServerPlugin;
 
 import javax.inject.Inject;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Collections;
 import java.util.Optional;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class DumpService {
+    private static final URI BYTEBIN_ENDPOINT = URI.create("https://bytebin.lucko.me/post");
     private final SRLogger logger;
     private final SRPlugin plugin;
     private final SRPlatformAdapter<?> adapter;
@@ -78,7 +80,8 @@ public class DumpService {
                 new DumpInfo.UserInfo()
         );
 
-        HttpResponse response = httpClient.execute("https://bytebin.lucko.me/post",
+        HttpResponse response = httpClient.execute(
+                BYTEBIN_ENDPOINT,
                 new HttpClient.RequestBody(gson.toJson(dumpInfo), HttpClient.HttpType.JSON),
                 HttpClient.HttpType.JSON,
                 plugin.getUserAgent(),
