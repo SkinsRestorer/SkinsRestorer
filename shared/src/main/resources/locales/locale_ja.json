@@ -78,7 +78,7 @@
   "skinsrestorer.only_allowed_on_player": "<dark_red>エラー<dark_gray>：<red>そのコマンドはプレイヤーのみ実行できます。",
   "skinsrestorer.invalid_player": "<dark_red>エラー<dark_gray>：<red>「<input>」は有効なユーザー名またはURLではありません。",
   "skinsrestorer.skin_cooldown": "<dark_red>エラー<dark_gray>：<red><yellow><time></yellow>秒後にスキンを変更してください。",
-  "skinsrestorer.ms_updating_skin": "<dark_green>スキンをアップロードしています。しばらくお待ちください…（しばらく時間がかかる可能性があります）",
+  "skinsrestorer.ms_uploading_skin": "<dark_green>スキンをアップロードしています。しばらくお待ちください…（しばらく時間がかかる可能性があります）",
   "skinsrestorer.generic_error": "<dark_red>エラー<dark_gray>：<red>スキンのデータのリクエスト中にエラーが発生しました。後でもう一度お試しください。",
   "skinsrestorer.wait_a_minute": "<dark_red>エラー<dark_gray>：<red>しばらく待ってからスキンをリクエストしてください。（レート制限あり）",
   "skinsrestorer.skinsmenu_open": "<dark_green>スキンメニューを開いています…",

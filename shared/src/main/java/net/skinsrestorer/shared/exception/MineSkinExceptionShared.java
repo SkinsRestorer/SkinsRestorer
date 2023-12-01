@@ -31,6 +31,7 @@ public class MineSkinExceptionShared extends MineSkinException implements Transl
     private final TagResolver[] args;
 
     public MineSkinExceptionShared(SkinsRestorerLocale locale, Message message, TagResolver... resolvers) {
+        // Not important locale since we use #getMessage(SRForeign, SkinsRestorerLocale) to get the message
         super(ComponentHelper.convertJsonToPlain(locale.getMessage(locale.getDefaultForeign(), message, resolvers)));
         this.message = message;
         this.args = resolvers;

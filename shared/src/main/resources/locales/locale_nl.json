@@ -57,7 +57,7 @@
   "skinsrestorer.only_allowed_on_player": "<dark_red>Fout<dark_gray>: <red>Alleen spelers mogen deze opdracht uitvoeren!",
   "skinsrestorer.invalid_player": "<dark_red>Fout<dark_gray>: <red><input> is geen geldige gebruikersnaam of URL.",
   "skinsrestorer.skin_cooldown": "<dark_red>Fout<dark_gray>: <red>U kunt uw skin opnieuw wijzigen in <yellow><time></yellow> seconden.",
-  "skinsrestorer.ms_updating_skin": "<dark_green>Uploaden skin, even geduld... (Dit kan even duren)",
+  "skinsrestorer.ms_uploading_skin": "<dark_green>Uploaden skin, even geduld... (Dit kan even duren)",
   "skinsrestorer.generic_error": "<dark_red>fout<dark_gray>: <red>Er is een fout opgetreden tijdens het aanvragen van skin data, probeer het later opnieuw!",
   "skinsrestorer.wait_a_minute": "<dark_red>Fout<dark_gray>: <red>Wacht alstublieft een minuut voordat je die skin opnieuw aanvraagt (rate limted)",
   "skinsrestorer.skinsmenu_open": "<dark_green>Open het skins menu...",

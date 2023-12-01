@@ -237,7 +237,7 @@ public final class SRCommand {
             skinApplier.applySkin(target.getAs(Object.class));
             sender.sendMessage(Message.SUCCESS_ADMIN_APPLYSKIN);
         } catch (DataRequestException e) {
-            ComponentHelper.sendException(e, sender, locale);
+            ComponentHelper.sendException(e, sender, locale, logger);
         }
     }
 
@@ -254,7 +254,7 @@ public final class SRCommand {
                 sender.sendMessage(Message.ERROR_INVALID_URLSKIN);
             }
         } catch (DataRequestException | MineSkinException e) {
-            ComponentHelper.sendException(e, sender, locale);
+            ComponentHelper.sendException(e, sender, locale, logger);
         }
     }
 

@@ -20,13 +20,15 @@
 package net.skinsrestorer.shared.utils;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.skinsrestorer.shared.exception.TranslatableException;
+import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
+import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 
 public class ComponentHelper {
@@ -60,11 +62,13 @@ public class ComponentHelper {
         return PLAIN_COMPONENT_SERIALIZER.serialize(component);
     }
 
-    public static void sendException(Throwable t, SRCommandSender sender, SkinsRestorerLocale locale) {
+    public static void sendException(Throwable t, SRCommandSender sender, SkinsRestorerLocale locale, SRLogger logger) {
         if (t instanceof TranslatableException) {
             sender.sendMessage(((TranslatableException) t).getMessage(sender, locale));
         } else {
-            sender.sendMessage(parseMiniMessageToJsonString(SRHelpers.getRootCause(t).getMessage()));
+            sender.sendMessage(parseMiniMessageToJsonString(locale.getMessage(sender, Message.ERROR_GENERIC,
+                    Placeholder.unparsed("message", SRHelpers.getRootCause(t).getMessage()))));
+            logger.warning("An error occurred while executing a command", t);
         }
     }
 }

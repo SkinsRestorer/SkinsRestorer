@@ -168,7 +168,7 @@ public final class SkinCommand {
 
             setCoolDown(sender, CommandConfig.SKIN_CHANGE_COOLDOWN);
         } catch (DataRequestException e) {
-            ComponentHelper.sendException(e, sender, locale);
+            ComponentHelper.sendException(e, sender, locale, logger);
             setCoolDown(sender, CommandConfig.SKIN_ERROR_COOLDOWN);
         }
     }
@@ -257,7 +257,7 @@ public final class SkinCommand {
             }
 
             try {
-                sender.sendMessage(Message.MS_UPDATING_SKIN);
+                sender.sendMessage(Message.MS_UPLOADING_SKIN);
 
                 MineSkinResponse response = mineSkinAPI.genSkin(skinInput, skinVariant);
                 skinStorage.setURLSkinByResponse(skinInput, response); // "generate" and save skin forever
@@ -268,7 +268,7 @@ public final class SkinCommand {
 
                 return true;
             } catch (DataRequestException e) {
-                ComponentHelper.sendException(e, sender, locale);
+                ComponentHelper.sendException(e, sender, locale, logger);
             } catch (Exception e) {
                 logger.debug(SRLogLevel.SEVERE, String.format("Could not generate skin url: %s", skinInput), e);
                 sender.sendMessage(Message.ERROR_INVALID_URLSKIN);
@@ -291,7 +291,7 @@ public final class SkinCommand {
 
                 return true;
             } catch (DataRequestException | MineSkinException e) {
-                ComponentHelper.sendException(e, sender, locale);
+                ComponentHelper.sendException(e, sender, locale, logger);
             }
         }
 

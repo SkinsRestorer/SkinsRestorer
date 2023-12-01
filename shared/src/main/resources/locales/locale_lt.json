@@ -78,7 +78,7 @@
   "skinsrestorer.only_allowed_on_player": "<dark_red>Klaida<dark_gray>: <red>Tik žaidėjai gali vykdyti šią komandą!",
   "skinsrestorer.invalid_player": "<dark_red>Klaida<dark_gray>: <red><input> nėra galiojantis vartotojo vardas arba URL.",
   "skinsrestorer.skin_cooldown": "<dark_red>Klaida<dark_gray>: <red>Galėsite vėl pasikeisti savo išvaizdą už <yellow><time></yellow> sekundžių.",
-  "skinsrestorer.ms_updating_skin": "<dark_green>Įkeliama išvaizda, palaukite... (Tai gali užtrukti)",
+  "skinsrestorer.ms_uploading_skin": "<dark_green>Įkeliama išvaizda, palaukite... (Tai gali užtrukti)",
   "skinsrestorer.generic_error": "<dark_red>Klaida<dark_gray>: <red>Prašant išvaizdos duomenų įvyko klaida. Bandykite dar kartą vėliau!",
   "skinsrestorer.wait_a_minute": "<dark_red>Klaida<dark_gray>: <red>Palaukite minutę prieš vėl prašydami tos išvaizdos. (Pasiektas veiksmų limitas)",
   "skinsrestorer.skinsmenu_open": "<dark_green>Atidaromas išvaizdų meniu...",

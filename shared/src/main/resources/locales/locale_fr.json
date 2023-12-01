@@ -77,7 +77,7 @@
   "skinsrestorer.only_allowed_on_player": "<dark_red>Erreur<dark_gray> : <red>Seulement les joueurs peuvent exécuter cette commande !",
   "skinsrestorer.invalid_player": "<dark_red>Erreur<dark_gray> : <red><input> n'est pas un URL ou identifiant valide.",
   "skinsrestorer.skin_cooldown": "<dark_red>Erreur<dark_gray> : <red>Vous pourrez changer votre skin dans <yellow><time></yellow> secondes.",
-  "skinsrestorer.ms_updating_skin": "<dark_green>Téléversement du skin, Veuillez patienter... (Cela peut prendre du temps)",
+  "skinsrestorer.ms_uploading_skin": "<dark_green>Téléversement du skin, Veuillez patienter... (Cela peut prendre du temps)",
   "skinsrestorer.generic_error": "<dark_red>Erreur<dark_gray> : <red>Une erreur est survenue pendant la requête des données du skin, veuillez réessayer plus tard !",
   "skinsrestorer.wait_a_minute": "<dark_red>Erreur<dark_gray> : <red>S'il vous plait, attendez une minute avant de réessayer de nouveau. (Taux Limité)",
   "skinsrestorer.skinsmenu_open": "<dark_green>Ouverture du menu des skins...",

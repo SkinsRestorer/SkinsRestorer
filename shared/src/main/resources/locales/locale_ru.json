@@ -77,7 +77,7 @@
   "skinsrestorer.only_allowed_on_player": "<dark_red>Ошибка<dark_gray>: <red>Только игроки могут выполнить эту команду!",
   "skinsrestorer.invalid_player": "<dark_red>Ошибка: <dark_gray>: <red><input> не является допустимым именем пользователя или URL-адресом.",
   "skinsrestorer.skin_cooldown": "<dark_red>Ошибка<dark_gray>: <red>Вы сможете снова изменить скин через <yellow><time></yellow> сек.",
-  "skinsrestorer.ms_updating_skin": "<dark_green>Загрузка скина, пожалуйста подождите...(Это может занять некоторое время)",
+  "skinsrestorer.ms_uploading_skin": "<dark_green>Загрузка скина, пожалуйста подождите...(Это может занять некоторое время)",
   "skinsrestorer.generic_error": "<dark_red>Ошибка<dark_gray>: <red>Произошла ошибка при запросе скина. Пожалуйста, повторите попытку позже!",
   "skinsrestorer.wait_a_minute": "<dark_red>Ошибка<dark_gray>: <red>Пожалуйста, подождите минуту перед повторным запросом этого скина. (Лимит Ограничен)",
   "skinsrestorer.skinsmenu_open": "<dark_green>Открытие меню скинов...",
