@@ -15,7 +15,5 @@
   "skinsrestorer.success_updating_skin": "<dark_green>已更新你的皮膚。",
   "skinsrestorer.success_admin_applyskin": "<dark_green>已重新載入玩家皮膚！",
   "skinsrestorer.success_admin_reload": "<dark_green>已重新載入設定和翻譯！",
-  "skinsrestorer.error_skinurl_disallowed": "<dark_red>錯誤<dark_gray>: <red>管理員不允許這個網域。",
-  "skinsrestorer.error_updating_skin": "<dark_red>錯誤<dark_gray>: <red>更新你的皮膚時發生了錯誤。請稍後再試！",
   "skinsrestorer.not_connected_to_server": "<red>你沒有連線到任何伺服器。"
 }
