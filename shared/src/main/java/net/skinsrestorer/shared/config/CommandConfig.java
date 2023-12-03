@@ -110,7 +110,8 @@ public class CommandConfig implements SettingsHolder {
                 "\n# Commands #",
                 "\n############",
                 "\n",
-                "Control behaviour of commands."
+                "Control behaviour of commands.",
+                "To learn more about commands and permissions, visit: https://skinsrestorer.net/docs/configuration/commands-permissions"
         );
         conf.setComment("commands.disabledSkins",
                 "Skins in this list will be disabled, so users can't set them.",

@@ -42,7 +42,7 @@ public class MessageConfig implements SettingsHolder {
             "Has to be a string separated by an underscore."
     })
     public static final Property<Locale> CONSOLE_LOCALE = new TypeBasedProperty<>("messages.consoleLocale", Locale.ENGLISH, LocaleProperty.instance());
-    @Comment("Disable message prefix in SkinsRestorer messages.")
+    @Comment("Disable the message prefix in SkinsRestorer messages.")
     public static final Property<Boolean> DISABLE_PREFIX = newProperty("messages.disablePrefix", false);
     @Comment({
             "Every message sent by the plugin will use the players client locale if a translation is available.",
@@ -58,7 +58,8 @@ public class MessageConfig implements SettingsHolder {
                 "\n# Locale #",
                 "\n##########",
                 "\n",
-                "Translation & message options here"
+                "Translation & message options here",
+                "To learn more about translations and how to make custom translations, visit: https://skinsrestorer.net/docs/configuration/locale-translations"
         );
     }
 }
