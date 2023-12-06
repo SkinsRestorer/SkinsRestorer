@@ -12,16 +12,6 @@
   "skinsrestorer.help_sr_create_custom": "Tạo một skin ngẫu nhiên.",
   "skinsrestorer.help_sr_purge_old_data": "Xóa dữ liệu cũ của skin từ x ngày trước.",
   "skinsrestorer.help_sr_dump": "Tải dữ liệu hỗ trợ tới bytebin.lucko.me.",
-  "skinsrestorer.success_skin_change": "<dark_green>Skin của bạn đã được thay đổi.",
-  "skinsrestorer.success_skin_change_other": "<dark_green>Bạn đã đổi skin của <name>.",
-  "skinsrestorer.success_skin_clear": "<dark_green>Skin của bạn đã bị xóa.",
-  "skinsrestorer.success_skin_clear_other": "<dark_green>Đã xóa skin của <name>.",
-  "skinsrestorer.success_updating_skin": "<dark_green>Skin của bạn đã được cập nhật.",
-  "skinsrestorer.success_updating_skin_other": "<dark_green>Đã cập nhật skin của <name>.",
-  "skinsrestorer.success_admin_applyskin": "<dark_green>Skin đã được làm mới!",
-  "skinsrestorer.success_admin_createcustom": "<dark_green>Skin <skin> đã được tạo!",
-  "skinsrestorer.success_admin_drop": "<dark_green><type> dữ liệu giảm cho <target>.",
-  "skinsrestorer.success_admin_reload": "<dark_green>Đã reload lại tệp Config và Locale!",
   "skinsrestorer.admincommand_setskinall_success": "<green>Đã đặt skin cho mọi người chơi đang online thành công sang <skin>",
   "skinsrestorer.admincommand_dump_success": "<green>Upload skin thành công! <yellow><url>"
 }

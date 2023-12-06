@@ -18,9 +18,5 @@
   "skinsrestorer.help_sr_set_skin_all": "सभी प्लेयर पे एक ही स्किन लगाए।",
   "skinsrestorer.help_sr_apply_skin_all": "सभी प्लेयर पर पुनः स्किन लगाए।",
   "skinsrestorer.help_sr_purge_old_data": "x दिन पहले का पुराना स्किन डेटा मिटाएँ।",
-  "skinsrestorer.help_sr_dump": "सपोर्ट डाटा को bytebin.lucko.me पे अपलोड करें।",
-  "skinsrestorer.success_skin_change": "<dark_green>आपकी स्किन बदल गईं है।",
-  "skinsrestorer.success_skin_change_other": "<dark_green>आपने <name> की स्किन बदल दी हैं।",
-  "skinsrestorer.success_skin_clear": "<dark_green>आपकी स्किन हट चुकी हैं।",
-  "skinsrestorer.success_skin_clear_other": "<dark_green>आपने <name> की स्किन हटा दी हैं।"
+  "skinsrestorer.help_sr_dump": "सपोर्ट डाटा को bytebin.lucko.me पे अपलोड करें।"
 }
