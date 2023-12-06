@@ -1,0 +1,14 @@
+name: SkinsRestorerX Release Hash
+run-name: ${{ github.actor }} is publishing release ${{ github.ref_name }}
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  sha256:
+    name: sha256
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create SkinsRestorer.jar sha256
+        run: curl -sL "${{ github.server_url }}/${{ github.repository }}/releases/download/${{ github.ref_name }}/SkinsRestorer.jar" | shasum -a 256 | cut -d " " -f 1
