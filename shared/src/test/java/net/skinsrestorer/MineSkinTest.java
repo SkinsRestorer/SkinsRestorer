@@ -60,10 +60,14 @@ public class MineSkinTest {
         String randomUrl = TEST_URL + "?" + UUID.randomUUID(); // Random URL to avoid caching
         MetricsCounter metricsCounter = injector.getSingleton(MetricsCounter.class);
 
-        // TODO: Mock api endpoints
+        try {
+            MineSkinResponse response = injector.getSingleton(MineSkinAPIImpl.class)
+                    .genSkin(randomUrl, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         /*
-        MineSkinResponse response = injector.getSingleton(MineSkinAPIImpl.class)
-                .genSkin(randomUrl, null);
 
         assertNotNull(response);
 
