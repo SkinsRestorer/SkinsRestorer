@@ -22,6 +22,7 @@ package net.skinsrestorer.shared.subjects.permissions;
 import lombok.Getter;
 import net.skinsrestorer.shared.subjects.messages.Message;
 
+@Getter
 public enum PermissionRegistry {
     SKIN("skinsrestorer.command", Message.PERMISSION_COMMAND),
     SR("skinsrestorer.admincommand", Message.PERMISSION_ADMINCOMMAND),
@@ -48,9 +49,7 @@ public enum PermissionRegistry {
     BYPASS_DISABLED("skinsrestorer.bypassdisabled", Message.PERMISSION_BYPASSDISABLED),
     OWN_SKIN("skinsrestorer.ownskin", Message.PERMISSION_OWNSKIN);
 
-    @Getter
     private final Permission permission;
-    @Getter
     private final Message description;
 
     PermissionRegistry(String permission, Message description) {
