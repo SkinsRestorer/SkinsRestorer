@@ -6,7 +6,7 @@ plugins {
 
 dependencies {
     implementation("org.jetbrains:annotations:24.1.0")
-    compileOnly("com.github.spotbugs:spotbugs-annotations:4.8.1")
+    compileOnly("com.github.spotbugs:spotbugs-annotations:4.8.2")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.1")
