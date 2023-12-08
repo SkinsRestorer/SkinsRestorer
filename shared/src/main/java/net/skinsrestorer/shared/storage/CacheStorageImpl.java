@@ -56,9 +56,10 @@ public class CacheStorageImpl implements CacheStorage {
             Optional<MojangCacheData> stored = getCachedData(playerName, allowExpired);
             if (stored.isPresent()) {
                 if (stored.get().isPremium()) {
-                    Optional<SkinProperty> skinProperty = mojangAPI.getProfile(stored.get().getUniqueId());
+                    UUID uuid = stored.get().getUniqueId();
+                    Optional<SkinProperty> skinProperty = mojangAPI.getProfile(uuid);
 
-                    return skinProperty.map(property -> MojangSkinDataResult.of(stored.get().getUniqueId(), property));
+                    return skinProperty.map(property -> MojangSkinDataResult.of(uuid, property));
                 } else {
                     return Optional.empty();
                 }
