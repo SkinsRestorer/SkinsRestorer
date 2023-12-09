@@ -44,7 +44,7 @@ import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
-import net.skinsrestorer.shared.utils.C;
+import net.skinsrestorer.shared.utils.ValidationUtil;
 import net.skinsrestorer.shared.utils.ComponentHelper;
 import net.skinsrestorer.shared.utils.SRConstants;
 
@@ -220,7 +220,7 @@ public final class SkinCommand {
     @Description(Message.HELP_SKIN_SET_URL)
     @CommandConditions("cooldown")
     private void onSkinSetUrlShort(SRPlayer player, String url) {
-        if (!C.validUrl(url)) {
+        if (!ValidationUtil.validSkinUrl(url)) {
             player.sendMessage(Message.ERROR_INVALID_URLSKIN);
             return;
         }
@@ -233,7 +233,7 @@ public final class SkinCommand {
     @Description(Message.HELP_SKIN_SET_URL)
     @CommandConditions("cooldown")
     private void onSkinSetUrl(SRPlayer player, String url, SkinVariant skinVariant) {
-        if (!C.validUrl(url)) {
+        if (!ValidationUtil.validSkinUrl(url)) {
             player.sendMessage(Message.ERROR_INVALID_URLSKIN);
             return;
         }
@@ -250,7 +250,7 @@ public final class SkinCommand {
 
     private boolean setSkin(SRCommandSender sender, SRPlayer target, String skinInput, SkinVariant skinVariant) {
         Optional<SkinIdentifier> oldSkinId = playerStorage.getSkinIdOfPlayer(target.getUniqueId());
-        if (C.validUrl(skinInput)) {
+        if (ValidationUtil.validSkinUrl(skinInput)) {
             if (!allowedSkinUrl(skinInput)) {
                 sender.sendMessage(Message.ERROR_SKINURL_DISALLOWED);
                 return false;
@@ -339,7 +339,7 @@ public final class SkinCommand {
             return false;
         }
 
-        if (C.validUrl(skinName) && !sender.hasPermission(PermissionRegistry.SKIN_SET_URL)) {
+        if (ValidationUtil.validSkinUrl(skinName) && !sender.hasPermission(PermissionRegistry.SKIN_SET_URL)) {
             sender.sendMessage(Message.PLAYER_HAS_NO_PERMISSION_URL);
             return false;
         }

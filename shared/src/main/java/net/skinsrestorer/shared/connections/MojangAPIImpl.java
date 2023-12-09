@@ -35,7 +35,7 @@ import net.skinsrestorer.shared.connections.responses.uuid.MojangUUIDResponse;
 import net.skinsrestorer.shared.exception.DataRequestExceptionShared;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
-import net.skinsrestorer.shared.utils.C;
+import net.skinsrestorer.shared.utils.ValidationUtil;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.UUIDUtils;
 
@@ -61,7 +61,7 @@ public class MojangAPIImpl implements MojangAPI {
 
     @Override
     public Optional<MojangSkinDataResult> getSkin(String playerName) throws DataRequestException {
-        if (!C.validMojangUsername(playerName)) {
+        if (!ValidationUtil.validMojangUsername(playerName)) {
             return Optional.empty();
         }
 
@@ -86,7 +86,7 @@ public class MojangAPIImpl implements MojangAPI {
      * @return String uuid trimmed (without dashes)
      */
     public Optional<UUID> getUUID(String playerName) throws DataRequestException {
-        if (!C.validMojangUsername(playerName)) {
+        if (!ValidationUtil.validMojangUsername(playerName)) {
             return Optional.empty();
         }
 

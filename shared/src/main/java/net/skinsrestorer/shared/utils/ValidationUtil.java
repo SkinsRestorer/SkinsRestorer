@@ -19,39 +19,26 @@
  */
 package net.skinsrestorer.shared.utils;
 
-public class C {
-    private C() {
-    }
-
-    public static String c(String msg) {
-        char[] b = msg.toCharArray();
-
-        for (int i = 0; i < b.length - 1; ++i) {
-            if (b[i] == '&' && "0123456789AaBbCcDdEeFfKkLlMmNnOoRrXx".indexOf(b[i + 1]) > -1) {
-                b[i] = 167;
-                b[i + 1] = Character.toLowerCase(b[i + 1]);
-            }
-        }
-
-        return new String(b);
+public class ValidationUtil {
+    private ValidationUtil() {
     }
 
     public static boolean validMojangUsername(String username) {
-        int len = username.length();
         // Note: there are exceptions to players with under 3 characters, who bought the game early in its development.
-        if (len > 16) return false;
+        if (username.length() > 16) return false;
 
-        // For some reason Apache's Lists.charactersOf is faster than character indexing for small strings.
-        for (int i = 0; i < len; i++) {
-            char c = username.charAt(i);
+        // For some reason, Apache's Lists.charactersOf is faster than character indexing for small strings.
+        for (char c : username.toCharArray()) {
             // Note: Players who bought the game early in its development can have "-" in usernames.
-            if (!(c >= 'a' && c <= 'z') && !(c >= '0' && c <= '9') && !(c >= 'A' && c <= 'Z') && c != '_' && c != '-')
+            if (!(c >= 'a' && c <= 'z') && !(c >= '0' && c <= '9') && !(c >= 'A' && c <= 'Z') && c != '_' && c != '-') {
                 return false;
+            }
         }
+
         return true;
     }
 
-    public static boolean validUrl(String url) {
+    public static boolean validSkinUrl(String url) {
         return url.startsWith("http://") || url.startsWith("https://");
     }
 }

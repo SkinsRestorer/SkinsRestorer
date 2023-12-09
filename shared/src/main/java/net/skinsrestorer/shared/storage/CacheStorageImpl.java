@@ -32,7 +32,8 @@ import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.storage.adapter.AdapterReference;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.storage.model.cache.MojangCacheData;
-import net.skinsrestorer.shared.utils.C;
+import net.skinsrestorer.shared.utils.TimeUtil;
+import net.skinsrestorer.shared.utils.ValidationUtil;
 
 import javax.inject.Inject;
 import java.time.Instant;
@@ -48,7 +49,7 @@ public class CacheStorageImpl implements CacheStorage {
 
     @Override
     public Optional<MojangSkinDataResult> getSkin(String playerName, boolean allowExpired) throws DataRequestException {
-        if (!C.validMojangUsername(playerName)) {
+        if (!ValidationUtil.validMojangUsername(playerName)) {
             return Optional.empty();
         }
 
@@ -69,7 +70,7 @@ public class CacheStorageImpl implements CacheStorage {
             adapterReference.get().setCachedUUID(playerName,
                     MojangCacheData.of(optional.isPresent(),
                             optional.map(MojangSkinDataResult::getUniqueId).orElse(null),
-                            Instant.now().getEpochSecond()));
+                            TimeUtil.getEpochSecond()));
 
             return optional;
         } catch (StorageAdapter.StorageException e) {
@@ -80,7 +81,7 @@ public class CacheStorageImpl implements CacheStorage {
 
     @Override
     public Optional<UUID> getUUID(String playerName, boolean allowExpired) throws DataRequestException {
-        if (!C.validMojangUsername(playerName)) {
+        if (!ValidationUtil.validMojangUsername(playerName)) {
             return Optional.empty();
         }
 
@@ -94,7 +95,7 @@ public class CacheStorageImpl implements CacheStorage {
                 Optional<UUID> uuid = mojangAPI.getUUID(playerName);
 
                 adapterReference.get().setCachedUUID(playerName,
-                        MojangCacheData.of(uuid.isPresent(), uuid.orElse(null), Instant.now().getEpochSecond()));
+                        MojangCacheData.of(uuid.isPresent(), uuid.orElse(null), TimeUtil.getEpochSecond()));
 
                 return uuid;
             } catch (DataRequestException e) {
@@ -120,6 +121,6 @@ public class CacheStorageImpl implements CacheStorage {
 
     private boolean isValidUUIDTimestamp(long epochSecond) {
         int expiresAfter = settings.getProperty(StorageConfig.UUID_EXPIRES_AFTER);
-        return expiresAfter <= 0 || Instant.now().getEpochSecond() - epochSecond <= expiresAfter;
+        return expiresAfter <= 0 || TimeUtil.getEpochSecond() - epochSecond <= expiresAfter;
     }
 }

@@ -37,7 +37,8 @@ import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.storage.adapter.AdapterReference;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.storage.model.skin.*;
-import net.skinsrestorer.shared.utils.C;
+import net.skinsrestorer.shared.utils.TimeUtil;
+import net.skinsrestorer.shared.utils.ValidationUtil;
 
 import javax.inject.Inject;
 import java.time.Instant;
@@ -109,7 +110,7 @@ public class SkinStorageImpl implements SkinStorage {
                 return currentSkin; // API returned even older skin data
             }
 
-            setPlayerSkinData(uuid, response.getProfileName(), skinProperty.get(), Instant.now().getEpochSecond());
+            setPlayerSkinData(uuid, response.getProfileName(), skinProperty.get(), TimeUtil.getEpochSecond());
             return skinProperty;
         } catch (StorageAdapter.StorageException e) {
             e.printStackTrace();
@@ -144,7 +145,7 @@ public class SkinStorageImpl implements SkinStorage {
     @Override
     public Optional<InputDataResult> findSkinData(String input) {
         try {
-            if (C.validUrl(input)) {
+            if (ValidationUtil.validSkinUrl(input)) {
                 Optional<URLIndexData> urlSkinIndex = adapterReference.get().getURLSkinIndex(input);
 
                 if (!urlSkinIndex.isPresent()) {
@@ -196,7 +197,7 @@ public class SkinStorageImpl implements SkinStorage {
             return skinData;
         }
 
-        if (C.validUrl(input)) {
+        if (ValidationUtil.validSkinUrl(input)) {
             MineSkinResponse response = mineSkinAPI.genSkin(input, null);
 
             setURLSkinByResponse(input, response);
@@ -209,7 +210,7 @@ public class SkinStorageImpl implements SkinStorage {
                 return Optional.empty();
             }
 
-            setPlayerSkinData(data.get().getUniqueId(), input, data.get().getSkinProperty(), Instant.now().getEpochSecond());
+            setPlayerSkinData(data.get().getUniqueId(), input, data.get().getSkinProperty(), TimeUtil.getEpochSecond());
 
             return Optional.of(InputDataResult.of(SkinIdentifier.ofPlayer(data.get().getUniqueId()), data.get().getSkinProperty()));
         }
@@ -277,14 +278,14 @@ public class SkinStorageImpl implements SkinStorage {
             return false;
         }
 
-        long now = Instant.now().getEpochSecond();
+        long now = TimeUtil.getEpochSecond();
         long expiryDate = timestamp + TimeUnit.MINUTES.toSeconds(settings.getProperty(StorageConfig.SKIN_EXPIRES_AFTER));
 
         return expiryDate <= now;
     }
 
     public boolean purgeOldSkins(int days) {
-        long targetPurgeTimestamp = Instant.now().minus(days, ChronoUnit.DAYS).toEpochMilli();
+        long targetPurgeTimestamp = Instant.now().minus(days, ChronoUnit.DAYS).getEpochSecond();
 
         try {
             adapterReference.get().purgeStoredOldSkins(targetPurgeTimestamp);

@@ -53,7 +53,7 @@ import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
-import net.skinsrestorer.shared.utils.C;
+import net.skinsrestorer.shared.utils.ValidationUtil;
 import net.skinsrestorer.shared.utils.ComponentHelper;
 
 import javax.inject.Inject;
@@ -246,7 +246,7 @@ public final class SRCommand {
     @Description(Message.HELP_SR_CREATE_CUSTOM)
     private void onCreateCustom(SRCommandSender sender, String skinName, String skinUrl, SkinVariant skinVariant) {
         try {
-            if (C.validUrl(skinUrl)) {
+            if (ValidationUtil.validSkinUrl(skinUrl)) {
                 MineSkinResponse response = mineSkinAPI.genSkin(skinUrl, skinVariant);
                 skinStorage.setCustomSkinData(skinName, response.getProperty());
                 sender.sendMessage(Message.SUCCESS_ADMIN_CREATECUSTOM, Placeholder.unparsed("skin", skinName));
