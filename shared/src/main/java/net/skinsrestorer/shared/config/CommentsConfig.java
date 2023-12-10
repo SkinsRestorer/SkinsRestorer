@@ -44,7 +44,7 @@ public class CommentsConfig implements SettingsHolder {
                 "Translations and messages: https://skinsrestorer.net/docs/configuration/locale-translations",
                 "\n",
                 "If you encounter issues, you can do the following:",
-                "Read the troubleshooting guide https://skinsrestorer.net/docs/troubleshooting",
+                "Read the troubleshooting guide: https://skinsrestorer.net/docs/troubleshooting",
                 "For advanced help or other, go to our Discord Server: https://skinsrestorer.net/discord",
                 "\n",
                 "(?) Step by step installation guide -> https://skinsrestorer.net/docs/installation",
