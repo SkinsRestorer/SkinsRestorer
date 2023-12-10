@@ -47,7 +47,7 @@ public class MineSkinTest {
     private SkinsRestorerLocale skinsRestorerLocale;
 
     @Test
-    public void testServices(Injector injector) throws DataRequestException, MineSkinException {
+    public void testServices(Injector injector) {
         injector.register(SkinsRestorerLocale.class, skinsRestorerLocale);
 
         when(settings.getProperty(APIConfig.MINESKIN_API_KEY)).thenReturn("");

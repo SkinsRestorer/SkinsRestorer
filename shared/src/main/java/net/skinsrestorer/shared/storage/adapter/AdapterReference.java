@@ -23,8 +23,8 @@ import lombok.Setter;
 
 import javax.inject.Provider;
 
+@Setter
 public class AdapterReference implements Provider<StorageAdapter> {
-    @Setter
     private StorageAdapter adapter;
 
     @Override

@@ -3,7 +3,6 @@ plugins {
 }
 
 dependencies {
-    implementation(projects.skinsrestorerApi)
     implementation(projects.skinsrestorerShared)
     implementation(projects.multiver.bukkit.shared)
 

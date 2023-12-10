@@ -25,7 +25,9 @@ public class ValidationUtil {
 
     public static boolean validMojangUsername(String username) {
         // Note: there are exceptions to players with under 3 characters, who bought the game early in its development.
-        if (username.length() > 16) return false;
+        if (username.length() > 16) {
+            return false;
+        }
 
         // For some reason, Apache's Lists.charactersOf is faster than character indexing for small strings.
         for (char c : username.toCharArray()) {

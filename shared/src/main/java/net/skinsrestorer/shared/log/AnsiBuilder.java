@@ -82,12 +82,12 @@ public class AnsiBuilder implements Appendable {
             builder.append(SECOND_ESC_CHAR);
             builder.append('m');
         } else {
-            _appendEscapeSequence('m', attributeOptions.toArray());
+            _appendEscapeSequence(attributeOptions.toArray());
         }
         attributeOptions.clear();
     }
 
-    private AnsiBuilder _appendEscapeSequence(char command, Object... options) {
+    private void _appendEscapeSequence(Object... options) {
         builder.append(FIRST_ESC_CHAR);
         builder.append(SECOND_ESC_CHAR);
         int size = options.length;
@@ -99,13 +99,8 @@ public class AnsiBuilder implements Appendable {
                 builder.append(options[i]);
             }
         }
-        builder.append(command);
-        return this;
+        builder.append('m');
     }
-
-    ///////////////////////////////////////////////////////////////////
-    // Private Helper Methods
-    ///////////////////////////////////////////////////////////////////
 
     @Override
     public AnsiBuilder append(CharSequence csq) {
@@ -162,6 +157,7 @@ public class AnsiBuilder implements Appendable {
      * <a href="https://en.wikipedia.org/wiki/ANSI_escape_code#SGR_(Select_Graphic_Rendition)_parameters">SGR
      * (Select Graphic Rendition) parameters</a>.
      */
+    @RequiredArgsConstructor
     public enum Attribute {
         RESET(0, "RESET"),
         INTENSITY_BOLD(1, "INTENSITY_BOLD"),
@@ -184,11 +180,6 @@ public class AnsiBuilder implements Appendable {
 
         private final int value;
         private final String name;
-
-        Attribute(int index, String name) {
-            this.value = index;
-            this.name = name;
-        }
 
         @Override
         public String toString() {

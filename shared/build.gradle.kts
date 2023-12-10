@@ -1,5 +1,5 @@
 dependencies {
-    api(projects.skinsrestorerBuildData)
+    implementation(projects.skinsrestorerBuildData)
     implementation(projects.skinsrestorerApi)
 
     api("com.google.code.gson:gson:2.10.1")

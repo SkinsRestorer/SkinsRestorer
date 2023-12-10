@@ -114,13 +114,13 @@ public class HttpClient {
         DELETE
     }
 
+    @Getter
     @RequiredArgsConstructor
     public enum HttpType {
         JSON("application/json"),
         TEXT("text/plain"),
         FORM("application/x-www-form-urlencoded");
 
-        @Getter
         private final String contentType;
     }
 

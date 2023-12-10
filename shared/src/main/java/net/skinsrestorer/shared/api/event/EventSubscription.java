@@ -26,12 +26,10 @@ import net.skinsrestorer.api.event.SkinsRestorerEvent;
 import java.lang.ref.WeakReference;
 import java.util.function.Consumer;
 
+@Getter
 @RequiredArgsConstructor
 public class EventSubscription<E extends SkinsRestorerEvent> {
-    @Getter
     private final WeakReference<Object> plugin;
-    @Getter
     private final Class<E> eventClass;
-    @Getter
     private final WeakReference<Consumer<E>> listener;
 }
