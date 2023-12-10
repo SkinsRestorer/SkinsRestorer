@@ -47,7 +47,7 @@ public class CommentsConfig implements SettingsHolder {
                 "Read the troubleshooting guide: https://skinsrestorer.net/docs/troubleshooting",
                 "For advanced help or other, go to our Discord Server: https://skinsrestorer.net/discord",
                 "\n",
-                "(?) Step by step installation guide -> https://skinsrestorer.net/docs/installation",
+                "(?) Step by step installation guide: https://skinsrestorer.net/docs/installation",
                 "\n",
                 "(!) IF YOU ARE USING A PROXY (BungeeCord, Waterfall or Velocity), YOU NEED TO INSTALL SKINSRESTORER ON THE PROXY AND ALL SERVERS! (!)",
                 "(!) YOU ALSO NEED TO CONFIGURE YOUR SERVERS TO DETECT THE PROXY! (!)",
