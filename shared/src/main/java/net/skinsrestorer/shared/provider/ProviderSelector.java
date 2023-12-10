@@ -26,7 +26,6 @@ import net.skinsrestorer.shared.log.SRLogger;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BooleanSupplier;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class ProviderSelector<P extends FeatureProvider> {

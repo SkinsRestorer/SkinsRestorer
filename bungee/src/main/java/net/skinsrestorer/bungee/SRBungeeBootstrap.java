@@ -27,7 +27,6 @@ import net.skinsrestorer.bungee.logger.BungeeConsoleImpl;
 import net.skinsrestorer.shared.log.JavaLoggerImpl;
 import net.skinsrestorer.shared.plugin.SRBootstrapper;
 import net.skinsrestorer.shared.plugin.SRProxyPlugin;
-import net.skinsrestorer.shared.update.UpdateCheckInit;
 
 @Getter
 @SuppressWarnings("unused")
@@ -56,6 +55,6 @@ public class SRBungeeBootstrap extends Plugin {
 
     @Override
     public void onDisable() {
-            shutdownHook.run();
+        shutdownHook.run();
     }
 }

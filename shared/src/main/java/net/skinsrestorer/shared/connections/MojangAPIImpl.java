@@ -35,9 +35,9 @@ import net.skinsrestorer.shared.connections.responses.uuid.MojangUUIDResponse;
 import net.skinsrestorer.shared.exception.DataRequestExceptionShared;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
-import net.skinsrestorer.shared.utils.ValidationUtil;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.UUIDUtils;
+import net.skinsrestorer.shared.utils.ValidationUtil;
 
 import javax.inject.Inject;
 import java.io.IOException;

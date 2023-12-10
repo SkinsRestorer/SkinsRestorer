@@ -36,11 +36,11 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 public class SRPlaceholderAPIExpansion extends PlaceholderExpansion {
-    private final SkinsRestorer api;
-    private final PluginDescriptionFile description;
     private static final String STEVE_URL = "https://textures.minecraft.net/texture/6d3b06c38504ffc0229b9492147c69fcf59fd2ed7885f78502152f77b4d50de1";
     private static final String ALEX_URL = "https://textures.minecraft.net/texture/fb9ab3483f8106ecc9e76bd47c71312b0f16a58784d606864f3b3e9cb1fd7b6c";
     private static final String ERROR_MESSAGE = "Error";
+    private final SkinsRestorer api;
+    private final PluginDescriptionFile description;
 
     @Override
     public @NotNull String getIdentifier() {

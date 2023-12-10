@@ -31,7 +31,6 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.shared.plugin.SRBootstrapper;
 import net.skinsrestorer.shared.plugin.SRProxyPlugin;
-import net.skinsrestorer.shared.update.UpdateCheckInit;
 import net.skinsrestorer.velocity.logger.Slf4jLoggerImpl;
 import org.slf4j.Logger;
 

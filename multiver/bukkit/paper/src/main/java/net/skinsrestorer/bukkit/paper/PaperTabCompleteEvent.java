@@ -20,23 +20,15 @@
 package net.skinsrestorer.bukkit.paper;
 
 import com.destroystokyo.paper.event.server.AsyncTabCompleteEvent;
-import com.destroystokyo.paper.profile.ProfileProperty;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.property.SkinProperty;
-import net.skinsrestorer.shared.commands.library.CommandExecutor;
-import net.skinsrestorer.shared.commands.library.CommandManager;
 import net.skinsrestorer.shared.commands.library.SRRegisterPayload;
-import net.skinsrestorer.shared.listeners.LoginProfileListenerAdapter;
-import net.skinsrestorer.shared.listeners.event.SRLoginProfileEvent;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 
 import javax.inject.Inject;
 import java.util.Arrays;
-import java.util.UUID;
 import java.util.function.Function;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)

@@ -51,8 +51,9 @@ public class UpdateCheckerGitHub {
     private final SRPlugin plugin;
     private final Injector injector;
     private final HttpClient httpClient;
+    private boolean updateDownloaded;
 
-    public void checkForUpdate(UpdateCallback callback) {
+    public void checkForUpdate(UpdateCause cause, UpdateDownloader downloader) {
         try {
             HttpResponse response = httpClient.execute(RELEASES_URL_LATEST,
                     null,
@@ -63,18 +64,35 @@ public class UpdateCheckerGitHub {
                     90_000);
             GitHubReleaseInfo releaseInfo = response.getBodyAs(GitHubReleaseInfo.class);
 
-            Optional<GitHubAssetInfo> jarAsset = releaseInfo.getAssets().stream()
+            Optional<String> jarAssetUrl = releaseInfo.getAssets().stream()
                     .filter(asset -> asset.getName().equals(JAR_ASSET_NAME))
+                    .map(GitHubAssetInfo::getBrowserDownloadUrl)
                     .findFirst();
 
-            if (!jarAsset.isPresent()) {
+            if (!jarAssetUrl.isPresent()) {
                 throw new DataRequestExceptionShared("No jar asset found in release");
             }
 
             if (isVersionNewer(plugin.getVersion(), releaseInfo.getTagName())) {
-                callback.updateAvailable(releaseInfo.getTagName(), jarAsset.get().getBrowserDownloadUrl());
+                plugin.setOutdated();
+
+                // An update was already downloaded, we don't need to download it again
+                if (updateDownloaded) {
+                    return;
+                }
+
+                String downloadUrl = jarAssetUrl.get();
+                if (downloader != null && downloader.downloadUpdate(downloadUrl)) {
+                    updateDownloaded = true;
+                }
+
+                printUpdateAvailable(cause, releaseInfo.getTagName(), downloadUrl, downloader != null);
             } else {
-                callback.upToDate();
+                if (cause == UpdateCause.SCHEDULED) {
+                    return;
+                }
+
+                printUpToDate(cause);
             }
         } catch (IOException | DataRequestException e) {
             logger.warning("Failed to get release info from api.github.com. \n If this message is repeated a lot, please see https://skinsrestorer.net/firewall");

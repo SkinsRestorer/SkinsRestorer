@@ -23,16 +23,13 @@ import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
-import net.skinsrestorer.shared.plugin.SRPlugin;
 
 import javax.inject.Inject;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class UpdateCheckExecutor {
-    private final SRPlugin plugin;
     private final SRPlatformAdapter<?> adapter;
     private final SettingsManager settings;
-    private boolean updateDownloaded;
 
     public void checkUpdate(UpdateCause cause, UpdateCheckerGitHub updateChecker, UpdateDownloader downloader, boolean isSync) {
         if (settings.getProperty(AdvancedConfig.NO_CONNECTIONS)) {
@@ -40,31 +37,7 @@ public class UpdateCheckExecutor {
             return;
         }
 
-        Runnable check = () -> updateChecker.checkForUpdate(new UpdateCallback() {
-            @Override
-            public void updateAvailable(String newVersion, String downloadUrl) {
-                plugin.setOutdated();
-                if (updateDownloaded) {
-                    return;
-                }
-
-                if (downloader != null && downloader.downloadUpdate(downloadUrl)) {
-                    updateDownloaded = true;
-                }
-
-                updateChecker.printUpdateAvailable(cause, newVersion, downloadUrl, downloader != null);
-            }
-
-            @Override
-            public void upToDate() {
-                if (cause == UpdateCause.SCHEDULED) {
-                    return;
-                }
-
-                updateChecker.printUpToDate(cause);
-            }
-        });
-
+        Runnable check = () -> updateChecker.checkForUpdate(cause, downloader);
         if (isSync) {
             adapter.runAsync(check);
         } else {

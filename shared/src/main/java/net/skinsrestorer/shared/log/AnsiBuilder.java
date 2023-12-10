@@ -35,6 +35,95 @@ import java.util.ArrayList;
 public class AnsiBuilder implements Appendable {
     private static final char FIRST_ESC_CHAR = 27;
     private static final char SECOND_ESC_CHAR = '[';
+    private final StringBuilder builder;
+    private final ArrayList<Integer> attributeOptions = new ArrayList<>(5);
+
+    public AnsiBuilder() {
+        this(new StringBuilder(80));
+    }
+
+    public AnsiBuilder(StringBuilder builder) {
+        this.builder = builder;
+    }
+
+    public static AnsiBuilder ansi() {
+        return new AnsiBuilder();
+    }
+
+    public AnsiBuilder fg(Color color) {
+        attributeOptions.add(color.fg());
+        return this;
+    }
+
+    public AnsiBuilder a(Attribute attribute) {
+        attributeOptions.add(attribute.value());
+        return this;
+    }
+
+    public AnsiBuilder bold() {
+        return a(Attribute.INTENSITY_BOLD);
+    }
+
+    public AnsiBuilder boldOff() {
+        return a(Attribute.INTENSITY_BOLD_OFF);
+    }
+
+    @Override
+    public String toString() {
+        flushAttributes();
+        return builder.toString();
+    }
+
+    private void flushAttributes() {
+        if (attributeOptions.isEmpty())
+            return;
+        if (attributeOptions.size() == 1 && attributeOptions.get(0) == 0) {
+            builder.append(FIRST_ESC_CHAR);
+            builder.append(SECOND_ESC_CHAR);
+            builder.append('m');
+        } else {
+            _appendEscapeSequence('m', attributeOptions.toArray());
+        }
+        attributeOptions.clear();
+    }
+
+    private AnsiBuilder _appendEscapeSequence(char command, Object... options) {
+        builder.append(FIRST_ESC_CHAR);
+        builder.append(SECOND_ESC_CHAR);
+        int size = options.length;
+        for (int i = 0; i < size; i++) {
+            if (i != 0) {
+                builder.append(';');
+            }
+            if (options[i] != null) {
+                builder.append(options[i]);
+            }
+        }
+        builder.append(command);
+        return this;
+    }
+
+    ///////////////////////////////////////////////////////////////////
+    // Private Helper Methods
+    ///////////////////////////////////////////////////////////////////
+
+    @Override
+    public AnsiBuilder append(CharSequence csq) {
+        builder.append(csq);
+        return this;
+    }
+
+    @Override
+    public AnsiBuilder append(CharSequence csq, int start, int end) {
+        builder.append(csq, start, end);
+        return this;
+    }
+
+    @Override
+    public AnsiBuilder append(char c) {
+        builder.append(c);
+        return this;
+    }
 
     /**
      * <a href="https://en.wikipedia.org/wiki/ANSI_escape_code#Colors">ANSI 8 colors</a> for fluent API
@@ -109,95 +198,5 @@ public class AnsiBuilder implements Appendable {
         public int value() {
             return value;
         }
-    }
-
-    public static AnsiBuilder ansi() {
-        return new AnsiBuilder();
-    }
-
-    private final StringBuilder builder;
-    private final ArrayList<Integer> attributeOptions = new ArrayList<>(5);
-
-    public AnsiBuilder() {
-        this(new StringBuilder(80));
-    }
-
-    public AnsiBuilder(StringBuilder builder) {
-        this.builder = builder;
-    }
-
-    public AnsiBuilder fg(Color color) {
-        attributeOptions.add(color.fg());
-        return this;
-    }
-
-    public AnsiBuilder a(Attribute attribute) {
-        attributeOptions.add(attribute.value());
-        return this;
-    }
-
-    public AnsiBuilder bold() {
-        return a(Attribute.INTENSITY_BOLD);
-    }
-
-    public AnsiBuilder boldOff() {
-        return a(Attribute.INTENSITY_BOLD_OFF);
-    }
-
-    @Override
-    public String toString() {
-        flushAttributes();
-        return builder.toString();
-    }
-
-    ///////////////////////////////////////////////////////////////////
-    // Private Helper Methods
-    ///////////////////////////////////////////////////////////////////
-
-    private void flushAttributes() {
-        if (attributeOptions.isEmpty())
-            return;
-        if (attributeOptions.size() == 1 && attributeOptions.get(0) == 0) {
-            builder.append(FIRST_ESC_CHAR);
-            builder.append(SECOND_ESC_CHAR);
-            builder.append('m');
-        } else {
-            _appendEscapeSequence('m', attributeOptions.toArray());
-        }
-        attributeOptions.clear();
-    }
-
-    private AnsiBuilder _appendEscapeSequence(char command, Object... options) {
-        builder.append(FIRST_ESC_CHAR);
-        builder.append(SECOND_ESC_CHAR);
-        int size = options.length;
-        for (int i = 0; i < size; i++) {
-            if (i != 0) {
-                builder.append(';');
-            }
-            if (options[i] != null) {
-                builder.append(options[i]);
-            }
-        }
-        builder.append(command);
-        return this;
-    }
-
-    @Override
-    public AnsiBuilder append(CharSequence csq) {
-        builder.append(csq);
-        return this;
-    }
-
-    @Override
-    public AnsiBuilder append(CharSequence csq, int start, int end) {
-        builder.append(csq, start, end);
-        return this;
-    }
-
-    @Override
-    public AnsiBuilder append(char c) {
-        builder.append(c);
-        return this;
     }
 }

@@ -32,8 +32,6 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.skinsrestorer.shared.commands.library.annotations.*;
@@ -99,6 +97,13 @@ public class CommandManager<T extends SRCommandSender> {
         Set<T> copy = new LinkedHashSet<>(set);
         copy.addAll(Arrays.asList(values));
         return copy;
+    }
+
+    private static <T> String mergeToUsageHelp(List<ParsedCommandNode<T>> list) {
+        return list.stream()
+                .map(ParsedCommandNode::getNode)
+                .map(CommandNode::getUsageText)
+                .collect(Collectors.joining(ARGUMENT_SEPARATOR));
     }
 
     public void registerCommand(Object command) {
@@ -457,13 +462,6 @@ public class CommandManager<T extends SRCommandSender> {
                 executor.sendMessage(ComponentHelper.parseMiniMessageToJsonString(e.getMessage()));
             }
         }
-    }
-
-    private static <T> String mergeToUsageHelp(List<ParsedCommandNode<T>> list) {
-        return list.stream()
-                .map(ParsedCommandNode::getNode)
-                .map(CommandNode::getUsageText)
-                .collect(Collectors.joining(ARGUMENT_SEPARATOR));
     }
 
     // Taken from https://github.com/PaperMC/Velocity/blob/8abc9c80a69158ebae0121fda78b55c865c0abad/proxy/src/main/java/com/velocitypowered/proxy/util/BrigadierUtils.java#L38

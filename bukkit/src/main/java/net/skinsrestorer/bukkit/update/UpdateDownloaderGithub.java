@@ -20,12 +20,10 @@
 package net.skinsrestorer.bukkit.update;
 
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.bukkit.SRBukkitAdapter;
 import net.skinsrestorer.bukkit.utils.PluginJarProvider;
 import net.skinsrestorer.shared.exception.UpdateException;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
-import net.skinsrestorer.shared.update.DownloadCallback;
 import net.skinsrestorer.shared.update.UpdateDownloader;
 import org.bukkit.Server;
 
@@ -33,7 +31,6 @@ import javax.inject.Inject;
 import javax.net.ssl.HttpsURLConnection;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
@@ -47,24 +44,13 @@ import java.nio.file.StandardCopyOption;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class UpdateDownloaderGithub implements UpdateDownloader {
     private final SRPlugin plugin;
-    private final SRBukkitAdapter adapter;
     private final SRLogger logger;
     private final Server server;
     private final PluginJarProvider jarProvider;
 
-    private Runnable downloadAsync(String downloadUrl, Path file, DownloadCallback callback) {
-        return () -> {
-            try {
-                download(downloadUrl, file);
-                callback.finished();
-            } catch (Exception e) {
-                callback.error(e);
-            }
-        };
-    }
-
     private void download(String downloadUrl, Path targetFile) throws UpdateException {
         try {
+            // We don't use HttpClient because this writes to a file directly
             HttpsURLConnection connection = (HttpsURLConnection) new URL(downloadUrl).openConnection();
             connection.setRequestProperty("User-Agent", plugin.getUserAgent());
             if (connection.getResponseCode() != 200) {
@@ -99,18 +85,15 @@ public class UpdateDownloaderGithub implements UpdateDownloader {
         Path updateFile = updateFolder.resolve(pluginFile.getFileName()); // /plugins/update/XXX.jar
 
         logger.info("[GitHubUpdate] Downloading update...");
-        adapter.runAsync(downloadAsync(downloadUrl, updateFile, new DownloadCallback() {
-            @Override
-            public void finished() {
-                logger.info(String.format("[GitHubUpdate] Update saved as %s", updateFile.getFileName()));
-                logger.info("[GitHubUpdate] The update will be loaded on the next server restart");
-            }
+        try {
+            download(downloadUrl, updateFile);
 
-            @Override
-            public void error(Exception exception) {
-                logger.warning("[GitHubUpdate] Could not download update", exception);
-            }
-        }));
+            logger.info(String.format("[GitHubUpdate] Update saved as %s", updateFile.getFileName()));
+            logger.info("[GitHubUpdate] The update will be loaded on the next server restart");
+        } catch (UpdateException e) {
+            logger.warning("[GitHubUpdate] Could not download update", e);
+            return false;
+        }
 
         return true;
     }

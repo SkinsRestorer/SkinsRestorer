@@ -31,7 +31,6 @@ import net.skinsrestorer.shared.config.GUIConfig;
 import net.skinsrestorer.shared.gui.SharedGUI;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
-import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.storage.adapter.file.model.cache.MojangCacheFile;
 import net.skinsrestorer.shared.storage.adapter.file.model.player.LegacyPlayerFile;

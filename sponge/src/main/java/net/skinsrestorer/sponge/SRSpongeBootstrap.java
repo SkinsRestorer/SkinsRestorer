@@ -23,7 +23,6 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import net.skinsrestorer.shared.plugin.SRBootstrapper;
 import net.skinsrestorer.shared.plugin.SRServerPlugin;
-import net.skinsrestorer.shared.update.UpdateCheckInit;
 import net.skinsrestorer.sponge.logger.Log4jLoggerImpl;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.api.Game;

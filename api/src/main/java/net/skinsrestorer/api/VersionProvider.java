@@ -45,8 +45,8 @@ public class VersionProvider {
      * @param version The version to check
      *                (e.g. {@code "15"}, {@code "15.1"} or {@code "15.1.2"})
      * @return {@code true} if the version is compatible, {@code false} otherwise.
-     *         The behavior currently is if the major version is different, the API is not compatible.
-     *         But this might change in the future.
+     * The behavior currently is if the major version is different, the API is not compatible.
+     * But this might change in the future.
      */
     public static boolean isCompatibleWith(String version) {
         SemanticVersion semVer = SemanticVersion.fromString(version);
@@ -64,9 +64,9 @@ public class VersionProvider {
      * E.g. "Expected SkinsRestorer 16.0.0+, but found [SkinsRestorer 15.0.0 (a1b2c3d)]".
      *
      * @return The version of SkinsRestorer installed on the server.
-     *         The format is {@code "SkinsRestorer [version] ([first six letters of commit])"}
-     *         but might change in the future.
-     *         (e.g. {@code "SkinsRestorer 15.0.0 (a1b2c3d)"})
+     * The format is {@code "SkinsRestorer [version] ([first six letters of commit])"}
+     * but might change in the future.
+     * (e.g. {@code "SkinsRestorer 15.0.0 (a1b2c3d)"})
      */
     public static String getVersionInfo() {
         return VERSION_INFO;
@@ -78,7 +78,7 @@ public class VersionProvider {
      * to use.
      *
      * @return The semantic version of SkinsRestorer installed on the server.
-     *         (e.g. {@code [15, 1, 2]} for {@code "15.1.2"})
+     * (e.g. {@code [15, 1, 2]} for {@code "15.1.2"})
      */
     public static int[] getSemanticVersion() {
         return SEMANTIC_VERSION.getVersion();
@@ -88,7 +88,7 @@ public class VersionProvider {
      * Returns the version of SkinsRestorer installed on the server.
      *
      * @return The version of SkinsRestorer installed on the server.
-     *         (e.g. {@code "15.1.2"})
+     * (e.g. {@code "15.1.2"})
      */
     public static String getVersion() {
         return VERSION;

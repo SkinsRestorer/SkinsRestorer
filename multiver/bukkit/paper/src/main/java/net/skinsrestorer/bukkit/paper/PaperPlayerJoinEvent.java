@@ -35,11 +35,6 @@ import java.util.UUID;
 public class PaperPlayerJoinEvent implements Listener {
     private final LoginProfileListenerAdapter<Void> adapter;
 
-    @EventHandler
-    public void onAsyncPreLogin(AsyncPlayerPreLoginEvent event) {
-        adapter.handleLogin(wrap(event));
-    }
-
     public static boolean isAvailable() {
         try {
             AsyncPlayerPreLoginEvent.class.getMethod("getPlayerProfile");
@@ -47,6 +42,11 @@ public class PaperPlayerJoinEvent implements Listener {
         } catch (ReflectiveOperationException e) {
             return false;
         }
+    }
+
+    @EventHandler
+    public void onAsyncPreLogin(AsyncPlayerPreLoginEvent event) {
+        adapter.handleLogin(wrap(event));
     }
 
     private SRLoginProfileEvent<Void> wrap(AsyncPlayerPreLoginEvent event) {
