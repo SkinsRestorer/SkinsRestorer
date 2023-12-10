@@ -27,7 +27,7 @@ import org.bukkit.entity.Player;
 @Getter
 public class ViaPacketData {
     private final Player player;
-    private final Integer dimension;
+    private final int dimension;
     private final long seed;
     private final short gamemodeId;
     private final boolean isFlat;
