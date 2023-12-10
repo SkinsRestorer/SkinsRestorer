@@ -22,6 +22,7 @@ package net.skinsrestorer.bukkit;
 import ch.jalu.configme.SettingsManager;
 import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.skinsrestorer.api.SkinsRestorerProvider;
 import net.skinsrestorer.bukkit.command.SRBukkitCommand;
 import net.skinsrestorer.bukkit.command.SRHelpTopic;
@@ -122,6 +123,9 @@ public class SRBukkitInit implements SRServerPlatformInit {
     public void prePlatformInit() {
         server.getHelpMap().registerHelpTopicFactory(SRBukkitCommand.class, command ->
                 new SRHelpTopic((SRBukkitCommand) command, wrapper, locale));
+
+        // Shutdown kyori adventure
+        plugin.getShutdownHooks().add(() -> adapter.getAdventure().close());
     }
 
     @Override

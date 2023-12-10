@@ -34,4 +34,6 @@ public interface SchedulerProvider extends FeatureProvider {
     void runSyncToEntity(Server server, Plugin plugin, Entity entity, Runnable runnable);
 
     void runRepeatAsync(Server server, Plugin plugin, Runnable runnable, int delay, int interval, TimeUnit timeUnit);
+
+    void unregisterTasks(Server server, Plugin plugin);
 }

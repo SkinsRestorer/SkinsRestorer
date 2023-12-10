@@ -56,6 +56,8 @@ public class SRSpongeBootstrap {
     @Listener
     public void onInitialize(ConstructPluginEvent event) {
         SRBootstrapper.startPlugin(
+                runnable -> {
+                },
                 injector -> {
                     injector.register(Game.class, game);
                     injector.register(PluginContainer.class, container);

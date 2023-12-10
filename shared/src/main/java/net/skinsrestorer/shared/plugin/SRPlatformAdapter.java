@@ -67,4 +67,12 @@ public interface SRPlatformAdapter<P> extends CommandPlatform<SRCommandSender> {
     default Tristate getMetricsState() {
         return Tristate.TRUE;
     }
+
+    /**
+     * Called when the plugin is getting disabled.
+     * May be optionally implemented to be called by the bootstrap.
+     * Use this to clean up any resources such as schedulers.
+     */
+    default void shutdownCleanup() {
+    }
 }

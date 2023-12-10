@@ -254,4 +254,9 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin> {
             logger.severe("Encountered a error while registering a command", e);
         }
     }
+
+    @Override
+    public void shutdownCleanup() {
+        schedulerProvider.unregisterTasks(server, pluginInstance);
+    }
 }

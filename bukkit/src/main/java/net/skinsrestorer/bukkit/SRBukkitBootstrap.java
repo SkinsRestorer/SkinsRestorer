@@ -35,19 +35,18 @@ import java.nio.file.Path;
 @Getter
 @SuppressWarnings("unused")
 public class SRBukkitBootstrap extends JavaPlugin {
-    private BukkitAudiences adventure;
+    private Runnable shutdownHook;
 
     @Override
     public void onEnable() {
-        this.adventure = BukkitAudiences.create(this);
-
         Server server = getServer();
         Path pluginFile = getFile().toPath();
         SRBootstrapper.startPlugin(
+                runnable -> this.shutdownHook = runnable,
                 injector -> {
                     injector.register(JavaPlugin.class, this);
                     injector.register(Server.class, server);
-                    injector.register(BukkitAudiences.class, this.adventure);
+                    injector.register(BukkitAudiences.class, BukkitAudiences.create(this));
                     injector.register(PluginJarProvider.class, new PluginJarProvider(pluginFile));
                 },
                 new JavaLoggerImpl(new BukkitConsoleImpl(server.getConsoleSender()), server.getLogger()),
@@ -63,9 +62,6 @@ public class SRBukkitBootstrap extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        if (this.adventure != null) {
-            this.adventure.close();
-            this.adventure = null;
-        }
+        shutdownHook.run();
     }
 }

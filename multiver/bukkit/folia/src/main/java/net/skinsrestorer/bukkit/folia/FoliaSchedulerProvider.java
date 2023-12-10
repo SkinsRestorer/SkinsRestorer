@@ -19,18 +19,20 @@
  */
 package net.skinsrestorer.bukkit.folia;
 
+import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import net.skinsrestorer.bukkit.utils.SchedulerProvider;
 import org.bukkit.Server;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
 
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 @SuppressWarnings("unused")
 public class FoliaSchedulerProvider implements SchedulerProvider {
     @Override
     public void runAsync(Server server, Plugin plugin, Runnable runnable) {
-        server.getAsyncScheduler().runNow(plugin, scheduledTask -> runnable.run());
+        server.getAsyncScheduler().runNow(plugin, getCancellingTaskConsumer(plugin, runnable));
     }
 
     /**
@@ -44,12 +46,28 @@ public class FoliaSchedulerProvider implements SchedulerProvider {
 
     @Override
     public void runSyncToEntity(Server server, Plugin plugin, Entity entity, Runnable runnable) {
-        entity.getScheduler().run(plugin, scheduledTask -> runnable.run(), null);
+        entity.getScheduler().run(plugin, getCancellingTaskConsumer(plugin, runnable), null);
     }
 
     @Override
     public void runRepeatAsync(Server server, Plugin plugin, Runnable runnable, int delay, int interval, TimeUnit timeUnit) {
-        server.getAsyncScheduler().runAtFixedRate(plugin, scheduledTask -> runnable.run(), delay, interval, timeUnit);
+        server.getAsyncScheduler().runAtFixedRate(plugin, getCancellingTaskConsumer(plugin, runnable), delay, interval, timeUnit);
+    }
+
+    @Override
+    public void unregisterTasks(Server server, Plugin plugin) {
+        server.getAsyncScheduler().cancelTasks(plugin);
+    }
+
+    private Consumer<ScheduledTask> getCancellingTaskConsumer(Plugin plugin, Runnable runnable) {
+        return scheduledTask -> {
+            if (plugin.isEnabled()) {
+                runnable.run();
+            } else {
+                // If the plugin is disabled, cancel the task from running again.
+                scheduledTask.cancel();
+            }
+        };
     }
 
     @Override

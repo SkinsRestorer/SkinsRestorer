@@ -41,7 +41,6 @@ public class SkinApplierSponge implements SkinApplierAccess<ServerPlayer> {
     private final SRSpongeAdapter plugin;
     private final Game game;
 
-    @SuppressWarnings("unchecked")
     @Override
     public void applySkin(ServerPlayer player, SkinProperty property) {
         try {

@@ -47,6 +47,11 @@ public class BukkitSchedulerProvider implements SchedulerProvider {
     }
 
     @Override
+    public void unregisterTasks(Server server, Plugin plugin) {
+        server.getScheduler().cancelTasks(plugin);
+    }
+
+    @Override
     public boolean isAvailable() {
         return true;
     }

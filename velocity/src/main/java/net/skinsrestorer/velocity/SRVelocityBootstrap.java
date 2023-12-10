@@ -57,6 +57,8 @@ public class SRVelocityBootstrap {
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent event) {
         SRBootstrapper.startPlugin(
+                runnable -> {
+                },
                 injector -> {
                     injector.register(ProxyServer.class, proxy);
                     injector.register(Injector.class, guiceInjector);

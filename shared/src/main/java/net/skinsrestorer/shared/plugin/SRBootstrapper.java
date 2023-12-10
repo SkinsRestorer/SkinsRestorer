@@ -31,6 +31,7 @@ import java.util.function.Consumer;
 
 public class SRBootstrapper {
     public static void startPlugin(
+            Consumer<Runnable> shutdownHookConsumer,
             Consumer<Injector> platformRegister,
             SRPlatformLogger isrLogger, boolean loggerColor,
             Class<? extends SRPlatformAdapter<?>> adapterClass,
@@ -55,6 +56,9 @@ public class SRBootstrapper {
 
             srPlugin = new SRPlugin(injector, version, dataFolder, updateCheck);
             injector.getSingleton(srPlatformClass);
+
+            // Allow a platform to call plugin shutdown
+            shutdownHookConsumer.accept(srPlugin::shutdown);
 
             srPlugin.startup(initCLass);
         } catch (Throwable t) {

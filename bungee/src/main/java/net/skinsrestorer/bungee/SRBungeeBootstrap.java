@@ -29,21 +29,20 @@ import net.skinsrestorer.shared.plugin.SRBootstrapper;
 import net.skinsrestorer.shared.plugin.SRProxyPlugin;
 import net.skinsrestorer.shared.update.SharedUpdateCheckInit;
 
+@Getter
 @SuppressWarnings("unused")
 public class SRBungeeBootstrap extends Plugin {
-    @Getter
-    private BungeeAudiences adventure;
+    private Runnable shutdownHook;
 
     @Override
     public void onEnable() {
-        this.adventure = BungeeAudiences.create(this);
-
         ProxyServer proxy = getProxy();
         SRBootstrapper.startPlugin(
+                runnable -> this.shutdownHook = runnable,
                 injector -> {
                     injector.register(Plugin.class, this);
                     injector.register(ProxyServer.class, proxy);
-                    injector.register(BungeeAudiences.class, this.adventure);
+                    injector.register(BungeeAudiences.class, BungeeAudiences.create(this));
                 },
                 new JavaLoggerImpl(new BungeeConsoleImpl(proxy.getConsole()), proxy.getLogger()),
                 true,
@@ -58,9 +57,6 @@ public class SRBungeeBootstrap extends Plugin {
 
     @Override
     public void onDisable() {
-        if (this.adventure != null) {
-            this.adventure.close();
-            this.adventure = null;
-        }
+            shutdownHook.run();
     }
 }

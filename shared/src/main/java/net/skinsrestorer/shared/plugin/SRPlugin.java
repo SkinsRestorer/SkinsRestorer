@@ -78,6 +78,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -94,6 +96,8 @@ public class SRPlugin {
     @Getter
     private final String version;
     private final Injector injector;
+    @Getter
+    private final List<Runnable> shutdownHooks = new ArrayList<>();
     @Getter
     private boolean outdated = false;
     @Getter
@@ -428,5 +432,10 @@ public class SRPlugin {
 
     public String getUserAgent() {
         return String.format(USER_AGENT, version, adapter.getPlatform());
+    }
+
+    public void shutdown() {
+        adapter.shutdownCleanup();
+        shutdownHooks.forEach(Runnable::run);
     }
 }
