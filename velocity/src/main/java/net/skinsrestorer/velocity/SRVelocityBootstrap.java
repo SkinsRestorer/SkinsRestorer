@@ -31,7 +31,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.shared.plugin.SRBootstrapper;
 import net.skinsrestorer.shared.plugin.SRProxyPlugin;
-import net.skinsrestorer.shared.update.SharedUpdateCheckInit;
+import net.skinsrestorer.shared.update.UpdateCheckInit;
 import net.skinsrestorer.velocity.logger.Slf4jLoggerImpl;
 import org.slf4j.Logger;
 
@@ -67,7 +67,6 @@ public class SRVelocityBootstrap {
                 new Slf4jLoggerImpl(logger),
                 false,
                 SRVelocityAdapter.class,
-                SharedUpdateCheckInit.class,
                 SRProxyPlugin.class,
                 container.getDescription().getVersion()
                         .orElseThrow(() -> new RuntimeException("Failed to get version from plugin container.")),

@@ -19,10 +19,32 @@
  */
 package net.skinsrestorer.shared.update;
 
-public interface UpdateCheckInit {
-    void run(InitCause cause);
+import ch.jalu.injector.Injector;
+import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 
-    enum InitCause {
+import javax.inject.Inject;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
+
+@RequiredArgsConstructor(onConstructor_ = @Inject)
+public class UpdateCheckInit {
+    private final SRPlatformAdapter<?> adapter;
+    private final UpdateCheckerGitHub updateChecker;
+    private final UpdateCheckExecutor updateCheckExecutor;
+    private final Injector injector;
+
+    public void run(InitCause cause) {
+        DownloaderClassProvider downloaderClassProvider = injector.getIfAvailable(DownloaderClassProvider.class);
+        UpdateDownloader downloader = downloaderClassProvider == null ? null : injector.getSingleton(downloaderClassProvider.get());
+
+        updateCheckExecutor.checkUpdate(cause.toUpdateCause(), updateChecker, downloader, true);
+
+        int delayInt = 60 + ThreadLocalRandom.current().nextInt(240 - 60 + 1);
+        adapter.runRepeatAsync(() -> updateCheckExecutor.checkUpdate(UpdateCause.SCHEDULED, updateChecker, downloader, false), delayInt, delayInt, TimeUnit.MINUTES);
+    }
+
+    public enum InitCause {
         STARTUP,
         ERROR;
 

@@ -19,13 +19,7 @@
  */
 package net.skinsrestorer.shared.update;
 
-public enum UpdateCause {
-    STARTUP,
-    ERROR,
-    SCHEDULED,
-    NO_NETWORK;
+import javax.inject.Provider;
 
-    public boolean isError() {
-        return this == ERROR;
-    }
+public interface DownloaderClassProvider extends Provider<Class<? extends UpdateDownloader>> {
 }

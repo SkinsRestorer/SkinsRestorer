@@ -35,7 +35,7 @@ public class SRBootstrapper {
             Consumer<Injector> platformRegister,
             SRPlatformLogger isrLogger, boolean loggerColor,
             Class<? extends SRPlatformAdapter<?>> adapterClass,
-            Class<? extends UpdateCheckInit> updateCheck, Class<?> srPlatformClass,
+            Class<?> srPlatformClass,
             String version, Path dataFolder,
             Class<? extends SRPlatformInit> initCLass) {
         SRPlugin srPlugin = null;
@@ -54,7 +54,7 @@ public class SRBootstrapper {
                 injector.register(SRProxyAdapter.class, (SRProxyAdapter<?>) adapter);
             }
 
-            srPlugin = new SRPlugin(injector, version, dataFolder, updateCheck);
+            srPlugin = new SRPlugin(injector, version, dataFolder);
             injector.getSingleton(srPlatformClass);
 
             // Allow a platform to call plugin shutdown

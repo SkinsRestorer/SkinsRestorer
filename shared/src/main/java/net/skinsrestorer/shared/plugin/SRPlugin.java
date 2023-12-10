@@ -90,7 +90,6 @@ public class SRPlugin {
     private static final boolean unitTest = System.getProperty("sr.unit.test") != null;
     private final SRPlatformAdapter<?> adapter;
     private final SRLogger logger;
-    private final Class<? extends UpdateCheckInit> updateCheck;
     @Getter
     private final Path dataFolder;
     @Getter
@@ -103,13 +102,12 @@ public class SRPlugin {
     @Getter
     private boolean updaterInitialized = false;
 
-    public SRPlugin(Injector injector, String version, Path dataFolder, Class<? extends UpdateCheckInit> updateCheck) {
+    public SRPlugin(Injector injector, String version, Path dataFolder) {
         injector.register(SRPlugin.class, this);
 
         this.injector = injector;
         this.adapter = injector.getSingleton(SRPlatformAdapter.class);
         this.logger = injector.getSingleton(SRLogger.class);
-        this.updateCheck = updateCheck;
         this.version = version;
         this.dataFolder = dataFolder;
     }
@@ -322,7 +320,7 @@ public class SRPlugin {
             return;
         }
 
-        injector.getSingleton(updateCheck).run(cause);
+        injector.getSingleton(UpdateCheckInit.class).run(cause);
     }
 
     public void setOutdated() {
