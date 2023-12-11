@@ -87,10 +87,6 @@ public class SkinStorageImpl implements SkinStorage {
         return updatePlayerSkinData(uuid, mojangAPI::getProfile, false);
     }
 
-    private interface ProfileGetter {
-        Optional<SkinProperty> getProfile(UUID uuid) throws DataRequestException;
-    }
-
     private Optional<SkinProperty> updatePlayerSkinData(UUID uuid, ProfileGetter profileGetter, boolean skipDbLookup) throws DataRequestException {
         try {
             Optional<PlayerSkinData> optionalData = skipDbLookup ? Optional.empty() : adapterReference.get().getPlayerSkinData(uuid);
@@ -365,5 +361,9 @@ public class SkinStorageImpl implements SkinStorage {
         HardcodedSkins(String value, String signature) {
             this.property = SkinProperty.of(value, signature);
         }
+    }
+
+    private interface ProfileGetter {
+        Optional<SkinProperty> getProfile(UUID uuid) throws DataRequestException;
     }
 }

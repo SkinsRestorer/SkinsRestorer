@@ -38,9 +38,8 @@ public interface CacheStorage {
      * @param allowExpired Allow expired data to be returned
      * @return The skin data of the player or empty if no such player exists
      * @throws DataRequestException If the data could not be retrieved
-     *
      * @deprecated Use {@link SkinStorage#getPlayerSkin(String, boolean)} instead.
-     *             This method will now just redirect you to {@link SkinStorage#getPlayerSkin(String, boolean)}.
+     * This method will now just redirect you to {@link SkinStorage#getPlayerSkin(String, boolean)}.
      *             TODO: Remove in 16.0.0
      */
     @Deprecated

@@ -20,14 +20,15 @@
 package net.skinsrestorer;
 
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.bukkit.SRBukkitAdapter;
 import net.skinsrestorer.bukkit.SRBukkitInit;
 import net.skinsrestorer.bukkit.logger.BukkitConsoleImpl;
+import net.skinsrestorer.bukkit.update.UpdateDownloaderGithub;
 import net.skinsrestorer.bukkit.utils.PluginJarProvider;
 import net.skinsrestorer.shared.log.JavaLoggerImpl;
 import net.skinsrestorer.shared.plugin.SRBootstrapper;
 import net.skinsrestorer.shared.plugin.SRServerPlugin;
+import net.skinsrestorer.shared.update.DownloaderClassProvider;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.CommandMap;
@@ -96,12 +97,13 @@ public class LoadTest {
         when(server.getCommandMap()).thenReturn(mock(SimpleCommandMap.class));
         when(server.getHelpMap()).thenReturn(mock(HelpMap.class));
         when(server.getPluginManager()).thenReturn(mock(SimplePluginManager.class));
+        when(server.getUpdateFolderFile()).thenReturn(tempDir.toFile());
 
         Bukkit.setServer(server);
 
         JavaPluginMock plugin = mock(JavaPluginMock.class);
         PluginDescriptionFile description =
-                new PluginDescriptionFile("SkinsRestorer", BuildData.VERSION, "net.skinsrestorer.bukkit.SRBukkitBootstrap");
+                new PluginDescriptionFile("Unknown", "", "");
         Field descriptionField = JavaPlugin.class.getDeclaredField("description");
         descriptionField.setAccessible(true);
         descriptionField.set(plugin, description);
@@ -119,13 +121,14 @@ public class LoadTest {
                         injector.register(JavaPlugin.class, plugin);
                         injector.register(Server.class, server);
                         injector.register(BukkitAudiences.class, adventure);
-                        injector.register(PluginJarProvider.class, new PluginJarProvider(pluginFile));
+                        injector.register(PluginJarProvider.class, () -> pluginFile);
+                        injector.register(DownloaderClassProvider.class, () -> UpdateDownloaderGithub.class);
                     },
                     new JavaLoggerImpl(new BukkitConsoleImpl(server.getConsoleSender()), server.getLogger()),
                     true,
                     SRBukkitAdapter.class,
                     SRServerPlugin.class,
-                    BuildData.VERSION,
+                    "14.0.0", // Always trigger an update download for testing
                     configDir,
                     SRBukkitInit.class
             );

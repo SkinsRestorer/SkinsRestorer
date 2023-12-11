@@ -24,7 +24,6 @@ import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.property.MojangSkinDataResult;
-import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.storage.CacheStorage;
 import net.skinsrestorer.api.storage.SkinStorage;
 import net.skinsrestorer.shared.config.StorageConfig;

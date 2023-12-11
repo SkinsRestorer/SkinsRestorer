@@ -22,8 +22,6 @@ package net.skinsrestorer;
 import ch.jalu.configme.SettingsManager;
 import ch.jalu.injector.Injector;
 import net.skinsrestorer.api.connections.model.MineSkinResponse;
-import net.skinsrestorer.api.exception.DataRequestException;
-import net.skinsrestorer.api.exception.MineSkinException;
 import net.skinsrestorer.shared.config.APIConfig;
 import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.connections.MineSkinAPIImpl;

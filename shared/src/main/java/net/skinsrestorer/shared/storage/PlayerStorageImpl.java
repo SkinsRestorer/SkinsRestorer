@@ -27,7 +27,6 @@ import net.skinsrestorer.api.property.MojangSkinDataResult;
 import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.storage.PlayerStorage;
-import net.skinsrestorer.api.storage.SkinStorage;
 import net.skinsrestorer.shared.config.LoginConfig;
 import net.skinsrestorer.shared.config.StorageConfig;
 import net.skinsrestorer.shared.floodgate.FloodgateUtil;

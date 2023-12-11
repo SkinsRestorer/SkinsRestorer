@@ -82,11 +82,10 @@ public class UpdateCheckerGitHub {
                 }
 
                 String downloadUrl = jarAssetUrl.get();
+                printUpdateAvailable(cause, releaseInfo.getTagName(), downloadUrl, downloader != null);
                 if (downloader != null && downloader.downloadUpdate(downloadUrl)) {
                     updateDownloaded = true;
                 }
-
-                printUpdateAvailable(cause, releaseInfo.getTagName(), downloadUrl, downloader != null);
             } else {
                 if (cause == UpdateCause.SCHEDULED) {
                     return;
@@ -102,7 +101,7 @@ public class UpdateCheckerGitHub {
 
     public void printUpToDate(UpdateCause cause) {
         printHeader(cause);
-        logger.info("§b    Current version: §a" + plugin.getVersion());
+        logger.info("§b    Version: §a" + plugin.getVersion());
         logger.info("§b    Commit: §a" + BuildData.COMMIT_SHORT);
         if (cause == UpdateCause.NO_NETWORK) {
             logger.info("§c    No network connection available!");
@@ -114,13 +113,12 @@ public class UpdateCheckerGitHub {
 
     public void printUpdateAvailable(UpdateCause cause, String newVersion, String downloadUrl, boolean updateDownloader) {
         printHeader(cause);
-        logger.info("§b    Current version: §c" + plugin.getVersion());
-        logger.info("§b    Commit: §a" + BuildData.COMMIT_SHORT);
-        logger.info("§b    New version: §c" + newVersion);
+        logger.info("§b    Version: §c" + plugin.getVersion());
+        logger.info("§b    Commit: §c" + BuildData.COMMIT_SHORT);
         if (updateDownloader) {
-            logger.info("    A new version is available! Downloading it now...");
+            logger.info("§b    A new version (§a" + newVersion + "§b) is available! Downloading update...");
         } else {
-            logger.info("§e    A new version is available! Download it at:");
+            logger.info("§b    A new version (§a" + newVersion + "§b) is available!");
             logger.info("§e    " + downloadUrl);
         }
         printFooter();

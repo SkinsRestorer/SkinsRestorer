@@ -32,11 +32,11 @@ public class MojangCacheData {
     @Getter
     private final long timestamp;
 
-    public Optional<UUID> getUniqueId() {
-        return Optional.ofNullable(uniqueId);
-    }
-
     public static MojangCacheData of(UUID uniqueId, long timestamp) {
         return new MojangCacheData(uniqueId, timestamp);
+    }
+
+    public Optional<UUID> getUniqueId() {
+        return Optional.ofNullable(uniqueId);
     }
 }

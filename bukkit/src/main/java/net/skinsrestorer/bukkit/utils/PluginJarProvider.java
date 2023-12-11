@@ -19,17 +19,8 @@
  */
 package net.skinsrestorer.bukkit.utils;
 
-import lombok.RequiredArgsConstructor;
-
 import javax.inject.Provider;
 import java.nio.file.Path;
 
-@RequiredArgsConstructor
-public class PluginJarProvider implements Provider<Path> {
-    private final Path pluginFile;
-
-    @Override
-    public Path get() {
-        return pluginFile;
-    }
+public interface PluginJarProvider extends Provider<Path> {
 }

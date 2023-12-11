@@ -29,14 +29,15 @@ import org.bukkit.Server;
 
 import javax.inject.Inject;
 import javax.net.ssl.HttpsURLConnection;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 
 /**
  * Parts taken from <a href="https://github.com/InventivetalentDev/SpigetUpdater">SpigetUpdater</a>
@@ -58,11 +59,10 @@ public class UpdateDownloaderGithub implements UpdateDownloader {
             }
 
             Path tempFile = Files.createTempFile("SkinsRestorer", ".jar");
-            ReadableByteChannel channel = Channels.newChannel(connection.getInputStream());
-
-            try (FileOutputStream output = new FileOutputStream(tempFile.toFile())) {
-                output.getChannel().transferFrom(channel, 0, Long.MAX_VALUE);
-                output.flush();
+            try (ReadableByteChannel input = Channels.newChannel(connection.getInputStream());
+                 FileChannel output = FileChannel.open(tempFile, StandardOpenOption.WRITE)) {
+                output.transferFrom(input, 0, Long.MAX_VALUE);
+                output.force(true);
             }
 
             Files.move(tempFile, targetFile, StandardCopyOption.REPLACE_EXISTING);

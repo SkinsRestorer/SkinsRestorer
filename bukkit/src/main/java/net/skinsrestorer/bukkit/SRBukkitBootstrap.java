@@ -48,7 +48,7 @@ public class SRBukkitBootstrap extends JavaPlugin {
                     injector.register(JavaPlugin.class, this);
                     injector.register(Server.class, server);
                     injector.register(BukkitAudiences.class, BukkitAudiences.create(this));
-                    injector.register(PluginJarProvider.class, new PluginJarProvider(pluginFile));
+                    injector.register(PluginJarProvider.class, () -> pluginFile);
                     injector.register(DownloaderClassProvider.class, () -> UpdateDownloaderGithub.class);
                 },
                 new JavaLoggerImpl(new BukkitConsoleImpl(server.getConsoleSender()), server.getLogger()),
