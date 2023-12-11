@@ -506,20 +506,24 @@ public class FileAdapter implements StorageAdapter {
         Map<String, GUIFileData> files = getGUIFilesSorted(offset);
 
         for (Map.Entry<String, GUIFileData> entry : files.entrySet()) {
-            if (entry.getValue().getSkinType() == SkinType.PLAYER) {
-                try {
-                    getPlayerSkinData(UUID.fromString(entry.getValue().getFileName()))
-                            .ifPresent(skinData -> list.put(entry.getKey(), skinData.getProperty().getValue()));
-                } catch (StorageException e) {
-                    logger.warning("Failed to load player skin data for " + entry.getValue().getFileName(), e);
+            GUIFileData data = entry.getValue();
+            String fileName = data.getFileName();
+            try {
+                Optional<SkinProperty> skinProperty;
+                SkinType skinType = data.getSkinType();
+                if (skinType == SkinType.PLAYER) {
+                    skinProperty = getPlayerSkinData(UUID.fromString(fileName))
+                            .map(PlayerSkinData::getProperty);
+                } else if (skinType == SkinType.CUSTOM) {
+                    skinProperty = getCustomSkinData(fileName)
+                            .map(CustomSkinData::getProperty);
+                } else {
+                    throw new IllegalStateException("Unknown skin type: " + skinType);
                 }
-            } else if (entry.getValue().getSkinType() == SkinType.CUSTOM) {
-                try {
-                    getCustomSkinData(entry.getValue().getFileName())
-                            .ifPresent(skinData -> list.put(entry.getKey(), skinData.getProperty().getValue()));
-                } catch (StorageException e) {
-                    logger.warning("Failed to load custom skin data for " + entry.getValue().getFileName(), e);
-                }
+
+                skinProperty.ifPresent(property -> list.put(entry.getKey(), property.getValue()));
+            } catch (StorageException e) {
+                logger.warning("Failed to load skin data for " + fileName, e);
             }
         }
 
@@ -538,8 +542,7 @@ public class FileAdapter implements StorageAdapter {
         Map<String, GUIFileData> files = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         try (Stream<Path> stream = Files.walk(skinsFolder, 1)) {
             int skinIndex = 0;
-            for (Iterator<Path> it = stream.iterator(); it.hasNext(); ) {
-                Path path = it.next();
+            for (Path path : (Iterable<Path>) stream::iterator) {
                 if (Files.isDirectory(path)) {
                     continue;
                 }
