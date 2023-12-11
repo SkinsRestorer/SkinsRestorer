@@ -23,7 +23,6 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.skinsrestorer.mappings.shared.IMapping;
 import net.skinsrestorer.mappings.shared.MappingReflection;
@@ -57,7 +56,6 @@ public class Mapping1_20_4 implements IMapping {
             // Slowly getting from object to object till we get what is needed for
             // the respawn packet
             ServerLevel world = entityPlayer.serverLevel();
-            ServerPlayerGameMode gamemode = entityPlayer.gameMode;
 
             CommonPlayerSpawnInfo spawnInfo = entityPlayer.createCommonSpawnInfo(world);
             ClientboundRespawnPacket respawn = new ClientboundRespawnPacket(
@@ -93,6 +91,8 @@ public class Mapping1_20_4 implements IMapping {
                 ClientboundUpdateMobEffectPacket effect = new ClientboundUpdateMobEffectPacket(entityPlayer.getId(), mobEffect);
                 sendPacket(entityPlayer, effect);
             }
+
+            sendPacket(entityPlayer, new ClientboundGameEventPacket(ClientboundGameEventPacket.LEVEL_CHUNKS_LOAD_START, 0.0F));
         } catch (ReflectiveOperationException e) {
             e.printStackTrace();
             throw new RuntimeException(e.getMessage());
