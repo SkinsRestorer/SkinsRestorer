@@ -31,6 +31,7 @@ import net.skinsrestorer.bukkit.paper.PaperSkinApplier;
 import net.skinsrestorer.bukkit.skinrefresher.MappingSpigotSkinRefresher;
 import net.skinsrestorer.bukkit.skinrefresher.PaperSkinRefresher;
 import net.skinsrestorer.bukkit.skinrefresher.SpigotSkinRefresher;
+import net.skinsrestorer.bukkit.skinrefresher.ViaWorkaround;
 import net.skinsrestorer.bukkit.spigot.SpigotPassengerUtil;
 import net.skinsrestorer.bukkit.spigot.SpigotUtil;
 import net.skinsrestorer.bukkit.utils.*;
@@ -98,9 +99,17 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
     }
 
     private Consumer<Player> selectSpigotRefresher(Server server) throws InitializeException {
+        // Wait to run task in order for ViaVersion to determine server protocol
+        boolean viaWorkaround = adapter.isPluginEnabled("ViaBackwards")
+                && ViaWorkaround.isProtocolNewer();
+
+        if (viaWorkaround) {
+            logger.debug("Activating ViaBackwards workaround.");
+        }
+
         if (NMSVersion.SERVER_VERSION.isNewerThan(new SemanticVersion(1, 17, 1))) {
-            return new MappingSpigotSkinRefresher(logger, server);
-        } else return new SpigotSkinRefresher(adapter, logger);
+            return new MappingSpigotSkinRefresher(logger, server, viaWorkaround);
+        } else return new SpigotSkinRefresher(adapter, logger, viaWorkaround);
     }
 
     @Override

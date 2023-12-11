@@ -38,6 +38,7 @@ import java.util.function.Consumer;
 
 public final class SpigotSkinRefresher implements Consumer<Player> {
     private final SRBukkitAdapter adapter;
+    private final boolean viaWorkaround;
     private final Class<?> playOutRespawn;
     private final Class<?> playOutPlayerInfo;
     private final Class<?> playOutPosition;
@@ -45,10 +46,10 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
     private final Class<?> playOutHeldItemSlot;
     private Enum<?> removePlayerEnum;
     private Enum<?> addPlayerEnum;
-    private boolean useViabackwards = false;
 
-    public SpigotSkinRefresher(SRBukkitAdapter adapter, SRLogger logger) throws InitializeException {
+    public SpigotSkinRefresher(SRBukkitAdapter adapter, SRLogger logger, boolean viaWorkaround) throws InitializeException {
         this.adapter = adapter;
+        this.viaWorkaround = viaWorkaround;
 
         try {
             packet = BukkitReflection.getNMSClass("Packet", "net.minecraft.network.protocol.Packet");
@@ -84,15 +85,6 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
                     }
                 }
             }
-
-            adapter.runSync(() -> {
-                // Wait to run task in order for ViaVersion to determine server protocol
-                if (adapter.isPluginEnabled("ViaBackwards")
-                        && ViaWorkaround.isProtocolNewer()) {
-                    useViabackwards = true;
-                    logger.debug("Activating ViaBackwards workaround.");
-                }
-            });
 
             logger.debug("Using SpigotSkinRefresher");
         } catch (Exception e) {
@@ -222,7 +214,7 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
             sendPacket(playerCon, addPlayer);
 
             boolean sendRespawnPacketDirectly = true;
-            if (useViabackwards) {
+            if (viaWorkaround) {
                 try {
                     Object worldObject = ReflectionUtil.getFieldByType(entityPlayer, "World");
                     boolean flat = (boolean) ReflectionUtil.invokeMethod(worldObject, "isFlatWorld");

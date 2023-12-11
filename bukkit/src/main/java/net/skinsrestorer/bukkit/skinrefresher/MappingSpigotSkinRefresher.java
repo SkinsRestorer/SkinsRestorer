@@ -33,21 +33,16 @@ import java.util.function.Predicate;
 
 public class MappingSpigotSkinRefresher implements Consumer<Player> {
     private final IMapping mapping;
-    private boolean useViaBackwards = false;
+    private final boolean viaWorkaround;
 
-    public MappingSpigotSkinRefresher(SRLogger logger, Server server) throws NoMappingException {
+    public MappingSpigotSkinRefresher(SRLogger logger, Server server, boolean viaWorkaround) throws NoMappingException {
+        this.viaWorkaround = viaWorkaround;
+
         Optional<IMapping> mapping = MappingManager.getMapping(server);
         if (!mapping.isPresent()) {
             throw new NoMappingException(server);
         } else {
             this.mapping = mapping.get();
-        }
-
-        // Wait to run task in order for ViaVersion to determine server protocol
-        if (adapter.isPluginEnabled("ViaBackwards")
-                && ViaWorkaround.isProtocolNewer()) {
-            useViaBackwards = true;
-            logger.debug("Activating ViaBackwards workaround.");
         }
 
         logger.debug("Using MappingSpigotSkinRefresher");
@@ -57,7 +52,7 @@ public class MappingSpigotSkinRefresher implements Consumer<Player> {
     public void accept(Player player) {
         Predicate<ViaPacketData> viaFunction;
 
-        if (useViaBackwards) {
+        if (viaWorkaround) {
             viaFunction = ViaWorkaround::sendCustomPacketVia;
         } else {
             viaFunction = data -> true;
