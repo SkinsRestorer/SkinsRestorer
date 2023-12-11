@@ -48,15 +48,16 @@ public class CacheStorageImpl implements CacheStorage {
 
     @Override
     public Optional<MojangSkinDataResult> getSkin(String playerName, boolean allowExpired) throws DataRequestException {
-        if (!ValidationUtil.validMojangUsername(playerName)) {
+        if (ValidationUtil.invalidMojangUsername(playerName)) {
             return Optional.empty();
         }
 
         try {
-            Optional<MojangCacheData> stored = getCachedData(playerName, allowExpired);
-            if (stored.isPresent()) {
-                if (stored.get().isPremium()) {
-                    UUID uuid = stored.get().getUniqueId();
+            Optional<MojangCacheData> cached = getCachedData(playerName, allowExpired);
+            if (cached.isPresent()) {
+                Optional<UUID> optionalUUID = cached.get().getUniqueId();
+                if (optionalUUID.isPresent()) {
+                    UUID uuid = optionalUUID.get();
                     Optional<SkinProperty> skinProperty = mojangAPI.getProfile(uuid);
 
                     return skinProperty.map(property -> MojangSkinDataResult.of(uuid, property));
@@ -67,8 +68,7 @@ public class CacheStorageImpl implements CacheStorage {
 
             Optional<MojangSkinDataResult> optional = mojangAPI.getSkin(playerName);
             adapterReference.get().setCachedUUID(playerName,
-                    MojangCacheData.of(optional.isPresent(),
-                            optional.map(MojangSkinDataResult::getUniqueId).orElse(null),
+                    MojangCacheData.of(optional.map(MojangSkinDataResult::getUniqueId).orElse(null),
                             TimeUtil.getEpochSecond()));
 
             return optional;
@@ -80,21 +80,21 @@ public class CacheStorageImpl implements CacheStorage {
 
     @Override
     public Optional<UUID> getUUID(String playerName, boolean allowExpired) throws DataRequestException {
-        if (!ValidationUtil.validMojangUsername(playerName)) {
+        if (ValidationUtil.invalidMojangUsername(playerName)) {
             return Optional.empty();
         }
 
         try {
             Optional<MojangCacheData> stored = getCachedData(playerName, allowExpired);
             if (stored.isPresent()) {
-                return Optional.ofNullable(stored.get().getUniqueId());
+                return stored.get().getUniqueId();
             }
 
             try {
                 Optional<UUID> uuid = mojangAPI.getUUID(playerName);
 
                 adapterReference.get().setCachedUUID(playerName,
-                        MojangCacheData.of(uuid.isPresent(), uuid.orElse(null), TimeUtil.getEpochSecond()));
+                        MojangCacheData.of(uuid.orElse(null), TimeUtil.getEpochSecond()));
 
                 return uuid;
             } catch (DataRequestException e) {

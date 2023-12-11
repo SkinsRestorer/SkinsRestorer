@@ -23,21 +23,21 @@ public class ValidationUtil {
     private ValidationUtil() {
     }
 
-    public static boolean validMojangUsername(String username) {
+    public static boolean invalidMojangUsername(String username) {
         // Note: there are exceptions to players with under 3 characters, who bought the game early in its development.
         if (username.length() > 16) {
-            return false;
+            return true;
         }
 
         // For some reason, Apache's Lists.charactersOf is faster than character indexing for small strings.
         for (char c : username.toCharArray()) {
             // Note: Players who bought the game early in its development can have "-" in usernames.
             if (!(c >= 'a' && c <= 'z') && !(c >= '0' && c <= '9') && !(c >= 'A' && c <= 'Z') && c != '_' && c != '-') {
-                return false;
+                return true;
             }
         }
 
-        return true;
+        return false;
     }
 
     public static boolean validSkinUrl(String url) {

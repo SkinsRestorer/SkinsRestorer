@@ -61,7 +61,7 @@ public class MojangAPIImpl implements MojangAPI {
 
     @Override
     public Optional<MojangSkinDataResult> getSkin(String playerName) throws DataRequestException {
-        if (!ValidationUtil.validMojangUsername(playerName)) {
+        if (ValidationUtil.invalidMojangUsername(playerName)) {
             return Optional.empty();
         }
 
@@ -86,7 +86,7 @@ public class MojangAPIImpl implements MojangAPI {
      * @return String uuid trimmed (without dashes)
      */
     public Optional<UUID> getUUID(String playerName) throws DataRequestException {
-        if (!ValidationUtil.validMojangUsername(playerName)) {
+        if (ValidationUtil.invalidMojangUsername(playerName)) {
             return Optional.empty();
         }
 

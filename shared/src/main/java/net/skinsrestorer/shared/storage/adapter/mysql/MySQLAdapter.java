@@ -97,10 +97,21 @@ public class MySQLAdapter implements StorageAdapter {
                 + "PRIMARY KEY (`name`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
 
         try {
+            // v14
             migrateLegacyPlayerTable();
             migrateLegacySkinTable();
+
+            // v15
+            migrateV15();
         } catch (IOException e) {
-            logger.severe("Failed to migrate legacy tables", e);
+            logger.severe("Failed to migrate tables", e);
+        }
+    }
+
+    private void migrateV15() {
+        // Now fully replaced by missing uuid column
+        if (columnExists(resolveCacheTable(), "is_premium")) {
+            mysql.execute("ALTER TABLE `" + resolveCacheTable() + "` DROP COLUMN `is_premium`");
         }
     }
 
@@ -189,6 +200,15 @@ public class MySQLAdapter implements StorageAdapter {
             return rs.next();
         } catch (SQLException e) {
             logger.severe("Failed to check if table exists", e);
+            return false;
+        }
+    }
+
+    private boolean columnExists(String table, String column) {
+        try (ResultSet rs = mysql.query("SHOW COLUMNS FROM `" + table + "` LIKE '" + column + "'")) {
+            return rs.next();
+        } catch (SQLException e) {
+            logger.severe("Failed to check if column exists", e);
             return false;
         }
     }
@@ -481,11 +501,11 @@ public class MySQLAdapter implements StorageAdapter {
                 return Optional.empty();
             }
 
-            boolean isPremium = crs.getBoolean("is_premium");
-            UUID uuid = isPremium ? UUID.fromString(crs.getString("uuid")) : null;
+            String uuidString = crs.getString("uuid");
+            UUID uuid = uuidString != null ? UUID.fromString(uuidString) : null;
             long timestamp = crs.getLong("timestamp");
 
-            return Optional.of(MojangCacheData.of(isPremium, uuid, timestamp));
+            return Optional.of(MojangCacheData.of(uuid, timestamp));
         } catch (SQLException e) {
             throw new StorageException(e);
         }
@@ -494,12 +514,10 @@ public class MySQLAdapter implements StorageAdapter {
     @Override
     public void setCachedUUID(String playerName, MojangCacheData mojangCacheData) {
         String uuid = mojangCacheData.getUniqueId() != null ? mojangCacheData.getUniqueId().toString() : null;
-        mysql.execute("INSERT INTO " + resolveCacheTable() + " (name, is_premium, uuid, timestamp) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE is_premium=?, uuid=?, timestamp=?",
+        mysql.execute("INSERT INTO " + resolveCacheTable() + " (name, uuid, timestamp) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE uuid=?, timestamp=?",
                 playerName,
-                mojangCacheData.isPremium(),
                 uuid,
                 mojangCacheData.getTimestamp(),
-                mojangCacheData.isPremium(),
                 uuid,
                 mojangCacheData.getTimestamp());
     }

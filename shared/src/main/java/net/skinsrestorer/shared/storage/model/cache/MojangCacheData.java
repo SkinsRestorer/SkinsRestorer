@@ -23,22 +23,20 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Optional;
 import java.util.UUID;
 
-@Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class MojangCacheData {
-    private final boolean isPremium;
     private final UUID uniqueId; // Null if not premium
+    @Getter
     private final long timestamp;
 
-    public static MojangCacheData of(boolean isPremium, UUID uniqueId, long timestamp) {
-        if (isPremium && uniqueId == null)
-            throw new IllegalArgumentException("uniqueId cannot be null if isPremium is true");
+    public Optional<UUID> getUniqueId() {
+        return Optional.ofNullable(uniqueId);
+    }
 
-        if (!isPremium && uniqueId != null)
-            throw new IllegalArgumentException("uniqueId must be null if isPremium is false");
-
-        return new MojangCacheData(isPremium, uniqueId, timestamp);
+    public static MojangCacheData of(UUID uniqueId, long timestamp) {
+        return new MojangCacheData(uniqueId, timestamp);
     }
 }
