@@ -47,6 +47,7 @@ public class HttpClient {
             throw new IOException("Connections are disabled.");
         }
 
+        long start = System.currentTimeMillis();
         URL url = uri.toURL();
 
         // Ensure we're never sending a request to a non-HTTPS URL.
@@ -101,8 +102,11 @@ public class HttpClient {
 
         HttpResponse response = new HttpResponse(connection.getResponseCode(), body.toString(), connection.getHeaderFields());
 
-        logger.debug("Response body: " + response.getBody());
+        logger.debug("Response body: " + response.getBody()
+                .replace("\n", "")
+                .replace("\r", ""));
         logger.debug("Response code: " + response.getStatusCode());
+        logger.debug("Request took " + (System.currentTimeMillis() - start) + "ms.");
 
         return response;
     }
