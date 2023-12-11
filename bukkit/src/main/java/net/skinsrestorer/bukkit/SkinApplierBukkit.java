@@ -87,7 +87,8 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
 
             // use PaperSkinRefresher if no VersionHack plugin found
             try {
-                return new PaperSkinRefresher(logger);
+                logger.debug("Using PaperSkinRefresher");
+                return new PaperSkinRefresher();
             } catch (NoMappingException e) {
                 throw e;
             } catch (InitializeException e) {
@@ -108,8 +109,12 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
         }
 
         if (NMSVersion.SERVER_VERSION.isNewerThan(new SemanticVersion(1, 17, 1))) {
-            return new MappingSpigotSkinRefresher(logger, server, viaWorkaround);
-        } else return new SpigotSkinRefresher(adapter, logger, viaWorkaround);
+            logger.debug("Using MappingSpigotSkinRefresher");
+            return new MappingSpigotSkinRefresher(server, viaWorkaround);
+        } else {
+            logger.debug("Using SpigotSkinRefresher");
+            return new SpigotSkinRefresher(adapter, viaWorkaround);
+        }
     }
 
     @Override

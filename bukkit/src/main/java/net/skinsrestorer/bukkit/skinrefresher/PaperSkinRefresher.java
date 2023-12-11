@@ -22,7 +22,6 @@ package net.skinsrestorer.bukkit.skinrefresher;
 import lombok.SneakyThrows;
 import net.skinsrestorer.bukkit.utils.BukkitReflection;
 import net.skinsrestorer.shared.exception.InitializeException;
-import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.bukkit.entity.Player;
 
@@ -33,7 +32,7 @@ public final class PaperSkinRefresher implements Consumer<Player> {
     private final Method refreshPlayerMethod;
     private final Consumer<Player> triggerHealthUpdate;
 
-    public PaperSkinRefresher(SRLogger logger) throws InitializeException {
+    public PaperSkinRefresher() throws InitializeException {
         try {
             refreshPlayerMethod = BukkitReflection.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("refreshPlayer");
             refreshPlayerMethod.setAccessible(true);
@@ -48,10 +47,7 @@ public final class PaperSkinRefresher implements Consumer<Player> {
                     player.resetMaxHealth();
                 }
             };
-
-            logger.debug("Using PaperSkinRefresher");
         } catch (Exception e) {
-            logger.debug("Failed PaperSkinRefresher", e);
             throw new InitializeException(e);
         }
     }

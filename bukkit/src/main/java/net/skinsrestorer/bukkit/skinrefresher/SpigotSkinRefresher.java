@@ -24,7 +24,6 @@ import net.skinsrestorer.bukkit.utils.BukkitReflection;
 import net.skinsrestorer.bukkit.utils.OPRefreshUtil;
 import net.skinsrestorer.mappings.shared.ViaPacketData;
 import net.skinsrestorer.shared.exception.InitializeException;
-import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.utils.FluentList;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.SRHelpers;
@@ -47,7 +46,7 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
     private Enum<?> removePlayerEnum;
     private Enum<?> addPlayerEnum;
 
-    public SpigotSkinRefresher(SRBukkitAdapter adapter, SRLogger logger, boolean viaWorkaround) throws InitializeException {
+    public SpigotSkinRefresher(SRBukkitAdapter adapter, boolean viaWorkaround) throws InitializeException {
         this.adapter = adapter;
         this.viaWorkaround = viaWorkaround;
 
@@ -85,9 +84,7 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
                     }
                 }
             }
-
-            logger.debug("Using SpigotSkinRefresher");
-        } catch (Exception e) {
+        } catch (ReflectiveOperationException e) {
             throw new InitializeException(e);
         }
     }

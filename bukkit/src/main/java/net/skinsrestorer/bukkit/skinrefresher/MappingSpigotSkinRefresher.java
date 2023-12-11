@@ -23,7 +23,6 @@ import net.skinsrestorer.bukkit.utils.MappingManager;
 import net.skinsrestorer.bukkit.utils.NoMappingException;
 import net.skinsrestorer.mappings.shared.IMapping;
 import net.skinsrestorer.mappings.shared.ViaPacketData;
-import net.skinsrestorer.shared.log.SRLogger;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 
@@ -35,7 +34,7 @@ public class MappingSpigotSkinRefresher implements Consumer<Player> {
     private final IMapping mapping;
     private final boolean viaWorkaround;
 
-    public MappingSpigotSkinRefresher(SRLogger logger, Server server, boolean viaWorkaround) throws NoMappingException {
+    public MappingSpigotSkinRefresher(Server server, boolean viaWorkaround) throws NoMappingException {
         this.viaWorkaround = viaWorkaround;
 
         Optional<IMapping> mapping = MappingManager.getMapping(server);
@@ -44,8 +43,6 @@ public class MappingSpigotSkinRefresher implements Consumer<Player> {
         } else {
             this.mapping = mapping.get();
         }
-
-        logger.debug("Using MappingSpigotSkinRefresher");
     }
 
     @Override
