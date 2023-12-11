@@ -19,10 +19,8 @@
  */
 package net.skinsrestorer.bukkit.skinrefresher;
 
-import net.skinsrestorer.bukkit.SRBukkitAdapter;
 import net.skinsrestorer.bukkit.utils.MappingManager;
 import net.skinsrestorer.bukkit.utils.NoMappingException;
-import net.skinsrestorer.bukkit.utils.OPRefreshUtil;
 import net.skinsrestorer.mappings.shared.IMapping;
 import net.skinsrestorer.mappings.shared.ViaPacketData;
 import net.skinsrestorer.shared.log.SRLogger;
@@ -34,12 +32,10 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class MappingSpigotSkinRefresher implements Consumer<Player> {
-    private final SRBukkitAdapter adapter;
     private final IMapping mapping;
     private boolean useViaBackwards = false;
 
-    public MappingSpigotSkinRefresher(SRBukkitAdapter adapter, SRLogger logger, Server server) throws NoMappingException {
-        this.adapter = adapter;
+    public MappingSpigotSkinRefresher(SRLogger logger, Server server) throws NoMappingException {
         Optional<IMapping> mapping = MappingManager.getMapping(server);
         if (!mapping.isPresent()) {
             throw new NoMappingException(server);
@@ -68,7 +64,5 @@ public class MappingSpigotSkinRefresher implements Consumer<Player> {
         }
 
         mapping.accept(player, viaFunction);
-
-        OPRefreshUtil.refreshOP(player, adapter);
     }
 }

@@ -20,7 +20,10 @@
 package net.skinsrestorer.mappings.mapping1_19_2;
 
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.*;
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket;
+import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
+import net.minecraft.network.protocol.game.ClientboundRespawnPacket;
+import net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
@@ -41,11 +44,6 @@ import java.util.function.Predicate;
 public class Mapping1_19_2 implements IMapping {
     private static void sendPacket(ServerPlayer player, Packet<?> packet) {
         player.connection.send(packet);
-    }
-
-    @Override
-    public void triggerHealthUpdate(Player player) {
-        MappingReflection.getHandle(player, ServerPlayer.class).resetSentInfo();
     }
 
     @Override
@@ -73,8 +71,6 @@ public class Mapping1_19_2 implements IMapping {
         );
 
         Location l = player.getLocation();
-        ClientboundPlayerPositionPacket pos = new ClientboundPlayerPositionPacket(l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<>(), 0, false);
-        ClientboundSetCarriedItemPacket slot = new ClientboundSetCarriedItemPacket(player.getInventory().getHeldItemSlot());
 
         sendPacket(entityPlayer, removePlayer);
         sendPacket(entityPlayer, addPlayer);
@@ -88,12 +84,12 @@ public class Mapping1_19_2 implements IMapping {
 
         entityPlayer.onUpdateAbilities();
 
-        sendPacket(entityPlayer, pos);
-        sendPacket(entityPlayer, slot);
+        sendPacket(entityPlayer, new ClientboundPlayerPositionPacket(l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<>(), 0, false));
 
-        triggerHealthUpdate(player);
+        entityPlayer.resetSentInfo();
 
         PlayerList playerList = entityPlayer.server.getPlayerList();
+        playerList.sendPlayerPermissionLevel(entityPlayer);
         playerList.sendLevelInfo(entityPlayer, world);
         playerList.sendAllPlayerInfo(entityPlayer);
 

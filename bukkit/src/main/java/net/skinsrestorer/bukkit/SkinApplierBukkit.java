@@ -99,7 +99,7 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
 
     private Consumer<Player> selectSpigotRefresher(Server server) throws InitializeException {
         if (NMSVersion.SERVER_VERSION.isNewerThan(new SemanticVersion(1, 17, 1))) {
-            return new MappingSpigotSkinRefresher(adapter, logger, server);
+            return new MappingSpigotSkinRefresher(logger, server);
         } else return new SpigotSkinRefresher(adapter, logger);
     }
 

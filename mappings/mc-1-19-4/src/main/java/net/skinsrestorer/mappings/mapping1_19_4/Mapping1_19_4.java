@@ -44,11 +44,6 @@ public class Mapping1_19_4 implements IMapping {
     }
 
     @Override
-    public void triggerHealthUpdate(Player player) {
-        MappingReflection.getHandle(player, ServerPlayer.class).resetSentInfo();
-    }
-
-    @Override
     public void accept(Player player, Predicate<ViaPacketData> viaFunction) {
         ServerPlayer entityPlayer = MappingReflection.getHandle(player, ServerPlayer.class);
 
@@ -73,8 +68,6 @@ public class Mapping1_19_4 implements IMapping {
         );
 
         Location l = player.getLocation();
-        ClientboundPlayerPositionPacket pos = new ClientboundPlayerPositionPacket(l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<>(), 0);
-        ClientboundSetCarriedItemPacket slot = new ClientboundSetCarriedItemPacket(player.getInventory().getHeldItemSlot());
 
         sendPacket(entityPlayer, removePlayer);
         sendPacket(entityPlayer, addPlayer);
@@ -88,12 +81,12 @@ public class Mapping1_19_4 implements IMapping {
 
         entityPlayer.onUpdateAbilities();
 
-        sendPacket(entityPlayer, pos);
-        sendPacket(entityPlayer, slot);
+        sendPacket(entityPlayer, new ClientboundPlayerPositionPacket(l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<>(), 0));
 
-        triggerHealthUpdate(player);
+        entityPlayer.resetSentInfo();
 
         PlayerList playerList = entityPlayer.server.getPlayerList();
+        playerList.sendPlayerPermissionLevel(entityPlayer);
         playerList.sendLevelInfo(entityPlayer, world);
         playerList.sendAllPlayerInfo(entityPlayer);
 

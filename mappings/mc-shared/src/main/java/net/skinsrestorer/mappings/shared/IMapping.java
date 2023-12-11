@@ -25,8 +25,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 public interface IMapping {
-    void triggerHealthUpdate(Player player);
-
     void accept(Player player, Predicate<ViaPacketData> viaFunction);
 
     /**
