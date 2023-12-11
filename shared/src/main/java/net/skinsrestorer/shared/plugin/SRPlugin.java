@@ -341,21 +341,23 @@ public class SRPlugin {
     }
 
     public void registerMetrics(Object metricsParent) {
-        MetricsCounter metricsCounter = injector.getSingleton(MetricsCounter.class);
+        MetricsBase metrics;
         try {
             Field field = metricsParent.getClass().getDeclaredField("metricsBase");
             field.setAccessible(true);
-            MetricsBase metrics = (MetricsBase) field.get(metricsParent);
-
-            metrics.addCustomChart(new SingleLineChart("mineskin_calls", () -> metricsCounter.collect(MetricsCounter.Service.MINE_SKIN)));
-            metrics.addCustomChart(new SingleLineChart("minetools_calls", () -> metricsCounter.collect(MetricsCounter.Service.MINE_TOOLS)));
-            metrics.addCustomChart(new SingleLineChart("mojang_calls", () -> metricsCounter.collect(MetricsCounter.Service.MOJANG)));
-            metrics.addCustomChart(new SingleLineChart("ashcon_calls", () -> metricsCounter.collect(MetricsCounter.Service.ASHCON)));
-            metrics.addCustomChart(new SimplePie("uses_mysql", metricsCounter::usesMySQL));
-            metrics.addCustomChart(new SimplePie("proxy_mode", metricsCounter::isProxyMode));
+            metrics = (MetricsBase) field.get(metricsParent);
         } catch (ReflectiveOperationException e) {
             e.printStackTrace();
+            return;
         }
+
+        MetricsCounter metricsCounter = injector.getSingleton(MetricsCounter.class);
+        metrics.addCustomChart(new SingleLineChart("mineskin_calls", () -> metricsCounter.collect(MetricsCounter.Service.MINE_SKIN)));
+        metrics.addCustomChart(new SingleLineChart("minetools_calls", () -> metricsCounter.collect(MetricsCounter.Service.MINE_TOOLS)));
+        metrics.addCustomChart(new SingleLineChart("mojang_calls", () -> metricsCounter.collect(MetricsCounter.Service.MOJANG)));
+        metrics.addCustomChart(new SingleLineChart("ashcon_calls", () -> metricsCounter.collect(MetricsCounter.Service.ASHCON)));
+        metrics.addCustomChart(new SimplePie("uses_mysql", metricsCounter::usesMySQL));
+        metrics.addCustomChart(new SimplePie("proxy_mode", metricsCounter::isProxyMode));
     }
 
     public void startup(Class<? extends SRPlatformInit> initClass) throws InitializeException {
