@@ -124,10 +124,11 @@ public class MessageLoader {
                         Optional<Message> message = Message.fromKey(entry.getKey());
                         if (!message.isPresent()) {
                             logger.warning("Skipping unknown message key " + entry.getKey());
-                        } else {
-                            manager.addMessage(message.get(), locale, entry.getValue());
-                            count++;
+                            continue;
                         }
+
+                        manager.addMessage(message.get(), locale, entry.getValue());
+                        count++;
                     }
                 }
 
