@@ -86,8 +86,10 @@ public class UpdateDownloaderGithub implements UpdateDownloader {
 
         logger.info("[GitHubUpdate] Downloading update...");
         try {
+            long start = System.currentTimeMillis();
             download(downloadUrl, updateFile);
 
+            logger.info(String.format("[GitHubUpdate] Downloaded update in %dms", System.currentTimeMillis() - start));
             logger.info(String.format("[GitHubUpdate] Update saved as %s", updateFile.getFileName()));
             logger.info("[GitHubUpdate] The update will be loaded on the next server restart");
         } catch (UpdateException e) {
