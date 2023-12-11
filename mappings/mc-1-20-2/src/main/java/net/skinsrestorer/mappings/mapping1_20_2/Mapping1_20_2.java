@@ -23,6 +23,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.skinsrestorer.mappings.shared.IMapping;
 import net.skinsrestorer.mappings.shared.MappingReflection;
@@ -47,53 +48,50 @@ public class Mapping1_20_2 implements IMapping {
 
     @Override
     public void accept(Player player, Predicate<ViaPacketData> viaFunction) {
-        try {
-            ServerPlayer entityPlayer = MappingReflection.getHandle(player, ServerPlayer.class);
+        ServerPlayer entityPlayer = MappingReflection.getHandle(player, ServerPlayer.class);
 
-            ClientboundPlayerInfoRemovePacket removePlayer = new ClientboundPlayerInfoRemovePacket(List.of(player.getUniqueId()));
-            ClientboundPlayerInfoUpdatePacket addPlayer = ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(entityPlayer));
+        ClientboundPlayerInfoRemovePacket removePlayer = new ClientboundPlayerInfoRemovePacket(List.of(player.getUniqueId()));
+        ClientboundPlayerInfoUpdatePacket addPlayer = ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(entityPlayer));
 
-            // Slowly getting from object to object till we get what is needed for
-            // the respawn packet
-            ServerLevel world = entityPlayer.serverLevel();
+        // Slowly getting from object to object till we get what is needed for
+        // the respawn packet
+        ServerLevel world = entityPlayer.serverLevel();
 
-            CommonPlayerSpawnInfo spawnInfo = entityPlayer.createCommonSpawnInfo(world);
-            ClientboundRespawnPacket respawn = new ClientboundRespawnPacket(
-                    spawnInfo,
-                    ClientboundRespawnPacket.KEEP_ALL_DATA
-            );
+        CommonPlayerSpawnInfo spawnInfo = entityPlayer.createCommonSpawnInfo(world);
+        ClientboundRespawnPacket respawn = new ClientboundRespawnPacket(
+                spawnInfo,
+                ClientboundRespawnPacket.KEEP_ALL_DATA
+        );
 
-            Location l = player.getLocation();
-            ClientboundPlayerPositionPacket pos = new ClientboundPlayerPositionPacket(l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<>(), 0);
-            ClientboundSetCarriedItemPacket slot = new ClientboundSetCarriedItemPacket(player.getInventory().getHeldItemSlot());
+        Location l = player.getLocation();
+        ClientboundPlayerPositionPacket pos = new ClientboundPlayerPositionPacket(l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<>(), 0);
+        ClientboundSetCarriedItemPacket slot = new ClientboundSetCarriedItemPacket(player.getInventory().getHeldItemSlot());
 
-            sendPacket(entityPlayer, removePlayer);
-            sendPacket(entityPlayer, addPlayer);
+        sendPacket(entityPlayer, removePlayer);
+        sendPacket(entityPlayer, addPlayer);
 
-            @SuppressWarnings("deprecation")
-            int dimension = player.getWorld().getEnvironment().getId();
+        @SuppressWarnings("deprecation")
+        int dimension = player.getWorld().getEnvironment().getId();
 
-            if (viaFunction.test(new ViaPacketData(player, dimension, spawnInfo.seed(), spawnInfo.gameType().getId(), spawnInfo.isFlat()))) {
-                sendPacket(entityPlayer, respawn);
-            }
+        if (viaFunction.test(new ViaPacketData(player, dimension, spawnInfo.seed(), spawnInfo.gameType().getId(), spawnInfo.isFlat()))) {
+            sendPacket(entityPlayer, respawn);
+        }
 
-            entityPlayer.onUpdateAbilities();
+        entityPlayer.onUpdateAbilities();
 
-            sendPacket(entityPlayer, pos);
-            sendPacket(entityPlayer, slot);
+        sendPacket(entityPlayer, pos);
+        sendPacket(entityPlayer, slot);
 
-            player.getClass().getMethod("updateScaledHealth").invoke(player);
-            player.updateInventory();
-            triggerHealthUpdate(player);
+        triggerHealthUpdate(player);
 
-            // Resend their effects
-            for (MobEffectInstance mobEffect : entityPlayer.getActiveEffects()) {
-                ClientboundUpdateMobEffectPacket effect = new ClientboundUpdateMobEffectPacket(entityPlayer.getId(), mobEffect);
-                sendPacket(entityPlayer, effect);
-            }
-        } catch (ReflectiveOperationException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
+        PlayerList playerList = entityPlayer.server.getPlayerList();
+        playerList.sendLevelInfo(entityPlayer, world);
+        playerList.sendAllPlayerInfo(entityPlayer);
+
+        // Resend their effects
+        for (MobEffectInstance mobEffect : entityPlayer.getActiveEffects()) {
+            ClientboundUpdateMobEffectPacket effect = new ClientboundUpdateMobEffectPacket(entityPlayer.getId(), mobEffect);
+            sendPacket(entityPlayer, effect);
         }
     }
 
