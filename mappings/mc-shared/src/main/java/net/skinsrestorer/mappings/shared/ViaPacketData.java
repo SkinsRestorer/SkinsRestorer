@@ -29,6 +29,6 @@ public class ViaPacketData {
     private final Player player;
     private final int dimension;
     private final long seed;
-    private final short gamemodeId;
+    private final int gamemodeId;
     private final boolean isFlat;
 }

@@ -25,8 +25,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.level.GameType;
-import net.minecraft.world.level.biome.BiomeManager;
 import net.skinsrestorer.mappings.shared.IMapping;
 import net.skinsrestorer.mappings.shared.MappingReflection;
 import net.skinsrestorer.mappings.shared.ViaPacketData;
@@ -61,22 +59,10 @@ public class Mapping1_20_4 implements IMapping {
             ServerLevel world = entityPlayer.serverLevel();
             ServerPlayerGameMode gamemode = entityPlayer.gameMode;
 
-            long seed = BiomeManager.obfuscateSeed(world.getSeed());
-            boolean flat = world.isFlat();
-            GameType gameModeForPlayer = gamemode.getGameModeForPlayer();
+            CommonPlayerSpawnInfo spawnInfo = entityPlayer.createCommonSpawnInfo(world);
             ClientboundRespawnPacket respawn = new ClientboundRespawnPacket(
-                    new CommonPlayerSpawnInfo(
-                            world.dimensionTypeId(),
-                            world.dimension(),
-                            seed,
-                            gameModeForPlayer,
-                            gamemode.getPreviousGameModeForPlayer(),
-                            world.isDebug(),
-                            flat,
-                            entityPlayer.getLastDeathLocation(),
-                            entityPlayer.getPortalCooldown()
-                    ),
-                    (byte) 3
+                    spawnInfo,
+                    ClientboundRespawnPacket.KEEP_ALL_DATA
             );
 
             Location l = player.getLocation();
@@ -89,7 +75,7 @@ public class Mapping1_20_4 implements IMapping {
             @SuppressWarnings("deprecation")
             int dimension = player.getWorld().getEnvironment().getId();
 
-            if (Boolean.TRUE.equals(viaFunction.test(new ViaPacketData(player, dimension, seed, (short) gameModeForPlayer.getId(), flat)))) {
+            if (viaFunction.test(new ViaPacketData(player, dimension, spawnInfo.seed(), spawnInfo.gameType().getId(), spawnInfo.isFlat()))) {
                 sendPacket(entityPlayer, respawn);
             }
 

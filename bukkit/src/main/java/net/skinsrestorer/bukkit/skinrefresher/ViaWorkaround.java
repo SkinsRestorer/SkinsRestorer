@@ -48,7 +48,7 @@ public final class ViaWorkaround {
 
             packet.write(Type.INT, packetData.getDimension());
             packet.write(Type.LONG, packetData.getSeed());
-            packet.write(Type.UNSIGNED_BYTE, packetData.getGamemodeId());
+            packet.write(Type.UNSIGNED_BYTE, (short) packetData.getGamemodeId());
             packet.write(Type.STRING, packetData.isFlat() ? "flat" : "default");
             try {
                 packet.send(Protocol1_15_2To1_16.class);
