@@ -50,7 +50,7 @@ import java.util.UUID;
 public interface SkinStorage {
     /**
      * This method returns the skin data associated to the skin name.
-     * If the skin name is not found, it will try to get the skin data from Mojang.
+     * If the skin data is not found or expired, it will try to get the skin data from Mojang.
      *
      * @param uuid Player UUID
      * @return The skin property containing the skin data

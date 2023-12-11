@@ -85,18 +85,16 @@ public class SkinStorageImpl implements SkinStorage {
     @Override
     public Optional<SkinProperty> updatePlayerSkinData(UUID uuid) throws DataRequestException {
         try {
-            Optional<PlayerSkinData> optional = adapterReference.get().getPlayerSkinData(uuid);
+            Optional<PlayerSkinData> optionalData = adapterReference.get().getPlayerSkinData(uuid);
+            Optional<SkinProperty> currentSkin = optionalData.map(PlayerSkinData::getProperty);
 
-            if (!optional.isPresent()) {
-                return Optional.empty();
-            }
-
-            PlayerSkinData data = optional.get();
-            Optional<SkinProperty> currentSkin = optional.map(PlayerSkinData::getProperty);
-
-            long timestamp = PropertyUtils.getSkinProfileData(data.getProperty()).getTimestamp();
-            if (!isPlayerSkinExpired(data.getTimestamp())) {
-                return currentSkin;
+            long timestamp = -1;
+            if (optionalData.isPresent()) {
+                PlayerSkinData currentSkinData = optionalData.get();
+                timestamp = PropertyUtils.getSkinProfileData(currentSkinData.getProperty()).getTimestamp();
+                if (!isPlayerSkinExpired(currentSkinData.getTimestamp())) {
+                    return currentSkin;
+                }
             }
 
             Optional<SkinProperty> skinProperty = mojangAPI.getProfile(uuid);
