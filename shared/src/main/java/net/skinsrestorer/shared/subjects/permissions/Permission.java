@@ -48,7 +48,7 @@ public class Permission {
         }
 
         for (PermissionGroup permissionGroup : permissionGroups) {
-            if (permissionGroup == PermissionGroup.getDefaultGroup()
+            if (permissionGroup == PermissionGroup.DEFAULT_GROUP
                     && settings.getProperty(CommandConfig.FORCE_DEFAULT_PERMISSIONS)) {
                 return true;
             }

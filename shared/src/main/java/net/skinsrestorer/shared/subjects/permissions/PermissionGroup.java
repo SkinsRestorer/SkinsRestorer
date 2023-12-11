@@ -58,6 +58,9 @@ public enum PermissionGroup {
             PermissionRegistry.BYPASS_DISABLED
     );
 
+    public static final PermissionGroup[] VALUES = values();
+    public static final PermissionGroup DEFAULT_GROUP = PLAYER;
+
     private final Permission basePermission;
     private final Permission wildcard;
     private final Message description;
@@ -74,10 +77,6 @@ public enum PermissionGroup {
         this.description = description;
         this.parents = parents;
         this.permissions = permissions;
-    }
-
-    public static PermissionGroup getDefaultGroup() {
-        return PLAYER;
     }
 
     public static Collection<PermissionGroup> getGrantedBy(Permission permission) {

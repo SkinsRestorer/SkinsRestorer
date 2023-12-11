@@ -40,9 +40,8 @@ public interface SkinApplier<P> {
      *
      * @param player     Player to apply the skin to.
      * @param identifier SkinIdentifier to apply
-     * @throws DataRequestException If the skin data could not be requested.
      */
-    void applySkin(P player, SkinIdentifier identifier) throws DataRequestException;
+    void applySkin(P player, SkinIdentifier identifier);
 
     /**
      * Applies a raw skin property to a player.

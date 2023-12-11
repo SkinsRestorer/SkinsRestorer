@@ -24,6 +24,8 @@ import com.cryptomorin.xseries.XMaterial;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.skinsrestorer.api.PropertyUtils;
+import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
 import net.skinsrestorer.shared.gui.GUIManager;
 import net.skinsrestorer.shared.gui.SharedGUI;
@@ -68,12 +70,7 @@ public class SkinsGUI implements GUIManager<Inventory> {
         skullMeta.setDisplayName(name);
         skullMeta.setLore(of(ComponentHelper.convertJsonToLegacy(locale.getMessage(player, Message.SKINSMENU_SELECT_SKIN))));
 
-        try {
-            SkullUtils.applySkin(skullMeta, property);
-        } catch (AssertionError e) {
-            log.warning(String.format("Could not add '%s' to SkinsGUI, skin might be corrupted or invalid!", name));
-            e.printStackTrace();
-        }
+        SkullUtils.setSkullBase64(skullMeta, property, PropertyUtils.getSkinTextureUrlStripped(SkinProperty.of(property, "")));
 
         itemStack.setItemMeta(skullMeta);
 
