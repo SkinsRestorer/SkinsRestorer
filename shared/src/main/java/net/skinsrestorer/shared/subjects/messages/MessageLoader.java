@@ -73,7 +73,7 @@ public class MessageLoader {
                 }
             }
 
-            logger.debug(String.format("Loaded default %d message strings for locale %s", count, locale));
+            logger.debug(String.format("Loaded %d default message strings for locale %s", count, locale));
         }
     }
 
