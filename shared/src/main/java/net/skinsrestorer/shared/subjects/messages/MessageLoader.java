@@ -58,9 +58,9 @@ public class MessageLoader {
             String resourcePath = "locales/" + localeFile;
             Locale locale = getTranslationLocale(localeFile);
 
+            int count = 0;
             try (InputStream is = adapter.getResource(resourcePath)) {
                 for (Map.Entry<String, String> entry : TranslationReader.readJsonTranslation(is).entrySet()) {
-                    logger.debug(String.format("Loaded message '%s' for locale %s", entry.getKey(), locale));
                     manager.addMessage(
                             Message.fromKey(entry.getKey())
                                     .orElseThrow(() -> new IllegalArgumentException(
@@ -69,8 +69,11 @@ public class MessageLoader {
                             locale,
                             entry.getValue()
                     );
+                    count++;
                 }
             }
+
+            logger.debug(String.format("Loaded default %d message strings for locale %s", count, locale));
         }
     }
 
@@ -115,17 +118,20 @@ public class MessageLoader {
 
                 Locale locale = getTranslationLocale(fileName);
 
+                int count = 0;
                 try (InputStream is = Files.newInputStream(path)) {
                     for (Map.Entry<String, String> entry : TranslationReader.readJsonTranslation(is).entrySet()) {
                         Optional<Message> message = Message.fromKey(entry.getKey());
                         if (!message.isPresent()) {
                             logger.warning("Skipping unknown message key " + entry.getKey());
                         } else {
-                            logger.debug(String.format("Loaded custom message '%s' for locale %s", entry.getKey(), locale));
                             manager.addMessage(message.get(), locale, entry.getValue());
+                            count++;
                         }
                     }
                 }
+
+                logger.debug(String.format("Loaded %d custom message strings for locale %s", count, locale));
             }
         }
     }
