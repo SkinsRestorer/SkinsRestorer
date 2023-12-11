@@ -512,8 +512,8 @@ public class MySQLAdapter implements StorageAdapter {
 
     @Override
     public void setCachedUUID(String playerName, MojangCacheData mojangCacheData) {
-        String uuid = mojangCacheData.getUniqueId() != null ? mojangCacheData.getUniqueId().toString() : null;
-        mysql.execute("INSERT INTO " + resolveCacheTable() + " (name, uuid, timestamp) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE uuid=?, timestamp=?",
+        String uuid = mojangCacheData.getUniqueId().map(UUID::toString).orElse(null);
+        mysql.execute("INSERT INTO " + resolveCacheTable() + " (name, uuid, timestamp) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE uuid=?, timestamp=?",
                 playerName,
                 uuid,
                 mojangCacheData.getTimestamp(),

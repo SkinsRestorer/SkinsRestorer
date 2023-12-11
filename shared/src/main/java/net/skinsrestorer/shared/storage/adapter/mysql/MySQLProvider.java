@@ -23,6 +23,7 @@ import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.config.DatabaseConfig;
 import net.skinsrestorer.shared.log.SRLogger;
+import net.skinsrestorer.shared.plugin.SRPlugin;
 import org.intellij.lang.annotations.Language;
 import org.mariadb.jdbc.Configuration;
 import org.mariadb.jdbc.pool.Pool;
@@ -71,8 +72,9 @@ public class MySQLProvider {
 
             logger.warning("MySQL error: " + e.getMessage(), e);
 
-            // If there is an error in unit tests, we want to know about it
-            assert false;
+            if (SRPlugin.isUnitTest()) {
+                throw new AssertionError(e);
+            }
         }
     }
 
