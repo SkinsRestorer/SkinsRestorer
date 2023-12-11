@@ -57,7 +57,7 @@ public class UpdateDownloaderGithub implements UpdateDownloader {
                 throw new UpdateException("Download returned status code " + connection.getResponseCode());
             }
 
-            Path tempFile = Files.createTempFile("skinsrestorer", ".jar");
+            Path tempFile = Files.createTempFile("SkinsRestorer", ".jar");
             ReadableByteChannel channel = Channels.newChannel(connection.getInputStream());
 
             try (FileOutputStream output = new FileOutputStream(tempFile.toFile())) {
