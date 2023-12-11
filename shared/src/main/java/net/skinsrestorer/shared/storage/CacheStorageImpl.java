@@ -20,11 +20,13 @@
 package net.skinsrestorer.shared.storage;
 
 import ch.jalu.configme.SettingsManager;
+import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.property.MojangSkinDataResult;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.storage.CacheStorage;
+import net.skinsrestorer.api.storage.SkinStorage;
 import net.skinsrestorer.shared.config.StorageConfig;
 import net.skinsrestorer.shared.connections.MojangAPIImpl;
 import net.skinsrestorer.shared.exception.DataRequestExceptionShared;
@@ -45,37 +47,11 @@ public class CacheStorageImpl implements CacheStorage {
     private final MojangAPIImpl mojangAPI;
     private final SettingsManager settings;
     private final AdapterReference adapterReference;
+    private final Injector injector;
 
     @Override
     public Optional<MojangSkinDataResult> getSkin(String playerName, boolean allowExpired) throws DataRequestException {
-        if (ValidationUtil.invalidMojangUsername(playerName)) {
-            return Optional.empty();
-        }
-
-        try {
-            Optional<MojangCacheData> cached = getCachedData(playerName, allowExpired);
-            if (cached.isPresent()) {
-                Optional<UUID> optionalUUID = cached.get().getUniqueId();
-                if (optionalUUID.isPresent()) {
-                    UUID uuid = optionalUUID.get();
-                    Optional<SkinProperty> skinProperty = mojangAPI.getProfile(uuid);
-
-                    return skinProperty.map(property -> MojangSkinDataResult.of(uuid, property));
-                } else {
-                    return Optional.empty();
-                }
-            }
-
-            Optional<MojangSkinDataResult> optional = mojangAPI.getSkin(playerName);
-            adapterReference.get().setCachedUUID(playerName,
-                    MojangCacheData.of(optional.map(MojangSkinDataResult::getUniqueId).orElse(null),
-                            TimeUtil.getEpochSecond()));
-
-            return optional;
-        } catch (StorageAdapter.StorageException e) {
-            logger.warning("Failed to get skin from cache for " + playerName, e);
-            return Optional.empty();
-        }
+        return injector.getSingleton(SkinStorage.class).getPlayerSkin(playerName, allowExpired);
     }
 
     @Override
@@ -108,7 +84,7 @@ public class CacheStorageImpl implements CacheStorage {
         }
     }
 
-    private Optional<MojangCacheData> getCachedData(String playerName, boolean allowExpired) throws StorageAdapter.StorageException {
+    public Optional<MojangCacheData> getCachedData(String playerName, boolean allowExpired) throws StorageAdapter.StorageException {
         Optional<MojangCacheData> optional = adapterReference.get().getCachedUUID(playerName);
 
         if (optional.isPresent() && (allowExpired || isValidUUIDTimestamp(optional.get().getTimestamp()))) {

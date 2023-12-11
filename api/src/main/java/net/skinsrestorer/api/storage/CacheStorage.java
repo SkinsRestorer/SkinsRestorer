@@ -32,14 +32,18 @@ import java.util.UUID;
 public interface CacheStorage {
     /**
      * Gets the skin data of a Mojang player by name using the UUID cache.
-     * This will cache the UUID if it's not already cached, but will not cache the skin data.
-     * The skin data is never looked up from the cache, but always requested from the data providers.
+     * This will cache the UUID if it's not already cached and will cache the skin data.
      *
      * @param playerName   Player name to search for
      * @param allowExpired Allow expired data to be returned
      * @return The skin data of the player or empty if no such player exists
      * @throws DataRequestException If the data could not be retrieved
+     *
+     * @deprecated Use {@link SkinStorage#getPlayerSkin(String, boolean)} instead.
+     *             This method will now just redirect you to {@link SkinStorage#getPlayerSkin(String, boolean)}.
+     *             TODO: Remove in 16.0.0
      */
+    @Deprecated
     Optional<MojangSkinDataResult> getSkin(String playerName, boolean allowExpired) throws DataRequestException;
 
     /**

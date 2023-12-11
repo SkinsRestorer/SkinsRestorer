@@ -28,7 +28,6 @@ import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.exception.MineSkinException;
 import net.skinsrestorer.api.model.MojangProfileResponse;
 import net.skinsrestorer.api.property.*;
-import net.skinsrestorer.api.storage.CacheStorage;
 import net.skinsrestorer.api.storage.SkinStorage;
 import net.skinsrestorer.shared.config.StorageConfig;
 import net.skinsrestorer.shared.connections.MineSkinAPIImpl;
@@ -36,6 +35,7 @@ import net.skinsrestorer.shared.connections.MojangAPIImpl;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.storage.adapter.AdapterReference;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
+import net.skinsrestorer.shared.storage.model.cache.MojangCacheData;
 import net.skinsrestorer.shared.storage.model.skin.*;
 import net.skinsrestorer.shared.utils.TimeUtil;
 import net.skinsrestorer.shared.utils.ValidationUtil;
@@ -49,7 +49,7 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SkinStorageImpl implements SkinStorage {
     private final SRLogger logger;
-    private final CacheStorage cacheStorage;
+    private final CacheStorageImpl cacheStorage;
     private final MojangAPIImpl mojangAPI;
     private final MineSkinAPIImpl mineSkinAPI;
     private final SettingsManager settings;
@@ -84,8 +84,16 @@ public class SkinStorageImpl implements SkinStorage {
 
     @Override
     public Optional<SkinProperty> updatePlayerSkinData(UUID uuid) throws DataRequestException {
+        return updatePlayerSkinData(uuid, mojangAPI::getProfile, false);
+    }
+
+    private interface ProfileGetter {
+        Optional<SkinProperty> getProfile(UUID uuid) throws DataRequestException;
+    }
+
+    private Optional<SkinProperty> updatePlayerSkinData(UUID uuid, ProfileGetter profileGetter, boolean skipDbLookup) throws DataRequestException {
         try {
-            Optional<PlayerSkinData> optionalData = adapterReference.get().getPlayerSkinData(uuid);
+            Optional<PlayerSkinData> optionalData = skipDbLookup ? Optional.empty() : adapterReference.get().getPlayerSkinData(uuid);
             Optional<SkinProperty> currentSkin = optionalData.map(PlayerSkinData::getProperty);
 
             long timestamp = -1;
@@ -99,7 +107,7 @@ public class SkinStorageImpl implements SkinStorage {
                 }
             }
 
-            Optional<SkinProperty> skinProperty = mojangAPI.getProfile(uuid);
+            Optional<SkinProperty> skinProperty = profileGetter.getProfile(uuid);
             if (!skinProperty.isPresent()) {
                 return currentSkin;
             }
@@ -107,13 +115,56 @@ public class SkinStorageImpl implements SkinStorage {
             MojangProfileResponse response = PropertyUtils.getSkinProfileData(skinProperty.get());
 
             if (response.getTimestamp() <= timestamp) {
-                return currentSkin; // API returned even older skin data
+                return currentSkin; // API even returned older skin data
             }
 
             setPlayerSkinData(uuid, response.getProfileName(), skinProperty.get(), TimeUtil.getEpochSecond());
             return skinProperty;
         } catch (StorageAdapter.StorageException e) {
             e.printStackTrace();
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<MojangSkinDataResult> getPlayerSkin(String playerName, boolean allowExpired) throws DataRequestException {
+        return getPlayerSkin(playerName, allowExpired, false);
+    }
+
+    private Optional<MojangSkinDataResult> getPlayerSkin(String playerName, boolean allowExpired, boolean skipDbLookup) throws DataRequestException {
+        if (ValidationUtil.invalidMojangUsername(playerName)) {
+            return Optional.empty();
+        }
+
+        try {
+            Optional<MojangCacheData> cached = cacheStorage.getCachedData(playerName, allowExpired);
+            if (cached.isPresent()) {
+                Optional<UUID> optionalUUID = cached.get().getUniqueId();
+
+                // User does not exist
+                if (!optionalUUID.isPresent()) {
+                    return Optional.empty();
+                }
+
+                UUID uuid = optionalUUID.get();
+                return updatePlayerSkinData(uuid, mojangAPI::getProfile, skipDbLookup).map(skinProperty -> MojangSkinDataResult.of(uuid, skinProperty));
+            }
+
+            Optional<MojangSkinDataResult> optional = mojangAPI.getSkin(playerName);
+            adapterReference.get().setCachedUUID(playerName,
+                    MojangCacheData.of(optional.map(MojangSkinDataResult::getUniqueId).orElse(null),
+                            TimeUtil.getEpochSecond()));
+
+            // Cache the skin data
+            if (optional.isPresent()) {
+                MojangSkinDataResult result = optional.get();
+                return updatePlayerSkinData(result.getUniqueId(), uuid -> Optional.of(result.getSkinProperty()), skipDbLookup)
+                        .map(skinProperty -> MojangSkinDataResult.of(result.getUniqueId(), skinProperty));
+            }
+
+            return optional;
+        } catch (StorageAdapter.StorageException e) {
+            logger.warning("Failed to get skin from cache for " + playerName, e);
             return Optional.empty();
         }
     }
@@ -204,15 +255,8 @@ public class SkinStorageImpl implements SkinStorage {
 
             return Optional.of(InputDataResult.of(SkinIdentifier.ofURL(input, response.getGeneratedVariant()), response.getProperty()));
         } else {
-            Optional<MojangSkinDataResult> data = cacheStorage.getSkin(input, false);
-
-            if (!data.isPresent()) {
-                return Optional.empty();
-            }
-
-            setPlayerSkinData(data.get().getUniqueId(), input, data.get().getSkinProperty(), TimeUtil.getEpochSecond());
-
-            return Optional.of(InputDataResult.of(SkinIdentifier.ofPlayer(data.get().getUniqueId()), data.get().getSkinProperty()));
+            return getPlayerSkin(input, false, true).map(result ->
+                    InputDataResult.of(SkinIdentifier.ofPlayer(result.getUniqueId()), result.getSkinProperty()));
         }
     }
 

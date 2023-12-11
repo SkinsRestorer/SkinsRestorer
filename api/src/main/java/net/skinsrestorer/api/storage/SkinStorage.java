@@ -22,10 +22,7 @@ package net.skinsrestorer.api.storage;
 import net.skinsrestorer.api.connections.model.MineSkinResponse;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.exception.MineSkinException;
-import net.skinsrestorer.api.property.InputDataResult;
-import net.skinsrestorer.api.property.SkinIdentifier;
-import net.skinsrestorer.api.property.SkinProperty;
-import net.skinsrestorer.api.property.SkinVariant;
+import net.skinsrestorer.api.property.*;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -57,6 +54,17 @@ public interface SkinStorage {
      * @throws DataRequestException If MojangAPI lookup errors (e.g. premium player not found)
      */
     Optional<SkinProperty> updatePlayerSkinData(UUID uuid) throws DataRequestException;
+
+    /**
+     * Gets the skin data of a Mojang player by name using the UUID cache.
+     * This will cache the UUID if it's not already cached and will cache the skin data.
+     *
+     * @param playerName   Player name to search for
+     * @param allowExpired Allow expired data to be returned
+     * @return The skin data of the player or empty if no such player exists
+     * @throws DataRequestException If the data could not be retrieved
+     */
+    Optional<MojangSkinDataResult> getPlayerSkin(String playerName, boolean allowExpired) throws DataRequestException;
 
     /**
      * Saves a player skin to the database.

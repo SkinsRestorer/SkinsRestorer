@@ -125,11 +125,10 @@ public class PlayerStorageImpl implements PlayerStorage {
             return getDefaultSkin();
         }
 
-        Optional<SkinProperty> premiumSkin = cacheStorage.getSkin(playerName, false)
-                .map(MojangSkinDataResult::getSkinProperty);
+        Optional<MojangSkinDataResult> premiumSkin = skinStorage.getPlayerSkin(playerName, false);
 
         if (premiumSkin.isPresent()) {
-            return premiumSkin;
+            return premiumSkin.map(MojangSkinDataResult::getSkinProperty);
         }
 
         if (defaultSkinsEnabled) {
