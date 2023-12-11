@@ -64,6 +64,10 @@ public class UpdateCheckerGitHub {
                     90_000);
             GitHubReleaseInfo releaseInfo = response.getBodyAs(GitHubReleaseInfo.class);
 
+            if (releaseInfo.getAssets() == null || releaseInfo.getAssets().isEmpty()) {
+                throw new DataRequestExceptionShared("No release info found");
+            }
+
             Optional<String> jarAssetUrl = releaseInfo.getAssets().stream()
                     .filter(asset -> asset.getName().equals(JAR_ASSET_NAME))
                     .map(GitHubAssetInfo::getBrowserDownloadUrl)
