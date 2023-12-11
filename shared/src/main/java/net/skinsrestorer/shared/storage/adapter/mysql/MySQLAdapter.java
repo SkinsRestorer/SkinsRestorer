@@ -57,7 +57,6 @@ public class MySQLAdapter implements StorageAdapter {
     public void init() {
         mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolveCacheTable() + "` ("
                 + "`name` VARCHAR(16) NOT NULL,"
-                + "`is_premium` tinyint(1) NOT NULL,"
                 + "`uuid` VARCHAR(36),"
                 + "`timestamp` BIGINT(20) NOT NULL,"
                 + "PRIMARY KEY (`name`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
