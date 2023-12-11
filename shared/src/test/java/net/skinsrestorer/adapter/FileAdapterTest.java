@@ -60,6 +60,8 @@ public class FileAdapterTest {
         FileAdapter adapter = injector.getSingleton(FileAdapter.class);
         adapter.init();
 
+        when(settingsManager.getProperty(GUIConfig.CUSTOM_GUI_ENABLED)).thenReturn(false);
+
         AdapterHelper.testAdapter(adapter, false);
 
         when(settingsManager.getProperty(GUIConfig.CUSTOM_GUI_ENABLED)).thenReturn(true);
