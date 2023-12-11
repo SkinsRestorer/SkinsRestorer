@@ -14,7 +14,11 @@ dependencies {
 
     implementation("net.kyori:adventure-platform-bukkit:4.3.1")
 
-    setOf("1-18", "1-18-2", "1-19", "1-19-1", "1-19-2", "1-19-3", "1-19-4", "1-20", "1-20-2").forEach {
+    setOf(
+        "1-18", "1-18-2",
+        "1-19", "1-19-1", "1-19-2", "1-19-3", "1-19-4",
+        "1-20", "1-20-2", "1-20-4"
+    ).forEach {
         implementation(project(":mappings:mc-$it", "remapped"))
     }
     testImplementation(testFixtures(projects.skinsrestorerShared))

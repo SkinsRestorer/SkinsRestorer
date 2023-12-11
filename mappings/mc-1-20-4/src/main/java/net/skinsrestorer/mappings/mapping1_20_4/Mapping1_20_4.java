@@ -17,7 +17,7 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.mappings.mapping1_20_2;
+package net.skinsrestorer.mappings.mapping1_20_4;
 
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.*;
@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
-public class Mapping1_20_2 implements IMapping {
+public class Mapping1_20_4 implements IMapping {
     private static void sendPacket(ServerPlayer player, Packet<?> packet) {
         player.connection.send(packet);
     }
@@ -116,7 +116,7 @@ public class Mapping1_20_2 implements IMapping {
     @Override
     public Set<String> getSupportedVersions() {
         return Set.of(
-                "3478a65bfd04b15b431fe107b3617dfc" // 1.20.2
+                "60a2bb6bf2684dc61c56b90d7c41bddc" // 1.20.3 and 1.20.4
         );
     }
 }
