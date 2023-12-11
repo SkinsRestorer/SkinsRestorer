@@ -37,7 +37,7 @@ public class AdapterHelper {
     private static final UUID DEFAULT_UUID = UUID.nameUUIDFromBytes(DEFAULT_NAME.getBytes(StandardCharsets.UTF_8));
 
     public static void testAdapter(StorageAdapter adapter, boolean checkCustom) {
-        adapter.setCachedUUID("test", MojangCacheData.of(true, UUID.randomUUID(), -1));
+        adapter.setCachedUUID("test", MojangCacheData.of(UUID.randomUUID(), -1));
         adapter.setPlayerData(UUID.randomUUID(), PlayerData.of(UUID.randomUUID(), null));
         adapter.setPlayerSkinData(DEFAULT_UUID, PlayerSkinData.of(DEFAULT_UUID, DEFAULT_NAME, SkinProperty.of("test", "test"), -1));
         adapter.setCustomSkinData("test-skin", CustomSkinData.of("test-skin", SkinProperty.of("test", "test")));

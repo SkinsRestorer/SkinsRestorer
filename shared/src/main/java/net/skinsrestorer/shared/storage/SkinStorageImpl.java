@@ -91,9 +91,11 @@ public class SkinStorageImpl implements SkinStorage {
             long timestamp = -1;
             if (optionalData.isPresent()) {
                 PlayerSkinData currentSkinData = optionalData.get();
-                timestamp = PropertyUtils.getSkinProfileData(currentSkinData.getProperty()).getTimestamp();
                 if (!isPlayerSkinExpired(currentSkinData.getTimestamp())) {
+                    // We have valid data, let's return it
                     return currentSkin;
+                } else {
+                    timestamp = PropertyUtils.getSkinProfileData(currentSkinData.getProperty()).getTimestamp();
                 }
             }
 
