@@ -239,8 +239,9 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
             player.updateInventory();
             ReflectionUtil.invokeMethod(entityPlayer, "triggerHealthUpdate");
 
-            //todo: resend effect
+            // TODO: Resend potion effects
 
+            // TODO: Send proper permission level instead of this workaround
             OPRefreshUtil.refreshOP(player, adapter);
         } catch (ReflectiveOperationException e) {
             e.printStackTrace();
