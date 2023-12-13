@@ -382,8 +382,10 @@ public class CommandManager<T extends SRCommandSender> {
 
     protected List<Component> getHelpMessageNodeStart(CommandNode<T> node, Component commandPrefix, T source) {
         List<Component> result = new ArrayList<>();
-        result.add(ComponentHelper.convertJsonToComponent(locale.getMessageRequired(source, Message.COMMAND_HELP_HEADER,
-                Placeholder.unparsed("command", ComponentHelper.convertToPlain(commandPrefix)))));
+        locale.getMessageOptional(source, Message.COMMAND_HELP_HEADER,
+                        Placeholder.unparsed("command", ComponentHelper.convertToPlain(commandPrefix)))
+                .map(ComponentHelper::convertJsonToComponent)
+                .ifPresent(result::add);
         getAllUsage(node, source, result, commandPrefix, true);
         return result;
     }
@@ -411,18 +413,17 @@ public class CommandManager<T extends SRCommandSender> {
                 completedPrefix = plainPrefix.substring(0, firstRequiredArgument);
             }
 
-            CommandInjectHelp<T> command = (CommandInjectHelp<T>) node.getCommand();
-            if (command.getHelpData() != null) {
-                result.add(ComponentHelper.convertJsonToComponent(locale.getMessageRequired(source, Message.COMMAND_HELP_FORMAT, TagResolver.resolver(
-                        Placeholder.component("command_click_to_suggest", ComponentHelper.convertJsonToComponent(
-                                locale.getMessageRequired(source, Message.COMMAND_CLICK_TO_SUGGEST))),
-                        Placeholder.parsed("suggestion", completedPrefix),
-                        Placeholder.component("command", prefix),
-                        Placeholder.component("description", ComponentHelper.convertJsonToComponent(locale.getMessageRequired(source, command.getHelpData().getCommandDescription())))
-                ))));
-            } else {
-                // Should normally not happen
-                result.add(prefix);
+            CommandHelpData helpData = ((CommandInjectHelp<T>) node.getCommand()).getHelpData();
+            if (!helpData.isPrivateCommand()) {
+                locale.getMessageOptional(source, Message.COMMAND_HELP_FORMAT, TagResolver.resolver(
+                                Placeholder.component("command_click_to_suggest", ComponentHelper.convertJsonToComponent(
+                                        locale.getMessageRequired(source, Message.COMMAND_CLICK_TO_SUGGEST))),
+                                Placeholder.parsed("suggestion", completedPrefix),
+                                Placeholder.component("command", prefix),
+                                Placeholder.component("description", ComponentHelper.convertJsonToComponent(locale.getMessageRequired(source, helpData.getCommandDescription())))
+                        ))
+                        .map(ComponentHelper::convertJsonToComponent)
+                        .ifPresent(result::add);
             }
         }
 
