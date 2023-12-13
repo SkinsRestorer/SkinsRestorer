@@ -50,9 +50,6 @@ public class Mapping1_18_2 implements IMapping {
     public void accept(Player player, Predicate<ViaPacketData> viaFunction) {
         ServerPlayer entityPlayer = MappingReflection.getHandle(player, ServerPlayer.class);
 
-        ClientboundPlayerInfoPacket removePlayer = new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.REMOVE_PLAYER, List.of(entityPlayer));
-        ClientboundPlayerInfoPacket addPlayer = new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, List.of(entityPlayer));
-
         // Slowly getting from object to object till we get what is needed for
         // the respawn packet
         ServerLevel world = entityPlayer.getLevel();
@@ -68,22 +65,18 @@ public class Mapping1_18_2 implements IMapping {
                 world.isFlat(),
                 true);
 
-        Location l = player.getLocation();
+        sendPacket(entityPlayer, new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.REMOVE_PLAYER, List.of(entityPlayer)));
+        sendPacket(entityPlayer, new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, List.of(entityPlayer)));
 
-        sendPacket(entityPlayer, removePlayer);
-        sendPacket(entityPlayer, addPlayer);
-
-        @SuppressWarnings("deprecation")
-        int dimension = player.getWorld().getEnvironment().getId();
-
-        if (viaFunction.test(new ViaPacketData(player, dimension, respawn.getSeed(), respawn.getPlayerGameType().getId(), respawn.isFlat()))) {
+        if (viaFunction.test(new ViaPacketData(player, respawn.getSeed(), respawn.getPlayerGameType().getId(), respawn.isFlat()))) {
             sendPacket(entityPlayer, respawn);
         }
 
         entityPlayer.onUpdateAbilities();
 
-        sendPacket(entityPlayer, new ClientboundPlayerPositionPacket(l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<>(), 0, false));
+        entityPlayer.connection.teleport(player.getLocation());
 
+        // Send health, food, experience (food is sent together with health)
         entityPlayer.resetSentInfo();
 
         PlayerList playerList = entityPlayer.server.getPlayerList();

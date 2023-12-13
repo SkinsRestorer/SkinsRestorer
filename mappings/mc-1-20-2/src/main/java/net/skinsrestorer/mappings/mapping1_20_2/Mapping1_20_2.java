@@ -45,9 +45,6 @@ public class Mapping1_20_2 implements IMapping {
     public void accept(Player player, Predicate<ViaPacketData> viaFunction) {
         ServerPlayer entityPlayer = MappingReflection.getHandle(player, ServerPlayer.class);
 
-        ClientboundPlayerInfoRemovePacket removePlayer = new ClientboundPlayerInfoRemovePacket(List.of(player.getUniqueId()));
-        ClientboundPlayerInfoUpdatePacket addPlayer = ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(entityPlayer));
-
         // Slowly getting from object to object till we get what is needed for
         // the respawn packet
         ServerLevel world = entityPlayer.serverLevel();
@@ -58,22 +55,18 @@ public class Mapping1_20_2 implements IMapping {
                 ClientboundRespawnPacket.KEEP_ALL_DATA
         );
 
-        Location l = player.getLocation();
+        sendPacket(entityPlayer, new ClientboundPlayerInfoRemovePacket(List.of(player.getUniqueId())));
+        sendPacket(entityPlayer, ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(entityPlayer)));
 
-        sendPacket(entityPlayer, removePlayer);
-        sendPacket(entityPlayer, addPlayer);
-
-        @SuppressWarnings("deprecation")
-        int dimension = player.getWorld().getEnvironment().getId();
-
-        if (viaFunction.test(new ViaPacketData(player, dimension, spawnInfo.seed(), spawnInfo.gameType().getId(), spawnInfo.isFlat()))) {
+        if (viaFunction.test(new ViaPacketData(player, spawnInfo.seed(), spawnInfo.gameType().getId(), spawnInfo.isFlat()))) {
             sendPacket(entityPlayer, respawn);
         }
 
         entityPlayer.onUpdateAbilities();
 
-        sendPacket(entityPlayer, new ClientboundPlayerPositionPacket(l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<>(), 0));
+        entityPlayer.connection.teleport(player.getLocation());
 
+        // Send health, food, experience (food is sent together with health)
         entityPlayer.resetSentInfo();
 
         PlayerList playerList = entityPlayer.server.getPlayerList();

@@ -75,10 +75,7 @@ public class Mapping1_19_1 implements IMapping {
         sendPacket(entityPlayer, removePlayer);
         sendPacket(entityPlayer, addPlayer);
 
-        @SuppressWarnings("deprecation")
-        int dimension = player.getWorld().getEnvironment().getId();
-
-        if (viaFunction.test(new ViaPacketData(player, dimension, respawn.getSeed(), respawn.getPlayerGameType().getId(), respawn.isFlat()))) {
+        if (viaFunction.test(new ViaPacketData(player, respawn.getSeed(), respawn.getPlayerGameType().getId(), respawn.isFlat()))) {
             sendPacket(entityPlayer, respawn);
         }
 

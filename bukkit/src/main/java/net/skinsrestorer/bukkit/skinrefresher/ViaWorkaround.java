@@ -36,6 +36,7 @@ public final class ViaWorkaround {
         return Via.getManager().getProtocolManager().getServerProtocolVersion().lowestSupportedVersion() >= ProtocolVersion.v1_16.getVersion();
     }
 
+    @SuppressWarnings("deprecation")
     public static boolean sendCustomPacketVia(ViaPacketData packetData) {
         UserConnection connection = Via.getManager().getConnectionManager().getConnectedClient(packetData.getPlayer().getUniqueId());
         if (connection != null
@@ -46,7 +47,7 @@ public final class ViaWorkaround {
             // and therefore bypassing their workaround.
             PacketWrapper packet = PacketWrapper.create(ClientboundPackets1_15.RESPAWN, connection);
 
-            packet.write(Type.INT, packetData.getDimension());
+            packet.write(Type.INT, packetData.getPlayer().getWorld().getEnvironment().getId());
             packet.write(Type.LONG, packetData.getSeed());
             packet.write(Type.UNSIGNED_BYTE, (short) packetData.getGamemodeId());
             packet.write(Type.STRING, packetData.isFlat() ? "flat" : "default");

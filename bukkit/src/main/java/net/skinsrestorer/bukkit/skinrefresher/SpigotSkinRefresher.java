@@ -216,11 +216,12 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
                     Object worldObject = ReflectionUtil.getFieldByType(entityPlayer, "World");
                     boolean flat = (boolean) ReflectionUtil.invokeMethod(worldObject, "isFlatWorld");
 
-                    sendRespawnPacketDirectly = ViaWorkaround.sendCustomPacketVia(new ViaPacketData(player,
-                            dimension,
+                    sendRespawnPacketDirectly = ViaWorkaround.sendCustomPacketVia(new ViaPacketData(
+                            player,
                             SRHelpers.hashSha256String(String.valueOf(player.getWorld().getSeed())),
                             ((Integer) gamemodeId).shortValue(),
-                            flat));
+                            flat
+                    ));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
