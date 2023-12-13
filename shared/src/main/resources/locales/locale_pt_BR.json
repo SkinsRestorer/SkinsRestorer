@@ -21,6 +21,7 @@
   "skinsrestorer.help_sr_purge_old_data": "Limpa dados da skin antigos de mais de x dias atrás.",
   "skinsrestorer.help_sr_dump": "Envia dados de suporte para bytebin.lucko.me.",
   "skinsrestorer.success_generic": "<dark_green><message>",
+  "skinsrestorer.success_skin_change": "Skin alterada.",
   "skinsrestorer.error_generic": "<dark_red>Erro<dark_gray>: <red><message>",
   "skinsrestorer.error_generic_skin": "Um erro ocorreu ao solicitar os dados da skin, tente novamente mais tarde!",
   "skinsrestorer.error_skin_disabled": "A skin foi desabilitada por um administrador.",
