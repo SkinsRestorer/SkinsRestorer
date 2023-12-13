@@ -108,7 +108,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
             }
         } while (retryAttempts.get() < 5);
 
-        throw new MineSkinExceptionShared(locale, Message.ERROR_MS_API_FAILED);
+        throw new MineSkinExceptionShared(Message.ERROR_MS_API_FAILED);
     }
 
     private Optional<MineSkinResponse> genSkinInternal(String imageUrl, @Nullable SkinVariant skinVariant) throws DataRequestException, MineSkinException, IOException, InterruptedException {
@@ -138,9 +138,9 @@ public class MineSkinAPIImpl implements MineSkinAPI {
 
                         return Optional.empty(); // try again
                     case "no_account_available":
-                        throw new MineSkinExceptionShared(locale, Message.ERROR_MS_FULL);
+                        throw new MineSkinExceptionShared(Message.ERROR_MS_FULL);
                     default:
-                        throw new MineSkinExceptionShared(locale, Message.ERROR_INVALID_URLSKIN);
+                        throw new MineSkinExceptionShared(Message.ERROR_INVALID_URLSKIN);
                 }
             }
             case 403: {
@@ -167,10 +167,10 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                             break;
                     }
 
-                    throw new MineSkinExceptionShared(locale, Message.ERROR_MS_API_KEY_INVALID);
+                    throw new MineSkinExceptionShared(Message.ERROR_MS_API_KEY_INVALID);
                 }
 
-                throw new MineSkinExceptionShared(locale, Message.ERROR_MS_UNKNOWN);
+                throw new MineSkinExceptionShared(Message.ERROR_MS_UNKNOWN);
             }
             case 429: {
                 MineSkinErrorDelayResponse errorDelayResponse = response.getBodyAs(MineSkinErrorDelayResponse.class);
@@ -192,7 +192,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
             }
             default:
                 logger.debug("[ERROR] MineSkin Failed! Unknown error: (Image URL: " + imageUrl + ") " + response.getStatusCode());
-                throw new MineSkinExceptionShared(locale, Message.ERROR_MS_API_FAILED);
+                throw new MineSkinExceptionShared(Message.ERROR_MS_API_FAILED);
         }
     }
 

@@ -68,7 +68,7 @@ public class SkinsGUI implements GUIManager<Inventory> {
         }
 
         skullMeta.setDisplayName(name);
-        skullMeta.setLore(of(ComponentHelper.convertJsonToLegacy(locale.getMessage(player, Message.SKINSMENU_SELECT_SKIN))));
+        skullMeta.setLore(of(ComponentHelper.convertJsonToLegacy(locale.getMessageRequired(player, Message.SKINSMENU_SELECT_SKIN))));
 
         SkullUtils.setSkullBase64(skullMeta, property, PropertyUtils.getSkinTextureUrlStripped(SkinProperty.of(property, "")));
 
@@ -84,7 +84,7 @@ public class SkinsGUI implements GUIManager<Inventory> {
             throw new IllegalStateException("Could not create glass for " + type.name() + "!");
         }
 
-        String text = type.getMessage() == null ? " " : ComponentHelper.convertJsonToLegacy(locale.getMessage(player, type.getMessage()));
+        String text = type.getMessage() == null ? " " : ComponentHelper.convertJsonToLegacy(locale.getMessageRequired(player, type.getMessage()));
 
         ItemMeta itemMeta = itemStack.getItemMeta();
 
@@ -101,7 +101,7 @@ public class SkinsGUI implements GUIManager<Inventory> {
     public Inventory createGUI(Consumer<ClickEventInfo> callback, SRForeign player, int page, Map<String, String> skinsList) {
         SkinsGUIHolder instance = new SkinsGUIHolder(page, callback, wrapper);
         Inventory inventory = server.createInventory(instance, 54, ComponentHelper.convertJsonToLegacy(
-                locale.getMessage(player, Message.SKINSMENU_TITLE_NEW,
+                locale.getMessageRequired(player, Message.SKINSMENU_TITLE_NEW,
                         Placeholder.unparsed("page_number", String.valueOf(page + 1)))));
         instance.setInventory(inventory);
 

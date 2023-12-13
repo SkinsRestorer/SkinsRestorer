@@ -26,13 +26,15 @@ import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.utils.ComponentHelper;
 
+import java.util.Optional;
+
 public class MineSkinExceptionShared extends MineSkinException implements TranslatableException {
     private final Message message;
     private final TagResolver[] args;
 
-    public MineSkinExceptionShared(SkinsRestorerLocale locale, Message message, TagResolver... resolvers) {
-        // Not important locale since we use #getMessage(SRForeign, SkinsRestorerLocale) to get the message
-        super(ComponentHelper.convertJsonToPlain(locale.getMessage(locale.getDefaultForeign(), message, resolvers)));
+    public MineSkinExceptionShared(Message message, TagResolver... resolvers) {
+        // Not important since we use #getMessage(SRForeign, SkinsRestorerLocale) to get the message
+        super(message.toString());
         this.message = message;
         this.args = resolvers;
     }
@@ -48,7 +50,7 @@ public class MineSkinExceptionShared extends MineSkinException implements Transl
     }
 
     @Override
-    public String getMessage(SRForeign foreign, SkinsRestorerLocale locale) {
-        return locale.getMessage(foreign, message, args);
+    public Optional<String> getMessageOptional(SRForeign foreign, SkinsRestorerLocale locale) {
+        return locale.getMessageOptional(foreign, message, args);
     }
 }

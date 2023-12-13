@@ -270,7 +270,7 @@ public class SRSpongeAdapter implements SRServerAdapter<PluginContainer> {
                 @Override
                 public Optional<Component> shortDescription(CommandCause cause) {
                     SRCommandSender sender = wrapper.commandSender(cause);
-                    return Optional.of(GSON.deserialize(locale.getMessage(sender, payload.getMeta().getRootHelp().getCommandDescription())));
+                    return Optional.of(GSON.deserialize(locale.getMessageRequired(sender, payload.getMeta().getRootHelp().getCommandDescription())));
                 }
 
                 @Override

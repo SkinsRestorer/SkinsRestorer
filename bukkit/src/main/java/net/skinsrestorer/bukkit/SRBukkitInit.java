@@ -177,13 +177,13 @@ public class SRBukkitInit implements SRServerPlatformInit {
     public void initPermissions() {
         for (PermissionRegistry permission : PermissionRegistry.values()) {
             String permissionString = permission.getPermission().getPermissionString();
-            String description = ComponentHelper.convertJsonToLegacy(locale.getMessage(locale.getDefaultForeign(), permission.getDescription()));
+            String description = ComponentHelper.convertJsonToLegacy(locale.getMessageRequired(locale.getDefaultForeign(), permission.getDescription()));
 
             addPermission(new Permission(permissionString, description));
         }
 
         for (PermissionGroup group : PermissionGroup.values()) {
-            String description = ComponentHelper.convertJsonToLegacy(locale.getMessage(locale.getDefaultForeign(), group.getDescription()));
+            String description = ComponentHelper.convertJsonToLegacy(locale.getMessageRequired(locale.getDefaultForeign(), group.getDescription()));
             Map<String, Boolean> children = new HashMap<>();
             mergePermissions(group, children);
             PermissionDefault permissionDefault = group == PermissionGroup.PLAYER ? PermissionDefault.TRUE : PermissionDefault.OP;

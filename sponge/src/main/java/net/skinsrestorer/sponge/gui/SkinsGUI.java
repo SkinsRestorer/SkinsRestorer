@@ -62,7 +62,7 @@ public class SkinsGUI implements GUIManager<InventoryMenu> {
     private static ItemStack createSkull(SkinsRestorerLocale locale, SRForeign player, String name, String property) {
         return ItemStack.builder()
                 .itemType(ItemTypes.PLAYER_HEAD)
-                .add(Keys.LORE, of(GSON.deserialize(locale.getMessage(player, Message.SKINSMENU_SELECT_SKIN))))
+                .add(Keys.LORE, of(GSON.deserialize(locale.getMessageRequired(player, Message.SKINSMENU_SELECT_SKIN))))
                 .add(Keys.GAME_PROFILE, GameProfile.of(UUID.randomUUID(), null).withProperty(ProfileProperty.of(SkinProperty.TEXTURES_NAME, property)))
                 .add(Keys.CUSTOM_NAME, Component.text(name))
                 .build();
@@ -71,7 +71,7 @@ public class SkinsGUI implements GUIManager<InventoryMenu> {
     private static ItemStack createGlass(GlassType type, SRForeign player, SkinsRestorerLocale locale) {
         return ItemStack.builder()
                 .itemType(type.getMaterial())
-                .add(Keys.CUSTOM_NAME, type.getMessage() == null ? Component.text(" ") : GSON.deserialize(locale.getMessage(player, type.getMessage())))
+                .add(Keys.CUSTOM_NAME, type.getMessage() == null ? Component.text(" ") : GSON.deserialize(locale.getMessageRequired(player, type.getMessage())))
                 .build();
     }
 
@@ -140,7 +140,7 @@ public class SkinsGUI implements GUIManager<InventoryMenu> {
 
         InventoryMenu menu = inventory.asMenu();
 
-        menu.setTitle(GSON.deserialize(locale.getMessage(player, Message.SKINSMENU_TITLE_NEW,
+        menu.setTitle(GSON.deserialize(locale.getMessageRequired(player, Message.SKINSMENU_TITLE_NEW,
                 Placeholder.unparsed("page_number", String.valueOf(page + 1)))));
         menu.setReadOnly(true);
         menu.registerSlotClick(new GUIListener(callback, page, wrapper));

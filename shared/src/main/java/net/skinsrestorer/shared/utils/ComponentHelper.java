@@ -31,6 +31,8 @@ import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 
+import java.util.Optional;
+
 public class ComponentHelper {
     private static final GsonComponentSerializer GSON_COMPONENT_SERIALIZER = GsonComponentSerializer.gson();
     private static final LegacyComponentSerializer LEGACY_COMPONENT_SERIALIZER = LegacyComponentSerializer.legacySection();
@@ -39,10 +41,6 @@ public class ComponentHelper {
 
     public static String parseMiniMessageToJsonString(String miniMessage) {
         return GSON_COMPONENT_SERIALIZER.serialize(MINI_MESSAGE_COMPONENT_SERIALIZER.deserialize(miniMessage));
-    }
-
-    public static String convertJsonToPlain(String messageJson) {
-        return PLAIN_COMPONENT_SERIALIZER.serialize(GSON_COMPONENT_SERIALIZER.deserialize(messageJson));
     }
 
     // Only used on platforms that don't support adventure
@@ -63,12 +61,17 @@ public class ComponentHelper {
     }
 
     public static void sendException(Throwable t, SRCommandSender sender, SkinsRestorerLocale locale, SRLogger logger) {
+        Optional<String> message;
         if (t instanceof TranslatableException) {
-            sender.sendMessage(((TranslatableException) t).getMessage(sender, locale));
+            message = ((TranslatableException) t).getMessageOptional(sender, locale);
         } else {
-            sender.sendMessage(parseMiniMessageToJsonString(locale.getMessage(sender, Message.ERROR_GENERIC,
-                    Placeholder.unparsed("message", SRHelpers.getRootCause(t).getMessage()))));
-            logger.warning("An error occurred while executing a command", t);
+            logger.warning("An unexpected error occurred while executing a command", t);
+
+            message = locale.getMessageOptional(sender, Message.ERROR_GENERIC,
+                    Placeholder.unparsed("message", SRHelpers.getRootCause(t).getMessage()));
         }
+
+        message.map(ComponentHelper::parseMiniMessageToJsonString)
+                .ifPresent(sender::sendMessage);
     }
 }

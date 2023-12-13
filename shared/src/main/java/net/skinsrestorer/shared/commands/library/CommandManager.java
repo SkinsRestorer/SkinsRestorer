@@ -382,7 +382,7 @@ public class CommandManager<T extends SRCommandSender> {
 
     protected List<Component> getHelpMessageNodeStart(CommandNode<T> node, Component commandPrefix, T source) {
         List<Component> result = new ArrayList<>();
-        result.add(ComponentHelper.convertJsonToComponent(locale.getMessage(source, Message.COMMAND_HELP_HEADER,
+        result.add(ComponentHelper.convertJsonToComponent(locale.getMessageRequired(source, Message.COMMAND_HELP_HEADER,
                 Placeholder.unparsed("command", ComponentHelper.convertToPlain(commandPrefix)))));
         getAllUsage(node, source, result, commandPrefix, true);
         return result;
@@ -413,12 +413,12 @@ public class CommandManager<T extends SRCommandSender> {
 
             CommandInjectHelp<T> command = (CommandInjectHelp<T>) node.getCommand();
             if (command.getHelpData() != null) {
-                result.add(ComponentHelper.convertJsonToComponent(locale.getMessage(source, Message.COMMAND_HELP_FORMAT, TagResolver.resolver(
+                result.add(ComponentHelper.convertJsonToComponent(locale.getMessageRequired(source, Message.COMMAND_HELP_FORMAT, TagResolver.resolver(
                         Placeholder.component("command_click_to_suggest", ComponentHelper.convertJsonToComponent(
-                                locale.getMessage(source, Message.COMMAND_CLICK_TO_SUGGEST))),
+                                locale.getMessageRequired(source, Message.COMMAND_CLICK_TO_SUGGEST))),
                         Placeholder.parsed("suggestion", completedPrefix),
                         Placeholder.component("command", prefix),
-                        Placeholder.component("description", ComponentHelper.convertJsonToComponent(locale.getMessage(source, command.getHelpData().getCommandDescription())))
+                        Placeholder.component("description", ComponentHelper.convertJsonToComponent(locale.getMessageRequired(source, command.getHelpData().getCommandDescription())))
                 ))));
             } else {
                 // Should normally not happen

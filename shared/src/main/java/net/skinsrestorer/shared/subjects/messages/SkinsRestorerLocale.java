@@ -45,21 +45,14 @@ public class SkinsRestorerLocale {
     @Getter
     private final SRForeign defaultForeign = () -> settings.getProperty(MessageConfig.LOCALE);
 
-    public String getMessage(SRForeign foreign, Message key) {
-        return getMessage(foreign, key, TagResolver.empty());
-    }
-
-    public String getMessage(SRForeign foreign, Message key, TagResolver... tagResolver) {
-        Component component = getMessageInternal(foreign, key, TagResolver.resolver(tagResolver))
-                .orElseGet(Component::empty);
-
-        return gsonSerializer.serialize(component);
+    public String getMessageRequired(SRForeign foreign, Message key, TagResolver... tagResolver) {
+        return gsonSerializer.serialize(getMessageInternal(foreign, key, TagResolver.resolver(tagResolver))
+                .orElseGet(Component::empty));
     }
 
     public Optional<String> getMessageOptional(SRForeign foreign, Message key, TagResolver... tagResolver) {
-        Optional<Component> component = getMessageInternal(foreign, key, TagResolver.resolver(tagResolver));
-
-        return component.map(gsonSerializer::serialize);
+        return getMessageInternal(foreign, key, TagResolver.resolver(tagResolver))
+                .map(gsonSerializer::serialize);
     }
 
     private Optional<Component> getMessageInternal(SRForeign foreign, Message key, TagResolver tagResolver) {

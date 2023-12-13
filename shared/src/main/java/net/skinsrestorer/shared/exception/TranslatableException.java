@@ -22,6 +22,8 @@ package net.skinsrestorer.shared.exception;
 import net.skinsrestorer.shared.subjects.SRForeign;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 
+import java.util.Optional;
+
 public interface TranslatableException {
-    String getMessage(SRForeign foreign, SkinsRestorerLocale locale);
+    Optional<String> getMessageOptional(SRForeign foreign, SkinsRestorerLocale locale);
 }

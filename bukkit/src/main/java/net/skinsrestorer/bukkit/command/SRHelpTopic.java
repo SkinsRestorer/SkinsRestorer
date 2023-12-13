@@ -48,7 +48,7 @@ public class SRHelpTopic extends HelpTopic {
     @NotNull
     @Override
     public String getShortText() {
-        return ComponentHelper.convertJsonToLegacy(locale.getMessage(locale.getDefaultForeign(),
+        return ComponentHelper.convertJsonToLegacy(locale.getMessageRequired(locale.getDefaultForeign(),
                 srbukkitCommand.getMeta().getRootHelp().getCommandDescription()));
     }
 
