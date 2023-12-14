@@ -2,6 +2,9 @@ name: Java CI
 
 on: [ push, pull_request ]
 
+permissions:
+  contents: write
+
 jobs:
   build:
     # Only run on PRs if the source branch is on someone else's repo
@@ -22,7 +25,11 @@ jobs:
       - name: Build with Gradle
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: build test --stacktrace
+          arguments: build test --stacktrace --scan
+          dependency-graph: generate-and-submit
+        env:
+          # Only generate dependency graph on push events
+          GITHUB_DEPENDENCY_GRAPH_ENABLED: "${{ github.event_name != 'pull_request' }}"
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
