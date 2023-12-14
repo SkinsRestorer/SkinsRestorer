@@ -19,7 +19,7 @@ sourceSets {
                 property("version", version.toString())
                 property("description", rootProject.description)
                 property("url", "https://skinsrestorer.net")
-                property("commit", indraGit.commit().toString())
+                property("commit", indraGit.commit()?.name ?: "unknown")
                 property("branch", indraGit.branch()?.name ?: "unknown")
                 property("build_time", SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date()))
                 property("ci_name", System.getenv("CI_NAME") ?: "local")

@@ -27,6 +27,7 @@ import net.skinsrestorer.shared.log.SRLogger;
 
 import javax.inject.Inject;
 import javax.net.ssl.HttpsURLConnection;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -94,22 +95,16 @@ public class HttpClient {
             throw new IOException("Failed to get input stream.");
         }
 
-        int toRead = connection.getContentLength();
-        byte[] data = new byte[toRead];
-        int offset = 0;
-        while (toRead > 0) {
-            int read = is.read(data, offset, toRead);
-            if (read == -1) {
-                throw new IOException("Failed to read data. Read " + offset + " bytes, expected " + toRead + " more bytes.");
-            }
-
-            offset += read;
-            toRead -= read;
+        ByteArrayOutputStream byteData = new ByteArrayOutputStream();
+        byte[] buffer = new byte[4096];
+        int read;
+        while ((read = is.read(buffer)) != -1) {
+            byteData.write(buffer, 0, read);
         }
 
         HttpResponse response = new HttpResponse(
                 connection.getResponseCode(),
-                new String(data, StandardCharsets.UTF_8),
+                new String(byteData.toByteArray(), StandardCharsets.UTF_8),
                 connection.getHeaderFields()
         );
 

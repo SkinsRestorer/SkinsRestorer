@@ -25,19 +25,19 @@ import net.skinsrestorer.shared.exception.UpdateException;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.update.UpdateDownloader;
+import net.skinsrestorer.shared.utils.HashUtil;
 import org.bukkit.Server;
 
 import javax.inject.Inject;
 import javax.net.ssl.HttpsURLConnection;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
-import java.nio.channels.Channels;
-import java.nio.channels.FileChannel;
-import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
+import java.util.Base64;
 
 /**
  * Parts taken from <a href="https://github.com/InventivetalentDev/SpigetUpdater">SpigetUpdater</a>
@@ -58,19 +58,31 @@ public class UpdateDownloaderGithub implements UpdateDownloader {
                 throw new UpdateException("Download returned status code " + connection.getResponseCode());
             }
 
-            Path tempFile = Files.createTempFile("SkinsRestorer-", ".jar");
-            try (ReadableByteChannel input = Channels.newChannel(connection.getInputStream());
-                 FileChannel output = FileChannel.open(tempFile, StandardOpenOption.WRITE)) {
-                long size = connection.getContentLengthLong();
-                long written = output.transferFrom(input, 0, size);
-                if (size != written) {
-                    throw new UpdateException("Download incomplete (expected " + size + " bytes, downloaded " + written + " bytes)");
+            byte[] fileData;
+            try (InputStream is = connection.getInputStream()) {
+                if (is == null) {
+                    throw new IOException("Failed to open input stream");
                 }
 
-                output.force(true);
+                ByteArrayOutputStream byteData = new ByteArrayOutputStream();
+                byte[] buffer = new byte[4096];
+                int read;
+                while ((read = is.read(buffer)) != -1) {
+                    byteData.write(buffer, 0, read);
+                }
+
+                fileData = byteData.toByteArray();
+                String hash = connection.getHeaderField("content-md5");
+                if (hash != null && !Arrays.equals(Base64.getDecoder().decode(hash), HashUtil.md5(fileData))) {
+                    throw new UpdateException("Downloaded file is corrupted");
+                } else if (hash == null) {
+                    logger.warning("[GitHubUpdate] MD5 header not found, cannot verify integrity");
+                } else {
+                    logger.debug("[GitHubUpdate] MD5 hash successfully verified");
+                }
             }
 
-            Files.move(tempFile, targetFile, StandardCopyOption.REPLACE_EXISTING);
+            Files.write(targetFile, fileData);
         } catch (IOException e) {
             throw new UpdateException("Download failed", e);
         }

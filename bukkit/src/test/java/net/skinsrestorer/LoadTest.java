@@ -93,6 +93,7 @@ public class LoadTest {
         when(server.getCommandMap()).thenReturn(mock(SimpleCommandMap.class));
         when(server.getHelpMap()).thenReturn(mock(HelpMap.class));
         when(server.getPluginManager()).thenReturn(mock(SimplePluginManager.class));
+        when(server.getUpdateFolderFile()).thenReturn(tempDir.toFile());
 
         Bukkit.setServer(server);
 
