@@ -61,7 +61,12 @@ public class UpdateDownloaderGithub implements UpdateDownloader {
             Path tempFile = Files.createTempFile("SkinsRestorer-", ".jar");
             try (ReadableByteChannel input = Channels.newChannel(connection.getInputStream());
                  FileChannel output = FileChannel.open(tempFile, StandardOpenOption.WRITE)) {
-                output.transferFrom(input, 0, Long.MAX_VALUE);
+                long size = connection.getContentLengthLong();
+                long written = output.transferFrom(input, 0, size);
+                if (size != written) {
+                    throw new UpdateException("Download incomplete (expected " + size + " bytes, downloaded " + written + " bytes)");
+                }
+
                 output.force(true);
             }
 

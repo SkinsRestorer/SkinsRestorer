@@ -94,9 +94,17 @@ public class HttpClient {
             throw new IOException("Failed to get input stream.");
         }
 
-        byte[] data = new byte[connection.getContentLength()];
-        if (is.read(data) != data.length) {
-            throw new IOException("Failed to read all data.");
+        int toRead = connection.getContentLength();
+        byte[] data = new byte[toRead];
+        int offset = 0;
+        while (toRead > 0) {
+            int read = is.read(data, offset, toRead);
+            if (read == -1) {
+                throw new IOException("Failed to read data. Read " + offset + " bytes, expected " + toRead + " more bytes.");
+            }
+
+            offset += read;
+            toRead -= read;
         }
 
         HttpResponse response = new HttpResponse(
