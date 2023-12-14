@@ -27,12 +27,12 @@ import net.skinsrestorer.shared.log.SRLogger;
 
 import javax.inject.Inject;
 import javax.net.ssl.HttpsURLConnection;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
@@ -71,17 +71,17 @@ public class HttpClient {
 
         connection.setDoOutput(requestBody != null);
         if (requestBody != null) {
-            connection.setRequestProperty("Content-Length", String.valueOf(requestBody.getBody().length()));
             connection.setRequestProperty("Content-Type", requestBody.getType().getContentType());
-            try (DataOutputStream output = new DataOutputStream(connection.getOutputStream())) {
-                output.writeBytes(requestBody.getBody());
-                output.flush();
+
+            byte[] body = requestBody.getBody().getBytes(StandardCharsets.UTF_8);
+            connection.setFixedLengthStreamingMode(body.length);
+            try (OutputStream output = connection.getOutputStream()) {
+                output.write(body);
             }
         }
 
         connection.connect();
 
-        StringBuilder body = new StringBuilder();
         InputStream is;
         try {
             is = connection.getInputStream();
@@ -94,13 +94,16 @@ public class HttpClient {
             throw new IOException("Failed to get input stream.");
         }
 
-        try (DataInputStream input = new DataInputStream(is)) {
-            for (int c = input.read(); c != -1; c = input.read()) {
-                body.append((char) c);
-            }
+        byte[] data = new byte[connection.getContentLength()];
+        if (is.read(data) != data.length) {
+            throw new IOException("Failed to read all data.");
         }
 
-        HttpResponse response = new HttpResponse(connection.getResponseCode(), body.toString(), connection.getHeaderFields());
+        HttpResponse response = new HttpResponse(
+                connection.getResponseCode(),
+                new String(data, StandardCharsets.UTF_8),
+                connection.getHeaderFields()
+        );
 
         logger.debug("Response body: " + response.getBody()
                 .replace("\n", "")
