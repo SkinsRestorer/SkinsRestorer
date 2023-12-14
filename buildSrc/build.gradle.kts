@@ -16,6 +16,7 @@ dependencies {
     implementation("com.diffplug.spotless:spotless-plugin-gradle:6.23.3")
     implementation("com.github.spotbugs.snom:spotbugs-gradle-plugin:6.0.2")
     implementation("net.kyori:indra-common:3.1.3")
+    implementation("net.kyori:indra-git:3.1.3")
     implementation("io.github.patrick.remapper:io.github.patrick.remapper.gradle.plugin:1.4.0")
     implementation("io.freefair.gradle:lombok-plugin:8.4")
 }

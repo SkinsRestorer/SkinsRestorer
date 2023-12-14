@@ -77,7 +77,7 @@ public class UpdateCheckerGitHub {
                 throw new DataRequestExceptionShared("No jar asset found in release");
             }
 
-            if (isVersionNewer(plugin.getVersion(), releaseInfo.getTagName())) {
+            if (isVersionNewer(BuildData.VERSION, releaseInfo.getTagName())) {
                 plugin.setOutdated();
 
                 // An update was already downloaded, we don't need to download it again
@@ -105,7 +105,7 @@ public class UpdateCheckerGitHub {
 
     public void printUpToDate(UpdateCause cause) {
         printHeader(cause);
-        logger.info("§b    Version: §a" + plugin.getVersion());
+        logger.info("§b    Version: §a" + BuildData.VERSION);
         logger.info("§b    Commit: §a" + BuildData.COMMIT_SHORT);
         if (cause == UpdateCause.NO_NETWORK) {
             logger.info("§c    No network connection available!");
@@ -117,7 +117,7 @@ public class UpdateCheckerGitHub {
 
     public void printUpdateAvailable(UpdateCause cause, String newVersion, String downloadUrl, boolean updateDownloader) {
         printHeader(cause);
-        logger.info("§b    Version: §c" + plugin.getVersion());
+        logger.info("§b    Version: §c" + BuildData.VERSION);
         logger.info("§b    Commit: §c" + BuildData.COMMIT_SHORT);
         if (updateDownloader) {
             logger.info("§b    A new version (§a" + newVersion + "§b) is available! Downloading update...");

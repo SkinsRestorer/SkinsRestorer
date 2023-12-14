@@ -35,18 +35,14 @@ import org.bukkit.command.CommandMap;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.help.HelpMap;
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.File;
-import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -97,17 +93,10 @@ public class LoadTest {
         when(server.getCommandMap()).thenReturn(mock(SimpleCommandMap.class));
         when(server.getHelpMap()).thenReturn(mock(HelpMap.class));
         when(server.getPluginManager()).thenReturn(mock(SimplePluginManager.class));
-        when(server.getUpdateFolderFile()).thenReturn(tempDir.toFile());
 
         Bukkit.setServer(server);
 
         JavaPluginMock plugin = mock(JavaPluginMock.class);
-        PluginDescriptionFile description =
-                new PluginDescriptionFile("Unknown", "", "");
-        Field descriptionField = JavaPlugin.class.getDeclaredField("description");
-        descriptionField.setAccessible(true);
-        descriptionField.set(plugin, description);
-
         try (BukkitAudiences adventure = mock(BukkitAudiences.class)) {
             SRBootstrapper.startPlugin(
                     runnable -> {
@@ -128,7 +117,6 @@ public class LoadTest {
                     true,
                     SRBukkitAdapter.class,
                     SRServerPlugin.class,
-                    "14.0.0", // Always trigger an update download for testing
                     configDir,
                     SRBukkitInit.class
             );
@@ -149,8 +137,5 @@ public class LoadTest {
     }
 
     public abstract static class JavaPluginMock extends JavaPlugin {
-        public @NotNull File getFile() {
-            return super.getFile();
-        }
     }
 }

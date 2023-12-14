@@ -67,8 +67,6 @@ public class SRVelocityBootstrap {
                 false,
                 SRVelocityAdapter.class,
                 SRProxyPlugin.class,
-                container.getDescription().getVersion()
-                        .orElseThrow(() -> new RuntimeException("Failed to get version from plugin container.")),
                 dataFolder,
                 SRVelocityInit.class
         );

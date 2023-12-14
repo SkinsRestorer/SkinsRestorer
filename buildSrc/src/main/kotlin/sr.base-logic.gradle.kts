@@ -5,6 +5,7 @@ plugins {
     id("sr.formatting-logic")
     id("sr.core-dependencies")
     id("net.kyori.indra")
+    id("net.kyori.indra.git")
 }
 
 tasks {
@@ -88,7 +89,7 @@ tasks.withType<Sign>().configureEach {
 
 tasks {
     all {
-        if (name.equals("testJava8")) {
+        if (name == "testJava8") {
             onlyIf { false }
         }
     }

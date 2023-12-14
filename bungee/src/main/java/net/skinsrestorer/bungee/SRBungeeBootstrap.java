@@ -47,7 +47,6 @@ public class SRBungeeBootstrap extends Plugin {
                 true,
                 SRBungeeAdapter.class,
                 SRProxyPlugin.class,
-                getDescription().getVersion(),
                 getDataFolder().toPath(),
                 SRBungeeInit.class
         );

@@ -55,7 +55,6 @@ public class SRBukkitBootstrap extends JavaPlugin {
                 true,
                 SRBukkitAdapter.class,
                 SRServerPlugin.class,
-                getDescription().getVersion(),
                 getDataFolder().toPath(),
                 SRBukkitInit.class
         );

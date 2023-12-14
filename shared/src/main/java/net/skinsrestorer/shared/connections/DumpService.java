@@ -71,7 +71,7 @@ public class DumpService {
         );
 
         DumpInfo dumpInfo = new DumpInfo(
-                plugin.getVersion(),
+                new DumpInfo.BuildInfo(),
                 proxyMode,
                 environmentInfo,
                 platformInfo,

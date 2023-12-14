@@ -21,6 +21,7 @@ package net.skinsrestorer.shared.connections.requests;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.AllArgsConstructor;
+import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.shared.info.EnvironmentInfo;
 import net.skinsrestorer.shared.info.PlatformInfo;
 
@@ -28,13 +29,24 @@ import net.skinsrestorer.shared.info.PlatformInfo;
 @SuppressWarnings("unused")
 @SuppressFBWarnings({"UWF_UNWRITTEN_FIELD", "URF_UNREAD_FIELD"})
 public class DumpInfo {
-    private String pluginVersion;
+    private BuildInfo buildInfo;
     private Boolean proxyMode;
     private EnvironmentInfo environmentInfo;
     private PlatformInfo platformInfo;
     private OSInfo osInfo;
     private JavaInfo javaInfo;
     private UserInfo userInfo;
+
+    @SuppressWarnings("unused")
+    @SuppressFBWarnings({"UWF_UNWRITTEN_FIELD", "URF_UNREAD_FIELD"})
+    public static class BuildInfo {
+        private final String version = BuildData.VERSION;
+        private final String commit = BuildData.COMMIT;
+        private final String branch = BuildData.BRANCH;
+        private final String buildTime = BuildData.BUILD_TIME;
+        private final String ciName = BuildData.CI_NAME;
+        private final String ciBuildNumber = BuildData.CI_BUILD_NUMBER;
+    }
 
     // Helps to figure out OS-specific issues
     @SuppressWarnings("unused")

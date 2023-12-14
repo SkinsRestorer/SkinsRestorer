@@ -20,7 +20,7 @@ fun replaceSlash(text: String): String {
     return text.replace(".", "/")
 }
 
-fun replacePackagDot(text: String): String {
+fun replacePackageDot(text: String): String {
     var returnedText = text
 
     for (entry in packages.entries) {
@@ -43,7 +43,7 @@ fun replacePackagSlash(text: String): String {
 fun replaceRelocation(text: String): String {
     var returnedText = text
 
-    returnedText = replacePackagDot(returnedText)
+    returnedText = replacePackageDot(returnedText)
     returnedText = replacePackagSlash(returnedText)
 
     return returnedText;
@@ -69,17 +69,17 @@ class ShadowResourceTransformer : Transformer {
         val replaced = replaceRelocation(content)
 
         if (content.length < replaced.length) {
-            replacedMap.put(context.path, replaced)
+            replacedMap[context.path] = replaced
         }
     }
 
     override fun hasTransformedResource(): Boolean {
-        return replacedMap.size > 0
+        return replacedMap.isNotEmpty()
     }
 
     override fun modifyOutputStream(os: ZipOutputStream?, preserveFileTimestamps: Boolean) {
         replacedMap.forEach { (path, value) ->
-            val entry = ZipEntry(replacePackagDot(path))
+            val entry = ZipEntry(replacePackageDot(path))
             entry.time = TransformerContext.getEntryTimestamp(preserveFileTimestamps, entry.time)
             os?.putNextEntry(entry)
             IOUtil.copy(ByteArrayInputStream(value.toByteArray()), os)

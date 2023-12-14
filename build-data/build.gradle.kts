@@ -1,7 +1,11 @@
+import java.text.SimpleDateFormat
+import java.util.*
+
 plugins {
     id("sr.formatting-logic")
-    id("net.kyori.blossom")
+    alias(libs.plugins.blossom)
     id("sr.core-dependencies")
+    id("net.kyori.indra.git")
 }
 
 java {
@@ -15,7 +19,11 @@ sourceSets {
                 property("version", version.toString())
                 property("description", rootProject.description)
                 property("url", "https://skinsrestorer.net")
-                property("commit", rootProject.latestCommitHash())
+                property("commit", indraGit.commit().toString())
+                property("branch", indraGit.branch()?.name ?: "unknown")
+                property("build_time", SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date()))
+                property("ci_name", System.getenv("CI_NAME") ?: "local")
+                property("ci_build_number", System.getenv("CI_BUILD_NUMBER") ?: "local")
 
                 val sharedResources = rootDir.resolve("shared").resolve("src").resolve("main").resolve("resources")
                 property("locales", sharedResources.resolve("locales").list()?.joinToString("|"))

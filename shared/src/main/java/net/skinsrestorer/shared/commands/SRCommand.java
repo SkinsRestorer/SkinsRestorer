@@ -146,7 +146,7 @@ public final class SRCommand {
         }
 
         sender.sendMessage(breakLine);
-        sender.sendMessage(Message.ADMINCOMMAND_STATUS_SUMMARY_VERSION, Placeholder.unparsed("version", plugin.getVersion()));
+        sender.sendMessage(Message.ADMINCOMMAND_STATUS_SUMMARY_VERSION, Placeholder.unparsed("version", BuildData.VERSION));
         sender.sendMessage(Message.ADMINCOMMAND_STATUS_SUMMARY_SERVER, Placeholder.unparsed("version", adapter.getPlatformVersion()));
 
         SRServerPlugin serverPlugin = injector.getIfAvailable(SRServerPlugin.class);

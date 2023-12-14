@@ -36,7 +36,7 @@ public class SRBootstrapper {
             SRPlatformLogger isrLogger, boolean loggerColor,
             Class<? extends SRPlatformAdapter<?>> adapterClass,
             Class<?> srPlatformClass,
-            String version, Path dataFolder,
+            Path dataFolder,
             Class<? extends SRPlatformInit> initCLass) {
         SRPlugin srPlugin = null;
         try {
@@ -54,7 +54,7 @@ public class SRBootstrapper {
                 injector.register(SRProxyAdapter.class, (SRProxyAdapter<?>) adapter);
             }
 
-            srPlugin = new SRPlugin(injector, version, dataFolder);
+            srPlugin = new SRPlugin(injector, dataFolder);
             injector.getSingleton(srPlatformClass);
 
             // Allow a platform to call plugin shutdown

@@ -29,6 +29,10 @@ public class BuildData {
     public static final String DESCRIPTION = "{{ description }}";
     public static final String URL = "{{ url }}";
     public static final String COMMIT = "{{ commit }}";
+    public static final String BRANCH = "{{ branch }}";
+    public static final String BUILD_TIME = "{{ build_time }}";
+    public static final String CI_NAME = "{{ ci_name }}";
+    public static final String CI_BUILD_NUMBER = "{{ ci_build_number }}";
     public static final String COMMIT_SHORT = COMMIT.substring(0, 7);
     public static final String[] LOCALES = supportedLocales();
 

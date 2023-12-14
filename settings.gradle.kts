@@ -1,23 +1,5 @@
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
-pluginManagement {
-    repositories {
-        gradlePluginPortal()
-    }
-    plugins {
-        id("com.github.johnrengelman.shadow") version "8.1.1"
-        id("org.cadixdev.licenser") version "0.6.1"
-        id("net.kyori.indra") version "3.1.3"
-        id("net.kyori.indra.git") version "3.1.3"
-        id("net.kyori.indra.publishing") version "3.1.3"
-        id("net.kyori.blossom") version "2.1.0"
-        id("io.github.patrick.remapper") version "1.4.0"
-        id("com.diffplug.spotless") version "6.23.3"
-        id("com.github.spotbugs") version "6.0.2"
-        id("io.freefair.lombok") version "8.4"
-    }
-}
-
 plugins {
     id("com.gradle.enterprise") version "3.16"
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.7.0"

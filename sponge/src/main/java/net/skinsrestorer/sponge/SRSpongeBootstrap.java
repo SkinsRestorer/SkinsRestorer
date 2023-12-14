@@ -67,7 +67,6 @@ public class SRSpongeBootstrap {
                 false,
                 SRSpongeAdapter.class,
                 SRServerPlugin.class,
-                container.metadata().version().toString(),
                 dataFolder,
                 SRSpongeInit.class
         );

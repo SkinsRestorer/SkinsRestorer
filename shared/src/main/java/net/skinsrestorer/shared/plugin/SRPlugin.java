@@ -32,6 +32,7 @@ import net.skinsrestorer.api.property.SkinApplier;
 import net.skinsrestorer.api.storage.CacheStorage;
 import net.skinsrestorer.api.storage.PlayerStorage;
 import net.skinsrestorer.api.storage.SkinStorage;
+import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.shared.api.PlatformWrapper;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
 import net.skinsrestorer.shared.api.SharedSkinsRestorer;
@@ -92,8 +93,6 @@ public class SRPlugin {
     private final SRLogger logger;
     @Getter
     private final Path dataFolder;
-    @Getter
-    private final String version;
     private final Injector injector;
     @Getter
     private final List<Runnable> shutdownHooks = new ArrayList<>();
@@ -102,13 +101,12 @@ public class SRPlugin {
     @Getter
     private boolean updaterInitialized = false;
 
-    public SRPlugin(Injector injector, String version, Path dataFolder) {
+    public SRPlugin(Injector injector, Path dataFolder) {
         injector.register(SRPlugin.class, this);
 
         this.injector = injector;
         this.adapter = injector.getSingleton(SRPlatformAdapter.class);
         this.logger = injector.getSingleton(SRLogger.class);
-        this.version = version;
         this.dataFolder = dataFolder;
     }
 
@@ -431,7 +429,7 @@ public class SRPlugin {
     }
 
     public String getUserAgent() {
-        return String.format(USER_AGENT, version, adapter.getPlatform());
+        return String.format(USER_AGENT, BuildData.VERSION, adapter.getPlatform());
     }
 
     public void shutdown() {

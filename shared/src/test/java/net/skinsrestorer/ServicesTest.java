@@ -53,7 +53,7 @@ public class ServicesTest {
 
         injector.register(SettingsManager.class, settings);
 
-        new SRPlugin(injector, "UnitTest", null);
+        new SRPlugin(injector, null);
 
         MetricsCounter metricsCounter = injector.getSingleton(MetricsCounter.class);
         ServiceCheckerService.ServiceCheckResponse serviceChecker = injector.getSingleton(ServiceCheckerService.class).checkServices();
