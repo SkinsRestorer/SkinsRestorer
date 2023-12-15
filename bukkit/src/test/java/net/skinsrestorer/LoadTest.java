@@ -56,7 +56,7 @@ public class LoadTest {
     private Path tempDir;
 
     @Test
-    public void testLoad() throws ReflectiveOperationException {
+    public void testLoad() {
         Path pluginFile = tempDir.resolve("SkinsRestorer.jar");
         Path configDir = tempDir.resolve("config");
 

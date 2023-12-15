@@ -53,6 +53,15 @@ public class UpdateCheckerGitHub {
     private final HttpClient httpClient;
     private boolean updateDownloaded;
 
+    private static String getCheckerPluginVersion() {
+        // Allow overriding the version for unit tests
+        if (SRPlugin.isUnitTest()) {
+            return System.getProperty("sr.check.version", BuildData.VERSION);
+        } else {
+            return BuildData.VERSION;
+        }
+    }
+
     public void checkForUpdate(UpdateCause cause, UpdateDownloader downloader) {
         try {
             HttpResponse response = httpClient.execute(RELEASES_URL_LATEST,
@@ -77,7 +86,7 @@ public class UpdateCheckerGitHub {
                 throw new DataRequestExceptionShared("No jar asset found in release");
             }
 
-            if (isVersionNewer(BuildData.VERSION, releaseInfo.getTagName())) {
+            if (isVersionNewer(getCheckerPluginVersion(), releaseInfo.getTagName())) {
                 plugin.setOutdated();
 
                 // An update was already downloaded, we don't need to download it again

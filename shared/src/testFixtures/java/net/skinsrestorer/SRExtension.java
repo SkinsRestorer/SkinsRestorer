@@ -30,6 +30,7 @@ public class SRExtension implements BeforeAllCallback, ParameterResolver {
     @Override
     public void beforeAll(ExtensionContext context) {
         System.setProperty("sr.unit.test", "true");
+        System.setProperty("sr.check.version", "1.0.0");
     }
 
     @Override
