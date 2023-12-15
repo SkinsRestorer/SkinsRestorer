@@ -1,1 +1,7 @@
-{}
+{
+  "skinsrestorer.help_skin": "Mijenja vaš skin.",
+  "skinsrestorer.help_skins": "Otvara GUI skinova.",
+  "skinsrestorer.help_sr": "Administratorske komande za SkinsRestorer.",
+  "skinsrestorer.help_skin_set": "Mijenja vaš skin.",
+  "skinsrestorer.help_skin_set_other": "Postavlja skin za ciljnog igrača."
+}
