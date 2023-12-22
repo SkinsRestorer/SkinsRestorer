@@ -12,7 +12,7 @@ dependencies {
     implementation("net.kyori:adventure-text-serializer-legacy:4.14.0")
     implementation("net.kyori:adventure-text-serializer-ansi:4.14.0")
     implementation("net.kyori:adventure-text-serializer-plain:4.14.0")
-    api("net.kyori:adventure-text-minimessage:4.14.0")
+    api("net.kyori:adventure-text-minimessage:4.15.0")
 
     api("com.github.SkinsRestorer:ConfigMe:beefdbdf7e")
     api("ch.jalu:injector:1.0")
