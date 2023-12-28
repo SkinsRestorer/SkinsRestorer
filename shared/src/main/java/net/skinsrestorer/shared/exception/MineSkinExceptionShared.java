@@ -24,7 +24,6 @@ import net.skinsrestorer.api.exception.MineSkinException;
 import net.skinsrestorer.shared.subjects.SRForeign;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
-import net.skinsrestorer.shared.utils.ComponentHelper;
 
 import java.util.Optional;
 
