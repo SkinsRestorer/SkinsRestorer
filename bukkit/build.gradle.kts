@@ -12,7 +12,7 @@ dependencies {
     implementation(projects.multiver.bukkit.multipaper)
     implementation(projects.multiver.bukkit.v17)
 
-    implementation("net.kyori:adventure-platform-bukkit:4.3.1")
+    implementation("net.kyori:adventure-platform-bukkit:4.3.2")
 
     setOf(
         "1-18", "1-18-2",
