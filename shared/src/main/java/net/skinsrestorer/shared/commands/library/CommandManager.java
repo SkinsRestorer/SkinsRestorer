@@ -18,6 +18,7 @@
 package net.skinsrestorer.shared.commands.library;
 
 import ch.jalu.configme.SettingsManager;
+import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
@@ -54,11 +55,11 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class CommandManager<T extends SRCommandSender> {
+public class CommandManager<T> {
     public static final String ARGUMENT_SEPARATOR = " ";
 
     private final CommandDispatcher<T> dispatcher = new CommandDispatcher<>();
-    private final Map<String, Predicate<T>> conditions = new HashMap<>();
+    private final Map<String, Predicate<SRCommandSender>> conditions = new HashMap<>();
     private final CommandPlatform<T> platform;
     private final SRLogger logger;
     private final SkinsRestorerLocale locale;
@@ -132,8 +133,9 @@ public class CommandManager<T extends SRCommandSender> {
             usage[i] = "/" + usage[i];
         }
 
-        SRCommandMeta<T> meta = new SRCommandMeta<>(commandName,
-                aliases.toArray(new String[0]), baseNode::canUse, ((CommandInjectHelp<T>) baseNode.getCommand()).getHelpData());
+        SRCommandMeta meta = new SRCommandMeta(commandName,
+                aliases.toArray(new String[0]), c -> baseNode.canUse(convertUnsafeCommandSender(c)),
+                ((CommandInjectHelp<T>) baseNode.getCommand()).getHelpData());
         CommandExecutor<T> executor = new CommandExecutor<>(dispatcher, this, meta, logger);
         SRRegisterPayload<T> payload = new SRRegisterPayload<>(meta, executor);
 
@@ -305,8 +307,8 @@ public class CommandManager<T extends SRCommandSender> {
         ArgumentBuilder<T, ?> lastNode = nodes.get(nodes.size() - 1);
 
         lastNode.executes(new CommandInjectHelp<>(currentHelpData,
-                new ConditionCommand<>(getConditionRegistrations(conditionTrail),
-                        new BrigadierCommand<>(method, methodHandle, logger, command, platform, settingsManager))));
+                convertUnsafeCommand(new ConditionCommand(getConditionRegistrations(conditionTrail),
+                        new BrigadierCommand(method, methodHandle, logger, command, platform, settingsManager)))));
 
         if (nodes.size() > 1) {
             for (int i1 = nodes.size() - 1; i1 > 0; i1--) {
@@ -332,7 +334,7 @@ public class CommandManager<T extends SRCommandSender> {
     }
 
     private Predicate<T> requirePermission(PermissionRegistry permission) {
-        return new PermissionPredicate<>(permission);
+        return new PermissionPredicate<>(platform, permission);
     }
 
     private Set<String> insertAnnotationConditions(Set<String> conditionTrail, AnnotatedElement element) {
@@ -356,29 +358,29 @@ public class CommandManager<T extends SRCommandSender> {
      * @param name      Name of the condition
      * @param condition Predicate that returns true if the condition is met
      */
-    public void registerCondition(String name, Predicate<T> condition) {
+    public void registerCondition(String name, Predicate<SRCommandSender> condition) {
         conditions.put(name, condition);
     }
 
-    private List<ConditionRegistration<T>> getConditionRegistrations(Set<String> conditionTrail) {
-        List<ConditionRegistration<T>> result = new ArrayList<>();
+    private List<ConditionRegistration> getConditionRegistrations(Set<String> conditionTrail) {
+        List<ConditionRegistration> result = new ArrayList<>();
         for (String condition : conditionTrail) {
             if (!conditions.containsKey(condition)) {
                 throw new IllegalStateException("Unknown condition: " + condition);
             }
 
-            result.add(new ConditionRegistration<>(condition, conditions.get(condition)));
+            result.add(new ConditionRegistration(condition, conditions.get(condition)));
         }
 
         return result;
     }
 
-    public List<String> getHelpMessage(String command, T source) {
+    public List<String> getHelpMessage(String command, SRCommandSender source) {
         return getHelpMessageNodeStart(dispatcher.getRoot().getChild(command), Component.text("/" + command), source)
                 .stream().map(ComponentHelper::convertToJsonString).collect(Collectors.toList());
     }
 
-    protected List<Component> getHelpMessageNodeStart(CommandNode<T> node, Component commandPrefix, T source) {
+    protected List<Component> getHelpMessageNodeStart(CommandNode<T> node, Component commandPrefix, SRCommandSender source) {
         List<Component> result = new ArrayList<>();
         locale.getMessageOptional(source, Message.COMMAND_HELP_HEADER,
                         Placeholder.unparsed("command", ComponentHelper.convertToPlain(commandPrefix)))
@@ -388,8 +390,8 @@ public class CommandManager<T extends SRCommandSender> {
         return result;
     }
 
-    private void getAllUsage(CommandNode<T> node, T source, List<Component> result, Component prefix, boolean first) {
-        if (!node.canUse(source)) {
+    private void getAllUsage(CommandNode<T> node, SRCommandSender source, List<Component> result, Component prefix, boolean first) {
+        if (!node.canUse(convertUnsafeCommandSender(source))) {
             return;
         }
 
@@ -437,15 +439,15 @@ public class CommandManager<T extends SRCommandSender> {
         }
     }
 
-    public void executeCommand(T executor, String input) {
+    public void executeCommand(SRCommandSender executor, String input) {
         logger.debug(String.format("Executing command: '%s' for '%s'", input, executor));
         try {
-            dispatcher.execute(input, executor);
+            dispatcher.execute(input, convertUnsafeCommandSender(executor));
         } catch (CommandSyntaxException e) {
             String rawMessage = e.getRawMessage().getString();
             if (rawMessage.equals(CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownCommand().toString())
                     || rawMessage.equals(CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownArgument().toString())) {
-                List<ParsedCommandNode<T>> parsedNodes = dispatcher.parse(input, executor).getContext().getNodes();
+                List<ParsedCommandNode<T>> parsedNodes = dispatcher.parse(input, convertUnsafeCommandSender(executor)).getContext().getNodes();
 
                 if (parsedNodes.isEmpty()) {
                     return;
@@ -478,5 +480,29 @@ public class CommandManager<T extends SRCommandSender> {
             builder.then(child);
         }
         return builder.build();
+    }
+
+    @SuppressWarnings("unchecked")
+    protected T convertUnsafeCommandSender(SRCommandSender sender) {
+        // This is necessary to support multiple types of command senders
+        return (T) sender;
+    }
+
+    private Command<T> convertUnsafeCommand(CommandWrapper command) {
+        return context -> {
+            SRCommandSender source;
+            if (context.getSource() instanceof SRCommandSender) {
+                source = (SRCommandSender) context.getSource();
+            } else {
+                source = platform.convertSender(context.getSource());
+            }
+
+            return command.run(new ContextWrapper(source) {
+                @Override
+                public <A> A getArgument(String name, Class<A> clazz) {
+                    return context.getArgument(name, clazz);
+                }
+            });
+        };
     }
 }

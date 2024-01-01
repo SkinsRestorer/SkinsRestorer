@@ -30,11 +30,12 @@ import java.util.function.Predicate;
 @Setter
 @Getter
 @AllArgsConstructor
-public class PermissionPredicate<T extends SRCommandSender> implements Predicate<T> {
+public class PermissionPredicate<T> implements Predicate<T> {
+    private final CommandPlatform<T> platform;
     private PermissionRegistry permission;
 
     @Override
     public boolean test(T t) {
-        return t.hasPermission(permission);
+        return platform.convertSender(t).hasPermission(permission);
     }
 }

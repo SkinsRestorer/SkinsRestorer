@@ -33,7 +33,7 @@ import javax.inject.Inject;
 @CommandConditions("cooldown")
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class ServerGUICommand {
-    private final SRServerAdapter<?> plugin;
+    private final SRServerAdapter<?, ?> plugin;
 
     @RootCommand
     private void onDefault(SRPlayer srPlayer) {

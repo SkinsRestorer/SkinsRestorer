@@ -87,7 +87,7 @@ public class SRPlugin {
     private static final String USER_AGENT = "SkinsRestorer/%s (%s)";
     @Getter
     private static final boolean unitTest = System.getProperty("sr.unit.test") != null;
-    private final SRPlatformAdapter<?> adapter;
+    private final SRPlatformAdapter<?, ?> adapter;
     private final SRLogger logger;
     @Getter
     private final Path dataFolder;
@@ -109,7 +109,7 @@ public class SRPlugin {
     }
 
     public void initCommands() {
-        CommandManager<SRCommandSender> manager = new CommandManager<>(adapter, logger,
+        CommandManager<?> manager = new CommandManager<>(adapter, logger,
                 injector.getSingleton(SkinsRestorerLocale.class),
                 injector.getSingleton(SettingsManager.class));
         injector.register(CommandManager.class, manager);
@@ -136,7 +136,7 @@ public class SRPlugin {
         }
     }
 
-    private void registerConditions(CommandManager<SRCommandSender> manager) {
+    private void registerConditions(CommandManager<?> manager) {
         SettingsManager settings = injector.getSingleton(SettingsManager.class);
         CooldownStorage cooldownStorage = injector.getSingleton(CooldownStorage.class);
 

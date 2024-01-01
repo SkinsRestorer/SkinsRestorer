@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
 
-public interface SRServerAdapter<P> extends SRPlatformAdapter<P> {
+public interface SRServerAdapter<P, C> extends SRPlatformAdapter<P, C> {
     void runSync(Runnable runnable);
 
     void runSyncToPlayer(SRPlayer player, Runnable runnable);

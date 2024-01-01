@@ -26,13 +26,13 @@ import net.skinsrestorer.shared.subjects.SRCommandSender;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class ConditionCommand<T extends SRCommandSender> implements Command<T> {
-    private final List<ConditionRegistration<T>> conditions;
-    private final Command<T> delegate;
+public class ConditionCommand implements CommandWrapper {
+    private final List<ConditionRegistration> conditions;
+    private final CommandWrapper delegate;
 
     @Override
-    public int run(CommandContext<T> context) throws CommandSyntaxException {
-        for (ConditionRegistration<T> condition : conditions) {
+    public int run(ContextWrapper context) throws CommandSyntaxException {
+        for (ConditionRegistration condition : conditions) {
             if (!condition.getCondition().test(context.getSource())) {
                 return 0;
             }

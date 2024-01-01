@@ -22,10 +22,12 @@ import net.skinsrestorer.shared.subjects.SRPlayer;
 
 import java.util.Collection;
 
-public interface CommandPlatform<T extends SRCommandSender> {
+public interface CommandPlatform<T> {
     void registerCommand(SRRegisterPayload<T> payload);
 
     void runAsync(Runnable runnable);
 
     Collection<SRPlayer> getOnlinePlayers();
+
+    SRCommandSender convertSender(T sender);
 }

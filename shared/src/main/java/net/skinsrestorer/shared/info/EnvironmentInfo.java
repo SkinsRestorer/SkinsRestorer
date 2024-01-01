@@ -29,7 +29,7 @@ public class EnvironmentInfo {
     private final PlatformType platformType;
     private final ClassInfo classInfo;
 
-    public static EnvironmentInfo determineEnvironment(SRPlatformAdapter<?> adapter) {
+    public static EnvironmentInfo determineEnvironment(SRPlatformAdapter<?, ?> adapter) {
         ClassInfo info = ClassInfo.get();
 
         Platform platform = adapter.getPlatform();

@@ -31,7 +31,7 @@ import java.util.function.Function;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class PaperTabCompleteEvent implements Listener {
-    private final SRRegisterPayload<SRCommandSender> payload;
+    private final SRRegisterPayload<CommandSender> payload;
     private final Function<CommandSender, SRCommandSender> senderMapper;
 
     @EventHandler(ignoreCancelled = true)

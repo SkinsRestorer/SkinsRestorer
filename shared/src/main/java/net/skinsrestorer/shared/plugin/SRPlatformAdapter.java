@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-public interface SRPlatformAdapter<P> extends CommandPlatform<SRCommandSender> {
+public interface SRPlatformAdapter<P, C> extends CommandPlatform<C> {
     InputStream getResource(String resource);
 
     void runAsync(Runnable runnable);

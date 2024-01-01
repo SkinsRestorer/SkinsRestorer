@@ -44,7 +44,7 @@ public class DumpService {
     private static final URI BYTEBIN_ENDPOINT = URI.create("https://bytebin.lucko.me/post");
     private final SRLogger logger;
     private final SRPlugin plugin;
-    private final SRPlatformAdapter<?> adapter;
+    private final SRPlatformAdapter<?, ?> adapter;
     private final Injector injector;
     private final HttpClient httpClient;
     private final Gson gson = new GsonBuilder()

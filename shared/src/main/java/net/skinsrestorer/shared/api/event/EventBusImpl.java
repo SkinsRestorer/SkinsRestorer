@@ -31,7 +31,7 @@ import java.util.function.Consumer;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class EventBusImpl implements EventBus {
     private final Queue<EventSubscription<?>> subscriptions = new ConcurrentLinkedQueue<>();
-    private final SRPlatformAdapter<Object> platformAdapter;
+    private final SRPlatformAdapter<Object, ?> platformAdapter;
 
     @Override
     public <E extends SkinsRestorerEvent> void subscribe(Object plugin, Class<E> eventClass, Consumer<E> listener) {

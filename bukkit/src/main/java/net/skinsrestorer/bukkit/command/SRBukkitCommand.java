@@ -37,12 +37,12 @@ public class SRBukkitCommand extends Command implements PluginIdentifiableComman
     @Getter
     private final Plugin plugin;
     @Getter
-    private final CommandExecutor<SRCommandSender> executor;
+    private final CommandExecutor<CommandSender> executor;
     private final WrapperBukkit wrapper;
     @Getter
-    private final SRCommandMeta<SRCommandSender> meta;
+    private final SRCommandMeta meta;
 
-    public SRBukkitCommand(SRRegisterPayload<SRCommandSender> payload, Plugin plugin, WrapperBukkit wrapper) {
+    public SRBukkitCommand(SRRegisterPayload<CommandSender> payload, Plugin plugin, WrapperBukkit wrapper) {
         super(
                 payload.getMeta().getRootName(),
                 "", // overwritten by help system

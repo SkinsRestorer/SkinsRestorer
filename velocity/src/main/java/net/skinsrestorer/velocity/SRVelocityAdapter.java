@@ -19,6 +19,7 @@ package net.skinsrestorer.velocity;
 
 import ch.jalu.injector.Injector;
 import com.velocitypowered.api.command.CommandMeta;
+import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.RawCommand;
 import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
@@ -52,7 +53,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class SRVelocityAdapter implements SRProxyAdapter<PluginContainer> {
+public class SRVelocityAdapter implements SRProxyAdapter<PluginContainer, CommandSource> {
     private final Injector injector;
     private final SRVelocityBootstrap pluginInstance; // Only for platform API use
     private final ProxyServer proxy;
@@ -135,12 +136,17 @@ public class SRVelocityAdapter implements SRProxyAdapter<PluginContainer> {
     }
 
     @Override
+    public SRCommandSender convertSender(CommandSource sender) {
+        return injector.getSingleton(WrapperVelocity.class).commandSender(sender);
+    }
+
+    @Override
     public Optional<SRProxyPlayer> getPlayer(String name) {
         return proxy.getPlayer(name).map(injector.getSingleton(WrapperVelocity.class)::player);
     }
 
     @Override
-    public void registerCommand(SRRegisterPayload<SRCommandSender> payload) {
+    public void registerCommand(SRRegisterPayload<CommandSource> payload) {
         CommandMeta meta = proxy.getCommandManager()
                 .metaBuilder(payload.getMeta().getRootName())
                 .plugin(pluginInstance)

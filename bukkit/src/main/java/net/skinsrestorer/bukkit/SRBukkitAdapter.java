@@ -46,6 +46,7 @@ import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Server;
 import org.bukkit.command.CommandMap;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -60,7 +61,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin> {
+public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin, CommandSender> {
     private final Injector injector;
     private final Server server;
     @Getter
@@ -233,7 +234,12 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin> {
     }
 
     @Override
-    public void registerCommand(SRRegisterPayload<SRCommandSender> payload) {
+    public SRCommandSender convertSender(CommandSender sender) {
+        return injector.getSingleton(WrapperBukkit.class).commandSender(sender);
+    }
+
+    @Override
+    public void registerCommand(SRRegisterPayload<CommandSender> payload) {
         SettingsManager settingsManager = injector.getSingleton(SettingsManager.class);
         WrapperBukkit wrapper = injector.getSingleton(WrapperBukkit.class);
 

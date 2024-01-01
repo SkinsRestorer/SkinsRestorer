@@ -17,12 +17,8 @@
  */
 package net.skinsrestorer.shared.commands.library;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-@Getter
-@RequiredArgsConstructor
-public class SRRegisterPayload<T> {
-    private final SRCommandMeta meta;
-    private final CommandExecutor<T> executor;
+public interface CommandWrapper {
+    int run(ContextWrapper context) throws CommandSyntaxException;
 }

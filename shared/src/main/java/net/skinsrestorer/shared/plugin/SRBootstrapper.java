@@ -32,7 +32,7 @@ public class SRBootstrapper {
             Consumer<Runnable> shutdownHookConsumer,
             Consumer<Injector> platformRegister,
             SRPlatformLogger isrLogger, boolean loggerColor,
-            Class<? extends SRPlatformAdapter<?>> adapterClass,
+            Class<? extends SRPlatformAdapter<?, ?>> adapterClass,
             Class<?> srPlatformClass,
             Path dataFolder,
             Class<? extends SRPlatformInit> initCLass) {
@@ -44,12 +44,12 @@ public class SRBootstrapper {
 
             injector.register(SRLogger.class, new SRLogger(isrLogger, loggerColor));
 
-            SRPlatformAdapter<?> adapter = injector.getSingleton(adapterClass);
+            SRPlatformAdapter<?, ?> adapter = injector.getSingleton(adapterClass);
             injector.register(SRPlatformAdapter.class, adapter);
             if (adapter instanceof SRServerAdapter) {
-                injector.register(SRServerAdapter.class, (SRServerAdapter<?>) adapter);
+                injector.register(SRServerAdapter.class, (SRServerAdapter<?, ?>) adapter);
             } else if (adapter instanceof SRProxyAdapter) {
-                injector.register(SRProxyAdapter.class, (SRProxyAdapter<?>) adapter);
+                injector.register(SRProxyAdapter.class, (SRProxyAdapter<?, ?>) adapter);
             }
 
             srPlugin = new SRPlugin(injector, dataFolder);

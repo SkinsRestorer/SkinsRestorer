@@ -46,7 +46,7 @@ public class SharedGUI {
 
     @RequiredArgsConstructor(onConstructor_ = @Inject)
     public static class ServerGUIActions implements Consumer<ClickEventInfo> {
-        private final SRServerAdapter<?> adapter;
+        private final SRServerAdapter<?, ?> adapter;
         private final CommandManager<SRCommandSender> commandManager;
 
         @Override
@@ -75,7 +75,7 @@ public class SharedGUI {
 
     @RequiredArgsConstructor(onConstructor_ = @Inject)
     public static class ProxyGUIActions implements Consumer<ClickEventInfo> {
-        private final SRServerAdapter<?> adapter;
+        private final SRServerAdapter<?, ?> adapter;
 
         @Override
         public void accept(ClickEventInfo event) {

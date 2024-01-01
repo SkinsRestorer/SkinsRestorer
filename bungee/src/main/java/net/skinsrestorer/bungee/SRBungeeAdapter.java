@@ -21,6 +21,7 @@ import ch.jalu.injector.Injector;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.platform.bungeecord.BungeeAudiences;
+import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -46,7 +47,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class SRBungeeAdapter implements SRProxyAdapter<Plugin> {
+public class SRBungeeAdapter implements SRProxyAdapter<Plugin, CommandSender> {
     private final Injector injector;
     private final ProxyServer proxy;
     @Getter
@@ -128,12 +129,17 @@ public class SRBungeeAdapter implements SRProxyAdapter<Plugin> {
     }
 
     @Override
+    public SRCommandSender convertSender(CommandSender sender) {
+        return injector.getSingleton(WrapperBungee.class).commandSender(sender);
+    }
+
+    @Override
     public Optional<SRProxyPlayer> getPlayer(String name) {
         return Optional.ofNullable(proxy.getPlayer(name)).map(p -> injector.getSingleton(WrapperBungee.class).player(p));
     }
 
     @Override
-    public void registerCommand(SRRegisterPayload<SRCommandSender> payload) {
+    public void registerCommand(SRRegisterPayload<CommandSender> payload) {
         proxy.getPluginManager().registerCommand(pluginInstance,
                 new SRBungeeCommand(payload, injector.getSingleton(WrapperBungee.class)));
     }

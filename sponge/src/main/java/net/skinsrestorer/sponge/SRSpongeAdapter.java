@@ -67,14 +67,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class SRSpongeAdapter implements SRServerAdapter<PluginContainer> {
+public class SRSpongeAdapter implements SRServerAdapter<PluginContainer, CommandCause> {
     private static final GsonComponentSerializer GSON = GsonComponentSerializer.gson();
     private final Injector injector;
     @Getter
     private final PluginContainer pluginContainer;
     private final Game game;
     private final MetricsConfigManager metricsConfigManager;
-    private final Set<SRRegisterPayload<SRCommandSender>> commands = new HashSet<>();
+    private final Set<SRRegisterPayload<CommandCause>> commands = new HashSet<>();
 
     @PostConstruct
     public void init() {
@@ -234,7 +234,12 @@ public class SRSpongeAdapter implements SRServerAdapter<PluginContainer> {
     }
 
     @Override
-    public void registerCommand(SRRegisterPayload<SRCommandSender> payload) {
+    public SRCommandSender convertSender(CommandCause sender) {
+        return injector.getSingleton(WrapperSponge.class).commandSender(sender);
+    }
+
+    @Override
+    public void registerCommand(SRRegisterPayload<CommandCause> payload) {
         commands.add(payload);
     }
 
@@ -243,7 +248,7 @@ public class SRSpongeAdapter implements SRServerAdapter<PluginContainer> {
         WrapperSponge wrapper = injector.getSingleton(WrapperSponge.class);
         SkinsRestorerLocale locale = injector.getSingleton(SkinsRestorerLocale.class);
         LegacyComponentSerializer serializer = LegacyComponentSerializer.legacySection();
-        for (SRRegisterPayload<SRCommandSender> payload : commands) {
+        for (SRRegisterPayload<CommandCause> payload : commands) {
             event.register(pluginContainer, new Command.Raw() {
                 @Override
                 public CommandResult process(CommandCause cause, ArgumentReader.Mutable arguments) {

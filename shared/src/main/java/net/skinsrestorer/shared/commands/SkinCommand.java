@@ -58,7 +58,7 @@ import java.util.concurrent.TimeUnit;
 @CommandConditions("allowed-server")
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class SkinCommand {
-    private final SRPlatformAdapter<?> adapter;
+    private final SRPlatformAdapter<?, ?> adapter;
     private final SRPlugin plugin;
     private final SettingsManager settings;
     private final CooldownStorage cooldownStorage;

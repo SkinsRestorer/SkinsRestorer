@@ -32,16 +32,16 @@ import java.lang.reflect.Parameter;
 import java.util.Arrays;
 
 @RequiredArgsConstructor
-public class BrigadierCommand<T extends SRCommandSender> implements Command<T> {
+public class BrigadierCommand  implements CommandWrapper {
     private final Method method;
     private final MethodHandle methodHandle;
     private final SRLogger logger;
     private final Object command;
-    private final CommandPlatform<T> platform;
+    private final CommandPlatform<?> platform;
     private final SettingsManager settingsManager;
 
     @Override
-    public int run(CommandContext<T> context) {
+    public int run(ContextWrapper context) {
         try {
             Object[] parameters = new Object[1 + method.getParameterCount()];
             parameters[0] = command;
@@ -80,7 +80,7 @@ public class BrigadierCommand<T extends SRCommandSender> implements Command<T> {
         }
     }
 
-    private String handleStringArgument(T source, String argument) {
+    private String handleStringArgument(SRCommandSender source, String argument) {
         if (settingsManager.getProperty(CommandConfig.REMOVE_BRACKETS) &&
                 ((argument.startsWith("<") && argument.endsWith(">")) || (argument.startsWith("[") && argument.endsWith("]")))) {
             source.sendMessage(Message.INFO_NO_BRACKETS);

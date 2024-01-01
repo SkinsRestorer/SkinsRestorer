@@ -19,10 +19,12 @@ package net.skinsrestorer.shared.commands.library;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.shared.subjects.SRCommandSender;
 
 @Getter
 @RequiredArgsConstructor
-public class SRRegisterPayload<T> {
-    private final SRCommandMeta meta;
-    private final CommandExecutor<T> executor;
+public abstract class ContextWrapper {
+    private final SRCommandSender source;
+
+    public abstract <T> T getArgument(String name, Class<T> clazz);
 }

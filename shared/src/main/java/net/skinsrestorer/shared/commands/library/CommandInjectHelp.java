@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 
 @RequiredArgsConstructor
-public class CommandInjectHelp<T extends SRCommandSender> implements Command<T> {
+public class CommandInjectHelp<T> implements Command<T> {
     @Getter
     private final CommandHelpData helpData;
     private final Command<T> delegate;
