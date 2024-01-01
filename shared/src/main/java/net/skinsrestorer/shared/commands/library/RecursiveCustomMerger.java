@@ -24,14 +24,13 @@ import com.mojang.brigadier.tree.ArgumentCommandNode;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mojang.brigadier.tree.RootCommandNode;
-import net.skinsrestorer.shared.subjects.SRCommandSender;
 
 import java.lang.reflect.Field;
 import java.util.Map;
 
 public class RecursiveCustomMerger {
     @SuppressWarnings("unchecked")
-    public static <T extends SRCommandSender> void mergeThen(ArgumentBuilder<T, ?> builder, CommandNode<T> other) {
+    public static <T> void mergeThen(ArgumentBuilder<T, ?> builder, CommandNode<T> other) {
         try {
             Field argumentsField = ArgumentBuilder.class.getDeclaredField("arguments");
             argumentsField.setAccessible(true);
@@ -44,7 +43,7 @@ public class RecursiveCustomMerger {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T extends SRCommandSender> void addChild(CommandNode<T> base, CommandNode<T> other) throws ReflectiveOperationException {
+    private static <T> void addChild(CommandNode<T> base, CommandNode<T> other) throws ReflectiveOperationException {
         if (other instanceof RootCommandNode) {
             throw new UnsupportedOperationException("Cannot add a RootCommandNode as a child to any other CommandNode");
         }
@@ -66,9 +65,9 @@ public class RecursiveCustomMerger {
                 Field requirementField = CommandNode.class.getDeclaredField("requirement");
                 requirementField.setAccessible(true);
 
-                PermissionPredicate<T> requirement = (PermissionPredicate<T>) requirementField.get(child);
+                PermissionPredicate<?> requirement = (PermissionPredicate<?>) requirementField.get(child);
                 if (requirement != null) {
-                    requirement.setPermission(((PermissionPredicate<T>) other.getRequirement()).getPermission());
+                    requirement.setPermission(((PermissionPredicate<?>) other.getRequirement()).getPermission());
                 }
             }
 

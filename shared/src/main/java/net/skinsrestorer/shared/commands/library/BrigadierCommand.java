@@ -22,7 +22,6 @@ package net.skinsrestorer.shared.commands.library;
 import ch.jalu.configme.SettingsManager;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.config.CommandConfig;
 import net.skinsrestorer.shared.log.SRLogger;
@@ -44,7 +43,7 @@ public class BrigadierCommand<T extends SRCommandSender> implements Command<T> {
     private final SettingsManager settingsManager;
 
     @Override
-    public int run(CommandContext<T> context) throws CommandSyntaxException {
+    public int run(CommandContext<T> context) {
         try {
             Object[] parameters = new Object[1 + method.getParameterCount()];
             parameters[0] = command;

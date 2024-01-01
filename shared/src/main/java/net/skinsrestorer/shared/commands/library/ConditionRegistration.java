@@ -21,13 +21,12 @@ package net.skinsrestorer.shared.commands.library;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.subjects.SRCommandSender;
 
 import java.util.function.Predicate;
 
 @Getter
 @RequiredArgsConstructor
-public class ConditionRegistration<T extends SRCommandSender> {
+public class ConditionRegistration<T> {
     private final String name;
     private final Predicate<T> condition;
 }

@@ -23,7 +23,7 @@ dependencies {
 
     compileOnly("org.geysermc.floodgate:api:2.2.2-SNAPSHOT")
 
-    implementation("com.mojang:brigadier:1.1.8")
+    implementation(libs.brigadier)
 
     testImplementation("org.bstats:bstats-base:3.0.2")
 

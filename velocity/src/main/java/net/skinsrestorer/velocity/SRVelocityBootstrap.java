@@ -25,7 +25,6 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
-import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.skinsrestorer.builddata.BuildData;
@@ -50,8 +49,6 @@ public class SRVelocityBootstrap {
     private Path dataFolder;
     @Inject
     private Logger logger;
-    @Inject
-    private PluginContainer container;
 
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent event) {

@@ -21,13 +21,12 @@ package net.skinsrestorer.shared.commands.library;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.subjects.SRCommandSender;
 
 import java.util.function.Predicate;
 
 @Getter
 @RequiredArgsConstructor
-public class SRCommandMeta<T extends SRCommandSender> {
+public class SRCommandMeta<T> {
     private final String rootName;
     private final String[] aliases;
     private final Predicate<T> permission;
