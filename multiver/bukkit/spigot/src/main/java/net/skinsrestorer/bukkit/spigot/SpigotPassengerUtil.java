@@ -25,7 +25,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class SpigotPassengerUtil {
-    public static void refreshPassengers(JavaPlugin plugin, Player player, Entity vehicle, SettingsManager settings) {
+    public static void ejectPassengers(JavaPlugin plugin, Player player, SettingsManager settings) {
+        Entity vehicle = player.getVehicle();
+
         // Dismounts a player on refreshing, which prevents desync caused by riding a horse, or plugins that allow sitting
         if (settings.getProperty(ServerConfig.DISMOUNT_PLAYER_ON_UPDATE) && vehicle != null) {
             vehicle.removePassenger(player);

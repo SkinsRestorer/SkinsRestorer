@@ -131,58 +131,54 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
             }
 
             // delay 1 server tick so we override online-mode
-            adapter.runSyncToPlayer(player, () -> {
-                applyAdapter.applyProperty(player, applyEvent.getProperty());
-
-                adapter.runAsync(() -> updateSkin(player, applyEvent.getProperty()));
-            });
+            adapter.runSyncToPlayer(player, () -> applySkinSync(player, applyEvent.getProperty()));
         });
     }
 
-    /**
-     * Instantly updates player's skin
-     *
-     * @param player - Player
-     */
     @SuppressWarnings("deprecation")
-    public void updateSkin(Player player, SkinProperty property) {
+    public void applySkinSync(Player player, SkinProperty property) {
         if (!player.isOnline()) {
             return;
         }
 
-        adapter.getSchedulerProvider().runSyncToEntity(server, adapter.getPluginInstance(), player, () -> {
-            ejectPassengers(player);
+        ejectPassengers(player);
 
-            if (ReflectionUtil.classExists("com.destroystokyo.paper.profile.PlayerProfile")
-                    && PaperSkinApplier.hasProfileMethod()) {
-                PaperSkinApplier.applySkin(player, property);
-                return;
+        if (ReflectionUtil.classExists("com.destroystokyo.paper.profile.PlayerProfile")
+                && PaperSkinApplier.hasProfileMethod()) {
+            PaperSkinApplier.applySkin(player, property);
+            return;
+        }
+
+        applyAdapter.applyProperty(player, property);
+
+        // Force player to be re-added to the player-list of every player on the server
+        for (Player otherPlayer : getOnlinePlayers()) {
+            // Do not hide the player from itself or do anything if the other player cannot see the player
+            if (otherPlayer.getUniqueId().equals(player.getUniqueId())
+                    || !otherPlayer.canSee(player)) {
+                continue;
             }
 
-            for (Player ps : getOnlinePlayers()) {
-                // Some older spigot versions only support hidePlayer(player)
-                try {
-                    ps.hidePlayer(adapter.getPluginInstance(), player);
-                } catch (NoSuchMethodError ignored) {
-                    ps.hidePlayer(player);
-                }
-
-                try {
-                    ps.showPlayer(adapter.getPluginInstance(), player);
-                } catch (NoSuchMethodError ignored) {
-                    ps.showPlayer(player);
-                }
+            // Some older spigot versions only support hidePlayer(player)
+            try {
+                otherPlayer.hidePlayer(adapter.getPluginInstance(), player);
+            } catch (NoSuchMethodError ignored) {
+                otherPlayer.hidePlayer(player);
             }
 
-            refresh.accept(player);
-        });
+            try {
+                otherPlayer.showPlayer(adapter.getPluginInstance(), player);
+            } catch (NoSuchMethodError ignored) {
+                otherPlayer.showPlayer(player);
+            }
+        }
+
+        refresh.accept(player);
     }
 
     private void ejectPassengers(Player player) {
         if (ClassInfo.get().isSpigot() && SpigotUtil.hasPassengerMethods()) {
-            Entity vehicle = player.getVehicle();
-
-            SpigotPassengerUtil.refreshPassengers(adapter.getPluginInstance(), player, vehicle, settings);
+            SpigotPassengerUtil.ejectPassengers(adapter.getPluginInstance(), player, settings);
         }
     }
 
