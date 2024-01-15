@@ -30,7 +30,6 @@ import net.skinsrestorer.shared.api.SkinApplierAccess;
 import net.skinsrestorer.shared.api.event.EventBusImpl;
 import net.skinsrestorer.shared.api.event.SkinApplyEventImpl;
 import net.skinsrestorer.shared.info.ClassInfo;
-import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
@@ -42,7 +41,6 @@ import java.util.Collection;
 public class SkinApplierBukkit implements SkinApplierAccess<Player> {
     private final SkinApplyBukkitAdapter applyAdapter;
     private final SRBukkitAdapter adapter;
-    private final SRLogger logger;
     private final SettingsManager settings;
     private final Server server;
     private final EventBusImpl eventBus;
