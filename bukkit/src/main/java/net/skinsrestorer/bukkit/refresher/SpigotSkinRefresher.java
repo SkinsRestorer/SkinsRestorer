@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package net.skinsrestorer.bukkit.skinrefresher;
+package net.skinsrestorer.bukkit.refresher;
 
 import net.skinsrestorer.bukkit.SRBukkitAdapter;
 import net.skinsrestorer.bukkit.utils.BukkitReflection;
@@ -31,9 +31,8 @@ import org.bukkit.entity.Player;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.List;
-import java.util.function.Consumer;
 
-public final class SpigotSkinRefresher implements Consumer<Player> {
+public final class SpigotSkinRefresher implements SkinRefresher {
     private final SRBukkitAdapter adapter;
     private final boolean viaWorkaround;
     private final Class<?> playOutRespawn;
@@ -92,7 +91,7 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
     }
 
     @Override
-    public void accept(Player player) {
+    public void refresh(Player player) {
         try {
             final Object entityPlayer = BukkitReflection.getHandle(player, Object.class);
             Object removePlayer;

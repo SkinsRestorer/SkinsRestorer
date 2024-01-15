@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package net.skinsrestorer.bukkit.skinrefresher;
+package net.skinsrestorer.bukkit.refresher;
 
 import net.skinsrestorer.bukkit.utils.MappingManager;
 import net.skinsrestorer.bukkit.utils.NoMappingException;
@@ -25,10 +25,9 @@ import org.bukkit.Server;
 import org.bukkit.entity.Player;
 
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-public class MappingSpigotSkinRefresher implements Consumer<Player> {
+public class MappingSpigotSkinRefresher implements SkinRefresher {
     private final IMapping mapping;
     private final boolean viaWorkaround;
 
@@ -38,13 +37,13 @@ public class MappingSpigotSkinRefresher implements Consumer<Player> {
         Optional<IMapping> mapping = MappingManager.getMapping(server);
         if (!mapping.isPresent()) {
             throw new NoMappingException(server);
-        } else {
-            this.mapping = mapping.get();
         }
+
+        this.mapping = mapping.get();
     }
 
     @Override
-    public void accept(Player player) {
+    public void refresh(Player player) {
         Predicate<ViaPacketData> viaFunction;
 
         if (viaWorkaround) {

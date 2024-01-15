@@ -34,6 +34,7 @@ public class SpigotPassengerUtil {
 
             if (settings.getProperty(ServerConfig.REMOUNT_PLAYER_ON_UPDATE)) {
                 // This is delayed to next tick to allow the accepter to propagate if necessary (IE: Paper's health update)
+                // TODO: Support folia for this
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                     // This is not really necessary, as addPassenger on vanilla despawned vehicles won't do anything, but better to be safe in case the server has plugins that do strange things
                     if (vehicle.isValid()) {

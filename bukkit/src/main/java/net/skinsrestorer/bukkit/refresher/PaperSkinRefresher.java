@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package net.skinsrestorer.bukkit.skinrefresher;
+package net.skinsrestorer.bukkit.refresher;
 
 import lombok.SneakyThrows;
 import net.skinsrestorer.bukkit.utils.BukkitReflection;
@@ -26,7 +26,7 @@ import org.bukkit.entity.Player;
 import java.lang.reflect.Method;
 import java.util.function.Consumer;
 
-public final class PaperSkinRefresher implements Consumer<Player> {
+public final class PaperSkinRefresher implements SkinRefresher {
     private final Method refreshPlayerMethod;
     private final Consumer<Player> triggerHealthUpdate;
 
@@ -52,7 +52,7 @@ public final class PaperSkinRefresher implements Consumer<Player> {
 
     @Override
     @SneakyThrows
-    public void accept(Player player) {
+    public void refresh(Player player) {
         refreshPlayerMethod.invoke(player);
         triggerHealthUpdate.accept(player);
     }
