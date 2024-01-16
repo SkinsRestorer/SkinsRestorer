@@ -17,9 +17,14 @@
  */
 package net.skinsrestorer.shared.connections;
 
+import ch.jalu.configme.SettingsManager;
+import ch.jalu.configme.SettingsManagerImpl;
+import ch.jalu.configme.configurationdata.ConfigurationData;
+import ch.jalu.configme.properties.Property;
 import ch.jalu.injector.Injector;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.shared.connections.http.HttpClient;
@@ -35,9 +40,11 @@ import net.skinsrestorer.shared.plugin.SRServerPlugin;
 
 import javax.inject.Inject;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Optional;
+import java.util.function.Function;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class DumpService {
@@ -47,9 +54,29 @@ public class DumpService {
     private final SRPlatformAdapter<?, ?> adapter;
     private final Injector injector;
     private final HttpClient httpClient;
+    private final SettingsManager settingsManager;
     private final Gson gson = new GsonBuilder()
             .serializeNulls()
             .create();
+    private static final Function<SettingsManager, ConfigurationData> DATA_EXTRACTOR;
+
+    static {
+        // In static initializer so we skip a field lookup + can easier detect if the field changed
+        try {
+            Field field = SettingsManagerImpl.class.getDeclaredField("configurationData");
+            field.setAccessible(true);
+
+            DATA_EXTRACTOR = settingsManager -> {
+                try {
+                    return (ConfigurationData) field.get(settingsManager);
+                } catch (ReflectiveOperationException e) {
+                    throw new RuntimeException(e);
+                }
+            };
+        } catch (ReflectiveOperationException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
 
     public Optional<String> dump() throws IOException, DataRequestException {
         Boolean proxyMode;
@@ -59,6 +86,32 @@ public class DumpService {
         } else {
             proxyMode = serverPlugin.isProxyMode();
         }
+
+        ConfigurationData configurationData = DATA_EXTRACTOR.apply(settingsManager);
+        JsonObject configMap = new JsonObject();
+        for (Property<?> key : configurationData.getProperties()) {
+            // Exclude sensitive data
+            if (key.getPath().startsWith("database.")) {
+                continue;
+            }
+
+            String[] split = key.getPath().split("\\.");
+            JsonObject jsonObject = configMap;
+            String keyName = split[split.length - 1];
+            if (split.length > 1) {
+                for (int i = 0; i < split.length - 1; i++) {
+                    if (!jsonObject.has(split[i])) {
+                        jsonObject.add(split[i], new JsonObject());
+                    }
+
+                    jsonObject = jsonObject.getAsJsonObject(split[i]);
+                }
+            }
+
+            jsonObject.add(keyName, gson.toJsonTree(configurationData.getValue(key)));
+        }
+
+        DumpInfo.PluginInfo pluginInfo = new DumpInfo.PluginInfo(proxyMode, configMap);
 
         EnvironmentInfo environmentInfo = EnvironmentInfo.determineEnvironment(adapter);
         PlatformInfo platformInfo = new PlatformInfo(
@@ -70,7 +123,7 @@ public class DumpService {
 
         DumpInfo dumpInfo = new DumpInfo(
                 new DumpInfo.BuildInfo(),
-                proxyMode,
+                pluginInfo,
                 environmentInfo,
                 platformInfo,
                 new DumpInfo.OSInfo(),

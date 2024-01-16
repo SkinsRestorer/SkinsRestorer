@@ -17,23 +17,27 @@
  */
 package net.skinsrestorer.shared.connections.requests;
 
+import com.google.gson.JsonObject;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.shared.info.EnvironmentInfo;
 import net.skinsrestorer.shared.info.PlatformInfo;
 
-@AllArgsConstructor
+import java.util.Map;
+import java.util.Objects;
+
+@RequiredArgsConstructor
 @SuppressWarnings("unused")
 @SuppressFBWarnings({"UWF_UNWRITTEN_FIELD", "URF_UNREAD_FIELD"})
 public class DumpInfo {
-    private BuildInfo buildInfo;
-    private Boolean proxyMode;
-    private EnvironmentInfo environmentInfo;
-    private PlatformInfo platformInfo;
-    private OSInfo osInfo;
-    private JavaInfo javaInfo;
-    private UserInfo userInfo;
+    private final BuildInfo buildInfo;
+    private final PluginInfo pluginInfo;
+    private final EnvironmentInfo environmentInfo;
+    private final PlatformInfo platformInfo;
+    private final OSInfo osInfo;
+    private final JavaInfo javaInfo;
+    private final UserInfo userInfo;
 
     @SuppressWarnings("unused")
     @SuppressFBWarnings({"UWF_UNWRITTEN_FIELD", "URF_UNREAD_FIELD"})
@@ -44,6 +48,14 @@ public class DumpInfo {
         private final String buildTime = BuildData.BUILD_TIME;
         private final String ciName = BuildData.CI_NAME;
         private final String ciBuildNumber = BuildData.CI_BUILD_NUMBER;
+    }
+
+    @RequiredArgsConstructor
+    @SuppressWarnings("unused")
+    @SuppressFBWarnings({"UWF_UNWRITTEN_FIELD", "URF_UNREAD_FIELD"})
+    public static class PluginInfo {
+        private final Boolean proxyMode;
+        private final JsonObject configData;
     }
 
     // Helps to figure out OS-specific issues
