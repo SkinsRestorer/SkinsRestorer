@@ -26,10 +26,12 @@ import org.bukkit.entity.Player;
 import java.lang.reflect.Method;
 import java.util.function.Consumer;
 
+// TODO: Rethink how necessary this class this since we already have native API support for this
 public final class PaperSkinRefresher implements SkinRefresher {
     private final Method refreshPlayerMethod;
     private final Consumer<Player> triggerHealthUpdate;
 
+    @SuppressWarnings("deprecation")
     public PaperSkinRefresher() throws InitializeException {
         try {
             refreshPlayerMethod = BukkitReflection.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("refreshPlayer");

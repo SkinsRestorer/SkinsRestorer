@@ -31,12 +31,13 @@ import java.util.UUID;
 public class EventWrapper {
     private final SRBukkitAdapter plugin;
     private final SkinApplierBukkit skinApplier;
+    private final SkinApplyBukkitAdapter applyAdapter;
 
     public SRLoginProfileEvent<Void> wrap(PlayerEvent event) {
         return new SRLoginProfileEvent<Void>() {
             @Override
             public boolean hasOnlineProperties() {
-                return SkinApplierBukkit.getApplyAdapter().getSkinProperty(event.getPlayer()).isPresent();
+                return applyAdapter.getSkinProperty(event.getPlayer()).isPresent();
             }
 
             @Override

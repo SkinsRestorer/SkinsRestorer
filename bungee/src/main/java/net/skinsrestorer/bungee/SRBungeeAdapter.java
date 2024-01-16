@@ -129,8 +129,13 @@ public class SRBungeeAdapter implements SRProxyAdapter<Plugin, CommandSender> {
     }
 
     @Override
-    public SRCommandSender convertSender(CommandSender sender) {
+    public SRCommandSender convertPlatformSender(CommandSender sender) {
         return injector.getSingleton(WrapperBungee.class).commandSender(sender);
+    }
+
+    @Override
+    public Class<CommandSender> getPlatformSenderClass() {
+        return CommandSender.class;
     }
 
     @Override

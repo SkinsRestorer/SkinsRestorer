@@ -30,6 +30,7 @@ import net.skinsrestorer.bukkit.paper.PaperUtil;
 import net.skinsrestorer.bukkit.spigot.SpigotUtil;
 import net.skinsrestorer.bukkit.utils.BukkitSchedulerProvider;
 import net.skinsrestorer.bukkit.utils.SchedulerProvider;
+import net.skinsrestorer.bukkit.utils.SkinApplyBukkitAdapter;
 import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
 import net.skinsrestorer.shared.commands.library.SRRegisterPayload;
 import net.skinsrestorer.shared.config.AdvancedConfig;
@@ -224,7 +225,7 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin, CommandSende
 
     @Override
     public Optional<SkinProperty> getSkinProperty(SRPlayer player) {
-        return SkinApplierBukkit.getApplyAdapter().getSkinProperty(player.getAs(Player.class));
+        return injector.getSingleton(SkinApplyBukkitAdapter.class).getSkinProperty(player.getAs(Player.class));
     }
 
     @Override
@@ -234,8 +235,13 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin, CommandSende
     }
 
     @Override
-    public SRCommandSender convertSender(CommandSender sender) {
+    public SRCommandSender convertPlatformSender(CommandSender sender) {
         return injector.getSingleton(WrapperBukkit.class).commandSender(sender);
+    }
+
+    @Override
+    public Class<CommandSender> getPlatformSenderClass() {
+        return CommandSender.class;
     }
 
     @Override

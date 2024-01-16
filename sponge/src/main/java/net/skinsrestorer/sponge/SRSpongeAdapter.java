@@ -234,8 +234,13 @@ public class SRSpongeAdapter implements SRServerAdapter<PluginContainer, Command
     }
 
     @Override
-    public SRCommandSender convertSender(CommandCause sender) {
+    public SRCommandSender convertPlatformSender(CommandCause sender) {
         return injector.getSingleton(WrapperSponge.class).commandSender(sender);
+    }
+
+    @Override
+    public Class<CommandCause> getPlatformSenderClass() {
+        return CommandCause.class;
     }
 
     @Override

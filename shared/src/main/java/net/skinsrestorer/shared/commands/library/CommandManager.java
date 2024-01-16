@@ -489,20 +489,13 @@ public class CommandManager<T> {
     }
 
     private Command<T> convertUnsafeCommand(CommandWrapper command) {
-        return context -> {
-            SRCommandSender source;
-            if (context.getSource() instanceof SRCommandSender) {
-                source = (SRCommandSender) context.getSource();
-            } else {
-                source = platform.convertSender(context.getSource());
+        return context -> command.run(new ContextWrapper(
+                platform.detectAndConvertSender(context.getSource())
+        ) {
+            @Override
+            public <A> A getArgument(String name, Class<A> clazz) {
+                return context.getArgument(name, clazz);
             }
-
-            return command.run(new ContextWrapper(source) {
-                @Override
-                public <A> A getArgument(String name, Class<A> clazz) {
-                    return context.getArgument(name, clazz);
-                }
-            });
-        };
+        });
     }
 }

@@ -136,8 +136,13 @@ public class SRVelocityAdapter implements SRProxyAdapter<PluginContainer, Comman
     }
 
     @Override
-    public SRCommandSender convertSender(CommandSource sender) {
+    public SRCommandSender convertPlatformSender(CommandSource sender) {
         return injector.getSingleton(WrapperVelocity.class).commandSender(sender);
+    }
+
+    @Override
+    public Class<CommandSource> getPlatformSenderClass() {
+        return CommandSource.class;
     }
 
     @Override

@@ -21,7 +21,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
 
 import java.util.function.Predicate;
@@ -36,6 +35,6 @@ public class PermissionPredicate<T> implements Predicate<T> {
 
     @Override
     public boolean test(T t) {
-        return platform.convertSender(t).hasPermission(permission);
+        return platform.detectAndConvertSender(t).hasPermission(permission);
     }
 }

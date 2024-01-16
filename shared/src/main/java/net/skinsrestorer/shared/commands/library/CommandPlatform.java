@@ -29,5 +29,15 @@ public interface CommandPlatform<T> {
 
     Collection<SRPlayer> getOnlinePlayers();
 
-    SRCommandSender convertSender(T sender);
+    SRCommandSender convertPlatformSender(T sender);
+
+    Class<T> getPlatformSenderClass();
+
+    default SRCommandSender detectAndConvertSender(Object sender) {
+        if (sender instanceof SRCommandSender) {
+            return (SRCommandSender) sender;
+        } else {
+            return convertPlatformSender(getPlatformSenderClass().cast(sender));
+        }
+    }
 }
