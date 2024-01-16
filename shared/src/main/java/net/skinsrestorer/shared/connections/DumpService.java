@@ -91,7 +91,8 @@ public class DumpService {
         JsonObject configMap = new JsonObject();
         for (Property<?> key : configurationData.getProperties()) {
             // Exclude sensitive data
-            if (key.getPath().startsWith("database.")) {
+            if (key.getPath().startsWith("database.")
+                    || key.getPath().startsWith("api.mineskinAPIKey")) {
                 continue;
             }
 
