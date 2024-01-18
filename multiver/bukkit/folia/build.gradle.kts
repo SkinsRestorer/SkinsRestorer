@@ -10,9 +10,3 @@ dependencies {
         isTransitive = false
     }
 }
-
-indra {
-    javaVersions {
-        target(17)
-    }
-}
