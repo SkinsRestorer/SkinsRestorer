@@ -19,16 +19,12 @@ package net.skinsrestorer.shared.connections.http;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.shared.exception.DataRequestExceptionShared;
 
 import java.util.List;
 import java.util.Map;
 
-@Getter
-@RequiredArgsConstructor
 public record HttpResponse(int statusCode, String body, Map<String, List<String>> headers) {
     private static final Gson GSON = new Gson();
 

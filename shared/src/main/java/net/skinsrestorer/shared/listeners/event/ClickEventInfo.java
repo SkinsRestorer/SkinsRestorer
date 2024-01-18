@@ -17,12 +17,8 @@
  */
 package net.skinsrestorer.shared.listeners.event;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.subjects.SRServerPlayer;
 
-@Getter
-@RequiredArgsConstructor
 public record ClickEventInfo(net.skinsrestorer.shared.listeners.event.ClickEventInfo.MaterialType material,
                              String displayName, SRServerPlayer player, int currentPage) {
     public enum MaterialType {

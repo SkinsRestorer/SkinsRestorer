@@ -17,12 +17,8 @@
  */
 package net.skinsrestorer.shared.info;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 
-@Getter
-@RequiredArgsConstructor
 public record EnvironmentInfo(boolean hybrid, Platform platform, PlatformType platformType, ClassInfo classInfo) {
     public static EnvironmentInfo determineEnvironment(SRPlatformAdapter<?, ?> adapter) {
         ClassInfo info = ClassInfo.get();

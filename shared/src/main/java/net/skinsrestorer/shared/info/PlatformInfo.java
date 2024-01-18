@@ -17,13 +17,8 @@
  */
 package net.skinsrestorer.shared.info;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
 import java.util.List;
 
-@Getter
-@RequiredArgsConstructor
 public record PlatformInfo(String platformName, String platformVendor, String platformVersion,
                            List<PluginInfo> plugins) {
 }

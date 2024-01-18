@@ -45,6 +45,7 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
@@ -112,7 +113,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
     private Optional<MineSkinResponse> genSkinInternal(String imageUrl, @Nullable SkinVariant skinVariant) throws DataRequestException, MineSkinException, IOException, InterruptedException {
         String skinVariantString = skinVariant != null ? "&variant=" + skinVariant.name().toLowerCase(Locale.ROOT) : "";
 
-        HttpResponse response = queryURL("url=" + URLEncoder.encode(imageUrl, "UTF-8") + skinVariantString);
+        HttpResponse response = queryURL("url=" + URLEncoder.encode(imageUrl, StandardCharsets.UTF_8) + skinVariantString);
         logger.debug("MineSkinAPI: Response: " + response);
 
         switch (response.statusCode()) {

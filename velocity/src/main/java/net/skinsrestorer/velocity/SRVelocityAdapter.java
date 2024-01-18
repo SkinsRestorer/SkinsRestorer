@@ -27,8 +27,6 @@ import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.util.GameProfile;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.commands.library.CommandUtils;
 import net.skinsrestorer.shared.commands.library.SRRegisterPayload;
@@ -51,13 +49,12 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-/**
- * @param pluginInstance Only for platform API use
- */
-@Getter
-@RequiredArgsConstructor(onConstructor_ = @Inject)
 public record SRVelocityAdapter(Injector injector, SRVelocityBootstrap pluginInstance,
                                 ProxyServer proxy) implements SRProxyAdapter<PluginContainer, CommandSource> {
+    @Inject
+    public SRVelocityAdapter {
+    }
+
     @Override
     public Object createMetricsInstance() {
         Metrics.Factory metricsFactory = injector.getSingleton(com.google.inject.Injector.class)

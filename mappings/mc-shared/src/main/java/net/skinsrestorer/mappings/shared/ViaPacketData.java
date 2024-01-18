@@ -17,11 +17,7 @@
  */
 package net.skinsrestorer.mappings.shared;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
 
-@RequiredArgsConstructor
-@Getter
 public record ViaPacketData(Player player, long seed, int gamemodeId, boolean isFlat) {
 }

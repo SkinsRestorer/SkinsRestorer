@@ -31,7 +31,7 @@ import java.lang.reflect.Parameter;
 import java.util.Arrays;
 
 @RequiredArgsConstructor
-public class BrigadierCommand  implements CommandWrapper {
+public class BrigadierCommand implements CommandWrapper {
     private final Method method;
     private final MethodHandle methodHandle;
     private final SRLogger logger;

@@ -49,15 +49,6 @@ import java.util.function.Function;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class DumpService {
     private static final URI BYTEBIN_ENDPOINT = URI.create("https://bytebin.lucko.me/post");
-    private final SRLogger logger;
-    private final SRPlugin plugin;
-    private final SRPlatformAdapter<?, ?> adapter;
-    private final Injector injector;
-    private final HttpClient httpClient;
-    private final SettingsManager settingsManager;
-    private final Gson gson = new GsonBuilder()
-            .serializeNulls()
-            .create();
     private static final Function<SettingsManager, ConfigurationData> DATA_EXTRACTOR;
 
     static {
@@ -77,6 +68,16 @@ public class DumpService {
             throw new ExceptionInInitializerError(e);
         }
     }
+
+    private final SRLogger logger;
+    private final SRPlugin plugin;
+    private final SRPlatformAdapter<?, ?> adapter;
+    private final Injector injector;
+    private final HttpClient httpClient;
+    private final SettingsManager settingsManager;
+    private final Gson gson = new GsonBuilder()
+            .serializeNulls()
+            .create();
 
     public Optional<String> dump() throws IOException, DataRequestException {
         Boolean proxyMode;

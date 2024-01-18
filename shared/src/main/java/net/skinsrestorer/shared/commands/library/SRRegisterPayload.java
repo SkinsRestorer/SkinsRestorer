@@ -17,10 +17,5 @@
  */
 package net.skinsrestorer.shared.commands.library;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
-@Getter
-@RequiredArgsConstructor
 public record SRRegisterPayload<T>(SRCommandMeta meta, CommandExecutor<T> executor) {
 }

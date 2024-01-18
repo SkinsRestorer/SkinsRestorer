@@ -17,15 +17,11 @@
  */
 package net.skinsrestorer.shared.api.event;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.event.SkinsRestorerEvent;
 
 import java.lang.ref.WeakReference;
 import java.util.function.Consumer;
 
-@Getter
-@RequiredArgsConstructor
 public record EventSubscription<E extends SkinsRestorerEvent>(WeakReference<Object> plugin, Class<E> eventClass,
                                                               WeakReference<Consumer<E>> listener) {
 }

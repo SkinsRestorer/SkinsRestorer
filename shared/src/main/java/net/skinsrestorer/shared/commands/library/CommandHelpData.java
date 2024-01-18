@@ -17,13 +17,7 @@
  */
 package net.skinsrestorer.shared.commands.library;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 import net.skinsrestorer.shared.subjects.messages.Message;
 
-@Getter
-@ToString
-@RequiredArgsConstructor
 public record CommandHelpData(boolean privateCommand, Message commandDescription) {
 }

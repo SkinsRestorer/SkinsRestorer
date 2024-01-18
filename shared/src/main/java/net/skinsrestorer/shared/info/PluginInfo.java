@@ -17,10 +17,5 @@
  */
 package net.skinsrestorer.shared.info;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
-@Getter
-@RequiredArgsConstructor
 public record PluginInfo(boolean enabled, String name, String version, String entryPoint, String[] authors) {
 }

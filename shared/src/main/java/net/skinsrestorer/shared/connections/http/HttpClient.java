@@ -132,8 +132,6 @@ public class HttpClient {
         private final String contentType;
     }
 
-    @Getter
-        @RequiredArgsConstructor
-        public record RequestBody(String body, HttpType type) {
+    public record RequestBody(String body, HttpType type) {
     }
 }

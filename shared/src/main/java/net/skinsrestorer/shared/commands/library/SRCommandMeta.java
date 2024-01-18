@@ -17,14 +17,10 @@
  */
 package net.skinsrestorer.shared.commands.library;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 
 import java.util.function.Predicate;
 
-@Getter
-@RequiredArgsConstructor
 public record SRCommandMeta(String rootName, String[] aliases, Predicate<SRCommandSender> permission,
                             CommandHelpData rootHelp) {
 }

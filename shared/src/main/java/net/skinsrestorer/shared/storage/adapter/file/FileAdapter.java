@@ -20,8 +20,6 @@ package net.skinsrestorer.shared.storage.adapter.file;
 import ch.jalu.configme.SettingsManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.property.SkinType;
 import net.skinsrestorer.api.property.SkinVariant;
@@ -720,8 +718,6 @@ public class FileAdapter implements StorageAdapter {
         return skinName.toLowerCase();
     }
 
-    @Getter
-        @RequiredArgsConstructor
-        private record GUIFileData(String fileName, Path path, SkinType skinType) {
+    private record GUIFileData(String fileName, Path path, SkinType skinType) {
     }
 }
