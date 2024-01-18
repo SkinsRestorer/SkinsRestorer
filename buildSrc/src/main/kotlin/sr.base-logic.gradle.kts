@@ -76,9 +76,9 @@ indra {
     }
 
     javaVersions {
-        target(8)
+        target(17)
         strictVersions()
-        testWith(11, 17) // Some test dependencies require minimum 11, so we test with 11 and 17
+        testWith(17)
         minimumToolchain(17)
     }
 }

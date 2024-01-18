@@ -1,4 +1,9 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import net.raphimc.javadowngrader.gradle.task.DowngradeJarTask
+
+plugins {
+    id("net.raphimc.java-downgrader") version "1.1.1"
+}
 
 val platforms = setOf(
     rootProject.projects.skinsrestorerBukkit,
@@ -19,5 +24,9 @@ tasks {
             dependsOn(platform.tasks.withType<Jar>())
             from(zipTree(shadowJarTask.archiveFile))
         }
+        finalizedBy("java8Jar")
     }
+    register<DowngradeJarTask>("java8Jar") {
+        input.set(jar.get().archiveFile.get().asFile)
+    }.get().dependsOn("jar")
 }

@@ -17,12 +17,6 @@ dependencies {
     implementation("org.bstats:bstats-velocity:3.0.2")
 }
 
-indra {
-    javaVersions {
-        target(11)
-    }
-}
-
 tasks {
     runVelocity {
         version(libs.versions.runvelocityversion.get())

@@ -8,10 +8,6 @@ plugins {
     id("net.kyori.indra.git")
 }
 
-java {
-    javaTarget(8)
-}
-
 sourceSets {
     main {
         blossom {
