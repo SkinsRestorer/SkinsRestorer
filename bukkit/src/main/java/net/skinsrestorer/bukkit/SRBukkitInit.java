@@ -306,7 +306,8 @@ public class SRBukkitInit implements SRServerPlatformInit {
         if (adapter.isPluginEnabled("PlaceholderAPI")) {
             new SRPlaceholderAPIExpansion(
                     SkinsRestorerProvider.get(),
-                    adapter.getPluginInstance().getDescription()
+                    adapter.getPluginInstance().getDescription(),
+                    injector
             ).register();
             logger.info("PlaceholderAPI expansion registered!");
         }

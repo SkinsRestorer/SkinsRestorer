@@ -17,6 +17,7 @@
  */
 package net.skinsrestorer.bukkit.hooks;
 
+import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import net.skinsrestorer.api.PropertyUtils;
@@ -25,7 +26,9 @@ import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.storage.PlayerStorage;
+import net.skinsrestorer.bukkit.utils.SkinApplyBukkitAdapter;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,6 +42,7 @@ public class SRPlaceholderAPIExpansion extends PlaceholderExpansion {
     private static final String ERROR_MESSAGE = "Error";
     private final SkinsRestorer api;
     private final PluginDescriptionFile description;
+    private final Injector injector;
 
     @Override
     public @NotNull String getIdentifier() {
@@ -63,14 +67,13 @@ public class SRPlaceholderAPIExpansion extends PlaceholderExpansion {
     @Override
     public String onRequest(OfflinePlayer offlinePlayer, @NotNull String params) {
         params = params.toLowerCase(Locale.ROOT);
-        PlayerStorage storage = api.getPlayerStorage();
 
         if (params.startsWith("skin_name")) {
             if (offlinePlayer == null) {
                 return ERROR_MESSAGE;
             }
 
-            Optional<SkinIdentifier> skin = storage.getSkinIdOfPlayer(offlinePlayer.getUniqueId());
+            Optional<SkinIdentifier> skin = api.getPlayerStorage().getSkinIdOfPlayer(offlinePlayer.getUniqueId());
 
             if (skin.isPresent()) {
                 return skin.get().getIdentifier();
@@ -87,15 +90,13 @@ public class SRPlaceholderAPIExpansion extends PlaceholderExpansion {
             }
 
             return ERROR_MESSAGE;
-        }
-
-        if (params.startsWith("texture_url")) {
+        } else if (params.startsWith("texture_url")) {
             if (offlinePlayer == null) {
                 return ERROR_MESSAGE;
             }
 
             try {
-                Optional<SkinProperty> skin = storage.getSkinForPlayer(offlinePlayer.getUniqueId(), offlinePlayer.getName());
+                Optional<SkinProperty> skin = getCurrentProperties(offlinePlayer);
 
                 if (skin.isPresent()) {
                     return extractUrl(skin.get());
@@ -117,15 +118,13 @@ public class SRPlaceholderAPIExpansion extends PlaceholderExpansion {
             }
 
             return ERROR_MESSAGE;
-        }
-
-        if (params.startsWith("texture_id")) {
+        } else if (params.startsWith("texture_id")) {
             if (offlinePlayer == null) {
                 return ERROR_MESSAGE;
             }
 
             try {
-                Optional<SkinProperty> skin = storage.getSkinForPlayer(offlinePlayer.getUniqueId(), offlinePlayer.getName());
+                Optional<SkinProperty> skin = getCurrentProperties(offlinePlayer);
 
                 if (skin.isPresent()) {
                     return extractUrlStripped(skin.get());
@@ -158,5 +157,13 @@ public class SRPlaceholderAPIExpansion extends PlaceholderExpansion {
 
     private String extractUrlStripped(SkinProperty property) {
         return PropertyUtils.getSkinTextureUrlStripped(property);
+    }
+
+    private Optional<SkinProperty> getCurrentProperties(OfflinePlayer player) throws DataRequestException {
+        if (player instanceof Player) {
+            return injector.getSingleton(SkinApplyBukkitAdapter.class).getSkinProperty((Player) player);
+        } else {
+            return api.getPlayerStorage().getSkinForPlayer(player.getUniqueId(), player.getName());
+        }
     }
 }
