@@ -22,7 +22,5 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class SRRegisterPayload<T> {
-    private final SRCommandMeta meta;
-    private final CommandExecutor<T> executor;
+public record SRRegisterPayload<T>(SRCommandMeta meta, CommandExecutor<T> executor) {
 }

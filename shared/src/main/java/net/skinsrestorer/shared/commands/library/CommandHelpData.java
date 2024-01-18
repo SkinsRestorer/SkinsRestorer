@@ -25,7 +25,5 @@ import net.skinsrestorer.shared.subjects.messages.Message;
 @Getter
 @ToString
 @RequiredArgsConstructor
-public class CommandHelpData {
-    private final boolean privateCommand;
-    private final Message commandDescription;
+public record CommandHelpData(boolean privateCommand, Message commandDescription) {
 }

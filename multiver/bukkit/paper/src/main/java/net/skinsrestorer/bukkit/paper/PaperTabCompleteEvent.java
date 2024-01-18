@@ -51,11 +51,11 @@ public class PaperTabCompleteEvent implements Listener {
         }
 
         String command = args[0];
-        if (!command.equals(payload.getMeta().getRootName()) && !Arrays.asList(payload.getMeta().getAliases()).contains(command)) {
+        if (!command.equals(payload.meta().rootName()) && !Arrays.asList(payload.meta().aliases()).contains(command)) {
             return;
         }
 
         event.setHandled(true);
-        event.setCompletions(payload.getExecutor().tabComplete(senderMapper.apply(event.getSender()), buffer).join());
+        event.setCompletions(payload.executor().tabComplete(senderMapper.apply(event.getSender()), buffer).join());
     }
 }

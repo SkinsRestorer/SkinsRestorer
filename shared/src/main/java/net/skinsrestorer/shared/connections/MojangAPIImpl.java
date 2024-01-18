@@ -147,7 +147,7 @@ public class MojangAPIImpl implements MojangAPI {
     public Optional<UUID> getUUIDMojang(String playerName) throws DataRequestException {
         HttpResponse httpResponse = readURL(URI.create(UUID_MOJANG.replace("%playerName%", playerName)), MetricsCounter.Service.MOJANG);
 
-        if (httpResponse.getStatusCode() == 204 || httpResponse.getStatusCode() == 404 || httpResponse.getBody().isEmpty()) {
+        if (httpResponse.statusCode() == 204 || httpResponse.statusCode() == 404 || httpResponse.body().isEmpty()) {
             return Optional.empty();
         }
 

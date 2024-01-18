@@ -53,6 +53,6 @@ public class CommandExecutor<T> {
     }
 
     public boolean hasPermission(SRCommandSender executor) {
-        return meta.getPermission().test(executor);
+        return meta.permission().test(executor);
     }
 }

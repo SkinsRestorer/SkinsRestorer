@@ -24,9 +24,6 @@ import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.shared.info.EnvironmentInfo;
 import net.skinsrestorer.shared.info.PlatformInfo;
 
-import java.util.Map;
-import java.util.Objects;
-
 @RequiredArgsConstructor
 @SuppressWarnings("unused")
 @SuppressFBWarnings({"UWF_UNWRITTEN_FIELD", "URF_UNREAD_FIELD"})

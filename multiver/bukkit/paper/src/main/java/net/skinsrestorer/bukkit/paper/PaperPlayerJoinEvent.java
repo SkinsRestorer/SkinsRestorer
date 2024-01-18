@@ -48,7 +48,7 @@ public class PaperPlayerJoinEvent implements Listener {
     }
 
     private SRLoginProfileEvent<Void> wrap(AsyncPlayerPreLoginEvent event) {
-        return new SRLoginProfileEvent<Void>() {
+        return new SRLoginProfileEvent<>() {
             @Override
             public boolean hasOnlineProperties() {
                 return !event.getPlayerProfile().getProperties().isEmpty();

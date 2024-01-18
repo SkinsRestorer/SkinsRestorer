@@ -22,7 +22,6 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.subjects.SRCommandSender;
 
 @RequiredArgsConstructor
 public class CommandInjectHelp<T> implements Command<T> {

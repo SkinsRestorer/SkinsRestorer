@@ -29,11 +29,8 @@ import java.util.Map;
 
 @Getter
 @RequiredArgsConstructor
-public class HttpResponse {
+public record HttpResponse(int statusCode, String body, Map<String, List<String>> headers) {
     private static final Gson GSON = new Gson();
-    private final int statusCode;
-    private final String body;
-    private final Map<String, List<String>> headers;
 
     public <T> T getBodyAs(Class<T> clazz) throws DataRequestException {
         try {

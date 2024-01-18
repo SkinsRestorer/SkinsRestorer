@@ -41,14 +41,14 @@ public class EventBusImpl implements EventBus {
 
     @SuppressWarnings("unchecked")
     public void callEvent(SkinsRestorerEvent event) {
-        subscriptions.removeIf(subscription -> subscription.getPlugin().get() == null || subscription.getListener().get() == null);
+        subscriptions.removeIf(subscription -> subscription.plugin().get() == null || subscription.listener().get() == null);
 
         for (EventSubscription<?> subscription : subscriptions) {
-            if (!subscription.getEventClass().isAssignableFrom(event.getClass())) {
+            if (!subscription.eventClass().isAssignableFrom(event.getClass())) {
                 continue;
             }
 
-            Consumer<?> listener = subscription.getListener().get();
+            Consumer<?> listener = subscription.listener().get();
 
             if (listener == null) {
                 continue;

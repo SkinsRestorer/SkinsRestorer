@@ -259,7 +259,7 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin, CommandSende
                         new PaperTabCompleteEvent(payload, wrapper::commandSender), pluginInstance);
             }
 
-            commandMap.register(payload.getMeta().getRootName(), "skinsrestorer", command);
+            commandMap.register(payload.meta().rootName(), "skinsrestorer", command);
         } catch (ReflectiveOperationException e) {
             logger.severe("Encountered a error while registering a command", e);
         }

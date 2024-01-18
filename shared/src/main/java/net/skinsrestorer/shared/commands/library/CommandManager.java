@@ -395,7 +395,7 @@ public class CommandManager<T> {
             return;
         }
 
-        if (node.getCommand() != null && ((CommandInjectHelp<T>) node.getCommand()).getHelpData().isPrivateCommand()) {
+        if (node.getCommand() != null && ((CommandInjectHelp<T>) node.getCommand()).getHelpData().privateCommand()) {
             return;
         }
 
@@ -414,13 +414,13 @@ public class CommandManager<T> {
             }
 
             CommandHelpData helpData = ((CommandInjectHelp<T>) node.getCommand()).getHelpData();
-            if (!helpData.isPrivateCommand()) {
+            if (!helpData.privateCommand()) {
                 locale.getMessageOptional(source, Message.COMMAND_HELP_FORMAT, TagResolver.resolver(
                                 Placeholder.component("command_click_to_suggest", ComponentHelper.convertJsonToComponent(
                                         locale.getMessageRequired(source, Message.COMMAND_CLICK_TO_SUGGEST))),
                                 Placeholder.parsed("suggestion", completedPrefix),
                                 Placeholder.component("command", prefix),
-                                Placeholder.component("description", ComponentHelper.convertJsonToComponent(locale.getMessageRequired(source, helpData.getCommandDescription())))
+                                Placeholder.component("description", ComponentHelper.convertJsonToComponent(locale.getMessageRequired(source, helpData.commandDescription())))
                         ))
                         .map(ComponentHelper::convertJsonToComponent)
                         .ifPresent(result::add);

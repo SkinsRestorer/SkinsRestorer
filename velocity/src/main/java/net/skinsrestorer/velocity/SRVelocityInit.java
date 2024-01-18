@@ -48,17 +48,17 @@ public class SRVelocityInit implements SRProxyPlatformInit {
 
     @Override
     public void initLoginProfileListener() {
-        proxy.getEventManager().register(adapter.getPluginInstance(), injector.newInstance(GameProfileRequest.class));
+        proxy.getEventManager().register(adapter.pluginInstance(), injector.newInstance(GameProfileRequest.class));
     }
 
     @Override
     public void initConnectListener() {
-        proxy.getEventManager().register(adapter.getPluginInstance(), injector.newInstance(ConnectListener.class));
+        proxy.getEventManager().register(adapter.pluginInstance(), injector.newInstance(ConnectListener.class));
     }
 
     @Override
     public void initMessageChannel() {
         proxy.getChannelRegistrar().register(MinecraftChannelIdentifier.from("sr:messagechannel"));
-        proxy.getEventManager().register(adapter.getPluginInstance(), PluginMessageEvent.class, injector.getSingleton(ProxyMessageListener.class));
+        proxy.getEventManager().register(adapter.pluginInstance(), PluginMessageEvent.class, injector.getSingleton(ProxyMessageListener.class));
     }
 }

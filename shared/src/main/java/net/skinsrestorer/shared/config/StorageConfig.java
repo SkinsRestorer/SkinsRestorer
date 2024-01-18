@@ -35,7 +35,7 @@ import static net.skinsrestorer.shared.utils.FluentList.of;
 public class StorageConfig implements SettingsHolder {
     public static final Property<Boolean> DEFAULT_SKINS_ENABLED = newProperty("storage.defaultSkins.enabled", false);
     public static final Property<Boolean> DEFAULT_SKINS_PREMIUM = newProperty("storage.defaultSkins.applyForPremium", false);
-    public static final Property<List<String>> DEFAULT_SKINS = new ListProperty<>("storage.defaultSkins.list", new PropertyType<String>() {
+    public static final Property<List<String>> DEFAULT_SKINS = new ListProperty<>("storage.defaultSkins.list", new PropertyType<>() {
         @Override
         public @Nullable String convert(@Nullable Object object, @NotNull ConvertErrorRecorder errorRecorder) {
             return object == null ? null : object.toString().replace(".skin", "");

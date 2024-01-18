@@ -152,11 +152,11 @@ public class FileAdapter implements StorageAdapter {
                         continue;
                     }
 
-                    String skinName = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+                    String skinName = Files.readString(path);
 
                     LegacyPlayerData legacyPlayerData = LegacyPlayerData.of(playerName, skinName);
 
-                    Files.write(legacyPlayerFile, gson.toJson(LegacyPlayerFile.fromLegacyPlayerData(legacyPlayerData)).getBytes(StandardCharsets.UTF_8));
+                    Files.writeString(legacyPlayerFile, gson.toJson(LegacyPlayerFile.fromLegacyPlayerData(legacyPlayerData)));
 
                     Files.deleteIfExists(path);
                 } catch (Exception e) {
@@ -196,7 +196,7 @@ public class FileAdapter implements StorageAdapter {
                         continue;
                     }
 
-                    String[] lines = new String(Files.readAllBytes(path), StandardCharsets.UTF_8).split("\n");
+                    String[] lines = Files.readString(path).split("\n");
                     String skinValue = lines[0].trim();
                     String skinSignature = lines[1].trim();
                     SkinProperty skinProperty = SkinProperty.of(skinValue, skinSignature);
@@ -207,7 +207,7 @@ public class FileAdapter implements StorageAdapter {
                     } else {
                         LegacySkinData legacySkinData = LegacySkinData.of(skinName, skinProperty);
 
-                        Files.write(legacySkinFile, gson.toJson(LegacySkinFile.fromLegacySkinData(legacySkinData)).getBytes(StandardCharsets.UTF_8));
+                        Files.writeString(legacySkinFile, gson.toJson(LegacySkinFile.fromLegacySkinData(legacySkinData)));
                     }
 
                     Files.deleteIfExists(path);
@@ -233,7 +233,7 @@ public class FileAdapter implements StorageAdapter {
         }
 
         try {
-            String json = new String(Files.readAllBytes(playerFile), StandardCharsets.UTF_8);
+            String json = Files.readString(playerFile);
             PlayerFile file = gson.fromJson(json, PlayerFile.class);
 
             return Optional.of(file.toPlayerData());
@@ -249,7 +249,7 @@ public class FileAdapter implements StorageAdapter {
         try {
             PlayerFile file = PlayerFile.fromPlayerData(data);
 
-            Files.write(playerFile, gson.toJson(file).getBytes(StandardCharsets.UTF_8));
+            Files.writeString(playerFile, gson.toJson(file));
         } catch (IOException e) {
             logger.warning("Failed to save player data for " + uuid, e);
         }
@@ -264,7 +264,7 @@ public class FileAdapter implements StorageAdapter {
         }
 
         try {
-            String json = new String(Files.readAllBytes(skinFile), StandardCharsets.UTF_8);
+            String json = Files.readString(skinFile);
 
             PlayerSkinFile file = gson.fromJson(json, PlayerSkinFile.class);
 
@@ -292,7 +292,7 @@ public class FileAdapter implements StorageAdapter {
         try {
             PlayerSkinFile file = PlayerSkinFile.fromPlayerSkinData(skinData);
 
-            Files.write(skinFile, gson.toJson(file).getBytes(StandardCharsets.UTF_8));
+            Files.writeString(skinFile, gson.toJson(file));
 
             UserDefinedFileAttributeView view = Files.getFileAttributeView(skinFile, UserDefinedFileAttributeView.class);
             view.write(LAST_KNOW_NAME_ATTRIBUTE, StandardCharsets.UTF_8.encode(skinData.getLastKnownName()));
@@ -310,7 +310,7 @@ public class FileAdapter implements StorageAdapter {
         }
 
         try {
-            String json = new String(Files.readAllBytes(skinFile), StandardCharsets.UTF_8);
+            String json = Files.readString(skinFile);
 
             URLSkinFile file = gson.fromJson(json, URLSkinFile.class);
 
@@ -338,7 +338,7 @@ public class FileAdapter implements StorageAdapter {
         try {
             URLSkinFile file = URLSkinFile.fromURLSkinData(skinData);
 
-            Files.write(skinFile, gson.toJson(file).getBytes(StandardCharsets.UTF_8));
+            Files.writeString(skinFile, gson.toJson(file));
         } catch (IOException e) {
             logger.warning("Failed to save URL skin data for " + url, e);
         }
@@ -353,7 +353,7 @@ public class FileAdapter implements StorageAdapter {
         }
 
         try {
-            String json = new String(Files.readAllBytes(skinFile), StandardCharsets.UTF_8);
+            String json = Files.readString(skinFile);
 
             URLIndexFile file = gson.fromJson(json, URLIndexFile.class);
 
@@ -381,7 +381,7 @@ public class FileAdapter implements StorageAdapter {
         try {
             URLIndexFile file = URLIndexFile.fromURLIndexData(skinData);
 
-            Files.write(skinFile, gson.toJson(file).getBytes(StandardCharsets.UTF_8));
+            Files.writeString(skinFile, gson.toJson(file));
         } catch (IOException e) {
             logger.warning("Failed to save URL skin index for " + url, e);
         }
@@ -397,7 +397,7 @@ public class FileAdapter implements StorageAdapter {
         }
 
         try {
-            String json = new String(Files.readAllBytes(skinFile), StandardCharsets.UTF_8);
+            String json = Files.readString(skinFile);
 
             CustomSkinFile file = gson.fromJson(json, CustomSkinFile.class);
 
@@ -427,7 +427,7 @@ public class FileAdapter implements StorageAdapter {
         try {
             CustomSkinFile file = CustomSkinFile.fromCustomSkinData(skinData);
 
-            Files.write(skinFile, gson.toJson(file).getBytes(StandardCharsets.UTF_8));
+            Files.writeString(skinFile, gson.toJson(file));
         } catch (IOException e) {
             logger.warning("Failed to save custom skin data for " + skinName, e);
         }
@@ -443,7 +443,7 @@ public class FileAdapter implements StorageAdapter {
         }
 
         try {
-            String json = new String(Files.readAllBytes(skinFile), StandardCharsets.UTF_8);
+            String json = Files.readString(skinFile);
 
             LegacySkinFile file = gson.fromJson(json, LegacySkinFile.class);
 
@@ -475,7 +475,7 @@ public class FileAdapter implements StorageAdapter {
         }
 
         try {
-            String json = new String(Files.readAllBytes(legacyFile), StandardCharsets.UTF_8);
+            String json = Files.readString(legacyFile);
 
             LegacyPlayerFile file = gson.fromJson(json, LegacyPlayerFile.class);
 
@@ -505,10 +505,10 @@ public class FileAdapter implements StorageAdapter {
 
         for (Map.Entry<String, GUIFileData> entry : files.entrySet()) {
             GUIFileData data = entry.getValue();
-            String fileName = data.getFileName();
+            String fileName = data.fileName();
             try {
                 Optional<SkinProperty> skinProperty;
-                SkinType skinType = data.getSkinType();
+                SkinType skinType = data.skinType();
                 if (skinType == SkinType.PLAYER) {
                     skinProperty = getPlayerSkinData(UUID.fromString(fileName))
                             .map(PlayerSkinData::getProperty);
@@ -631,7 +631,7 @@ public class FileAdapter implements StorageAdapter {
 
         for (Path file : files) {
             try {
-                String json = new String(Files.readAllBytes(file), StandardCharsets.UTF_8);
+                String json = Files.readString(file);
 
                 PlayerSkinFile skinFile = gson.fromJson(json, PlayerSkinFile.class);
 
@@ -653,7 +653,7 @@ public class FileAdapter implements StorageAdapter {
         }
 
         try {
-            String json = new String(Files.readAllBytes(cacheFile), StandardCharsets.UTF_8);
+            String json = Files.readString(cacheFile);
 
             MojangCacheFile file = gson.fromJson(json, MojangCacheFile.class);
 
@@ -670,7 +670,7 @@ public class FileAdapter implements StorageAdapter {
         try {
             MojangCacheFile file = MojangCacheFile.fromMojangCacheData(mojangCacheData);
 
-            Files.write(cacheFile, gson.toJson(file).getBytes(StandardCharsets.UTF_8));
+            Files.writeString(cacheFile, gson.toJson(file));
         } catch (IOException e) {
             logger.warning("Failed to save cached UUID for " + playerName, e);
         }
@@ -721,10 +721,7 @@ public class FileAdapter implements StorageAdapter {
     }
 
     @Getter
-    @RequiredArgsConstructor
-    private static class GUIFileData {
-        private final String fileName;
-        private final Path path;
-        private final SkinType skinType;
+        @RequiredArgsConstructor
+        private record GUIFileData(String fileName, Path path, SkinType skinType) {
     }
 }

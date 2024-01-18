@@ -24,9 +24,6 @@ import java.util.List;
 
 @Getter
 @RequiredArgsConstructor
-public class PlatformInfo {
-    private final String platformName;
-    private final String platformVendor;
-    private final String platformVersion;
-    private final List<PluginInfo> plugins;
+public record PlatformInfo(String platformName, String platformVendor, String platformVersion,
+                           List<PluginInfo> plugins) {
 }

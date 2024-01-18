@@ -25,9 +25,6 @@ import java.util.function.Predicate;
 
 @Getter
 @RequiredArgsConstructor
-public class SRCommandMeta {
-    private final String rootName;
-    private final String[] aliases;
-    private final Predicate<SRCommandSender> permission;
-    private final CommandHelpData rootHelp;
+public record SRCommandMeta(String rootName, String[] aliases, Predicate<SRCommandSender> permission,
+                            CommandHelpData rootHelp) {
 }

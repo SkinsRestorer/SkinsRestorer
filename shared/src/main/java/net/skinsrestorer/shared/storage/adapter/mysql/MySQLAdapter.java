@@ -555,7 +555,7 @@ public class MySQLAdapter implements StorageAdapter {
         Path legacyTable = getLegacyPlayerTableFilePath();
         try {
             if (Files.exists(legacyTable)) {
-                return Optional.of(new String(Files.readAllBytes(legacyTable), StandardCharsets.UTF_8));
+                return Optional.of(Files.readString(legacyTable));
             } else {
                 return Optional.empty();
             }
@@ -568,7 +568,7 @@ public class MySQLAdapter implements StorageAdapter {
         Path legacyTable = getLegacySkinTableFilePath();
         try {
             if (Files.exists(legacyTable)) {
-                return Optional.of(new String(Files.readAllBytes(legacyTable), StandardCharsets.UTF_8));
+                return Optional.of(Files.readString(legacyTable));
             } else {
                 return Optional.empty();
             }

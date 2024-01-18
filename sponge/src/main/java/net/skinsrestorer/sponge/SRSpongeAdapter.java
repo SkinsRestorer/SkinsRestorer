@@ -258,41 +258,41 @@ public class SRSpongeAdapter implements SRServerAdapter<PluginContainer, Command
                 @Override
                 public CommandResult process(CommandCause cause, ArgumentReader.Mutable arguments) {
                     String argumentsString = arguments.remaining();
-                    String command = payload.getMeta().getRootName() + (argumentsString.isEmpty() ? "" : " " + argumentsString);
-                    payload.getExecutor().execute(wrapper.commandSender(cause), command);
+                    String command = payload.meta().rootName() + (argumentsString.isEmpty() ? "" : " " + argumentsString);
+                    payload.executor().execute(wrapper.commandSender(cause), command);
                     return CommandResult.builder().build();
                 }
 
                 @Override
                 public List<CommandCompletion> complete(CommandCause cause, ArgumentReader.Mutable arguments) {
-                    return payload.getExecutor().tabComplete(wrapper.commandSender(cause), arguments.remaining()).thenApply(list -> list.stream()
+                    return payload.executor().tabComplete(wrapper.commandSender(cause), arguments.remaining()).thenApply(list -> list.stream()
                             .map(CommandCompletion::of)
                             .collect(Collectors.toList())).join();
                 }
 
                 @Override
                 public boolean canExecute(CommandCause cause) {
-                    return payload.getExecutor().hasPermission(wrapper.commandSender(cause));
+                    return payload.executor().hasPermission(wrapper.commandSender(cause));
                 }
 
                 @Override
                 public Optional<Component> shortDescription(CommandCause cause) {
                     SRCommandSender sender = wrapper.commandSender(cause);
-                    return Optional.of(GSON.deserialize(locale.getMessageRequired(sender, payload.getMeta().getRootHelp().getCommandDescription())));
+                    return Optional.of(GSON.deserialize(locale.getMessageRequired(sender, payload.meta().rootHelp().commandDescription())));
                 }
 
                 @Override
                 public Optional<Component> extendedDescription(CommandCause cause) {
                     SRCommandSender sender = wrapper.commandSender(cause);
                     return Optional.of(serializer.deserialize(String.join("\n",
-                            payload.getExecutor().getManager().getHelpMessage(payload.getMeta().getRootName(), sender))));
+                            payload.executor().getManager().getHelpMessage(payload.meta().rootName(), sender))));
                 }
 
                 @Override
                 public Component usage(CommandCause cause) {
                     return Component.empty(); // TODO
                 }
-            }, payload.getMeta().getRootName(), payload.getMeta().getAliases());
+            }, payload.meta().rootName(), payload.meta().aliases());
         }
     }
 }

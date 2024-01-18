@@ -24,15 +24,14 @@ import net.skinsrestorer.bungee.wrapper.WrapperBungee;
 import net.skinsrestorer.shared.commands.library.CommandExecutor;
 import net.skinsrestorer.shared.commands.library.CommandUtils;
 import net.skinsrestorer.shared.commands.library.SRRegisterPayload;
-import net.skinsrestorer.shared.subjects.SRCommandSender;
 
 public class SRBungeeCommand extends Command implements TabExecutor {
     private final CommandExecutor<CommandSender> executor;
     private final WrapperBungee wrapper;
 
     public SRBungeeCommand(SRRegisterPayload<CommandSender> payload, WrapperBungee wrapper) {
-        super(payload.getMeta().getRootName(), null, payload.getMeta().getAliases());
-        this.executor = payload.getExecutor();
+        super(payload.meta().rootName(), null, payload.meta().aliases());
+        this.executor = payload.executor();
         this.wrapper = wrapper;
     }
 

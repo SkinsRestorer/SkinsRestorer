@@ -142,8 +142,8 @@ public class DumpService {
                 20_000
         );
 
-        if (response.getStatusCode() != 201) {
-            logger.warning("Failed to dump data to bytebin. Response code: " + response.getStatusCode());
+        if (response.statusCode() != 201) {
+            logger.warning("Failed to dump data to bytebin. Response code: " + response.statusCode());
             return Optional.empty();
         }
 

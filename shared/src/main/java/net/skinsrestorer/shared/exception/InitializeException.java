@@ -17,10 +17,13 @@
  */
 package net.skinsrestorer.shared.exception;
 
+import java.io.Serial;
+
 /**
  * Used for constructors that fail to initialize.
  */
 public class InitializeException extends Exception {
+    @Serial
     private static final long serialVersionUID = 7174618370827939357L;
 
     public InitializeException(Exception e) {

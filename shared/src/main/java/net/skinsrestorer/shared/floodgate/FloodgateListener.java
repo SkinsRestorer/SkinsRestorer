@@ -50,19 +50,7 @@ public class FloodgateListener implements Consumer<SkinApplyEvent> {
     }
 
     @SuppressWarnings("NullableProblems") // Suppress missing annotations
-    @RequiredArgsConstructor
-    private static class SkinDataImpl implements SkinApplyEvent.SkinData {
-        private final String value;
-        private final String signature;
-
-        @Override
-        public String value() {
-            return value;
+        @RequiredArgsConstructor
+        private record SkinDataImpl(String value, String signature) implements SkinApplyEvent.SkinData {
         }
-
-        @Override
-        public String signature() {
-            return signature;
-        }
-    }
 }

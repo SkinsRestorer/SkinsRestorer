@@ -51,13 +51,13 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+/**
+ * @param pluginInstance Only for platform API use
+ */
 @Getter
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class SRVelocityAdapter implements SRProxyAdapter<PluginContainer, CommandSource> {
-    private final Injector injector;
-    private final SRVelocityBootstrap pluginInstance; // Only for platform API use
-    private final ProxyServer proxy;
-
+public record SRVelocityAdapter(Injector injector, SRVelocityBootstrap pluginInstance,
+                                ProxyServer proxy) implements SRProxyAdapter<PluginContainer, CommandSource> {
     @Override
     public Object createMetricsInstance() {
         Metrics.Factory metricsFactory = injector.getSingleton(com.google.inject.Injector.class)
@@ -153,27 +153,27 @@ public class SRVelocityAdapter implements SRProxyAdapter<PluginContainer, Comman
     @Override
     public void registerCommand(SRRegisterPayload<CommandSource> payload) {
         CommandMeta meta = proxy.getCommandManager()
-                .metaBuilder(payload.getMeta().getRootName())
+                .metaBuilder(payload.meta().rootName())
                 .plugin(pluginInstance)
-                .aliases(payload.getMeta().getAliases()).build();
+                .aliases(payload.meta().aliases()).build();
         WrapperVelocity wrapper = injector.getSingleton(WrapperVelocity.class);
 
         proxy.getCommandManager().register(meta, new RawCommand() {
             @Override
             public void execute(Invocation invocation) {
-                payload.getExecutor().execute(wrapper.commandSender(invocation.source()),
+                payload.executor().execute(wrapper.commandSender(invocation.source()),
                         CommandUtils.joinCommand(invocation.alias(), invocation.arguments(), false));
             }
 
             @Override
             public CompletableFuture<List<String>> suggestAsync(Invocation invocation) {
-                return payload.getExecutor().tabComplete(wrapper.commandSender(invocation.source()),
+                return payload.executor().tabComplete(wrapper.commandSender(invocation.source()),
                         CommandUtils.joinCommand(invocation.alias(), invocation.arguments(), true));
             }
 
             @Override
             public boolean hasPermission(Invocation invocation) {
-                return payload.getExecutor().hasPermission(wrapper.commandSender(invocation.source()));
+                return payload.executor().hasPermission(wrapper.commandSender(invocation.source()));
             }
         });
     }

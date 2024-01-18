@@ -25,7 +25,5 @@ import java.util.function.Predicate;
 
 @Getter
 @RequiredArgsConstructor
-public class ConditionRegistration {
-    private final String name;
-    private final Predicate<SRCommandSender> condition;
+public record ConditionRegistration(String name, Predicate<SRCommandSender> condition) {
 }

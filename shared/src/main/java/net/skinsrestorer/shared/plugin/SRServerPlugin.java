@@ -62,9 +62,9 @@ public class SRServerPlugin {
                             .collect(Collectors.joining("\n"));
 
                     if (Files.exists(warning)) {
-                        String existingWarning = new String(Files.readAllBytes(warning), StandardCharsets.UTF_8);
+                        String existingWarning = Files.readString(warning);
                         if (!existingWarning.equals(proxyWarning)) {
-                            Files.write(warning, proxyWarning.getBytes(StandardCharsets.UTF_8));
+                            Files.writeString(warning, proxyWarning);
                         }
                     } else {
                         Files.copy(inputStream, warning);

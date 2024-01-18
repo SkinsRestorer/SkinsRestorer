@@ -23,12 +23,8 @@ import net.skinsrestorer.shared.subjects.SRServerPlayer;
 
 @Getter
 @RequiredArgsConstructor
-public class ClickEventInfo {
-    private final MaterialType material;
-    private final String displayName;
-    private final SRServerPlayer player;
-    private final int currentPage;
-
+public record ClickEventInfo(net.skinsrestorer.shared.listeners.event.ClickEventInfo.MaterialType material,
+                             String displayName, SRServerPlayer player, int currentPage) {
     public enum MaterialType {
         HEAD,
         YELLOW_PANE,

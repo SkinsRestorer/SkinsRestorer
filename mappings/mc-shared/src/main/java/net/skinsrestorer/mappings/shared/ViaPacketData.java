@@ -23,9 +23,5 @@ import org.bukkit.entity.Player;
 
 @RequiredArgsConstructor
 @Getter
-public class ViaPacketData {
-    private final Player player;
-    private final long seed;
-    private final int gamemodeId;
-    private final boolean isFlat;
+public record ViaPacketData(Player player, long seed, int gamemodeId, boolean isFlat) {
 }

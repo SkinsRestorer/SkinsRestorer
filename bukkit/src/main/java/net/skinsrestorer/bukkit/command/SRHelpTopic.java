@@ -40,14 +40,14 @@ public class SRHelpTopic extends HelpTopic {
     @NotNull
     @Override
     public String getName() {
-        return "/" + srbukkitCommand.getMeta().getRootName();
+        return "/" + srbukkitCommand.getMeta().rootName();
     }
 
     @NotNull
     @Override
     public String getShortText() {
         return ComponentHelper.convertJsonToLegacy(locale.getMessageRequired(locale.getDefaultForeign(),
-                srbukkitCommand.getMeta().getRootHelp().getCommandDescription()));
+                srbukkitCommand.getMeta().rootHelp().commandDescription()));
     }
 
     @NotNull
@@ -56,7 +56,7 @@ public class SRHelpTopic extends HelpTopic {
         SRCommandSender sender = wrapper.commandSender(forWho);
         return String.join("\n",
                 srbukkitCommand.getExecutor().getManager()
-                        .getHelpMessage(srbukkitCommand.getMeta().getRootName(), sender)
+                        .getHelpMessage(srbukkitCommand.getMeta().rootName(), sender)
                         .stream()
                         .map(ComponentHelper::convertJsonToLegacy)
                         .toArray(String[]::new));

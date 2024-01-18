@@ -70,9 +70,9 @@ public class HttpClient {
 
         connection.setDoOutput(requestBody != null);
         if (requestBody != null) {
-            connection.setRequestProperty("Content-Type", requestBody.getType().getContentType());
+            connection.setRequestProperty("Content-Type", requestBody.type().getContentType());
 
-            byte[] body = requestBody.getBody().getBytes(StandardCharsets.UTF_8);
+            byte[] body = requestBody.body().getBytes(StandardCharsets.UTF_8);
             connection.setFixedLengthStreamingMode(body.length);
             try (OutputStream output = connection.getOutputStream()) {
                 output.write(body);
@@ -106,10 +106,10 @@ public class HttpClient {
                 connection.getHeaderFields()
         );
 
-        logger.debug("Response body: " + response.getBody()
+        logger.debug("Response body: " + response.body()
                 .replace("\n", "")
                 .replace("\r", ""));
-        logger.debug("Response code: " + response.getStatusCode());
+        logger.debug("Response code: " + response.statusCode());
         logger.debug("Request took " + (System.currentTimeMillis() - start) + "ms.");
 
         return response;
@@ -133,9 +133,7 @@ public class HttpClient {
     }
 
     @Getter
-    @RequiredArgsConstructor
-    public static class RequestBody {
-        private final String body;
-        private final HttpType type;
+        @RequiredArgsConstructor
+        public record RequestBody(String body, HttpType type) {
     }
 }

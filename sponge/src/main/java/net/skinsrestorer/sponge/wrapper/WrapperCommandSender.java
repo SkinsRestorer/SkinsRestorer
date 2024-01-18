@@ -43,14 +43,11 @@ public class WrapperCommandSender extends AbstractSRCommandSender {
     @Override
     public boolean hasPermission(Permission permission) {
         return permission.checkPermission(settings, p -> {
-            switch (subject.permissionValue(p)) {
-                case TRUE:
-                    return Tristate.TRUE;
-                case FALSE:
-                    return Tristate.FALSE;
-                default:
-                    return Tristate.UNDEFINED;
-            }
+            return switch (subject.permissionValue(p)) {
+                case TRUE -> Tristate.TRUE;
+                case FALSE -> Tristate.FALSE;
+                default -> Tristate.UNDEFINED;
+            };
         });
     }
 

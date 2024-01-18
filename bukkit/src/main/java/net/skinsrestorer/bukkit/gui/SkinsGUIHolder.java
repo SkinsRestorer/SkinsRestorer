@@ -42,11 +42,10 @@ public class SkinsGUIHolder implements InventoryHolder {
     private Inventory inventory;
 
     public void onClick(InventoryClickEvent event) {
-        if (!(event.getWhoClicked() instanceof Player)) {
+        if (!(event.getWhoClicked() instanceof Player player)) {
             return;
         }
 
-        Player player = (Player) event.getWhoClicked();
         ItemStack currentItem = event.getCurrentItem();
 
         // Cancel invalid items
@@ -64,17 +63,12 @@ public class SkinsGUIHolder implements InventoryHolder {
     }
 
     private ClickEventInfo.MaterialType getMaterialType(XMaterial material) {
-        switch (material) {
-            case PLAYER_HEAD:
-                return ClickEventInfo.MaterialType.HEAD;
-            case RED_STAINED_GLASS_PANE:
-                return ClickEventInfo.MaterialType.RED_PANE;
-            case GREEN_STAINED_GLASS_PANE:
-                return ClickEventInfo.MaterialType.GREEN_PANE;
-            case YELLOW_STAINED_GLASS_PANE:
-                return ClickEventInfo.MaterialType.YELLOW_PANE;
-            default:
-                return ClickEventInfo.MaterialType.UNKNOWN;
-        }
+        return switch (material) {
+            case PLAYER_HEAD -> ClickEventInfo.MaterialType.HEAD;
+            case RED_STAINED_GLASS_PANE -> ClickEventInfo.MaterialType.RED_PANE;
+            case GREEN_STAINED_GLASS_PANE -> ClickEventInfo.MaterialType.GREEN_PANE;
+            case YELLOW_STAINED_GLASS_PANE -> ClickEventInfo.MaterialType.YELLOW_PANE;
+            default -> ClickEventInfo.MaterialType.UNKNOWN;
+        };
     }
 }

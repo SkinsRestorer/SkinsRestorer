@@ -25,7 +25,6 @@ import net.skinsrestorer.api.SkinsRestorer;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.api.property.SkinProperty;
-import net.skinsrestorer.api.storage.PlayerStorage;
 import net.skinsrestorer.bukkit.utils.SkinApplyBukkitAdapter;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;

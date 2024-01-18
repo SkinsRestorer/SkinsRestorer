@@ -115,7 +115,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
         HttpResponse response = queryURL("url=" + URLEncoder.encode(imageUrl, "UTF-8") + skinVariantString);
         logger.debug("MineSkinAPI: Response: " + response);
 
-        switch (response.getStatusCode()) {
+        switch (response.statusCode()) {
             case 200: {
                 MineSkinUrlResponse urlResponse = response.getBodyAs(MineSkinUrlResponse.class);
                 SkinProperty property = SkinProperty.of(urlResponse.getData().getTexture().getValue(),
@@ -189,7 +189,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                 return Optional.empty(); // try again after nextRequest
             }
             default:
-                logger.debug("[ERROR] MineSkin Failed! Unknown error: (Image URL: " + imageUrl + ") " + response.getStatusCode());
+                logger.debug("[ERROR] MineSkin Failed! Unknown error: (Image URL: " + imageUrl + ") " + response.statusCode());
                 throw new MineSkinExceptionShared(Message.ERROR_MS_API_FAILED);
         }
     }

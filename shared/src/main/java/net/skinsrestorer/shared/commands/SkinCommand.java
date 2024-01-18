@@ -326,8 +326,7 @@ public final class SkinCommand {
 
     private boolean canSetSkin(SRCommandSender sender, String skinName) {
         if (settings.getProperty(CommandConfig.PER_SKIN_PERMISSIONS) && !sender.hasPermission(PermissionRegistry.forSkin(skinName))) {
-            if (sender.hasPermission(PermissionRegistry.OWN_SKIN) && sender instanceof SRPlayer) {
-                SRPlayer player = (SRPlayer) sender;
+            if (sender.hasPermission(PermissionRegistry.OWN_SKIN) && sender instanceof SRPlayer player) {
                 if (skinName.equalsIgnoreCase(player.getName())) {
                     return true;
                 }

@@ -17,11 +17,8 @@
  */
 package net.skinsrestorer.shared.commands.library;
 
-import com.mojang.brigadier.Command;
-import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.subjects.SRCommandSender;
 
 import java.util.List;
 
@@ -33,7 +30,7 @@ public class ConditionCommand implements CommandWrapper {
     @Override
     public int run(ContextWrapper context) throws CommandSyntaxException {
         for (ConditionRegistration condition : conditions) {
-            if (!condition.getCondition().test(context.getSource())) {
+            if (!condition.condition().test(context.getSource())) {
                 return 0;
             }
         }
