@@ -35,7 +35,7 @@ public class MappingSpigotSkinRefresher implements SkinRefresher {
         this.viaWorkaround = viaWorkaround;
 
         Optional<IMapping> mapping = MappingManager.getMapping(server);
-        if (!mapping.isPresent()) {
+        if (mapping.isEmpty()) {
             throw new NoMappingException(server);
         }
 

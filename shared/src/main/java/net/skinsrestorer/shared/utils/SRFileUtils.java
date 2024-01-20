@@ -29,7 +29,7 @@ public class SRFileUtils {
     public static void renameFile(Path parent, String oldName, String newName) throws IOException {
         try (Stream<Path> stream = Files.list(parent)) {
             // Folders are case-insensitive on Windows, so we need to check it using this method
-            List<String> files = stream.map(Path::getFileName).map(Path::toString).collect(Collectors.toList());
+            List<String> files = stream.map(Path::getFileName).map(Path::toString).toList();
 
             String tempName = newName + "_temp";
             if (files.contains(oldName) && !files.contains(tempName) && !files.contains(newName)) {

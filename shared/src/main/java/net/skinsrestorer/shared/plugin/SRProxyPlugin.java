@@ -67,7 +67,7 @@ public class SRProxyPlugin {
     }
 
     public void sendUpdateRequest(@NotNull SRProxyPlayer player, SkinProperty textures) {
-        if (!player.getCurrentServer().isPresent()) {
+        if (player.getCurrentServer().isEmpty()) {
             return;
         }
 

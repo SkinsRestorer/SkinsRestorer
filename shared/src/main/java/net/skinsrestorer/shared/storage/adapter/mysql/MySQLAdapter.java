@@ -113,7 +113,7 @@ public class MySQLAdapter implements StorageAdapter {
 
     private void migrateLegacyPlayerTable() throws IOException {
         Optional<String> legacyPlayerTable = getLegacyPlayerTableFile();
-        if (!legacyPlayerTable.isPresent()) {
+        if (legacyPlayerTable.isEmpty()) {
             return;
         }
 
@@ -149,7 +149,7 @@ public class MySQLAdapter implements StorageAdapter {
 
     private void migrateLegacySkinTable() throws IOException {
         Optional<String> legacySkinTable = getLegacySkinTableFile();
-        if (!legacySkinTable.isPresent()) {
+        if (legacySkinTable.isEmpty()) {
             return;
         }
 

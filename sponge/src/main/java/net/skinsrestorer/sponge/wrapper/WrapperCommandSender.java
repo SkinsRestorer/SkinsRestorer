@@ -24,6 +24,7 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.skinsrestorer.shared.subjects.AbstractSRCommandSender;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.Permission;
+import net.skinsrestorer.shared.subjects.permissions.PermissionGroup;
 import net.skinsrestorer.shared.utils.Tristate;
 import org.spongepowered.api.service.permission.Subject;
 
@@ -42,12 +43,12 @@ public class WrapperCommandSender extends AbstractSRCommandSender {
 
     @Override
     public boolean hasPermission(Permission permission) {
-        return permission.checkPermission(settings, p -> {
-            return switch (subject.permissionValue(p)) {
-                case TRUE -> Tristate.TRUE;
-                case FALSE -> Tristate.FALSE;
-                default -> Tristate.UNDEFINED;
-            };
+        return permission.checkPermission(settings, p -> switch (subject.permissionValue(p)) {
+            case TRUE -> Tristate.TRUE;
+            case FALSE -> Tristate.FALSE;
+            case UNDEFINED -> Tristate.fromBoolean(
+                    PermissionGroup.DEFAULT_GROUP.hasPermission(permission)
+            );
         });
     }
 

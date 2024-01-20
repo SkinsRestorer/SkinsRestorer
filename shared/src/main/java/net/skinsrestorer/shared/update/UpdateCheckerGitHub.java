@@ -80,7 +80,7 @@ public class UpdateCheckerGitHub {
                     .map(GitHubAssetInfo::getBrowserDownloadUrl)
                     .findFirst();
 
-            if (!jarAssetUrl.isPresent()) {
+            if (jarAssetUrl.isEmpty()) {
                 throw new DataRequestExceptionShared("No jar asset found in release");
             }
 

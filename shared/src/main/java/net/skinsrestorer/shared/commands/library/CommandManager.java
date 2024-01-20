@@ -202,7 +202,7 @@ public class CommandManager<T> {
 
             Optional<RootCommand> def = getAnnotation(RootCommand.class, method);
             Optional<Subcommand> names = getAnnotation(Subcommand.class, method);
-            if (!def.isPresent() && !names.isPresent()) {
+            if (def.isEmpty() && names.isEmpty()) {
                 continue;
             }
 

@@ -38,7 +38,7 @@ public abstract class AbstractSRCommandSender implements SRCommandSender {
     public void sendMessage(Message key, TagResolver... resolvers) {
         Optional<String> translatedMessage = getSRLocale().getMessageOptional(this, key, resolvers);
 
-        if (!translatedMessage.isPresent()) {
+        if (translatedMessage.isEmpty()) {
             return;
         }
 

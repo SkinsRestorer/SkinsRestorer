@@ -49,7 +49,7 @@ public final class SRServerMessageAdapter {
 
             if (subChannel.equalsIgnoreCase("returnSkinsV3")) {
                 Optional<SRPlayer> player = plugin.getPlayer(in.readUTF());
-                if (!player.isPresent()) {
+                if (player.isEmpty()) {
                     return;
                 }
 

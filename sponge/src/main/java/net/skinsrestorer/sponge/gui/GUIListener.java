@@ -47,7 +47,7 @@ public class GUIListener implements SlotClickHandler {
     public boolean handle(Cause cause, Container container, Slot slot, int slotIndex, ClickType<?> clickType) {
         Optional<ServerPlayer> player = cause.first(ServerPlayer.class);
 
-        if (!player.isPresent()) {
+        if (player.isEmpty()) {
             return false;
         }
 
@@ -59,7 +59,7 @@ public class GUIListener implements SlotClickHandler {
 
         Optional<Value<Component>> displayName = stack.getValue(Keys.CUSTOM_NAME);
 
-        if (!displayName.isPresent()) {
+        if (displayName.isEmpty()) {
             return false;
         }
 

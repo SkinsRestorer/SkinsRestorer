@@ -120,7 +120,7 @@ public class MessageLoader {
                 try (InputStream is = Files.newInputStream(path)) {
                     for (Map.Entry<String, String> entry : TranslationReader.readJsonTranslation(is).entrySet()) {
                         Optional<Message> message = Message.fromKey(entry.getKey());
-                        if (!message.isPresent()) {
+                        if (message.isEmpty()) {
                             logger.warning("Skipping unknown message key " + entry.getKey());
                             continue;
                         }

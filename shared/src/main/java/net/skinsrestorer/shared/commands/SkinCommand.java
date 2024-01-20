@@ -146,7 +146,7 @@ public final class SkinCommand {
 
         try {
             if (setSkin.isPresent() && setSkin.get().getSkinType() == SkinType.PLAYER) {
-                if (!skinStorage.updatePlayerSkinData(UUID.fromString(setSkin.get().getIdentifier())).isPresent()) {
+                if (skinStorage.updatePlayerSkinData(UUID.fromString(setSkin.get().getIdentifier())).isEmpty()) {
                     sender.sendMessage(Message.ERROR_UPDATING_SKIN);
                     return;
                 }
@@ -276,7 +276,7 @@ public final class SkinCommand {
                 // Perform skin lookup, which causes a second url regex check, but we don't care
                 Optional<InputDataResult> optional = skinStorage.findOrCreateSkinData(skinInput);
 
-                if (!optional.isPresent()) {
+                if (optional.isEmpty()) {
                     sender.sendMessage(Message.NOT_PREMIUM); // TODO: Is this the right message?
                     return false;
                 }

@@ -166,7 +166,7 @@ public final class SRCommand {
                 try {
                     Optional<UUID> targetId = cacheStorage.getUUID(target, false);
 
-                    if (!targetId.isPresent()) {
+                    if (targetId.isEmpty()) {
                         sender.sendMessage(Message.ADMINCOMMAND_DROP_PLAYER_NOT_FOUND, Placeholder.unparsed("player", target));
                         return;
                     }
@@ -180,7 +180,7 @@ public final class SRCommand {
             case SKIN:
                 Optional<InputDataResult> optional = skinStorage.findSkinData(target);
 
-                if (!optional.isPresent()) {
+                if (optional.isEmpty()) {
                     sender.sendMessage(Message.ADMINCOMMAND_DROP_SKIN_NOT_FOUND, Placeholder.unparsed("skin", target));
                     return;
                 }
@@ -201,7 +201,7 @@ public final class SRCommand {
         try {
             Optional<SkinProperty> properties = adapter.getSkinProperty(target);
 
-            if (!properties.isPresent()) {
+            if (properties.isEmpty()) {
                 sender.sendMessage(Message.NO_SKIN_DATA);
                 return;
             }
@@ -263,7 +263,7 @@ public final class SRCommand {
     private void onSetSkinAll(SRCommandSender sender, String skinName, SkinVariant skinVariant) {
         Optional<InputDataResult> optional = skinStorage.findSkinData(skinName);
 
-        if (!optional.isPresent()) {
+        if (optional.isEmpty()) {
             sender.sendMessage(Message.ADMINCOMMAND_SETSKINALL_NOT_FOUND);
             return;
         }

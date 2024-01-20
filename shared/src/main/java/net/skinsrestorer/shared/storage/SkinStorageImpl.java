@@ -102,7 +102,7 @@ public class SkinStorageImpl implements SkinStorage {
             }
 
             Optional<SkinProperty> skinProperty = profileGetter.getProfile(uuid);
-            if (!skinProperty.isPresent()) {
+            if (skinProperty.isEmpty()) {
                 return currentSkin;
             }
 
@@ -136,7 +136,7 @@ public class SkinStorageImpl implements SkinStorage {
                 Optional<UUID> optionalUUID = cached.get().getUniqueId();
 
                 // User does not exist
-                if (!optionalUUID.isPresent()) {
+                if (optionalUUID.isEmpty()) {
                     return Optional.empty();
                 }
 
@@ -193,7 +193,7 @@ public class SkinStorageImpl implements SkinStorage {
             if (ValidationUtil.validSkinUrl(input)) {
                 Optional<URLIndexData> urlSkinIndex = adapterReference.get().getURLSkinIndex(input);
 
-                if (!urlSkinIndex.isPresent()) {
+                if (urlSkinIndex.isEmpty()) {
                     return Optional.empty();
                 }
 
@@ -216,7 +216,7 @@ public class SkinStorageImpl implements SkinStorage {
 
                 Optional<UUID> uuid = cacheStorage.getUUID(input, false);
 
-                if (!uuid.isPresent()) {
+                if (uuid.isEmpty()) {
                     return Optional.empty();
                 }
 

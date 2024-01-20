@@ -533,7 +533,7 @@ public class FileAdapter implements StorageAdapter {
                 .stream()
                 .map(s -> s.toLowerCase(Locale.ROOT))
                 .distinct() // No duplicates
-                .collect(Collectors.toList());
+                .toList();
 
         Map<String, GUIFileData> files = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         try (Stream<Path> stream = Files.walk(skinsFolder, 1)) {

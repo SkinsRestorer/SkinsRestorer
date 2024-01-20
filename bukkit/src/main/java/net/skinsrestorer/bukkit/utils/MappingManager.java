@@ -52,7 +52,7 @@ public class MappingManager {
     public static Optional<IMapping> getMapping(Server server) {
         Optional<String> mappingVersion = getMappingsVersion(server);
 
-        if (!mappingVersion.isPresent()) {
+        if (mappingVersion.isEmpty()) {
             return Optional.empty();
         }
 

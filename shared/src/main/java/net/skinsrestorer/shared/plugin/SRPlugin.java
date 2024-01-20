@@ -149,7 +149,7 @@ public class SRPlugin {
             }
 
             Optional<String> optional = ((SRProxyPlayer) sender).getCurrentServer();
-            if (!optional.isPresent()) {
+            if (optional.isEmpty()) {
                 if (!settings.getProperty(ProxyConfig.NOT_ALLOWED_COMMAND_SERVERS_IF_NONE_BLOCK_COMMAND)) {
                     sender.sendMessage(Message.NOT_CONNECTED_TO_SERVER);
                     return false;

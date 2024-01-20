@@ -78,7 +78,7 @@ public interface StorageAdapter {
 
     default void migrateLegacyPlayer(String playerName, UUID uuid) throws StorageException {
         Optional<LegacyPlayerData> legacyPlayerData = getLegacyPlayerData(playerName);
-        if (!legacyPlayerData.isPresent()) {
+        if (legacyPlayerData.isEmpty()) {
             return;
         }
 

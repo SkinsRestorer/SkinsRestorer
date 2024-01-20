@@ -102,7 +102,7 @@ public class HttpClient {
 
         HttpResponse response = new HttpResponse(
                 connection.getResponseCode(),
-                new String(byteData.toByteArray(), StandardCharsets.UTF_8),
+                byteData.toString(StandardCharsets.UTF_8),
                 connection.getHeaderFields()
         );
 

@@ -68,7 +68,7 @@ public class MojangAPIImpl implements MojangAPI {
         } catch (DataRequestException e) {
             logger.debug(e);
             Optional<UUID> uuidResult = getUUIDStartMojang(playerName);
-            if (!uuidResult.isPresent()) {
+            if (uuidResult.isEmpty()) {
                 return Optional.empty();
             }
 

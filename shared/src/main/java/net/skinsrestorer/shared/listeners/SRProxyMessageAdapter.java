@@ -58,7 +58,7 @@ public final class SRProxyMessageAdapter {
             String subChannel = in.readUTF();
             Optional<SRProxyPlayer> optional = plugin.getPlayer(in.readUTF());
 
-            if (!optional.isPresent()) {
+            if (optional.isEmpty()) {
                 return;
             }
 
