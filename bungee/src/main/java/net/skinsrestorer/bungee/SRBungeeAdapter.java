@@ -86,6 +86,11 @@ public class SRBungeeAdapter implements SRProxyAdapter<Plugin, CommandSender> {
     }
 
     @Override
+    public boolean supportsDefaultPermissions() {
+        return false;
+    }
+
+    @Override
     public String getPlatformVersion() {
         return proxy.getVersion();
     }

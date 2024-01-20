@@ -88,6 +88,11 @@ public record SRVelocityAdapter(Injector injector, SRVelocityBootstrap pluginIns
     }
 
     @Override
+    public boolean supportsDefaultPermissions() {
+        return true;
+    }
+
+    @Override
     public String getPlatformVersion() {
         return proxy.getVersion().getVersion();
     }

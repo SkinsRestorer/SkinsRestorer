@@ -31,8 +31,10 @@ public class CommandConfig implements SettingsHolder {
 
     @Comment({
             "For all player commands to work by default, you need to give players the permission 'skinsrestorer.player'.",
-            "This option allows you to force the default permission (skinsrestorer.player) to be given to all players if the value is not set explicitly.",
+            "This option allows you to force the default permission (skinsrestorer.player) to be given to all players.",
             "A value of 'false' will disable this behaviour, and players will need to be given the permission explicitly.",
+            "This is because some platforms (like BungeeCord) do not have a default permission system.",
+            "If your platform supports default permissions, this option is ignored."
     })
     public static final Property<Boolean> FORCE_DEFAULT_PERMISSIONS = newProperty("commands.forceDefaultPermissions", true);
     @Comment({

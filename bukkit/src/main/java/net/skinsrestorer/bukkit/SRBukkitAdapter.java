@@ -192,6 +192,11 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin, CommandSende
     }
 
     @Override
+    public boolean supportsDefaultPermissions() {
+        return true;
+    }
+
+    @Override
     public String getPlatformVersion() {
         return server.getVersion();
     }

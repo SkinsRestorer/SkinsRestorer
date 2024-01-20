@@ -43,6 +43,7 @@ import org.spongepowered.api.event.lifecycle.StartingEngineEvent;
 import org.spongepowered.api.event.network.ServerSideConnectionEvent;
 import org.spongepowered.api.network.channel.raw.RawDataChannel;
 import org.spongepowered.api.service.permission.PermissionDescription;
+import org.spongepowered.api.util.Tristate;
 
 import javax.inject.Inject;
 
@@ -118,6 +119,7 @@ public class SRSpongeInit implements SRServerPlatformInit {
         return game.server().serviceProvider().permissionService()
                 .newDescriptionBuilder(adapter.getPluginContainer())
                 .id(permission.getPermissionString())
+                .defaultValue(Tristate.fromBoolean(PermissionGroup.DEFAULT_GROUP.hasPermission(permission)))
                 .description(GSON.deserialize(locale.getMessageRequired(locale.getDefaultForeign(), description)));
     }
 }

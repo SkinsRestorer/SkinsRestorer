@@ -231,6 +231,15 @@ public class SRPlugin {
             settings.setProperty(CommandConfig.RESTRICT_SKIN_URLS_ENABLED, false);
         }
 
+        if (settings.getProperty(CommandConfig.FORCE_DEFAULT_PERMISSIONS)) {
+            if (adapter.supportsDefaultPermissions()) {
+                logger.debug("Disabling enforcing default permissions");
+                settings.setProperty(CommandConfig.FORCE_DEFAULT_PERMISSIONS, false);
+            } else {
+                logger.info("Enforcing default permissions plugin-side due to platform limitations.");
+            }
+        }
+
         if (!settings.getProperty(GUIConfig.CUSTOM_GUI_ENABLED)) {
             settings.setProperty(GUIConfig.CUSTOM_GUI_ONLY, false);
         }

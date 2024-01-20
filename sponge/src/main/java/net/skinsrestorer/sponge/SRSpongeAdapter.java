@@ -187,6 +187,11 @@ public class SRSpongeAdapter implements SRServerAdapter<PluginContainer, Command
     }
 
     @Override
+    public boolean supportsDefaultPermissions() {
+        return true;
+    }
+
+    @Override
     public String getPlatformVersion() {
         return game.platform().minecraftVersion().name();
     }

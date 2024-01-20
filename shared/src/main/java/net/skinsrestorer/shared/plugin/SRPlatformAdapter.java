@@ -65,6 +65,8 @@ public interface SRPlatformAdapter<P, C> extends CommandPlatform<C> {
         return Tristate.TRUE;
     }
 
+    boolean supportsDefaultPermissions();
+
     /**
      * Called when the plugin is getting disabled.
      * May be optionally implemented to be called by the bootstrap.
