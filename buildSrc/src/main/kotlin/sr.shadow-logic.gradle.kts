@@ -27,7 +27,7 @@ fun replacePackageDot(text: String): String {
         returnedText = returnedText.replace(entry.key, entry.value)
     }
 
-    return returnedText;
+    return returnedText
 }
 
 fun replacePackagSlash(text: String): String {
@@ -37,7 +37,7 @@ fun replacePackagSlash(text: String): String {
         returnedText = returnedText.replace(replaceSlash(entry.key), replaceSlash(entry.value))
     }
 
-    return returnedText;
+    return returnedText
 }
 
 fun replaceRelocation(text: String): String {
@@ -46,7 +46,7 @@ fun replaceRelocation(text: String): String {
     returnedText = replacePackageDot(returnedText)
     returnedText = replacePackagSlash(returnedText)
 
-    return returnedText;
+    return returnedText
 }
 
 class ShadowResourceTransformer : Transformer {
