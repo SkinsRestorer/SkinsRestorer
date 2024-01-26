@@ -66,6 +66,8 @@ public class SemanticVersion {
 
     @Override
     public String toString() {
-        return String.join(".", Arrays.stream(version).mapToObj(String::valueOf).toArray(String[]::new));
+        return String.join(".", Arrays.stream(version)
+                .mapToObj(String::valueOf)
+                .toArray(String[]::new));
     }
 }

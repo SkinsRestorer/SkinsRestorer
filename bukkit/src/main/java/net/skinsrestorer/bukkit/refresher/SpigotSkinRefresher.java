@@ -20,6 +20,7 @@ package net.skinsrestorer.bukkit.refresher;
 import net.skinsrestorer.bukkit.SRBukkitAdapter;
 import net.skinsrestorer.bukkit.utils.BukkitReflection;
 import net.skinsrestorer.bukkit.utils.OPRefreshUtil;
+import net.skinsrestorer.mappings.shared.MappingReflection;
 import net.skinsrestorer.mappings.shared.ViaPacketData;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.utils.FluentList;
@@ -93,7 +94,7 @@ public final class SpigotSkinRefresher implements SkinRefresher {
     @Override
     public void refresh(Player player) {
         try {
-            final Object entityPlayer = BukkitReflection.getHandle(player, Object.class);
+            final Object entityPlayer = MappingReflection.getHandle(player, Object.class);
             Object removePlayer;
             Object addPlayer;
             try {

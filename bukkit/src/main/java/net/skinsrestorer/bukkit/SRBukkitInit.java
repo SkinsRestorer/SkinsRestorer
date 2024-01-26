@@ -92,9 +92,9 @@ public class SRBukkitInit implements SRServerPlatformInit {
         plugin.registerSkinApplier(injector.getSingleton(SkinApplierBukkit.class), Player.class, wrapper::player);
 
         // Log information about the platform
-        logger.info(ChatColor.GREEN + "Detected Minecraft " + ChatColor.YELLOW + BukkitReflection.SERVER_VERSION_STRING + ChatColor.GREEN + ".");
+        logger.info(ChatColor.GREEN + "Running on Minecraft " + ChatColor.YELLOW + BukkitReflection.SERVER_VERSION + ChatColor.GREEN + ".");
 
-        if (!NMSVersion.SERVER_VERSION.isNewerThan(new SemanticVersion(1, 7, 10))) {
+        if (!BukkitReflection.SERVER_VERSION.isNewerThan(new SemanticVersion(1, 7, 10))) {
             logger.warning(ChatColor.YELLOW + "Although SkinsRestorer allows using this ancient version, we will not provide full support for it. This version of Minecraft does not allow using all of SkinsRestorers features due to client side restrictions. Please be aware things WILL BREAK and not work!");
         }
     }
@@ -149,7 +149,7 @@ public class SRBukkitInit implements SRServerPlatformInit {
             logger.debug("Activating ViaBackwards workaround.");
         }
 
-        if (NMSVersion.SERVER_VERSION.isNewerThan(new SemanticVersion(1, 17, 1))) {
+        if (BukkitReflection.SERVER_VERSION.isNewerThan(new SemanticVersion(1, 17, 1))) {
             logger.debug("Using MappingSpigotSkinRefresher");
             return new MappingSpigotSkinRefresher(server, viaWorkaround);
         } else {
@@ -159,7 +159,7 @@ public class SRBukkitInit implements SRServerPlatformInit {
     }
 
     private boolean isPaper() {
-        if (ClassInfo.get().isPaper() && NMSVersion.SERVER_VERSION.isNewerThan(new SemanticVersion(1, 11, 2))) {
+        if (ClassInfo.get().isPaper() && BukkitReflection.SERVER_VERSION.isNewerThan(new SemanticVersion(1, 11, 2))) {
             if (hasPaperMethods()) {
                 return true;
             } else {

@@ -17,61 +17,48 @@
  */
 package net.skinsrestorer.bukkit.utils;
 
-import org.bukkit.entity.Player;
-
-import java.lang.reflect.Method;
-import java.util.Optional;
+import net.skinsrestorer.api.semver.SemanticVersion;
+import net.skinsrestorer.shared.plugin.SRPlugin;
+import org.bukkit.Bukkit;
 
 public class BukkitReflection {
-    public static final String SERVER_VERSION_STRING;
-
-    static {
-        SERVER_VERSION_STRING = getNMSVersion().orElseThrow(() -> new RuntimeException("Failed to get NMS version"));
-    }
-
-    public static <E> E getHandle(Player player, Class<E> eClass) throws ReflectiveOperationException {
-        Method getHandleMethod = BukkitReflection.getBukkitClass("entity.CraftPlayer")
-                .getDeclaredMethod("getHandle");
-
-        getHandleMethod.setAccessible(true);
-
-        return eClass.cast(getHandleMethod.invoke(player));
-    }
+    public static final String CRAFTBUKKIT_PACKAGE = getCraftBukkitString();
+    public static final SemanticVersion SERVER_VERSION = getServerVersion();
 
     public static Class<?> getBukkitClass(String clazz) throws ClassNotFoundException {
-        return Class.forName("org.bukkit.craftbukkit." + SERVER_VERSION_STRING + "." + clazz);
+        return Class.forName(CRAFTBUKKIT_PACKAGE + "." + clazz);
     }
 
     public static Class<?> getNMSClass(String clazz, String fullClassName) throws ClassNotFoundException {
-        try {
-            return Class.forName("net.minecraft.server." + SERVER_VERSION_STRING + "." + clazz);
-        } catch (ClassNotFoundException ignored) {
-            if (fullClassName != null) {
+        if (fullClassName != null) {
+            try {
                 return Class.forName(fullClassName);
+            } catch (ClassNotFoundException ignored) {
             }
-
-            throw new ClassNotFoundException("Could not find net.minecraft.server." + SERVER_VERSION_STRING + "." + clazz);
         }
+
+        return Class.forName("net.minecraft.server." + getVersionString() + "." + clazz);
     }
 
-    private static Optional<String> getNMSVersion() {
-        String propertyVersion = System.getProperty("sr.nms.version");
-        if (propertyVersion != null) {
-            return Optional.of(propertyVersion);
+    private static String getCraftBukkitString() {
+        if (SRPlugin.isUnitTest()) {
+            return "org.bukkit.craftbukkit";
         }
 
-        try {
-            Object bukkitServer = Class.forName("org.bukkit.Bukkit").getMethod("getServer").invoke(null);
+        return Bukkit.getServer().getClass().getPackage().getName();
+    }
 
-            if (bukkitServer == null) {
-                return Optional.empty();
-            }
+    private static SemanticVersion getServerVersion() {
+        String fullVersion = Bukkit.getServer().getBukkitVersion();
+        String[] versionParts = fullVersion.substring(0, fullVersion.indexOf('-')).split("\\.");
+        return new SemanticVersion(
+                Integer.parseInt(versionParts[0]),
+                Integer.parseInt(versionParts[1]),
+                Integer.parseInt(versionParts[2])
+        );
+    }
 
-            String serverPackage = bukkitServer.getClass().getPackage().getName();
-
-            return Optional.of(serverPackage.substring(serverPackage.lastIndexOf('.') + 1));
-        } catch (ReflectiveOperationException ignored) {
-            return Optional.empty();
-        }
+    private static String getVersionString() {
+        return CRAFTBUKKIT_PACKAGE.substring(CRAFTBUKKIT_PACKAGE.lastIndexOf('.') + 1);
     }
 }
