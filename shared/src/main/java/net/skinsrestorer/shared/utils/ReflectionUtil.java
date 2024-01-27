@@ -24,17 +24,17 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class ReflectionUtil {
-    private static final Map<Class<?>, Class<?>> builtInMap = new HashMap<>();
+    private static final Map<Class<?>, Class<?>> wrap2primitiveMap = new HashMap<>();
 
     static {
-        builtInMap.put(Integer.class, Integer.TYPE);
-        builtInMap.put(Long.class, Long.TYPE);
-        builtInMap.put(Double.class, Double.TYPE);
-        builtInMap.put(Float.class, Float.TYPE);
-        builtInMap.put(Boolean.class, Boolean.TYPE);
-        builtInMap.put(Character.class, Character.TYPE);
-        builtInMap.put(Byte.class, Byte.TYPE);
-        builtInMap.put(Short.class, Short.TYPE);
+        wrap2primitiveMap.put(Integer.class, Integer.TYPE);
+        wrap2primitiveMap.put(Long.class, Long.TYPE);
+        wrap2primitiveMap.put(Double.class, Double.TYPE);
+        wrap2primitiveMap.put(Float.class, Float.TYPE);
+        wrap2primitiveMap.put(Boolean.class, Boolean.TYPE);
+        wrap2primitiveMap.put(Character.class, Character.TYPE);
+        wrap2primitiveMap.put(Byte.class, Byte.TYPE);
+        wrap2primitiveMap.put(Short.class, Short.TYPE);
     }
 
     private ReflectionUtil() {
@@ -135,8 +135,9 @@ public class ReflectionUtil {
         return m;
     }
 
-    public static <T> T getObject(Object obj, String fieldName, Class<T> tClass) throws ReflectiveOperationException {
-        return tClass.cast(getField(obj.getClass(), fieldName).get(obj));
+    @SuppressWarnings("unchecked")
+    public static <T> T getObject(Object obj, String fieldName) throws ReflectiveOperationException {
+        return (T) getField(obj.getClass(), fieldName).get(obj);
     }
 
     public static Object getFieldByType(Object obj, String typeName) throws ReflectiveOperationException {
@@ -222,7 +223,7 @@ public class ReflectionUtil {
     }
 
     private static Class<?> convertToPrimitive(Class<?> clazz) {
-        return builtInMap.getOrDefault(clazz, clazz);
+        return wrap2primitiveMap.getOrDefault(clazz, clazz);
     }
 
     public static Object invokeMethod(Class<?> clazz, Object obj, String method) throws ReflectiveOperationException {

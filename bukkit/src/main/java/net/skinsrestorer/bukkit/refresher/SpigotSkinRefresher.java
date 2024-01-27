@@ -101,9 +101,15 @@ public final class SpigotSkinRefresher implements SkinRefresher {
                 removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, removePlayerEnum, FluentList.of(entityPlayer));
                 addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, addPlayerEnum, FluentList.of(entityPlayer));
             } catch (ReflectiveOperationException e) {
-                int ping = ReflectionUtil.getObject(entityPlayer, "ping", int.class);
-                removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, player.getPlayerListName(), false, 9999);
-                addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, player.getPlayerListName(), true, ping);
+                try {
+                    int ping = ReflectionUtil.getObject(entityPlayer, "ping");
+                    removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, player.getPlayerListName(), false, 9999);
+                    addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, player.getPlayerListName(), true, ping);
+                } catch (ReflectiveOperationException e2) {
+                    // 1.7.10 and below | pre-netty
+                    removePlayer = ReflectionUtil.invokeMethod(playOutPlayerInfo, null, "removePlayer", new Class<?>[] {entityPlayer.getClass()}, entityPlayer);
+                    addPlayer = ReflectionUtil.invokeMethod(playOutPlayerInfo, null, "addPlayer", new Class<?>[] {entityPlayer.getClass()}, entityPlayer);
+                }
             }
 
             // Slowly getting from object to object till we get what is needed for
@@ -113,14 +119,14 @@ public final class SpigotSkinRefresher implements SkinRefresher {
             try {
                 difficulty = ReflectionUtil.invokeMethod(world, "getDifficulty");
             } catch (ReflectiveOperationException e) {
-                difficulty = ReflectionUtil.getObject(world, "difficulty", Object.class);
+                difficulty = ReflectionUtil.getObject(world, "difficulty");
             }
 
             Object worldData;
             try {
                 worldData = ReflectionUtil.invokeMethod(world, "getWorldData");
             } catch (ReflectiveOperationException ignored) {
-                worldData = ReflectionUtil.getObject(world, "worldData", Object.class);
+                worldData = ReflectionUtil.getObject(world, "worldData");
             }
 
             Object worldType;
