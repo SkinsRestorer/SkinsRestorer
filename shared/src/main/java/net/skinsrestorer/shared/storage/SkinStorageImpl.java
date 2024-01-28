@@ -257,28 +257,24 @@ public class SkinStorageImpl implements SkinStorage {
     @Override
     public Optional<SkinProperty> getSkinDataByIdentifier(SkinIdentifier identifier) {
         try {
-            switch (identifier.getSkinType()) {
-                case PLAYER:
-                    return adapterReference.get().getPlayerSkinData(UUID.fromString(identifier.getIdentifier()))
-                            .map(PlayerSkinData::getProperty);
-                case URL:
-                    return adapterReference.get().getURLSkinData(identifier.getIdentifier(), identifier.getSkinVariant())
-                            .map(URLSkinData::getProperty);
-                case CUSTOM:
+            return switch (identifier.getSkinType()) {
+                case PLAYER -> adapterReference.get().getPlayerSkinData(UUID.fromString(identifier.getIdentifier()))
+                        .map(PlayerSkinData::getProperty);
+                case URL -> adapterReference.get().getURLSkinData(identifier.getIdentifier(), identifier.getSkinVariant())
+                        .map(URLSkinData::getProperty);
+                case CUSTOM -> {
                     Optional<SkinProperty> skinProperty = adapterReference.get().getCustomSkinData(identifier.getIdentifier())
                             .map(CustomSkinData::getProperty);
                     if (skinProperty.isPresent()) {
-                        return skinProperty;
+                        yield skinProperty;
                     } else {
-                        return findCustomHardcodedSkin(identifier.getIdentifier())
+                        yield findCustomHardcodedSkin(identifier.getIdentifier())
                                 .map(InputDataResult::getProperty);
                     }
-                case LEGACY:
-                    return adapterReference.get().getLegacySkinData(identifier.getIdentifier())
-                            .map(LegacySkinData::getProperty);
-                default:
-                    throw new IllegalStateException("Unexpected value: " + identifier.getSkinType());
-            }
+                }
+                case LEGACY -> adapterReference.get().getLegacySkinData(identifier.getIdentifier())
+                        .map(LegacySkinData::getProperty);
+            };
 
         } catch (StorageAdapter.StorageException e) {
             e.printStackTrace();
@@ -289,18 +285,11 @@ public class SkinStorageImpl implements SkinStorage {
     @Override
     public void removeSkinData(SkinIdentifier identifier) {
         switch (identifier.getSkinType()) {
-            case PLAYER:
-                adapterReference.get().removePlayerSkinData(UUID.fromString(identifier.getIdentifier()));
-                break;
-            case URL:
-                adapterReference.get().removeURLSkinData(identifier.getIdentifier(), identifier.getSkinVariant());
-                break;
-            case CUSTOM:
-                adapterReference.get().removeCustomSkinData(identifier.getIdentifier());
-                break;
-            case LEGACY:
-                adapterReference.get().removeLegacySkinData(identifier.getIdentifier());
-                break;
+            case PLAYER -> adapterReference.get().removePlayerSkinData(UUID.fromString(identifier.getIdentifier()));
+            case URL ->
+                    adapterReference.get().removeURLSkinData(identifier.getIdentifier(), identifier.getSkinVariant());
+            case CUSTOM -> adapterReference.get().removeCustomSkinData(identifier.getIdentifier());
+            case LEGACY -> adapterReference.get().removeLegacySkinData(identifier.getIdentifier());
         }
     }
 

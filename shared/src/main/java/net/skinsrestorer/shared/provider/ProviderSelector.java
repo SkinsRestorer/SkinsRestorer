@@ -18,40 +18,35 @@
 package net.skinsrestorer.shared.provider;
 
 import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ProviderSelector<P extends FeatureProvider> {
-    private final List<P> providers;
-
     public static <P extends FeatureProvider> Builder<P> builder() {
         return new Builder<>();
     }
 
-    public P get() {
-        for (P provider : providers) {
-            return provider;
-        }
-
-        throw new IllegalStateException("No provider available.");
-    }
-
-    @RequiredArgsConstructor
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Builder<P extends FeatureProvider> {
-        private final List<P> providers = new ArrayList<>();
+        private P provider;
 
         public Builder<P> add(P provider) {
-            if (provider.isAvailable()) {
-                providers.add(provider);
+            if (this.provider != null) {
+                return this;
             }
+
+            if (provider.isAvailable()) {
+                this.provider = provider;
+            }
+
             return this;
         }
 
-        public P buildAndGet() {
-            return new ProviderSelector<P>(providers).get();
+        public P get() {
+            return Objects.requireNonNull(provider, "No provider available");
         }
     }
 }

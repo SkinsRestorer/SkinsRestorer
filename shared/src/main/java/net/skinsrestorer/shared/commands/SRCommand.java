@@ -162,7 +162,7 @@ public final class SRCommand {
     @Description(Message.HELP_SR_DROP)
     private void onDrop(SRCommandSender sender, PlayerOrSkin playerOrSkin, String target) {
         switch (playerOrSkin) {
-            case PLAYER:
+            case PLAYER -> {
                 try {
                     Optional<UUID> targetId = cacheStorage.getUUID(target, false);
 
@@ -176,8 +176,8 @@ public final class SRCommand {
                     sender.sendMessage(Message.ADMINCOMMAND_DROP_UUID_ERROR);
                     return;
                 }
-                break;
-            case SKIN:
+            }
+            case SKIN -> {
                 Optional<InputDataResult> optional = skinStorage.findSkinData(target);
 
                 if (optional.isEmpty()) {
@@ -188,7 +188,7 @@ public final class SRCommand {
                 InputDataResult result = optional.get();
 
                 skinStorage.removeSkinData(result.getIdentifier());
-                break;
+            }
         }
 
         sender.sendMessage(Message.SUCCESS_ADMIN_DROP, Placeholder.unparsed("type", playerOrSkin.toString()), Placeholder.unparsed("target", target));

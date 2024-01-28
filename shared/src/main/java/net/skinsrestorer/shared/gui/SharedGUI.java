@@ -53,22 +53,16 @@ public class SharedGUI {
         public void accept(ClickEventInfo event) {
             SRServerPlayer player = event.player();
             switch (event.material()) {
-                case HEAD:
+                case HEAD -> {
                     commandManager.executeCommand(player, "skin set " + event.displayName());
                     player.closeInventory();
-                    break;
-                case RED_PANE:
+                }
+                case RED_PANE -> {
                     commandManager.executeCommand(player, "skin clear");
                     player.closeInventory();
-                    break;
-                case GREEN_PANE:
-                    adapter.runAsync(() -> adapter.openServerGUI(player, event.currentPage() + 1));
-                    break;
-                case YELLOW_PANE:
-                    adapter.runAsync(() -> adapter.openServerGUI(player, event.currentPage() - 1));
-                    break;
-                default:
-                    break;
+                }
+                case GREEN_PANE -> adapter.runAsync(() -> adapter.openServerGUI(player, event.currentPage() + 1));
+                case YELLOW_PANE -> adapter.runAsync(() -> adapter.openServerGUI(player, event.currentPage() - 1));
             }
         }
     }
@@ -81,7 +75,7 @@ public class SharedGUI {
         public void accept(ClickEventInfo event) {
             SRServerPlayer player = event.player();
             switch (event.material()) {
-                case HEAD:
+                case HEAD -> {
                     String skinName = event.displayName();
                     adapter.runAsync(() -> adapter.sendToMessageChannel(event.player(), out -> {
                         out.writeUTF("setSkin");
@@ -89,24 +83,18 @@ public class SharedGUI {
                         out.writeUTF(skinName);
                     }));
                     player.closeInventory();
-                    break;
-                case RED_PANE:
+                }
+                case RED_PANE -> {
                     adapter.runAsync(() -> adapter.sendToMessageChannel(event.player(), out -> {
                         out.writeUTF("clearSkin");
                         out.writeUTF(player.getName());
                     }));
                     player.closeInventory();
-                    break;
-                case GREEN_PANE:
-                    adapter.runAsync(() ->
-                            adapter.requestSkinsFromProxy(event.player(), event.currentPage() + 1));
-                    break;
-                case YELLOW_PANE:
-                    adapter.runAsync(() ->
-                            adapter.requestSkinsFromProxy(event.player(), event.currentPage() - 1));
-                    break;
-                default:
-                    break;
+                }
+                case GREEN_PANE -> adapter.runAsync(() ->
+                        adapter.requestSkinsFromProxy(event.player(), event.currentPage() + 1));
+                case YELLOW_PANE -> adapter.runAsync(() ->
+                        adapter.requestSkinsFromProxy(event.player(), event.currentPage() - 1));
             }
         }
     }

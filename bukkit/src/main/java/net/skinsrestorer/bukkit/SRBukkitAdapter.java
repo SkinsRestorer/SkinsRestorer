@@ -84,7 +84,7 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin, CommandSende
         this.schedulerProvider = ProviderSelector.<SchedulerProvider>builder()
                 .add(new FoliaSchedulerProvider())
                 .add(new BukkitSchedulerProvider())
-                .buildAndGet();
+                .get();
     }
 
     @Override

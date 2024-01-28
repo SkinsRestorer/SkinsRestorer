@@ -29,34 +29,18 @@ public class Slf4jLoggerImpl implements SRPlatformLogger {
     @Override
     public void log(SRLogLevel level, String message) {
         switch (level) {
-            case INFO:
-                logger.info(message);
-                break;
-            case WARNING:
-                logger.warn(message);
-                break;
-            case SEVERE:
-                logger.error(message);
-                break;
-            default:
-                break;
+            case INFO -> logger.info(message);
+            case WARNING -> logger.warn(message);
+            case SEVERE -> logger.error(message);
         }
     }
 
     @Override
     public void log(SRLogLevel level, String message, Throwable throwable) {
         switch (level) {
-            case INFO:
-                logger.info(message, throwable);
-                break;
-            case WARNING:
-                logger.warn(message, throwable);
-                break;
-            case SEVERE:
-                logger.error(message, throwable);
-                break;
-            default:
-                break;
+            case INFO -> logger.info(message, throwable);
+            case WARNING -> logger.warn(message, throwable);
+            case SEVERE -> logger.error(message, throwable);
         }
     }
 }

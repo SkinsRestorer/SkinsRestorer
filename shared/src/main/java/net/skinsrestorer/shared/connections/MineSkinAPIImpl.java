@@ -117,53 +117,44 @@ public class MineSkinAPIImpl implements MineSkinAPI {
         logger.debug("MineSkinAPI: Response: " + response);
 
         switch (response.statusCode()) {
-            case 200: {
+            case 200 -> {
                 MineSkinUrlResponse urlResponse = response.getBodyAs(MineSkinUrlResponse.class);
                 SkinProperty property = SkinProperty.of(urlResponse.getData().getTexture().getValue(),
                         urlResponse.getData().getTexture().getSignature());
                 return Optional.of(MineSkinResponse.of(property, urlResponse.getIdStr(),
                         skinVariant, PropertyUtils.getSkinVariant(property)));
             }
-            case 500:
-            case 400: {
+            case 500, 400 -> {
                 MineSkinErrorResponse errorResponse = response.getBodyAs(MineSkinErrorResponse.class);
                 String error = errorResponse.getErrorCode();
                 logger.debug(String.format("[ERROR] MineSkin Failed! Reason: %s Image URL: %s", error, imageUrl));
-                switch (error) {
-                    case "failed_to_create_id":
-                    case "skin_change_failed":
+                // try again
+                return switch (error) {
+                    case "failed_to_create_id", "skin_change_failed" -> {
                         logger.debug("Trying again in 5 seconds...");
                         TimeUnit.SECONDS.sleep(5);
-
-                        return Optional.empty(); // try again
-                    case "no_account_available":
-                        throw new MineSkinExceptionShared(Message.ERROR_MS_FULL);
-                    default:
-                        throw new MineSkinExceptionShared(Message.ERROR_INVALID_URLSKIN);
-                }
+                        yield Optional.empty();
+                    }
+                    case "no_account_available" -> throw new MineSkinExceptionShared(Message.ERROR_MS_FULL);
+                    default -> throw new MineSkinExceptionShared(Message.ERROR_INVALID_URLSKIN);
+                };
             }
-            case 403: {
+            case 403 -> {
                 MineSkinErrorResponse apiErrorResponse = response.getBodyAs(MineSkinErrorResponse.class);
                 String errorCode2 = apiErrorResponse.getErrorCode();
                 String error2 = apiErrorResponse.getError();
                 if (errorCode2.equals("invalid_api_key")) {
                     logger.severe("[ERROR] MineSkin API key is not invalid! Reason: " + error2);
                     switch (error2) {
-                        case "Invalid API Key":
-                            logger.severe("The API Key provided is not registered on MineSkin! Please empty \"api.mineSkinKey\" in plugins/SkinsRestorer/config.yml and run /sr reload");
-                            break;
-                        case "Client not allowed":
-                            logger.severe("This server ip is not on the apikey allowed IPs list!");
-                            break;
-                        case "Origin not allowed":
-                            logger.severe("This server Origin is not on the apikey allowed Origins list!");
-                            break;
-                        case "Agent not allowed":
-                            logger.severe("SkinsRestorer's agent \"SkinsRestorer/MineSkinAPI\" is not on the apikey allowed agents list!");
-                            break;
-                        default:
-                            logger.severe("Unknown error, please report this to SkinsRestorer's discord!");
-                            break;
+                        case "Invalid API Key" ->
+                                logger.severe("The API Key provided is not registered on MineSkin! Please empty \"api.mineSkinKey\" in plugins/SkinsRestorer/config.yml and run /sr reload");
+                        case "Client not allowed" ->
+                                logger.severe("This server ip is not on the apikey allowed IPs list!");
+                        case "Origin not allowed" ->
+                                logger.severe("This server Origin is not on the apikey allowed Origins list!");
+                        case "Agent not allowed" ->
+                                logger.severe("SkinsRestorer's agent \"SkinsRestorer/MineSkinAPI\" is not on the apikey allowed agents list!");
+                        default -> logger.severe("Unknown error, please report this to SkinsRestorer's discord!");
                     }
 
                     throw new MineSkinExceptionShared(Message.ERROR_MS_API_KEY_INVALID);
@@ -171,7 +162,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
 
                 throw new MineSkinExceptionShared(Message.ERROR_MS_UNKNOWN);
             }
-            case 429: {
+            case 429 -> {
                 MineSkinErrorDelayResponse errorDelayResponse = response.getBodyAs(MineSkinErrorDelayResponse.class);
                 // If "Too many requests"
                 if (errorDelayResponse.getDelay() != null) {
@@ -189,9 +180,10 @@ public class MineSkinAPIImpl implements MineSkinAPI {
 
                 return Optional.empty(); // try again after nextRequest
             }
-            default:
+            default -> {
                 logger.debug("[ERROR] MineSkin Failed! Unknown error: (Image URL: " + imageUrl + ") " + response.statusCode());
                 throw new MineSkinExceptionShared(Message.ERROR_MS_API_FAILED);
+            }
         }
     }
 

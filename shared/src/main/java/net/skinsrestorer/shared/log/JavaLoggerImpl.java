@@ -30,34 +30,18 @@ public class JavaLoggerImpl implements SRPlatformLogger {
     @Override
     public void log(SRLogLevel level, String message) {
         switch (level) {
-            case INFO:
-                console.sendMessage(message);
-                break;
-            case WARNING:
-                logger.warning(message);
-                break;
-            case SEVERE:
-                logger.severe(message);
-                break;
-            default:
-                break;
+            case INFO -> console.sendMessage(message);
+            case WARNING -> logger.warning(message);
+            case SEVERE -> logger.severe(message);
         }
     }
 
     @Override
     public void log(SRLogLevel level, String message, Throwable throwable) {
         switch (level) {
-            case INFO:
-                logger.log(Level.INFO, message, throwable);
-                break;
-            case WARNING:
-                logger.log(Level.WARNING, message, throwable);
-                break;
-            case SEVERE:
-                logger.log(Level.SEVERE, message, throwable);
-                break;
-            default:
-                break;
+            case INFO -> logger.log(Level.INFO, message, throwable);
+            case WARNING -> logger.log(Level.WARNING, message, throwable);
+            case SEVERE -> logger.log(Level.SEVERE, message, throwable);
         }
     }
 }
