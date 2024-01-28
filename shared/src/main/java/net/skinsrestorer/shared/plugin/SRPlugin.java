@@ -434,6 +434,7 @@ public class SRPlugin {
             if (version < 17) {
                 logger.warning(SRChatColor.YELLOW + "Your Java version \"" + specVersion + "\" is not recommended! SkinsRestorer now uses Java 17 primarily.\n"
                         + "The plugin was \"downgraded\" to Java 1.8 (Java 8) to ensure compatibility with your server, but it may cause issues.\n"
+                        + "The plugin still works, but it may have Java version related issues.\n"
                         + "Please update your server Java version to 17 or higher to get the best performance, security and to avoid issues with SkinsRestorer."
                 );
             }
