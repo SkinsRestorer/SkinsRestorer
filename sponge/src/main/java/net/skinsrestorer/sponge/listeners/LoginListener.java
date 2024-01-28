@@ -66,7 +66,6 @@ public class LoginListener implements EventListener<ServerSideConnectionEvent.Au
                 return false;
             }
 
-            @SuppressWarnings("unchecked")
             @Override
             public void setResultProperty(SkinProperty property) {
                 try {
