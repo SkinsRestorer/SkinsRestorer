@@ -11,6 +11,7 @@ dependencies {
     implementation(projects.multiver.bukkit.paper)
     implementation(projects.multiver.bukkit.multipaper)
     implementation(projects.multiver.bukkit.v17)
+    implementation(projects.multiver.bukkit.folia)
 
     implementation("net.kyori:adventure-platform-bukkit:4.3.2")
 
@@ -53,30 +54,9 @@ dependencies {
     testRuntimeOnly("com.mojang:authlib:2.0.27")
 }
 
-tasks.shadowJar {
-    configureKyoriRelocations()
-}
-
-val projectIncludes = setOf(
-    rootProject.projects.multiver.bukkit.folia
-).map { it.dependencyProject }
-
-tasks.jar {
-    duplicatesStrategy = DuplicatesStrategy.INCLUDE
-    projectIncludes.forEach { include ->
-        val jarTask = include.tasks.named<Jar>("jar").get()
-        dependsOn(jarTask)
-        from(zipTree(jarTask.archiveFile))
-    }
-}
-
 tasks {
     shadowJar {
-        projectIncludes.forEach { include ->
-            val jarTask = include.tasks.named<Jar>("jar").get()
-            dependsOn(jarTask)
-            from(zipTree(jarTask.archiveFile))
-        }
+        configureKyoriRelocations()
     }
     runServer {
         minecraftVersion(libs.versions.runpaperversion.get())

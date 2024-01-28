@@ -23,6 +23,7 @@ import lombok.Getter;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.bukkit.command.SRBukkitCommand;
+import net.skinsrestorer.bukkit.folia.FoliaSchedulerProvider;
 import net.skinsrestorer.bukkit.gui.SkinsGUI;
 import net.skinsrestorer.bukkit.listener.ForceAliveListener;
 import net.skinsrestorer.bukkit.paper.PaperTabCompleteEvent;
@@ -80,8 +81,8 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin, CommandSende
         this.pluginInstance = pluginInstance;
         this.adventure = adventure;
         this.logger = injector.getSingleton(SRLogger.class);
-        this.schedulerProvider = ProviderSelector.builder(SchedulerProvider.class, logger)
-                .add("net.skinsrestorer.bukkit.folia.FoliaSchedulerProvider") // Compiled with java 17, which the bukkit module is not.
+        this.schedulerProvider = ProviderSelector.<SchedulerProvider>builder()
+                .add(new FoliaSchedulerProvider())
                 .add(new BukkitSchedulerProvider())
                 .buildAndGet();
     }

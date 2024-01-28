@@ -28,5 +28,6 @@ tasks {
     }
     register<DowngradeJarTask>("java8Jar") {
         input.set(jar.get().archiveFile.get().asFile)
-    }.get().dependsOn("jar")
+        dependsOn("jar")
+    }
 }

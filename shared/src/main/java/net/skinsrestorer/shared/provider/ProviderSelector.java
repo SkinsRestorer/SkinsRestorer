@@ -27,50 +27,23 @@ import java.util.List;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class ProviderSelector<P extends FeatureProvider> {
-    private final Class<P> providerType;
     private final List<P> providers;
 
-    public static <P extends FeatureProvider> Builder<P> builder(Class<P> providerType, SRLogger logger) {
-        return new Builder<>(providerType, logger);
+    public static <P extends FeatureProvider> Builder<P> builder() {
+        return new Builder<>();
     }
 
     public P get() {
         for (P provider : providers) {
-            return providerType.cast(provider);
+            return provider;
         }
 
-        throw new IllegalStateException("No provider available for " + providerType.getSimpleName());
+        throw new IllegalStateException("No provider available.");
     }
 
     @RequiredArgsConstructor
     public static class Builder<P extends FeatureProvider> {
-        private final Class<P> providerType;
-        private final SRLogger logger;
         private final List<P> providers = new ArrayList<>();
-
-        public Builder<P> add(String providerClass) {
-            try {
-                add(Class.forName(providerClass).asSubclass(providerType));
-            } catch (Throwable t) {
-                if (t instanceof ClassNotFoundException || t instanceof UnsupportedClassVersionError) {
-                    logger.debug("Did not load provider " + providerClass + " because of java version issues");
-                } else {
-                    logger.debug("Failed to load provider " + providerClass, t);
-                }
-            }
-            return this;
-        }
-
-        public Builder<P> add(Class<? extends P> providerClass) {
-            try {
-                Constructor<? extends P> constructor = providerClass.getConstructor();
-                P provider = providerType.cast(constructor.newInstance());
-                add(provider);
-            } catch (Throwable t) {
-                logger.debug("Failed to load provider " + providerClass.getName(), t);
-            }
-            return this;
-        }
 
         public Builder<P> add(P provider) {
             if (provider.isAvailable()) {
@@ -80,7 +53,7 @@ public class ProviderSelector<P extends FeatureProvider> {
         }
 
         public P buildAndGet() {
-            return new ProviderSelector<P>(providerType, providers).get();
+            return new ProviderSelector<P>(providers).get();
         }
     }
 }
