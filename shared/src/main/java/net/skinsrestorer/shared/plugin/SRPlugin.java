@@ -47,6 +47,7 @@ import net.skinsrestorer.shared.connections.MojangAPIImpl;
 import net.skinsrestorer.shared.connections.ServiceCheckerService;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.floodgate.FloodgateUtil;
+import net.skinsrestorer.shared.log.SRChatColor;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.storage.CacheStorageImpl;
 import net.skinsrestorer.shared.storage.CooldownStorage;
@@ -416,11 +417,46 @@ public class SRPlugin {
             FloodgateUtil.registerListener(injector);
         }
 
+        runJavaCheck();
+
         initUpdateCheck(UpdateCheckInit.InitCause.STARTUP);
 
         if (serverPlugin == null || !serverPlugin.isProxyMode()) {
             adapter.runAsync(this::runServiceCheck);
         }
+    }
+
+    private void runJavaCheck() {
+        String specVersion = System.getProperty("java.specification.version");
+
+        try {
+            int version = getJavaVersion(specVersion);
+            if (version < 17) {
+                logger.warning(SRChatColor.YELLOW + "Your Java version \"" + specVersion + "\" is outdated! SkinsRestorer now uses Java 17 for development.\n"
+                        + "The plugin was \"downgraded\" automatically to Java 1.8 (Java 8) to ensure compatibility, but it may cause issues.\n"
+                        + "Please update your server Java version to 17 or higher to get the best performance, security and to avoid issues with SkinsRestorer."
+                );
+            }
+        } catch (Exception e) {
+            logger.warning("Failed to parse Java version: " + specVersion, e);
+        }
+    }
+
+    private static int getJavaVersion(String specVersion) {
+        String[] split = specVersion.split("\\.");
+
+        String majorVersion;
+        if (split.length == 0 || split.length > 2) {
+            throw new IllegalArgumentException("Invalid Java version: " + specVersion);
+        } else if (split.length == 1) {
+            majorVersion = split[0];
+        } else if (split[0].equals("1")) {
+            majorVersion = split[1];
+        } else {
+            throw new IllegalArgumentException("Invalid Java version: " + specVersion);
+        }
+
+        return Integer.parseInt(majorVersion);
     }
 
     private void runServiceCheck() {

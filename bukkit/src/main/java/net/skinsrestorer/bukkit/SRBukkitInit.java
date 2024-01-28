@@ -37,6 +37,7 @@ import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
 import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.info.ClassInfo;
+import net.skinsrestorer.shared.log.SRChatColor;
 import net.skinsrestorer.shared.log.SRLogLevel;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
@@ -46,7 +47,6 @@ import net.skinsrestorer.shared.subjects.permissions.PermissionGroup;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
 import net.skinsrestorer.shared.utils.ComponentHelper;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
-import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -85,17 +85,17 @@ public class SRBukkitInit implements SRServerPlatformInit {
             logger.severe("Your Minecraft version is not supported by this version of SkinsRestorer! Is there a newer version available? If not, join our discord server!", e);
             throw e;
         } catch (InitializeException e) {
-            logger.severe(ChatColor.RED + ChatColor.UNDERLINE.toString() + "Could not initialize SkinApplier! Please report this on our discord server!");
+            logger.severe(SRChatColor.RED + SRChatColor.UNDERLINE.toString() + "Could not initialize SkinApplier! Please report this on our discord server!");
             throw e;
         }
 
         plugin.registerSkinApplier(injector.getSingleton(SkinApplierBukkit.class), Player.class, wrapper::player);
 
         // Log information about the platform
-        logger.info(ChatColor.GREEN + "Running on Minecraft " + ChatColor.YELLOW + BukkitReflection.SERVER_VERSION + ChatColor.GREEN + ".");
+        logger.info(SRChatColor.GREEN + "Running on Minecraft " + SRChatColor.YELLOW + BukkitReflection.SERVER_VERSION + SRChatColor.GREEN + ".");
 
         if (!BukkitReflection.SERVER_VERSION.isNewerThan(new SemanticVersion(1, 7, 10))) {
-            logger.warning(ChatColor.YELLOW + "Although SkinsRestorer allows using this ancient version, we will not provide full support for it. This version of Minecraft does not allow using all of SkinsRestorers features due to client side restrictions. Please be aware things WILL BREAK and not work!");
+            logger.warning(SRChatColor.YELLOW + "Although SkinsRestorer allows using this ancient version, we will not provide full support for it. This version of Minecraft does not allow using all of SkinsRestorers features due to client side restrictions. Please be aware things WILL BREAK and not work!");
         }
     }
 
@@ -237,12 +237,12 @@ public class SRBukkitInit implements SRServerPlatformInit {
         try (BufferedReader reader = Files.newBufferedReader(pluginsFolder.resolve("MundoSK").resolve("config.yml"))) {
             FileConfiguration config = YamlConfiguration.loadConfiguration(reader);
             if (config.getBoolean("enable_custom_skin_and_tablist")) {
-                logger.warning(ChatColor.DARK_RED + "----------------------------------------------");
-                logger.warning(ChatColor.DARK_RED + "             [CRITICAL WARNING]");
-                logger.warning(ChatColor.RED + "We have detected MundoSK on your server with " + ChatColor.YELLOW + "'enable_custom_skin_and_tablist: " + ChatColor.DARK_RED + ChatColor.UNDERLINE + "true" + ChatColor.YELLOW + "' " + ChatColor.RED + ".");
-                logger.warning(ChatColor.RED + "That setting is located in §e/plugins/MundoSK/config.yml");
-                logger.warning(ChatColor.RED + "You have to disable ('false') it to get SkinsRestorer to work!");
-                logger.warning(ChatColor.DARK_RED + "----------------------------------------------");
+                logger.warning(SRChatColor.DARK_RED + "----------------------------------------------");
+                logger.warning(SRChatColor.DARK_RED + "             [CRITICAL WARNING]");
+                logger.warning(SRChatColor.RED + "We have detected MundoSK on your server with " + SRChatColor.YELLOW + "'enable_custom_skin_and_tablist: " + SRChatColor.DARK_RED + SRChatColor.UNDERLINE + "true" + SRChatColor.YELLOW + "' " + SRChatColor.RED + ".");
+                logger.warning(SRChatColor.RED + "That setting is located in §e/plugins/MundoSK/config.yml");
+                logger.warning(SRChatColor.RED + "You have to disable ('false') it to get SkinsRestorer to work!");
+                logger.warning(SRChatColor.DARK_RED + "----------------------------------------------");
             }
         } catch (IOException e) {
             logger.warning("Could not read MundoSK config.yml to check for 'enable_custom_skin_and_tablist'!", e);
