@@ -21,7 +21,6 @@ import lombok.Getter;
 import net.kyori.adventure.platform.bungeecord.BungeeAudiences;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
-import net.skinsrestorer.bungee.logger.BungeeConsoleImpl;
 import net.skinsrestorer.shared.log.JavaLoggerImpl;
 import net.skinsrestorer.shared.plugin.SRBootstrapper;
 import net.skinsrestorer.shared.plugin.SRProxyPlugin;
@@ -41,7 +40,7 @@ public class SRBungeeBootstrap extends Plugin {
                     injector.register(ProxyServer.class, proxy);
                     injector.register(BungeeAudiences.class, BungeeAudiences.create(this));
                 },
-                new JavaLoggerImpl(new BungeeConsoleImpl(proxy.getConsole()), proxy.getLogger()),
+                new JavaLoggerImpl(proxy.getLogger()::info, proxy.getLogger()),
                 true,
                 SRBungeeAdapter.class,
                 SRProxyPlugin.class,
