@@ -37,7 +37,7 @@ public class BukkitReflection {
             }
         }
 
-        return Class.forName("net.minecraft.server." + getVersionString() + "." + clazz);
+        return Class.forName("net.minecraft.server." + getLegacyVersionString() + "." + clazz);
     }
 
     private static String getCraftBukkitString() {
@@ -54,7 +54,7 @@ public class BukkitReflection {
         return SemanticVersion.fromString(versionString);
     }
 
-    private static String getVersionString() {
+    private static String getLegacyVersionString() {
         return CRAFTBUKKIT_PACKAGE.substring(CRAFTBUKKIT_PACKAGE.lastIndexOf('.') + 1);
     }
 }
