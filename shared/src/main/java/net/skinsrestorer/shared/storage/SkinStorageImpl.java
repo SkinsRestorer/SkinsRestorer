@@ -82,7 +82,7 @@ public class SkinStorageImpl implements SkinStorage {
 
     @Override
     public Optional<SkinProperty> updatePlayerSkinData(UUID uuid) throws DataRequestException {
-        return updatePlayerSkinData(uuid, mojangAPI::getProfile, false);
+        return updatePlayerSkinData(uuid, mojangAPI::getProfile, true);
     }
 
     private Optional<SkinProperty> updatePlayerSkinData(UUID uuid, ProfileGetter profileGetter, boolean skipDbLookup) throws DataRequestException {
@@ -141,7 +141,8 @@ public class SkinStorageImpl implements SkinStorage {
                 }
 
                 UUID uuid = optionalUUID.get();
-                return updatePlayerSkinData(uuid, mojangAPI::getProfile, skipDbLookup).map(skinProperty -> MojangSkinDataResult.of(uuid, skinProperty));
+                return updatePlayerSkinData(uuid, mojangAPI::getProfile, skipDbLookup)
+                        .map(skinProperty -> MojangSkinDataResult.of(uuid, skinProperty));
             }
 
             Optional<MojangSkinDataResult> optional = mojangAPI.getSkin(playerName);
@@ -242,6 +243,7 @@ public class SkinStorageImpl implements SkinStorage {
             return skinData;
         }
 
+        // Create new skin data
         if (ValidationUtil.validSkinUrl(input)) {
             MineSkinResponse response = mineSkinAPI.genSkin(input, null);
 
