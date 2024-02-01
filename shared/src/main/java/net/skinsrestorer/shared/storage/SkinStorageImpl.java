@@ -82,7 +82,7 @@ public class SkinStorageImpl implements SkinStorage {
 
     @Override
     public Optional<SkinProperty> updatePlayerSkinData(UUID uuid) throws DataRequestException {
-        return updatePlayerSkinData(uuid, mojangAPI::getProfile, true);
+        return updatePlayerSkinData(uuid, mojangAPI::getProfileMojang, true);
     }
 
     private Optional<SkinProperty> updatePlayerSkinData(UUID uuid, ProfileGetter profileGetter, boolean skipDbLookup) throws DataRequestException {
