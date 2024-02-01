@@ -82,10 +82,10 @@ public class SkinStorageImpl implements SkinStorage {
 
     @Override
     public Optional<SkinProperty> updatePlayerSkinData(UUID uuid) throws DataRequestException {
-        return updatePlayerSkinData(uuid, mojangAPI::getProfileMojang, true);
+        return updatePlayerSkinData(uuid, mojangAPI::getProfileMojang, false, true);
     }
 
-    private Optional<SkinProperty> updatePlayerSkinData(UUID uuid, ProfileGetter profileGetter, boolean skipDbLookup) throws DataRequestException {
+    private Optional<SkinProperty> updatePlayerSkinData(UUID uuid, ProfileGetter profileGetter, boolean skipDbLookup, boolean ignoreExpiry) throws DataRequestException {
         try {
             Optional<PlayerSkinData> optionalData = skipDbLookup ? Optional.empty() : adapterReference.get().getPlayerSkinData(uuid);
             Optional<SkinProperty> currentSkin = optionalData.map(PlayerSkinData::getProperty);
@@ -93,7 +93,7 @@ public class SkinStorageImpl implements SkinStorage {
             long timestamp = -1;
             if (optionalData.isPresent()) {
                 PlayerSkinData currentSkinData = optionalData.get();
-                if (!isPlayerSkinExpired(currentSkinData.getTimestamp())) {
+                if (!ignoreExpiry && !isPlayerSkinExpired(currentSkinData.getTimestamp())) {
                     // We have valid data, let's return it
                     return currentSkin;
                 } else {
@@ -141,7 +141,7 @@ public class SkinStorageImpl implements SkinStorage {
                 }
 
                 UUID uuid = optionalUUID.get();
-                return updatePlayerSkinData(uuid, mojangAPI::getProfile, skipDbLookup)
+                return updatePlayerSkinData(uuid, mojangAPI::getProfile, skipDbLookup, false)
                         .map(skinProperty -> MojangSkinDataResult.of(uuid, skinProperty));
             }
 
@@ -153,7 +153,7 @@ public class SkinStorageImpl implements SkinStorage {
             // Cache the skin data
             if (optional.isPresent()) {
                 MojangSkinDataResult result = optional.get();
-                return updatePlayerSkinData(result.getUniqueId(), uuid -> Optional.of(result.getSkinProperty()), skipDbLookup)
+                return updatePlayerSkinData(result.getUniqueId(), uuid -> Optional.of(result.getSkinProperty()), skipDbLookup, false)
                         .map(skinProperty -> MojangSkinDataResult.of(result.getUniqueId(), skinProperty));
             }
 
