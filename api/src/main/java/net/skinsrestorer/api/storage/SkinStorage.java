@@ -44,8 +44,8 @@ import java.util.UUID;
  */
 public interface SkinStorage {
     /**
-     * This method returns the skin data associated to the skin name.
-     * If the skin data is not found or expired, it will try to get the skin data from Mojang.
+     * This method returns the updated skin property associated to the player skin by UUID.
+     * This will always request the latest skin data from Mojang directly no matter whether it's expired or not.
      *
      * @param uuid Player UUID
      * @return The skin property containing the skin data
