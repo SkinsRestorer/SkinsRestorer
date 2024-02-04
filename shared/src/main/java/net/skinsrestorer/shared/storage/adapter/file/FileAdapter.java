@@ -36,7 +36,7 @@ import net.skinsrestorer.shared.storage.model.cache.MojangCacheData;
 import net.skinsrestorer.shared.storage.model.player.LegacyPlayerData;
 import net.skinsrestorer.shared.storage.model.player.PlayerData;
 import net.skinsrestorer.shared.storage.model.skin.*;
-import net.skinsrestorer.shared.utils.SRFileUtils;
+import net.skinsrestorer.shared.utils.SRHelpers;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -114,8 +114,8 @@ public class FileAdapter implements StorageAdapter {
     }
 
     private void migrate(Path dataFolder) throws IOException {
-        SRFileUtils.renameFile(dataFolder, "Skins", "skins");
-        SRFileUtils.renameFile(dataFolder, "Players", "players");
+        SRHelpers.renameFile(dataFolder, "Skins", "skins");
+        SRHelpers.renameFile(dataFolder, "Players", "players");
 
         migrateSkins();
         migratePlayers();

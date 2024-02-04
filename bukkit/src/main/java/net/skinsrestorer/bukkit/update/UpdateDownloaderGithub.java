@@ -23,7 +23,7 @@ import net.skinsrestorer.shared.exception.UpdateException;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.update.UpdateDownloader;
-import net.skinsrestorer.shared.utils.HashUtil;
+import net.skinsrestorer.shared.utils.SRHelpers;
 import org.bukkit.Server;
 
 import javax.inject.Inject;
@@ -71,7 +71,7 @@ public class UpdateDownloaderGithub implements UpdateDownloader {
 
                 fileData = byteData.toByteArray();
                 String hash = connection.getHeaderField("content-md5");
-                if (hash != null && !Arrays.equals(Base64.getDecoder().decode(hash), HashUtil.md5(fileData))) {
+                if (hash != null && !Arrays.equals(Base64.getDecoder().decode(hash), SRHelpers.md5(fileData))) {
                     throw new UpdateException("Downloaded file is corrupted");
                 } else if (hash == null) {
                     logger.warning("[GitHubUpdate] MD5 header not found, cannot verify integrity");

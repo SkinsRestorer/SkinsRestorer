@@ -31,7 +31,7 @@ import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.storage.adapter.AdapterReference;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.storage.model.cache.MojangCacheData;
-import net.skinsrestorer.shared.utils.TimeUtil;
+import net.skinsrestorer.shared.utils.SRHelpers;
 import net.skinsrestorer.shared.utils.ValidationUtil;
 
 import javax.inject.Inject;
@@ -67,7 +67,7 @@ public class CacheStorageImpl implements CacheStorage {
                 Optional<UUID> uuid = mojangAPI.getUUID(playerName);
 
                 adapterReference.get().setCachedUUID(playerName,
-                        MojangCacheData.of(uuid.orElse(null), TimeUtil.getEpochSecond()));
+                        MojangCacheData.of(uuid.orElse(null), SRHelpers.getEpochSecond()));
 
                 return uuid;
             } catch (DataRequestException e) {
@@ -93,6 +93,6 @@ public class CacheStorageImpl implements CacheStorage {
 
     private boolean isValidUUIDTimestamp(long epochSecond) {
         int expiresAfter = settings.getProperty(StorageConfig.UUID_EXPIRES_AFTER);
-        return expiresAfter <= 0 || TimeUtil.getEpochSecond() - epochSecond <= expiresAfter;
+        return expiresAfter <= 0 || SRHelpers.getEpochSecond() - epochSecond <= expiresAfter;
     }
 }

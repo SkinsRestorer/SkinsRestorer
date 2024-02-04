@@ -32,6 +32,7 @@ import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.storage.adapter.AdapterReference;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.storage.model.player.PlayerData;
+import net.skinsrestorer.shared.utils.SRHelpers;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -144,7 +145,7 @@ public class PlayerStorageImpl implements PlayerStorage {
             return Optional.empty();
         }
 
-        String selectedSkin = skins.size() == 1 ? skins.get(0) : skins.get(ThreadLocalRandom.current().nextInt(skins.size()));
+        String selectedSkin = skins.size() == 1 ? skins.get(0) : SRHelpers.getRandomEntry(skins);
 
         return skinStorage.findSkinData(selectedSkin).map(InputDataResult::getProperty);
     }

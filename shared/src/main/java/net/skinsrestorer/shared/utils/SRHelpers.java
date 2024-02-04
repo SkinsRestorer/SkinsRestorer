@@ -17,30 +17,92 @@
  */
 package net.skinsrestorer.shared.utils;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Stream;
 
 public class SRHelpers {
     private SRHelpers() {
     }
 
     public static Throwable getRootCause(Throwable throwable) {
-        if (throwable.getCause() != null)
+        if (throwable.getCause() != null) {
             return getRootCause(throwable.getCause());
+        }
 
         return throwable;
     }
 
     public static long hashSha256String(String str) {
         try {
-            MessageDigest md = java.security.MessageDigest.getInstance("SHA-256");
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
             md.update(str.getBytes(StandardCharsets.UTF_8));
             byte[] digest = md.digest();
             return ByteBuffer.wrap(digest).getLong();
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException("Failed to get SHA-256 hash algorithm", e);
         }
+    }
+
+    public static byte[] md5(byte[] input) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.update(input);
+            return md.digest();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static long getEpochSecond() {
+        return System.currentTimeMillis() / 1000L;
+    }
+
+    public static void renameFile(Path parent, String oldName, String newName) throws IOException {
+        try (Stream<Path> stream = Files.list(parent)) {
+            // Folders are case-insensitive on Windows, so we need to check it using this method
+            List<String> files = stream.map(Path::getFileName).map(Path::toString).toList();
+
+            String tempName = newName + "_temp";
+            if (files.contains(oldName) && !files.contains(tempName) && !files.contains(newName)) {
+                Path oldPath = parent.resolve(oldName);
+                Path tempPath = parent.resolve(tempName);
+                Path newPath = parent.resolve(newName);
+
+                // Windows will not allow renaming a folder to a name that differs only in case
+                // So we need to rename it to a temporary name first
+                Files.move(oldPath, tempPath, StandardCopyOption.REPLACE_EXISTING);
+                Files.move(tempPath, newPath, StandardCopyOption.REPLACE_EXISTING);
+            }
+        }
+    }
+
+    public static <E> E getRandomEntry(List<E> list) {
+        Random random = ThreadLocalRandom.current();
+        return list.get(random.nextInt(list.size()));
+    }
+
+    public static <E> E getRandomEntry(Set<E> list) {
+        Random random = ThreadLocalRandom.current();
+        int index = random.nextInt(list.size());
+        int i = 0;
+        for (E entry : list) {
+            if (i == index) {
+                return entry;
+            }
+            i++;
+        }
+
+        throw new IllegalStateException("Failed to get random entry");
     }
 }

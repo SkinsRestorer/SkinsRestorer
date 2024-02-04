@@ -22,31 +22,37 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.property.MojangSkinDataResult;
 import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.shared.utils.SRHelpers;
 
 import javax.inject.Inject;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class ServiceCheckerService {
-    private static final String XKNAT_NAME = "xknat";
-    private static final UUID XKNAT_UUID = UUID.fromString("7dcfc130-344a-4719-9fbe-3176bc2075c6");
+    private static final Map<String, UUID> PLAYER_MAP = Map.ofEntries(
+            Map.entry("xknat", UUID.fromString("7dcfc130-344a-4719-9fbe-3176bc2075c6")),
+            Map.entry("jeb_", UUID.fromString("853c80ef-3c37-49fd-aa49-938b674adae6")),
+            Map.entry("Dinnerbone", UUID.fromString("61699b2e-d327-4a01-9f1e-0ea8c3f06bc6")),
+            Map.entry("Grumm", UUID.fromString("e6b5c088-0680-44df-9e1b-9bf11792291b"))
+    );
     private static final String MESSAGE_ERROR = "%s <red>✘ Error getting %s";
     private static final String MESSAGE_ERROR_EXCEPTION = "%s <red>✘ Error getting %s: %s";
-    private static final String UUID_MESSAGE = "%s <green>✔ xknat UUID: <aqua>%s";
-    private static final String PROFILE_MESSAGE = "%s <green>✔ xknat Profile: <aqua>%s";
+    private static final String UUID_MESSAGE = "%s <green>✔ %s UUID: <aqua>%s";
+    private static final String PROFILE_MESSAGE = "%s <green>✔ %s Profile: <aqua>%s";
     private final MojangAPIImpl mojangAPI;
 
     public ServiceCheckResponse checkServices() {
         ServiceCheckResponse response = new ServiceCheckResponse();
 
+        Map.Entry<String, UUID> selectedUser = SRHelpers.getRandomEntry(PLAYER_MAP.entrySet());
+        String selectedUsername = selectedUser.getKey();
+        UUID selectedUUID = selectedUser.getValue();
+
         // ##### Ashcon request #####
         try {
-            Optional<MojangSkinDataResult> uuidAshcon = mojangAPI.getDataAshcon(XKNAT_NAME);
+            Optional<MojangSkinDataResult> uuidAshcon = mojangAPI.getDataAshcon(selectedUsername);
             if (uuidAshcon.isPresent()) {
-                response.addResult(String.format(PROFILE_MESSAGE, "Ashcon", uuidAshcon.get().getUniqueId()));
+                response.addResult(String.format(PROFILE_MESSAGE, "Ashcon", selectedUsername, uuidAshcon.get().getUniqueId()));
                 response.incrementWorkingUUID();
             } else response.addResult(String.format(MESSAGE_ERROR, "Ashcon", "UUID"));
         } catch (DataRequestException e) {
@@ -55,10 +61,10 @@ public class ServiceCheckerService {
 
         // ##### UUID requests #####
         try {
-            Optional<UUID> uuid = mojangAPI.getUUIDMojang(XKNAT_NAME);
+            Optional<UUID> uuid = mojangAPI.getUUIDMojang(selectedUsername);
 
             if (uuid.isPresent()) {
-                response.addResult(String.format(UUID_MESSAGE, "Mojang", uuid.get()));
+                response.addResult(String.format(UUID_MESSAGE, "Mojang", selectedUsername, uuid.get()));
                 response.incrementWorkingUUID();
             } else response.addResult(String.format(MESSAGE_ERROR, "Mojang", "UUID"));
         } catch (DataRequestException e) {
@@ -66,10 +72,10 @@ public class ServiceCheckerService {
         }
 
         try {
-            Optional<UUID> uuid = mojangAPI.getUUIDMineTools(XKNAT_NAME);
+            Optional<UUID> uuid = mojangAPI.getUUIDMineTools(selectedUsername);
 
             if (uuid.isPresent()) {
-                response.addResult(String.format(UUID_MESSAGE, "MineTools", uuid.get()));
+                response.addResult(String.format(UUID_MESSAGE, "MineTools", selectedUsername, uuid.get()));
                 response.incrementWorkingUUID();
             } else response.addResult(String.format(MESSAGE_ERROR, "MineTools", "UUID"));
         } catch (DataRequestException e) {
@@ -78,9 +84,9 @@ public class ServiceCheckerService {
 
         // ##### Profile requests #####
         try {
-            Optional<MojangSkinDataResult> nameAshcon = mojangAPI.getDataAshcon(XKNAT_UUID.toString());
+            Optional<MojangSkinDataResult> nameAshcon = mojangAPI.getDataAshcon(selectedUUID.toString());
             if (nameAshcon.isPresent()) {
-                response.addResult(String.format(PROFILE_MESSAGE, "Ashcon", nameAshcon.get().getSkinProperty()));
+                response.addResult(String.format(PROFILE_MESSAGE, "Ashcon", selectedUUID, nameAshcon.get().getSkinProperty()));
                 response.incrementWorkingProfile();
             } else response.addResult(String.format(MESSAGE_ERROR, "Ashcon", "Profile"));
         } catch (DataRequestException e) {
@@ -88,9 +94,9 @@ public class ServiceCheckerService {
         }
 
         try {
-            Optional<SkinProperty> mojang = mojangAPI.getProfileMojang(XKNAT_UUID);
+            Optional<SkinProperty> mojang = mojangAPI.getProfileMojang(selectedUUID);
             if (mojang.isPresent()) {
-                response.addResult(String.format(PROFILE_MESSAGE, "Mojang", mojang.get()));
+                response.addResult(String.format(PROFILE_MESSAGE, "Mojang", selectedUUID, mojang.get()));
                 response.incrementWorkingProfile();
             } else response.addResult(String.format(MESSAGE_ERROR, "Mojang", "Profile"));
         } catch (DataRequestException e) {
@@ -98,9 +104,9 @@ public class ServiceCheckerService {
         }
 
         try {
-            Optional<SkinProperty> minetools = mojangAPI.getProfileMineTools(XKNAT_UUID);
+            Optional<SkinProperty> minetools = mojangAPI.getProfileMineTools(selectedUUID);
             if (minetools.isPresent()) {
-                response.addResult(String.format(PROFILE_MESSAGE, "MineTools", minetools.get()));
+                response.addResult(String.format(PROFILE_MESSAGE, "MineTools", selectedUUID, minetools.get()));
                 response.incrementWorkingProfile();
             } else response.addResult(String.format(MESSAGE_ERROR, "MineTools", "Profile"));
         } catch (DataRequestException e) {

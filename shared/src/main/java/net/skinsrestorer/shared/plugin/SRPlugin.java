@@ -66,7 +66,7 @@ import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
 import net.skinsrestorer.shared.update.UpdateCheckInit;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
-import net.skinsrestorer.shared.utils.SRFileUtils;
+import net.skinsrestorer.shared.utils.SRHelpers;
 import org.bstats.MetricsBase;
 import org.bstats.charts.SimplePie;
 import org.bstats.charts.SingleLineChart;
@@ -256,7 +256,7 @@ public class SRPlugin {
 
     public void moveOldFiles() {
         try {
-            SRFileUtils.renameFile(dataFolder, "Archive", "archive"); // Now lowercase
+            SRHelpers.renameFile(dataFolder, "Archive", "archive"); // Now lowercase
         } catch (IOException e) {
             e.printStackTrace();
         }

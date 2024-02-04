@@ -35,7 +35,7 @@ import net.skinsrestorer.shared.storage.adapter.AdapterReference;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.storage.model.cache.MojangCacheData;
 import net.skinsrestorer.shared.storage.model.skin.*;
-import net.skinsrestorer.shared.utils.TimeUtil;
+import net.skinsrestorer.shared.utils.SRHelpers;
 import net.skinsrestorer.shared.utils.ValidationUtil;
 
 import javax.inject.Inject;
@@ -112,7 +112,7 @@ public class SkinStorageImpl implements SkinStorage {
                 return currentSkin; // API even returned older skin data
             }
 
-            setPlayerSkinData(uuid, response.getProfileName(), skinProperty.get(), TimeUtil.getEpochSecond());
+            setPlayerSkinData(uuid, response.getProfileName(), skinProperty.get(), SRHelpers.getEpochSecond());
             return skinProperty;
         } catch (StorageAdapter.StorageException e) {
             e.printStackTrace();
@@ -148,7 +148,7 @@ public class SkinStorageImpl implements SkinStorage {
             Optional<MojangSkinDataResult> optional = mojangAPI.getSkin(playerName);
             adapterReference.get().setCachedUUID(playerName,
                     MojangCacheData.of(optional.map(MojangSkinDataResult::getUniqueId).orElse(null),
-                            TimeUtil.getEpochSecond()));
+                            SRHelpers.getEpochSecond()));
 
             // Cache the skin data
             if (optional.isPresent()) {
@@ -307,7 +307,7 @@ public class SkinStorageImpl implements SkinStorage {
             return false;
         }
 
-        long now = TimeUtil.getEpochSecond();
+        long now = SRHelpers.getEpochSecond();
         long expiryDate = timestamp + TimeUnit.MINUTES.toSeconds(settings.getProperty(StorageConfig.SKIN_EXPIRES_AFTER));
 
         return expiryDate <= now;
