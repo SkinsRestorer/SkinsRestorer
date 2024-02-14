@@ -1,0 +1,9 @@
+net.skinsrestorer.api
+net.skinsrestorer.api.connections
+net.skinsrestorer.api.connections.model
+net.skinsrestorer.api.event
+net.skinsrestorer.api.exception
+net.skinsrestorer.api.model
+net.skinsrestorer.api.property
+net.skinsrestorer.api.semver
+net.skinsrestorer.api.storage
