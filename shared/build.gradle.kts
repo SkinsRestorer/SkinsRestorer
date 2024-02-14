@@ -31,7 +31,7 @@ dependencies {
     testImplementation("org.testcontainers:mariadb:1.19.5")
     testImplementation("org.testcontainers:junit-jupiter:1.19.5")
 
-    testRuntimeOnly("org.slf4j:slf4j-simple:2.0.11")
+    testRuntimeOnly("org.slf4j:slf4j-simple:2.0.12")
 }
 
 tasks {
