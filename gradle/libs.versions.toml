@@ -25,7 +25,7 @@ blossom = { id = "net.kyori.blossom", version = "2.1.0" }
 remapper = { id = "io.github.patrick.remapper", version = "1.4.0" }
 spotless = { id = "com.diffplug.spotless", version = "6.25.0" }
 spotbugs = { id = "com.github.spotbugs", version = "6.0.7" }
-lombok = { id = "io.freefair.lombok", version = "8.4" }
+lombok = { id = "io.freefair.lombok", version = "8.6" }
 
 [bundles]
 
