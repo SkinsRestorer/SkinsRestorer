@@ -38,13 +38,11 @@ import javax.inject.Inject;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class PlayerStorageImpl implements PlayerStorage {
     private final SettingsManager settings;
     private final SkinStorageImpl skinStorage;
-    private final CacheStorageImpl cacheStorage;
     private final SRLogger logger;
     private final AdapterReference adapterReference;
 
