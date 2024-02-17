@@ -274,7 +274,7 @@ public class SRPlugin {
 
         logger.info("Moving old file " + path.getFileName() + " to archive folder.");
         Path archive = dataFolder.resolve("archive");
-        Path target = archive.resolve(path.getFileName().toString() + "_" + System.currentTimeMillis());
+        Path target = archive.resolve(path.getFileName().toString() + "_" + SRHelpers.getEpochSecond());
 
         try {
             Files.createDirectories(archive);

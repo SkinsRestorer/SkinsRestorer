@@ -54,6 +54,8 @@ public class HttpClient {
             throw new IOException("Only HTTPS is supported.");
         }
 
+        logger.debug("Sending " + method + " request to " + url + " with body: " + requestBody);
+
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
         connection.setRequestMethod(method.name());
         connection.setConnectTimeout(timeout);

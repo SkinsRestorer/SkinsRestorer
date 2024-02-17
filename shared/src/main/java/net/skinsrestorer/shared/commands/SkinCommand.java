@@ -142,19 +142,18 @@ public final class SkinCommand {
     @Description(Message.HELP_SKIN_UPDATE_OTHER)
     @CommandConditions("cooldown")
     private void onSkinUpdateOther(SRCommandSender sender, SRPlayer target) {
-        Optional<SkinIdentifier> setSkin = playerStorage.getSkinIdOfPlayer(target.getUniqueId());
-
         try {
-            if (setSkin.isPresent() && setSkin.get().getSkinType() == SkinType.PLAYER) {
-                if (skinStorage.updatePlayerSkinData(UUID.fromString(setSkin.get().getIdentifier())).isEmpty()) {
+            SkinIdentifier currentPlayerSkin = playerStorage.getSkinIdForPlayer(target.getUniqueId(), target.getName())
+                    .orElse(SkinIdentifier.ofPlayer(target.getUniqueId()));
+
+            if (currentPlayerSkin.getSkinType() == SkinType.PLAYER) {
+                if (skinStorage.updatePlayerSkinData(UUID.fromString(currentPlayerSkin.getIdentifier())).isEmpty()) {
                     sender.sendMessage(Message.ERROR_UPDATING_SKIN);
                     return;
                 }
             }
 
             Optional<SkinProperty> skin = playerStorage.getSkinForPlayer(target.getUniqueId(), target.getName());
-
-            sender.sendMessage(Message.SUCCESS_SKIN_CHANGE);
 
             skinApplier.applySkin(target.getAs(Object.class), skin.orElse(SRConstants.EMPTY_SKIN));
 

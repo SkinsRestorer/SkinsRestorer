@@ -100,11 +100,24 @@ public class PlayerStorageImpl implements PlayerStorage {
     }
 
     @Override
+    public Optional<SkinIdentifier> getSkinIdForPlayer(UUID uuid, String playerName, boolean isOnlineMode) throws DataRequestException {
+        return getSkinForPlayerResult(uuid, playerName, isOnlineMode, false).map(SkinForResult::identifier);
+    }
+
+    @Override
     public Optional<SkinProperty> getSkinForPlayer(UUID uuid, String playerName, boolean isOnlineMode) throws DataRequestException {
-        Optional<SkinProperty> setSkin = getSkinOfPlayer(uuid);
+        return getSkinForPlayerResult(uuid, playerName, isOnlineMode, true).map(SkinForResult::property);
+    }
+
+    private Optional<SkinForResult> getSkinForPlayerResult(UUID uuid, String playerName, boolean isOnlineMode, boolean requireProperty) throws DataRequestException {
+        Optional<SkinIdentifier> setSkin = getSkinIdOfPlayer(uuid);
 
         if (setSkin.isPresent()) {
-            return setSkin;
+            if (requireProperty) {
+                return setSkin.flatMap(skinStorage::getSkinDataByIdentifier).map(property -> new SkinForResult(setSkin.get(), property));
+            } else {
+                return Optional.of(new SkinForResult(setSkin.get(), null));
+            }
         }
 
         if (FloodgateUtil.isFloodgateBedrockPlayer(uuid)) {
@@ -124,7 +137,7 @@ public class PlayerStorageImpl implements PlayerStorage {
         Optional<MojangSkinDataResult> premiumSkin = skinStorage.getPlayerSkin(playerName, false);
 
         if (premiumSkin.isPresent()) {
-            return premiumSkin.map(MojangSkinDataResult::getSkinProperty);
+            return premiumSkin.map(result -> new SkinForResult(SkinIdentifier.ofPlayer(result.getUniqueId()), result.getSkinProperty()));
         }
 
         if (defaultSkinsEnabled) {
@@ -134,7 +147,7 @@ public class PlayerStorageImpl implements PlayerStorage {
         return Optional.empty();
     }
 
-    private Optional<SkinProperty> getDefaultSkin() {
+    private Optional<SkinForResult> getDefaultSkin() {
         // return default skin name if user has no custom skin set, or we want to clear to default
         List<String> skins = settings.getProperty(StorageConfig.DEFAULT_SKINS);
 
@@ -145,6 +158,9 @@ public class PlayerStorageImpl implements PlayerStorage {
 
         String selectedSkin = skins.size() == 1 ? skins.get(0) : SRHelpers.getRandomEntry(skins);
 
-        return skinStorage.findSkinData(selectedSkin).map(InputDataResult::getProperty);
+        return skinStorage.findSkinData(selectedSkin).map(result -> new SkinForResult(result.getIdentifier(), result.getProperty()));
+    }
+
+    private record SkinForResult(SkinIdentifier identifier, SkinProperty property) {
     }
 }

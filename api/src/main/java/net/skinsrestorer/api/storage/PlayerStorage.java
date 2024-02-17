@@ -76,6 +76,18 @@ public interface PlayerStorage {
      * @param isOnlineMode Whether the player gets properties from the platform already
      * @return The skin identifier of the skin that would be set on join
      */
+    Optional<SkinIdentifier> getSkinIdForPlayer(UUID uuid, String playerName, boolean isOnlineMode) throws DataRequestException;
+
+    /**
+     * @see #getSkinIdForPlayer(UUID, String, boolean)
+     */
+    default Optional<SkinIdentifier> getSkinIdForPlayer(UUID uuid, String playerName) throws DataRequestException {
+        return getSkinIdForPlayer(uuid, playerName, false);
+    }
+
+    /**
+     * @see #getSkinIdForPlayer(UUID, String, boolean)
+     */
     Optional<SkinProperty> getSkinForPlayer(UUID uuid, String playerName, boolean isOnlineMode) throws DataRequestException;
 
     /**
