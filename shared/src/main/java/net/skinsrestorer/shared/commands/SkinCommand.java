@@ -143,19 +143,18 @@ public final class SkinCommand {
     @CommandConditions("cooldown")
     private void onSkinUpdateOther(SRCommandSender sender, SRPlayer target) {
         try {
-            SkinIdentifier currentPlayerSkin = playerStorage.getSkinIdForPlayer(target.getUniqueId(), target.getName())
-                    .orElse(SkinIdentifier.ofPlayer(target.getUniqueId()));
-
-            if (currentPlayerSkin.getSkinType() == SkinType.PLAYER) {
-                if (skinStorage.updatePlayerSkinData(UUID.fromString(currentPlayerSkin.getIdentifier())).isEmpty()) {
+            Optional<SkinIdentifier> currentSkin = playerStorage.getSkinIdForPlayer(target.getUniqueId(), target.getName());
+            if (currentSkin.isPresent() && currentSkin.get().getSkinType() == SkinType.PLAYER) {
+                if (skinStorage.updatePlayerSkinData(UUID.fromString(currentSkin.get().getIdentifier())).isEmpty()) {
                     sender.sendMessage(Message.ERROR_UPDATING_SKIN);
                     return;
                 }
             }
 
-            Optional<SkinProperty> skin = playerStorage.getSkinForPlayer(target.getUniqueId(), target.getName());
+            Optional<SkinProperty> newSkin = currentSkin.isEmpty() ?
+                    Optional.empty() : playerStorage.getSkinForPlayer(target.getUniqueId(), target.getName());
 
-            skinApplier.applySkin(target.getAs(Object.class), skin.orElse(SRConstants.EMPTY_SKIN));
+            skinApplier.applySkin(target.getAs(Object.class), newSkin.orElse(SRConstants.EMPTY_SKIN));
 
             if (senderEqual(sender, target)) {
                 sender.sendMessage(Message.SUCCESS_UPDATING_SKIN);
