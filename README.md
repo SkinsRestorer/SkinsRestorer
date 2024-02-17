@@ -31,8 +31,7 @@ servers.
 
 **WE DO NOT SUPPORT FORGE / FABRIC**
 
-- Java 8 till 17 ([Adoptium](https://adoptium.net/)
-  | [Oracle Java](https://www.oracle.com/de/java/technologies/javase-downloads.html))
+- Java 8+ ([Get Adoptium](https://adoptium.net/))
 - Minecraft 1.8.0 - 1.20.4
 
 Implementation:
