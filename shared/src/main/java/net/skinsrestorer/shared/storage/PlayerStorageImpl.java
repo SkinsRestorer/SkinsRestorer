@@ -20,7 +20,6 @@ package net.skinsrestorer.shared.storage;
 import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.DataRequestException;
-import net.skinsrestorer.api.property.InputDataResult;
 import net.skinsrestorer.api.property.MojangSkinDataResult;
 import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.api.property.SkinProperty;

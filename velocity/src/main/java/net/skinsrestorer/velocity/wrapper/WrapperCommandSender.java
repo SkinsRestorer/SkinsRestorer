@@ -20,11 +20,11 @@ package net.skinsrestorer.velocity.wrapper;
 import ch.jalu.configme.SettingsManager;
 import com.velocitypowered.api.command.CommandSource;
 import lombok.experimental.SuperBuilder;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.skinsrestorer.shared.subjects.AbstractSRCommandSender;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.Permission;
 import net.skinsrestorer.shared.subjects.permissions.PermissionGroup;
+import net.skinsrestorer.shared.utils.ComponentString;
 import net.skinsrestorer.shared.utils.Tristate;
 
 @SuperBuilder
@@ -32,11 +32,10 @@ public class WrapperCommandSender extends AbstractSRCommandSender {
     private final SettingsManager settings;
     private final SkinsRestorerLocale locale;
     private final CommandSource sender;
-    private final GsonComponentSerializer serializer = GsonComponentSerializer.gson();
 
     @Override
-    public void sendMessage(String messageJson) {
-        sender.sendMessage(serializer.deserialize(messageJson));
+    public void sendMessage(ComponentString messageJson) {
+        sender.sendMessage(VelocityComponentHelper.deserialize(messageJson));
     }
 
     @Override

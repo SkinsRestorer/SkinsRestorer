@@ -19,7 +19,6 @@ package net.skinsrestorer.sponge;
 
 import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.plugin.SRServerPlatformInit;
@@ -31,6 +30,7 @@ import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
 import net.skinsrestorer.sponge.listeners.LoginListener;
 import net.skinsrestorer.sponge.listeners.MetricsJoinListener;
 import net.skinsrestorer.sponge.listeners.ServerMessageListener;
+import net.skinsrestorer.sponge.wrapper.SpongeComponentHelper;
 import net.skinsrestorer.sponge.wrapper.WrapperSponge;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.ResourceKey;
@@ -50,7 +50,6 @@ import javax.inject.Inject;
 @SuppressWarnings("unused")
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SRSpongeInit implements SRServerPlatformInit {
-    private static final GsonComponentSerializer GSON = GsonComponentSerializer.gson();
     private final Injector injector;
     private final SRSpongeAdapter adapter;
     private final SRPlugin plugin;
@@ -120,6 +119,6 @@ public class SRSpongeInit implements SRServerPlatformInit {
                 .newDescriptionBuilder(adapter.getPluginContainer())
                 .id(permission.getPermissionString())
                 .defaultValue(Tristate.fromBoolean(PermissionGroup.DEFAULT_GROUP.hasPermission(permission)))
-                .description(GSON.deserialize(locale.getMessageRequired(locale.getDefaultForeign(), description)));
+                .description(SpongeComponentHelper.deserialize(locale.getMessageRequired(locale.getDefaultForeign(), description)));
     }
 }

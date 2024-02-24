@@ -262,8 +262,9 @@ public class SkinStorageImpl implements SkinStorage {
             return switch (identifier.getSkinType()) {
                 case PLAYER -> adapterReference.get().getPlayerSkinData(UUID.fromString(identifier.getIdentifier()))
                         .map(PlayerSkinData::getProperty);
-                case URL -> adapterReference.get().getURLSkinData(identifier.getIdentifier(), identifier.getSkinVariant())
-                        .map(URLSkinData::getProperty);
+                case URL ->
+                        adapterReference.get().getURLSkinData(identifier.getIdentifier(), identifier.getSkinVariant())
+                                .map(URLSkinData::getProperty);
                 case CUSTOM -> {
                     Optional<SkinProperty> skinProperty = adapterReference.get().getCustomSkinData(identifier.getIdentifier())
                             .map(CustomSkinData::getProperty);

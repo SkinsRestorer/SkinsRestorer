@@ -22,6 +22,7 @@ import net.skinsrestorer.api.exception.MineSkinException;
 import net.skinsrestorer.shared.subjects.SRForeign;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
+import net.skinsrestorer.shared.utils.ComponentString;
 
 import java.util.Optional;
 
@@ -47,7 +48,7 @@ public class MineSkinExceptionShared extends MineSkinException implements Transl
     }
 
     @Override
-    public Optional<String> getMessageOptional(SRForeign foreign, SkinsRestorerLocale locale) {
+    public Optional<ComponentString> getMessageOptional(SRForeign foreign, SkinsRestorerLocale locale) {
         return locale.getMessageOptional(foreign, message, args);
     }
 }

@@ -23,18 +23,18 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.skinsrestorer.shared.config.MessageConfig;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRForeign;
 import net.skinsrestorer.shared.subjects.SRPlayer;
+import net.skinsrestorer.shared.utils.ComponentHelper;
+import net.skinsrestorer.shared.utils.ComponentString;
 
 import javax.inject.Inject;
 import java.util.Locale;
 import java.util.Optional;
 
 public class SkinsRestorerLocale {
-    private final GsonComponentSerializer gsonSerializer = GsonComponentSerializer.gson();
     private final MiniMessage miniMessage = MiniMessage.miniMessage();
     @Inject
     private LocaleManager localeManager;
@@ -43,14 +43,14 @@ public class SkinsRestorerLocale {
     @Getter
     private final SRForeign defaultForeign = () -> settings.getProperty(MessageConfig.LOCALE);
 
-    public String getMessageRequired(SRForeign foreign, Message key, TagResolver... tagResolver) {
-        return gsonSerializer.serialize(getMessageInternal(foreign, key, TagResolver.resolver(tagResolver))
+    public ComponentString getMessageRequired(SRForeign foreign, Message key, TagResolver... tagResolver) {
+        return ComponentHelper.convertToJsonString(getMessageInternal(foreign, key, TagResolver.resolver(tagResolver))
                 .orElseGet(Component::empty));
     }
 
-    public Optional<String> getMessageOptional(SRForeign foreign, Message key, TagResolver... tagResolver) {
+    public Optional<ComponentString> getMessageOptional(SRForeign foreign, Message key, TagResolver... tagResolver) {
         return getMessageInternal(foreign, key, TagResolver.resolver(tagResolver))
-                .map(gsonSerializer::serialize);
+                .map(ComponentHelper::convertToJsonString);
     }
 
     private Optional<Component> getMessageInternal(SRForeign foreign, Message key, TagResolver tagResolver) {

@@ -107,8 +107,8 @@ public final class SpigotSkinRefresher implements SkinRefresher {
                     addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, player.getPlayerListName(), true, ping);
                 } catch (ReflectiveOperationException e2) {
                     // 1.7.10 and below | pre-netty
-                    removePlayer = ReflectionUtil.invokeMethod(playOutPlayerInfo, null, "removePlayer", new Class<?>[] {entityPlayer.getClass()}, entityPlayer);
-                    addPlayer = ReflectionUtil.invokeMethod(playOutPlayerInfo, null, "addPlayer", new Class<?>[] {entityPlayer.getClass()}, entityPlayer);
+                    removePlayer = ReflectionUtil.invokeMethod(playOutPlayerInfo, null, "removePlayer", new Class<?>[]{entityPlayer.getClass()}, entityPlayer);
+                    addPlayer = ReflectionUtil.invokeMethod(playOutPlayerInfo, null, "addPlayer", new Class<?>[]{entityPlayer.getClass()}, entityPlayer);
                 }
             }
 

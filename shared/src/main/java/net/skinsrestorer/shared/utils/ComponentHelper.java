@@ -18,6 +18,7 @@
 package net.skinsrestorer.shared.utils;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
@@ -29,6 +30,7 @@ import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 
+import java.util.List;
 import java.util.Optional;
 
 public class ComponentHelper {
@@ -37,29 +39,34 @@ public class ComponentHelper {
     private static final MiniMessage MINI_MESSAGE_COMPONENT_SERIALIZER = MiniMessage.miniMessage();
     private static final PlainTextComponentSerializer PLAIN_COMPONENT_SERIALIZER = PlainTextComponentSerializer.plainText();
 
-    public static String parseMiniMessageToJsonString(String miniMessage) {
-        return GSON_COMPONENT_SERIALIZER.serialize(MINI_MESSAGE_COMPONENT_SERIALIZER.deserialize(miniMessage));
+    public static ComponentString parseMiniMessageToJsonString(String miniMessage) {
+        return new ComponentString(GSON_COMPONENT_SERIALIZER.serialize(MINI_MESSAGE_COMPONENT_SERIALIZER.deserialize(miniMessage)));
     }
 
     // Only used on platforms that don't support adventure
-    public static String convertJsonToLegacy(String messageJson) {
-        return LEGACY_COMPONENT_SERIALIZER.serialize(GSON_COMPONENT_SERIALIZER.deserialize(messageJson));
+    public static String convertJsonToLegacy(ComponentString messageJson) {
+        return LEGACY_COMPONENT_SERIALIZER.serialize(GSON_COMPONENT_SERIALIZER.deserialize(messageJson.jsonString()));
     }
 
-    public static String convertToJsonString(Component component) {
-        return GSON_COMPONENT_SERIALIZER.serialize(component);
+    public static ComponentString convertToJsonString(Component component) {
+        return new ComponentString(GSON_COMPONENT_SERIALIZER.serialize(component));
     }
 
-    public static Component convertJsonToComponent(String messageJson) {
-        return GSON_COMPONENT_SERIALIZER.deserialize(messageJson);
+    public static Component convertJsonToComponent(ComponentString messageJson) {
+        return GSON_COMPONENT_SERIALIZER.deserialize(messageJson.jsonString());
     }
 
     public static String convertToPlain(Component component) {
         return PLAIN_COMPONENT_SERIALIZER.serialize(component);
     }
 
+    public static ComponentString joinNewline(List<ComponentString> components) {
+        return convertToJsonString(Component.join(JoinConfiguration.newlines(),
+                components.stream().map(ComponentHelper::convertJsonToComponent).toList()));
+    }
+
     public static void sendException(Throwable t, SRCommandSender sender, SkinsRestorerLocale locale, SRLogger logger) {
-        Optional<String> message;
+        Optional<ComponentString> message;
         if (t instanceof TranslatableException) {
             message = ((TranslatableException) t).getMessageOptional(sender, locale);
         } else {
@@ -69,7 +76,6 @@ public class ComponentHelper {
                     Placeholder.unparsed("message", SRHelpers.getRootCause(t).getMessage()));
         }
 
-        message.map(ComponentHelper::parseMiniMessageToJsonString)
-                .ifPresent(sender::sendMessage);
+        message.ifPresent(sender::sendMessage);
     }
 }

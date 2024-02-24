@@ -43,6 +43,7 @@ import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
 import net.skinsrestorer.shared.utils.ComponentHelper;
+import net.skinsrestorer.shared.utils.ComponentString;
 import net.skinsrestorer.shared.utils.FluentList;
 
 import java.lang.annotation.Annotation;
@@ -375,7 +376,7 @@ public class CommandManager<T> {
         return result;
     }
 
-    public List<String> getHelpMessage(String command, SRCommandSender source) {
+    public List<ComponentString> getHelpMessage(String command, SRCommandSender source) {
         return getHelpMessageNodeStart(dispatcher.getRoot().getChild(command), Component.text("/" + command), source)
                 .stream().map(ComponentHelper::convertToJsonString).collect(Collectors.toList());
     }

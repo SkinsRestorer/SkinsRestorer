@@ -15,14 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package net.skinsrestorer.shared.exception;
+package net.skinsrestorer.shared.utils;
 
-import net.skinsrestorer.shared.subjects.SRForeign;
-import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
-import net.skinsrestorer.shared.utils.ComponentString;
-
-import java.util.Optional;
-
-public interface TranslatableException {
-    Optional<ComponentString> getMessageOptional(SRForeign foreign, SkinsRestorerLocale locale);
+/**
+ * Represents a json string that can safely be shared across platforms.
+ * This prevents coding errors like passing a json string to a component that expects a legacy string.
+ *
+ * @param jsonString The json string.
+ */
+public record ComponentString(String jsonString) {
 }

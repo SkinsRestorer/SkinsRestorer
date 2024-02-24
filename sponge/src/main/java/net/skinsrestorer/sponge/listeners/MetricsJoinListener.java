@@ -21,12 +21,12 @@ import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.utils.Tristate;
 import net.skinsrestorer.sponge.SRSpongeAdapter;
+import net.skinsrestorer.sponge.wrapper.SpongeComponentHelper;
 import net.skinsrestorer.sponge.wrapper.WrapperSponge;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.event.EventListener;
@@ -42,7 +42,6 @@ public class MetricsJoinListener implements EventListener<ServerSideConnectionEv
     private final SRSpongeAdapter adapter;
     private final SkinsRestorerLocale locale;
     private final WrapperSponge wrapper;
-    private final GsonComponentSerializer gsonSerializer = GsonComponentSerializer.gson();
 
     @Override
     public void handle(ServerSideConnectionEvent.Join event) {
@@ -50,8 +49,8 @@ public class MetricsJoinListener implements EventListener<ServerSideConnectionEv
         SRPlayer srPlayer = wrapper.player(player);
 
         if (player.hasPermission("sponge.command.metrics") && adapter.getMetricsState() == Tristate.UNDEFINED) {
-            Component component = gsonSerializer.deserialize(locale.getMessageRequired(srPlayer, Message.SPONGE_METRICS_CONSENT));
-            Component hoverComponent = gsonSerializer.deserialize(locale.getMessageRequired(srPlayer, Message.SPONGE_METRICS_HOVER));
+            Component component = SpongeComponentHelper.deserialize(locale.getMessageRequired(srPlayer, Message.SPONGE_METRICS_CONSENT));
+            Component hoverComponent = SpongeComponentHelper.deserialize(locale.getMessageRequired(srPlayer, Message.SPONGE_METRICS_HOVER));
             component = component.clickEvent(ClickEvent.runCommand("/srmetricsenable"));
             component = component.hoverEvent(HoverEvent.showText(hoverComponent));
 

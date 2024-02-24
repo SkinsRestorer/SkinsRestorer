@@ -20,11 +20,11 @@ package net.skinsrestorer.sponge.wrapper;
 import ch.jalu.configme.SettingsManager;
 import lombok.experimental.SuperBuilder;
 import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.skinsrestorer.shared.subjects.AbstractSRCommandSender;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.Permission;
 import net.skinsrestorer.shared.subjects.permissions.PermissionGroup;
+import net.skinsrestorer.shared.utils.ComponentString;
 import net.skinsrestorer.shared.utils.Tristate;
 import org.spongepowered.api.service.permission.Subject;
 
@@ -34,11 +34,10 @@ public class WrapperCommandSender extends AbstractSRCommandSender {
     private final SkinsRestorerLocale locale;
     private final Subject subject;
     private final Audience audience;
-    private final GsonComponentSerializer serializer = GsonComponentSerializer.gson();
 
     @Override
-    public void sendMessage(String messageJson) {
-        audience.sendMessage(serializer.deserialize(messageJson));
+    public void sendMessage(ComponentString messageJson) {
+        audience.sendMessage(SpongeComponentHelper.deserialize(messageJson));
     }
 
     @Override

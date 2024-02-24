@@ -52,6 +52,7 @@ import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
 import net.skinsrestorer.shared.utils.ComponentHelper;
+import net.skinsrestorer.shared.utils.ComponentString;
 import net.skinsrestorer.shared.utils.ValidationUtil;
 
 import javax.inject.Inject;
@@ -116,7 +117,7 @@ public final class SRCommand {
     private void onStatus(SRCommandSender sender) {
         sender.sendMessage(Message.ADMINCOMMAND_STATUS_CHECKING);
 
-        String breakLine = ComponentHelper.parseMiniMessageToJsonString("<dark_aqua>----------------------------------------------");
+        ComponentString breakLine = ComponentHelper.parseMiniMessageToJsonString("<dark_aqua>----------------------------------------------");
         sender.sendMessage(breakLine);
 
         ServiceCheckerService.ServiceCheckResponse response = serviceCheckerService.checkServices();

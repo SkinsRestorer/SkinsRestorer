@@ -21,8 +21,6 @@ import ch.jalu.injector.Injector;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.commands.library.SRRegisterPayload;
 import net.skinsrestorer.shared.gui.SharedGUI;
@@ -32,9 +30,11 @@ import net.skinsrestorer.shared.plugin.SRServerAdapter;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
+import net.skinsrestorer.shared.utils.ComponentHelper;
 import net.skinsrestorer.shared.utils.Tristate;
 import net.skinsrestorer.sponge.gui.SkinsGUI;
 import net.skinsrestorer.sponge.listeners.ForceAliveListener;
+import net.skinsrestorer.sponge.wrapper.SpongeComponentHelper;
 import net.skinsrestorer.sponge.wrapper.WrapperSponge;
 import org.bstats.sponge.Metrics;
 import org.spongepowered.api.Game;
@@ -68,7 +68,6 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SRSpongeAdapter implements SRServerAdapter<PluginContainer, CommandCause> {
-    private static final GsonComponentSerializer GSON = GsonComponentSerializer.gson();
     private final Injector injector;
     @Getter
     private final PluginContainer pluginContainer;
@@ -257,7 +256,6 @@ public class SRSpongeAdapter implements SRServerAdapter<PluginContainer, Command
     public void onCommandRegister(RegisterCommandEvent<Command.Raw> event) {
         WrapperSponge wrapper = injector.getSingleton(WrapperSponge.class);
         SkinsRestorerLocale locale = injector.getSingleton(SkinsRestorerLocale.class);
-        LegacyComponentSerializer serializer = LegacyComponentSerializer.legacySection();
         for (SRRegisterPayload<CommandCause> payload : commands) {
             event.register(pluginContainer, new Command.Raw() {
                 @Override
@@ -283,13 +281,13 @@ public class SRSpongeAdapter implements SRServerAdapter<PluginContainer, Command
                 @Override
                 public Optional<Component> shortDescription(CommandCause cause) {
                     SRCommandSender sender = wrapper.commandSender(cause);
-                    return Optional.of(GSON.deserialize(locale.getMessageRequired(sender, payload.meta().rootHelp().commandDescription())));
+                    return Optional.of(SpongeComponentHelper.deserialize(locale.getMessageRequired(sender, payload.meta().rootHelp().commandDescription())));
                 }
 
                 @Override
                 public Optional<Component> extendedDescription(CommandCause cause) {
                     SRCommandSender sender = wrapper.commandSender(cause);
-                    return Optional.of(serializer.deserialize(String.join("\n",
+                    return Optional.of(SpongeComponentHelper.deserialize(ComponentHelper.joinNewline(
                             payload.executor().getManager().getHelpMessage(payload.meta().rootName(), sender))));
                 }
 

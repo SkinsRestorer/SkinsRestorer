@@ -15,14 +15,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package net.skinsrestorer.shared.exception;
+package net.skinsrestorer.bungee.wrapper;
 
-import net.skinsrestorer.shared.subjects.SRForeign;
-import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.skinsrestorer.shared.utils.ComponentString;
 
-import java.util.Optional;
-
-public interface TranslatableException {
-    Optional<ComponentString> getMessageOptional(SRForeign foreign, SkinsRestorerLocale locale);
+public class BungeeComponentHelper {
+    public static Component deserialize(ComponentString messageJson) {
+        return GsonComponentSerializer.gson().deserialize(messageJson.jsonString());
+    }
 }

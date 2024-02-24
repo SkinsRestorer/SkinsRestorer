@@ -23,6 +23,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.skinsrestorer.shared.config.MessageConfig;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
+import net.skinsrestorer.shared.utils.ComponentString;
 
 import java.util.Locale;
 import java.util.Optional;
@@ -36,7 +37,7 @@ public abstract class AbstractSRCommandSender implements SRCommandSender {
 
     @Override
     public void sendMessage(Message key, TagResolver... resolvers) {
-        Optional<String> translatedMessage = getSRLocale().getMessageOptional(this, key, resolvers);
+        Optional<ComponentString> translatedMessage = getSRLocale().getMessageOptional(this, key, resolvers);
 
         if (translatedMessage.isEmpty()) {
             return;

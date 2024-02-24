@@ -21,9 +21,10 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.permissions.Permission;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
+import net.skinsrestorer.shared.utils.ComponentString;
 
 public interface SRCommandSender extends SRForeign {
-    void sendMessage(String messageJson);
+    void sendMessage(ComponentString messageJson);
 
     void sendMessage(Message key, TagResolver... resolvers);
 

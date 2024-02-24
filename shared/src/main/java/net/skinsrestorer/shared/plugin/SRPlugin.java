@@ -108,6 +108,23 @@ public class SRPlugin {
         this.dataFolder = dataFolder;
     }
 
+    private static int getJavaVersion(String specVersion) {
+        String[] split = specVersion.split("\\.");
+
+        String majorVersion;
+        if (split.length == 0 || split.length > 2) {
+            throw new IllegalArgumentException("Invalid Java version: " + specVersion);
+        } else if (split.length == 1) {
+            majorVersion = split[0];
+        } else if (split[0].equals("1")) {
+            majorVersion = split[1];
+        } else {
+            throw new IllegalArgumentException("Invalid Java version: " + specVersion);
+        }
+
+        return Integer.parseInt(majorVersion);
+    }
+
     public void initCommands() {
         CommandManager<?> manager = new CommandManager<>(adapter, logger,
                 injector.getSingleton(SkinsRestorerLocale.class),
@@ -440,23 +457,6 @@ public class SRPlugin {
         } catch (Exception e) {
             logger.warning("Failed to parse Java version: " + specVersion, e);
         }
-    }
-
-    private static int getJavaVersion(String specVersion) {
-        String[] split = specVersion.split("\\.");
-
-        String majorVersion;
-        if (split.length == 0 || split.length > 2) {
-            throw new IllegalArgumentException("Invalid Java version: " + specVersion);
-        } else if (split.length == 1) {
-            majorVersion = split[0];
-        } else if (split[0].equals("1")) {
-            majorVersion = split[1];
-        } else {
-            throw new IllegalArgumentException("Invalid Java version: " + specVersion);
-        }
-
-        return Integer.parseInt(majorVersion);
     }
 
     private void runServiceCheck() {
