@@ -15,5 +15,21 @@
   "skinsrestorer.help_sr_drop": "Remova os dados do jogador ou da skin do banco de dados.",
   "skinsrestorer.help_sr_props": "Exibe as propriedades da skin de um jogador.",
   "skinsrestorer.help_sr_apply_skin": "Aplica novamente a skin ao jogador selecionado.",
-  "skinsrestorer.help_sr_create_custom": "Crie uma skin personalizada para o servidor."
+  "skinsrestorer.help_sr_create_custom": "Crie uma skin personalizada para o servidor.",
+  "skinsrestorer.help_sr_set_skin_all": "Define a skin de cada jogador como uma única skin.",
+  "skinsrestorer.help_sr_apply_skin_all": "Aplica novamente a skin a todos os jogadores.",
+  "skinsrestorer.help_sr_purge_old_data": "Limpe dados da skin com mais de x dias atrás.",
+  "skinsrestorer.help_sr_dump": "Enviar dados de suporte para bytebin.lucko.me.",
+  "skinsrestorer.success_generic": "<dark_green><message>",
+  "skinsrestorer.success_skin_change": "A sua skin foi alterada.",
+  "skinsrestorer.success_skin_change_other": "Você mudou a skin de <name>.",
+  "skinsrestorer.success_skin_clear": "A sua skin foi removida.",
+  "skinsrestorer.success_skin_clear_other": "Skin limpa para o jogador <name>.",
+  "skinsrestorer.success_updating_skin": "A sua skin foi atualizada.",
+  "skinsrestorer.success_updating_skin_other": "Skin atualizada para o jogador <name>.",
+  "skinsrestorer.success_admin_applyskin": "O skin do jogador foi atualizada!",
+  "skinsrestorer.success_admin_createcustom": "A skin <skin> foi criada!",
+  "skinsrestorer.success_admin_drop": "<type> dados descartados para <target>.",
+  "skinsrestorer.success_admin_reload": "A configuração e as traduções foram recarregadas!",
+  "skinsrestorer.error_generic": "<dark_red>Erro<dark_gray>: <red><message>"
 }
