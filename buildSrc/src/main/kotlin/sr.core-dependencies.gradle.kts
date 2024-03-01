@@ -10,10 +10,10 @@ dependencies {
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.2")
-    testImplementation("org.mockito:mockito-core:5.10.0")
-    testImplementation("org.mockito:mockito-junit-jupiter:5.10.0")
+    testImplementation("org.mockito:mockito-core:5.11.0")
+    testImplementation("org.mockito:mockito-junit-jupiter:5.11.0")
 
     testFixturesImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
-    testFixturesImplementation("org.mockito:mockito-core:5.10.0")
-    testFixturesImplementation("org.mockito:mockito-junit-jupiter:5.10.0")
+    testFixturesImplementation("org.mockito:mockito-core:5.11.0")
+    testFixturesImplementation("org.mockito:mockito-junit-jupiter:5.11.0")
 }
