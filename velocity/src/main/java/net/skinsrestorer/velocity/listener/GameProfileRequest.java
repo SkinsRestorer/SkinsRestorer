@@ -48,12 +48,12 @@ public class GameProfileRequest {
 
             @Override
             public UUID getPlayerUniqueId() {
-                return event.getOriginalProfile().getId();
+                return event.getGameProfile().getId();
             }
 
             @Override
             public String getPlayerName() {
-                return event.getUsername();
+                return event.getGameProfile().getName();
             }
 
             @Override
