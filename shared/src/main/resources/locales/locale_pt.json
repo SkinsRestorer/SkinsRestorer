@@ -31,5 +31,8 @@
   "skinsrestorer.success_admin_createcustom": "A skin <skin> foi criada!",
   "skinsrestorer.success_admin_drop": "<type> dados descartados para <target>.",
   "skinsrestorer.success_admin_reload": "A configuração e as traduções foram recarregadas!",
-  "skinsrestorer.error_generic": "<dark_red>Erro<dark_gray>: <red><message>"
+  "skinsrestorer.error_generic": "<dark_red>Erro<dark_gray>: <red><message>",
+  "skinsrestorer.error_generic_skin": "Ocorreu um erro ao solicitar dados da skin, tente novamente mais tarde!",
+  "skinsrestorer.error_skin_disabled": "Esta skin foi desabilitada por um administrador.",
+  "skinsrestorer.error_skinurl_disallowed": "Este domínio não foi autorizado pelo administrador."
 }
