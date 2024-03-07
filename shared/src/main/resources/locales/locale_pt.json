@@ -1,8 +1,8 @@
 {
-  "skinsrestorer.help_skin": "Mude a sua skin.",
-  "skinsrestorer.help_skins": "Abra a GUI de skins.",
+  "skinsrestorer.help_skin": "Muda a tua skin.",
+  "skinsrestorer.help_skins": "Abre a GUI de skins.",
   "skinsrestorer.help_sr": "Comando de administrador do SkinsRestorer.",
-  "skinsrestorer.help_skin_set": "Mude a sua skin.",
+  "skinsrestorer.help_skin_set": "Muda a tua skin.",
   "skinsrestorer.help_skin_set_other": "Define a skin de outro jogador.",
   "skinsrestorer.help_skin_set_url": "Mude a sua skin a partir de uma URL.",
   "skinsrestorer.help_skin_clear": "Remova a sua skin.",
@@ -34,5 +34,11 @@
   "skinsrestorer.error_generic": "<dark_red>Erro<dark_gray>: <red><message>",
   "skinsrestorer.error_generic_skin": "Ocorreu um erro ao solicitar dados da skin, tente novamente mais tarde!",
   "skinsrestorer.error_skin_disabled": "Esta skin foi desabilitada por um administrador.",
-  "skinsrestorer.error_skinurl_disallowed": "Este domínio não foi autorizado pelo administrador."
+  "skinsrestorer.error_skinurl_disallowed": "Este domínio não foi autorizado pelo administrador.",
+  "skinsrestorer.error_updating_skin": "Ocorreu um erro ao atualizar a skin. Tenta de novo mais tarde!",
+  "skinsrestorer.error_ms_unknown": "Erro desconhecido do MineSkin!",
+  "skinsrestorer.not_connected_to_server": "<red>Não estás conectado a nenhum servidor.",
+  "skinsrestorer.skinsmenu_previous_page": "<yellow><bold>« <gray>Página Anterior</gray> <bold>«</bold>",
+  "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[</bold> <gray>Remover Skin</gray> <bold>]</bold>",
+  "skinsrestorer.skinsmenu_select_skin": "<dark_green>Clica para usar esta skin"
 }
