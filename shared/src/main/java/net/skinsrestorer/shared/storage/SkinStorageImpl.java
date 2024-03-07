@@ -36,6 +36,7 @@ import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.storage.model.cache.MojangCacheData;
 import net.skinsrestorer.shared.storage.model.skin.*;
 import net.skinsrestorer.shared.utils.SRHelpers;
+import net.skinsrestorer.shared.utils.UUIDUtils;
 import net.skinsrestorer.shared.utils.ValidationUtil;
 
 import javax.inject.Inject;
@@ -121,34 +122,42 @@ public class SkinStorageImpl implements SkinStorage {
     }
 
     @Override
-    public Optional<MojangSkinDataResult> getPlayerSkin(String playerName, boolean allowExpired) throws DataRequestException {
-        return getPlayerSkin(playerName, allowExpired, false);
+    public Optional<MojangSkinDataResult> getPlayerSkin(String nameOrUniqueId, boolean allowExpired) throws DataRequestException {
+        return getPlayerSkin(nameOrUniqueId, allowExpired, false);
     }
 
-    private Optional<MojangSkinDataResult> getPlayerSkin(String playerName, boolean allowExpired, boolean skipDbLookup) throws DataRequestException {
-        if (ValidationUtil.invalidMojangUsername(playerName)) {
+    private Optional<MojangSkinDataResult> getPlayerSkin(String nameOrUniqueId, boolean allowExpired, boolean skipDbLookup) throws DataRequestException {
+        Optional<UUID> uuidParseResult = UUIDUtils.tryParseUniqueId(nameOrUniqueId);
+        if (ValidationUtil.invalidMinecraftUsername(nameOrUniqueId) && uuidParseResult.isEmpty()) {
             return Optional.empty();
         }
 
         try {
-            Optional<MojangCacheData> cached = cacheStorage.getCachedData(playerName, allowExpired);
-            if (cached.isPresent()) {
-                Optional<UUID> optionalUUID = cached.get().getUniqueId();
+            // We already know the UUID, so nothing to do here
+            if (uuidParseResult.isEmpty()) {
+                Optional<MojangCacheData> cached = cacheStorage.getCachedData(nameOrUniqueId, allowExpired);
+                if (cached.isPresent()) {
+                    Optional<UUID> optionalUUID = cached.get().getUniqueId();
 
-                // User does not exist
-                if (optionalUUID.isEmpty()) {
-                    return Optional.empty();
+                    // User does not exist
+                    if (optionalUUID.isEmpty()) {
+                        return Optional.empty();
+                    }
+
+                    UUID uuid = optionalUUID.get();
+                    return updatePlayerSkinData(uuid, mojangAPI::getProfile, skipDbLookup, false)
+                            .map(skinProperty -> MojangSkinDataResult.of(uuid, skinProperty));
                 }
-
-                UUID uuid = optionalUUID.get();
-                return updatePlayerSkinData(uuid, mojangAPI::getProfile, skipDbLookup, false)
-                        .map(skinProperty -> MojangSkinDataResult.of(uuid, skinProperty));
             }
 
-            Optional<MojangSkinDataResult> optional = mojangAPI.getSkin(playerName);
-            adapterReference.get().setCachedUUID(playerName,
-                    MojangCacheData.of(optional.map(MojangSkinDataResult::getUniqueId).orElse(null),
-                            SRHelpers.getEpochSecond()));
+            Optional<MojangSkinDataResult> optional = mojangAPI.getSkin(nameOrUniqueId);
+
+            // Only cache name -> UUID if this is a name and not a UUID
+            if (uuidParseResult.isEmpty()) {
+                adapterReference.get().setCachedUUID(nameOrUniqueId,
+                        MojangCacheData.of(optional.map(MojangSkinDataResult::getUniqueId).orElse(null),
+                                SRHelpers.getEpochSecond()));
+            }
 
             // Cache the skin data
             if (optional.isPresent()) {
@@ -159,7 +168,7 @@ public class SkinStorageImpl implements SkinStorage {
 
             return optional;
         } catch (StorageAdapter.StorageException e) {
-            logger.warning("Failed to get skin from cache for " + playerName, e);
+            logger.warning("Failed to get skin from cache for " + nameOrUniqueId, e);
             return Optional.empty();
         }
     }

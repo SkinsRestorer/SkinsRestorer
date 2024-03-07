@@ -41,11 +41,11 @@ public interface MojangAPI {
      * But internally it is faster than calling {@link #getUUID(String)} and {@link #getProfile(UUID)} separately.
      * That is because we use ashcon.app, and we can directly get the profile and uuid from the name.
      *
-     * @param playerName Premium player username
+     * @param nameOrUniqueId Can be a premium player username or unique id (dashed or non-dashed)
      * @return Skin or empty if the player is not premium
      * @throws DataRequestException If there was an error while getting the data
      */
-    Optional<MojangSkinDataResult> getSkin(String playerName) throws DataRequestException;
+    Optional<MojangSkinDataResult> getSkin(String nameOrUniqueId) throws DataRequestException;
 
     Optional<UUID> getUUID(String playerName) throws DataRequestException;
 

@@ -17,9 +17,31 @@
  */
 package net.skinsrestorer.shared.utils;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public class UUIDUtils {
+    public static boolean isValidUniqueId(String str) {
+        return tryParseUniqueId(str).isPresent();
+    }
+
+    public static Optional<UUID> tryParseUniqueId(String str) {
+        try {
+            return Optional.of(UUID.fromString(str));
+        } catch (IllegalArgumentException ignored) {
+            // If we have a non-dashed UUID, we can try to convert it to dashed.
+            if (str.length() == 32) {
+                try {
+                    return Optional.of(convertToDashed(str));
+                } catch (IllegalArgumentException ignored2) {
+                    return Optional.empty();
+                }
+            }
+
+            return Optional.empty();
+        }
+    }
+
     public static UUID convertToDashed(String noDashes) {
         StringBuilder idBuff = new StringBuilder(noDashes);
         idBuff.insert(20, '-');
