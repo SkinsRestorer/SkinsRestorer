@@ -57,12 +57,12 @@ public interface SkinStorage {
      * Gets the skin data of a Mojang player by name using the UUID cache.
      * This will cache the UUID if it's not already cached and will cache the skin data.
      *
-     * @param playerName   Player name to search for
+     * @param nameOrUniqueId   Player name to search for or UUID
      * @param allowExpired Allow expired data to be returned
      * @return The skin data of the player or empty if no such player exists
      * @throws DataRequestException If the data could not be retrieved
      */
-    Optional<MojangSkinDataResult> getPlayerSkin(String playerName, boolean allowExpired) throws DataRequestException;
+    Optional<MojangSkinDataResult> getPlayerSkin(String nameOrUniqueId, boolean allowExpired) throws DataRequestException;
 
     /**
      * Saves a player skin to the database.

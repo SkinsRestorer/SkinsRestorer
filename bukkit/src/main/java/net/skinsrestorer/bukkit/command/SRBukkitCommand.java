@@ -44,8 +44,8 @@ public class SRBukkitCommand extends Command implements PluginIdentifiableComman
     public SRBukkitCommand(SRRegisterPayload<CommandSender> payload, Plugin plugin, WrapperBukkit wrapper) {
         super(
                 payload.meta().rootName(),
-                "", // overwritten by help system
-                "", // overwritten by help system
+                "", // overwritten by the help system
+                "", // overwritten by the help system
                 Arrays.asList(payload.meta().aliases())
         );
         this.plugin = plugin;

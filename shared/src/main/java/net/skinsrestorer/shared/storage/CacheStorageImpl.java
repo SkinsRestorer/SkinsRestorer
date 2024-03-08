@@ -47,13 +47,14 @@ public class CacheStorageImpl implements CacheStorage {
     private final Injector injector;
 
     @Override
+    @Deprecated
     public Optional<MojangSkinDataResult> getSkin(String playerName, boolean allowExpired) throws DataRequestException {
         return injector.getSingleton(SkinStorage.class).getPlayerSkin(playerName, allowExpired);
     }
 
     @Override
     public Optional<UUID> getUUID(String playerName, boolean allowExpired) throws DataRequestException {
-        if (ValidationUtil.invalidMojangUsername(playerName)) {
+        if (ValidationUtil.invalidMinecraftUsername(playerName)) {
             return Optional.empty();
         }
 

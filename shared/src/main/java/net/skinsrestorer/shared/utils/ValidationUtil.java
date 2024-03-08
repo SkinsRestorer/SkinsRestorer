@@ -17,18 +17,20 @@
  */
 package net.skinsrestorer.shared.utils;
 
+import java.util.UUID;
+
 public class ValidationUtil {
     private ValidationUtil() {
     }
 
-    public static boolean invalidMojangUsername(String username) {
+    public static boolean invalidMinecraftUsername(String str) {
         // Note: there are exceptions to players with under 3 characters, who bought the game early in its development.
-        if (username.length() > 16) {
+        if (str.length() > 16) {
             return true;
         }
 
         // For some reason, Apache's Lists.charactersOf is faster than character indexing for small strings.
-        for (char c : username.toCharArray()) {
+        for (char c : str.toCharArray()) {
             // Note: Players who bought the game early in its development can have "-" in usernames.
             if (!(c >= 'a' && c <= 'z') && !(c >= '0' && c <= '9') && !(c >= 'A' && c <= 'Z') && c != '_' && c != '-') {
                 return true;
@@ -38,7 +40,7 @@ public class ValidationUtil {
         return false;
     }
 
-    public static boolean validSkinUrl(String url) {
-        return url.startsWith("http://") || url.startsWith("https://");
+    public static boolean validSkinUrl(String str) {
+        return str.startsWith("http://") || str.startsWith("https://");
     }
 }

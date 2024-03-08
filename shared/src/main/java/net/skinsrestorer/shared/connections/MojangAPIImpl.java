@@ -46,7 +46,7 @@ import java.util.UUID;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class MojangAPIImpl implements MojangAPI {
-    private static final String ASHCON = "https://api.ashcon.app/mojang/v2/user/%uuidOrName%";
+    private static final String ASHCON = "https://api.ashcon.app/mojang/v2/user/%nameOrUniqueId%";
     private static final String UUID_MOJANG = "https://api.mojang.com/users/profiles/minecraft/%playerName%";
     private static final String UUID_MINETOOLS = "https://api.minetools.eu/uuid/%playerName%";
     private static final String PROFILE_MOJANG = "https://sessionserver.mojang.com/session/minecraft/profile/%uuid%?unsigned=false";
@@ -58,16 +58,18 @@ public class MojangAPIImpl implements MojangAPI {
     private final HttpClient httpClient;
 
     @Override
-    public Optional<MojangSkinDataResult> getSkin(String playerName) throws DataRequestException {
-        if (ValidationUtil.invalidMojangUsername(playerName)) {
+    public Optional<MojangSkinDataResult> getSkin(String nameOrUniqueId) throws DataRequestException {
+        Optional<UUID> uuidParseResult = UUIDUtils.tryParseUniqueId(nameOrUniqueId);
+        if (ValidationUtil.invalidMinecraftUsername(nameOrUniqueId) && uuidParseResult.isEmpty()) {
             return Optional.empty();
         }
 
         try {
-            return getDataAshcon(playerName);
+            return getDataAshcon(nameOrUniqueId);
         } catch (DataRequestException e) {
             logger.debug(e);
-            Optional<UUID> uuidResult = getUUIDStartMojang(playerName);
+            Optional<UUID> uuidResult = uuidParseResult.isEmpty()
+                    ? getUUIDStartMojang(nameOrUniqueId) : uuidParseResult;
             if (uuidResult.isEmpty()) {
                 return Optional.empty();
             }
@@ -84,7 +86,7 @@ public class MojangAPIImpl implements MojangAPI {
      * @return String uuid trimmed (without dashes)
      */
     public Optional<UUID> getUUID(String playerName) throws DataRequestException {
-        if (ValidationUtil.invalidMojangUsername(playerName)) {
+        if (ValidationUtil.invalidMinecraftUsername(playerName)) {
             return Optional.empty();
         }
 
@@ -105,8 +107,8 @@ public class MojangAPIImpl implements MojangAPI {
         }
     }
 
-    protected Optional<MojangSkinDataResult> getDataAshcon(String uuidOrName) throws DataRequestException {
-        HttpResponse httpResponse = readURL(URI.create(ASHCON.replace("%uuidOrName%", uuidOrName)), MetricsCounter.Service.ASHCON);
+    protected Optional<MojangSkinDataResult> getDataAshcon(String nameOrUniqueId) throws DataRequestException {
+        HttpResponse httpResponse = readURL(URI.create(ASHCON.replace("%nameOrUniqueId%", nameOrUniqueId)), MetricsCounter.Service.ASHCON);
         AshconResponse response = httpResponse.getBodyAs(AshconResponse.class);
 
         if (response.getCode() == 404) {
