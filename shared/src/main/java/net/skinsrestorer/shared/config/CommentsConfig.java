@@ -56,7 +56,6 @@ public class CommentsConfig implements SettingsHolder {
                 "\n# End #",
                 "\n",
                 "Useful tools:",
-                "Vectier Thailand has made some super cool \"Custom Skin\" tools that you can use!",
                 "",
                 "SkinFile Generator:",
                 "With SkinFile Generator, you can upload your own custom skin to get a unique .skin file that you can put in your skins folder, to use with SkinsRestorer.",
