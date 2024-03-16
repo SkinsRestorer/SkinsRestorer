@@ -60,19 +60,18 @@ public class CommentsConfig implements SettingsHolder {
                 "",
                 "SkinFile Generator:",
                 "With SkinFile Generator, you can upload your own custom skin to get a unique .skin file that you can put in your skins folder, to use with SkinsRestorer.",
-                "Check it out here: https://skinsrestorer.github.io/SkinFile-Generator/",
+                "Check it out here: https://generator.skinsrestorer.net",
                 "",
                 "SkinSystem :",
-                "With SkinSystem, you, as a server owner, can connect AuthMe (and forum) with the SkinSystem website that you can host, to give your players the ability to upload custom skins.",
+                "With SkinSystem, you, as a server owner, can connect AuthMe with the SkinSystem website that you can host, to give your players the ability to upload custom skins.",
                 "Check it out here: https://github.com/SkinsRestorer/SkinSystem",
                 "",
                 "\n# Useful Links #",
-                "Website: https://skinsrestorer.net/",
-                "Download: https://github.com/SkinsRestorer/SkinsRestorerX/releases",
-                "Wiki https://github.com/SkinsRestorer/SkinsRestorerX/wiki/",
-                "Spigot: https://www.spigotmc.org/resources/skinsrestorer.2124/",
-                "Github: https://github.com/SkinsRestorer/SkinsRestorerX/",
-                "Discord: https://discord.me/SkinsRestorer/"
+                "Website: https://skinsrestorer.net",
+                "Docs: https://skinsrestorer.net/docs",
+                "Spigot: https://skinsrestorer.net/spigot",
+                "Github: https://github.com/SkinsRestorer/SkinsRestorerX",
+                "Discord: https://skinsrestorer.net/discord"
         );
     }
 }
