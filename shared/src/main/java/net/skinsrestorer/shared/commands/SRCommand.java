@@ -28,10 +28,8 @@ import net.skinsrestorer.api.connections.model.MineSkinResponse;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.exception.MineSkinException;
 import net.skinsrestorer.api.model.MojangProfileResponse;
-import net.skinsrestorer.api.property.InputDataResult;
-import net.skinsrestorer.api.property.SkinApplier;
-import net.skinsrestorer.api.property.SkinProperty;
-import net.skinsrestorer.api.property.SkinVariant;
+import net.skinsrestorer.api.model.MojangProfileTextureMeta;
+import net.skinsrestorer.api.property.*;
 import net.skinsrestorer.api.storage.CacheStorage;
 import net.skinsrestorer.api.storage.PlayerStorage;
 import net.skinsrestorer.builddata.BuildData;
@@ -45,7 +43,14 @@ import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.plugin.SRServerPlugin;
+import net.skinsrestorer.shared.storage.HardcodedSkins;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
+import net.skinsrestorer.shared.storage.adapter.AdapterReference;
+import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
+import net.skinsrestorer.shared.storage.model.skin.CustomSkinData;
+import net.skinsrestorer.shared.storage.model.skin.PlayerSkinData;
+import net.skinsrestorer.shared.storage.model.skin.URLIndexData;
+import net.skinsrestorer.shared.storage.model.skin.URLSkinData;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.messages.Message;
@@ -53,6 +58,7 @@ import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
 import net.skinsrestorer.shared.utils.ComponentHelper;
 import net.skinsrestorer.shared.utils.ComponentString;
+import net.skinsrestorer.shared.utils.UUIDUtils;
 import net.skinsrestorer.shared.utils.ValidationUtil;
 
 import javax.inject.Inject;
@@ -62,6 +68,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 @SuppressWarnings("unused")
 @CommandNames({"sr", "skinsrestorer"})
@@ -76,6 +83,7 @@ public final class SRCommand {
     private final PlayerStorage playerStorage;
     private final CacheStorage cacheStorage;
     private final SkinStorageImpl skinStorage;
+    private final AdapterReference adapterReference;
     private final SettingsManager settings;
     private final SRLogger logger;
     private final DumpService dumpService;
@@ -99,13 +107,13 @@ public final class SRCommand {
         try {
             plugin.loadLocales();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.severe("Failed to load locales", e);
         }
 
         try {
             plugin.loadStorage();
         } catch (InitializeException e) {
-            e.printStackTrace();
+            logger.severe("Failed to load storage", e);
         }
 
         sender.sendMessage(Message.SUCCESS_ADMIN_RELOAD);
@@ -195,36 +203,97 @@ public final class SRCommand {
         sender.sendMessage(Message.SUCCESS_ADMIN_DROP, Placeholder.unparsed("type", playerOrSkin.toString()), Placeholder.unparsed("target", target));
     }
 
-    @Subcommand("props")
-    @CommandPermission(PermissionRegistry.SR_PROPS)
-    @Description(Message.HELP_SR_PROPS)
-    private void onProps(SRCommandSender sender, SRPlayer target) {
+    @Subcommand({"info", "props", "lookup"})
+    @CommandPermission(PermissionRegistry.SR_INFO)
+    @Description(Message.HELP_SR_INFO)
+    private void onInfo(SRCommandSender sender, PlayerOrSkin playerOrSkin, String input) {
         try {
-            Optional<SkinProperty> properties = adapter.getSkinProperty(target);
+            var message = switch (playerOrSkin) {
+                case PLAYER -> getPlayerInfoMessage(input);
+                case SKIN -> getSkinInfoMessage(input);
+            };
 
-            if (properties.isEmpty()) {
-                sender.sendMessage(Message.NO_SKIN_DATA);
-                return;
+            message.accept(sender);
+        } catch (StorageAdapter.StorageException | DataRequestException e) {
+            logger.severe("Failed to get data", e);
+            sender.sendMessage(Message.ERROR_GENERIC);
+        }
+    }
+
+    private Consumer<SRCommandSender> getPlayerInfoMessage(String input) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    private void sendGenericSkinInfoMessage(SRCommandSender sender, SkinProperty property) {
+        MojangProfileResponse profile = PropertyUtils.getSkinProfileData(property);
+        String texturesUrl = profile.getTextures().getSKIN().getUrl();
+        MojangProfileTextureMeta skinMetadata = profile.getTextures().getSKIN().getMetadata();
+        String variant;
+        if (skinMetadata == null) {
+            variant = "classic";
+        } else {
+            variant = skinMetadata.getModel();
+        }
+        long timestamp = profile.getTimestamp();
+        String requestTime = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new Date(timestamp));
+
+        sender.sendMessage(Message.ADMINCOMMAND_INFO_GENERIC,
+                Placeholder.parsed("url", texturesUrl),
+                Placeholder.parsed("variant", variant),
+                Placeholder.parsed("uuid", UUIDUtils.convertToDashed(profile.getProfileId()).toString()),
+                Placeholder.parsed("name", profile.getProfileName()),
+                Placeholder.parsed("time", requestTime));
+    }
+
+    private Consumer<SRCommandSender> getSkinInfoMessage(String input) throws StorageAdapter.StorageException, DataRequestException {
+        if (ValidationUtil.validSkinUrl(input)) {
+            Optional<URLIndexData> urlSkinIndex = adapterReference.get().getURLSkinIndex(input);
+
+            if (urlSkinIndex.isEmpty()) {
+                return sender -> sender.sendMessage(Message.NO_SKIN_DATA);
             }
 
-            MojangProfileResponse profile = PropertyUtils.getSkinProfileData(properties.get());
-            String decodedSkin = profile.getTextures().getSKIN().getUrl();
-            long timestamp = profile.getTimestamp();
-            String requestTime = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new Date(timestamp));
+            Optional<URLSkinData> urlSkinData = adapterReference.get().getURLSkinData(input, urlSkinIndex.get().getSkinVariant());
+            return urlSkinData.<Consumer<SRCommandSender>>map(skinData -> sender -> {
+                sender.sendMessage(Message.ADMINCOMMAND_INFO_URL_SKIN,
+                        Placeholder.parsed("url", input));
+                sendGenericSkinInfoMessage(sender, skinData.getProperty());
+            }).orElseGet(() -> sender -> sender.sendMessage(Message.NO_SKIN_DATA));
 
-            sender.sendMessage(Message.ADMINCOMMAND_PROPS_REQUEST_TIME, Placeholder.unparsed("request_time", requestTime));
-            sender.sendMessage(Message.ADMINCOMMAND_PROPS_PROFILE_ID, Placeholder.unparsed("profile_id", profile.getProfileId()));
-            sender.sendMessage(Message.ADMINCOMMAND_PROPS_NAME, Placeholder.unparsed("profile_name", profile.getProfileName()));
-            sender.sendMessage(Message.ADMINCOMMAND_PROPS_SKIN_TEXTURE, Placeholder.unparsed("skin_texture", decodedSkin));
-            sender.sendMessage(Message.ADMINCOMMAND_PROPS_MORE_INFO_IN_CONSOLE);
+        } else {
+            Optional<InputDataResult> result = HardcodedSkins.getHardcodedSkin(input);
 
-            // Console
-            logger.info("§aValue: §8" + properties.get().getValue());
-            logger.info("§aSignature: §8" + properties.get().getSignature());
-            logger.info("§aValue Decoded: §e" + profile);
-        } catch (Exception e) {
-            e.printStackTrace();
-            sender.sendMessage(Message.NO_SKIN_DATA);
+            if (result.isPresent()) {
+                return sender -> {
+                    sender.sendMessage(Message.ADMINCOMMAND_INFO_HARDCODED_SKIN,
+                            Placeholder.parsed("skin", result.get().getIdentifier().getIdentifier()));
+                    sendGenericSkinInfoMessage(sender, result.get().getProperty());
+                };
+            }
+
+            Optional<CustomSkinData> customSkinData = adapterReference.get().getCustomSkinData(input);
+
+            if (customSkinData.isPresent()) {
+                return sender -> {
+                    sender.sendMessage(Message.ADMINCOMMAND_INFO_CUSTOM_SKIN,
+                            Placeholder.parsed("skin", input));
+                    sendGenericSkinInfoMessage(sender, customSkinData.get().getProperty());
+                };
+            }
+
+            Optional<UUID> uuid = cacheStorage.getUUID(input, false);
+
+            if (uuid.isEmpty()) {
+                return sender -> sender.sendMessage(Message.NO_SKIN_DATA);
+            }
+
+            Optional<PlayerSkinData> playerSkinData = adapterReference.get().getPlayerSkinData(uuid.get());
+
+            return playerSkinData.<Consumer<SRCommandSender>>map(skinData -> sender -> {
+                sender.sendMessage(Message.ADMINCOMMAND_INFO_PLAYER_SKIN,
+                        Placeholder.parsed("skin", input));
+                sendGenericSkinInfoMessage(sender, skinData.getProperty());
+            }).orElseGet(() -> sender -> sender.sendMessage(Message.NO_SKIN_DATA));
         }
     }
 
@@ -289,6 +358,7 @@ public final class SRCommand {
                 sender.sendMessage(Message.ADMINCOMMAND_APPLYSKINALL_PLAYER_ERROR, Placeholder.unparsed("player", player.getName()));
             }
         }
+
         sender.sendMessage(Message.ADMINCOMMAND_APPLYSKINALL_SUCCESS);
     }
 
@@ -317,8 +387,8 @@ public final class SRCommand {
                 sender.sendMessage(Message.ADMINCOMMAND_DUMP_ERROR);
             }
         } catch (IOException | DataRequestException e) {
+            logger.severe("Failed to dump data", e);
             sender.sendMessage(Message.ADMINCOMMAND_DUMP_ERROR);
-            e.printStackTrace();
         }
     }
 

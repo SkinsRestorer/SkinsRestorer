@@ -49,7 +49,7 @@ public enum PermissionGroup {
             PermissionRegistry.SKIN_UPDATE_OTHER,
             PermissionRegistry.SR_STATUS,
             PermissionRegistry.SR_DROP,
-            PermissionRegistry.SR_PROPS,
+            PermissionRegistry.SR_INFO,
             PermissionRegistry.SR_APPLY_SKIN,
             PermissionRegistry.SR_CREATE_CUSTOM,
             PermissionRegistry.BYPASS_COOLDOWN,

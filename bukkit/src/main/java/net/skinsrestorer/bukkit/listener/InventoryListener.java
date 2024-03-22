@@ -17,24 +17,32 @@
  */
 package net.skinsrestorer.bukkit.listener;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import net.skinsrestorer.bukkit.gui.SkinsGUIHolder;
+import net.skinsrestorer.shared.log.SRLogger;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
+import javax.inject.Inject;
+
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class InventoryListener implements Listener {
+    private final SRLogger logger;
+    
     @EventHandler(ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
         Inventory topInventory = event.getView().getTopInventory();
         InventoryHolder holder = topInventory.getHolder();
-        if (holder instanceof SkinsGUIHolder) {
+        if (holder instanceof SkinsGUIHolder guiHolder) {
             if (isInTop(topInventory, event.getRawSlot())) { // Only handle if there was a click in the top inventory
                 try {
-                    ((SkinsGUIHolder) holder).onClick(event);
+                    guiHolder.onClick(event);
                 } catch (Throwable e) { // Ensure event always cancels
-                    e.printStackTrace();
+                    logger.severe("Failed to handle inventory click event", e);
                 }
             }
 

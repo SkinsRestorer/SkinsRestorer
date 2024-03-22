@@ -28,6 +28,7 @@ import net.skinsrestorer.shared.api.SkinApplierAccess;
 import net.skinsrestorer.shared.api.event.EventBusImpl;
 import net.skinsrestorer.shared.api.event.SkinApplyEventImpl;
 import net.skinsrestorer.shared.config.AdvancedConfig;
+import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRProxyPlugin;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.jetbrains.annotations.Nullable;
@@ -43,6 +44,7 @@ public class SkinApplierBungee implements SkinApplierAccess<ProxiedPlayer> {
     private final WrapperBungee wrapper;
     private final SRProxyPlugin proxyPlugin;
     private final EventBusImpl eventBus;
+    private final SRLogger logger;
 
     /*
      * Starting the 1.19 builds of BungeeCord, the Property class has changed.
@@ -61,7 +63,7 @@ public class SkinApplierBungee implements SkinApplierAccess<ProxiedPlayer> {
         try {
             applyEvent(player, property, (InitialHandler) player.getPendingConnection());
         } catch (ReflectiveOperationException e) {
-            e.printStackTrace();
+            logger.severe("Failed to apply skin to player " + player.getName(), e);
         }
     }
 
@@ -69,7 +71,7 @@ public class SkinApplierBungee implements SkinApplierAccess<ProxiedPlayer> {
         try {
             applyEvent(null, property, handler);
         } catch (ReflectiveOperationException e) {
-            e.printStackTrace();
+            logger.severe("Failed to apply skin to player", e);
         }
     }
 

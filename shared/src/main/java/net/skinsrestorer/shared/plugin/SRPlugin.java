@@ -275,7 +275,7 @@ public class SRPlugin {
         try {
             SRHelpers.renameFile(dataFolder, "Archive", "archive"); // Now lowercase
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.warning("Failed to rename Archive folder to lowercase.", e);
         }
 
         moveToArchive(dataFolder.resolve("messages.yml"));
@@ -297,7 +297,7 @@ public class SRPlugin {
             Files.createDirectories(archive);
             Files.move(path, target, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.warning("Failed to move old file " + path.getFileName() + " to archive folder.", e);
         }
     }
 
@@ -369,7 +369,7 @@ public class SRPlugin {
             field.setAccessible(true);
             metrics = (MetricsBase) field.get(metricsParent);
         } catch (ReflectiveOperationException e) {
-            e.printStackTrace();
+            logger.warning("Failed to register metrics", e);
             return;
         }
 

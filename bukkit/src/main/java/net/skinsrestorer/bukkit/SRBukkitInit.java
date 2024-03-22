@@ -157,7 +157,7 @@ public class SRBukkitInit implements SRServerPlatformInit {
             return new MappingSpigotSkinRefresher(server, viaWorkaround);
         } else {
             logger.debug("Using SpigotSkinRefresher");
-            return new SpigotSkinRefresher(adapter, viaWorkaround);
+            return new SpigotSkinRefresher(adapter, logger, viaWorkaround);
         }
     }
 
@@ -294,7 +294,7 @@ public class SRBukkitInit implements SRServerPlatformInit {
 
     @Override
     public void initGUIListener() {
-        server.getPluginManager().registerEvents(new InventoryListener(), adapter.getPluginInstance());
+        server.getPluginManager().registerEvents(injector.getSingleton(InventoryListener.class), adapter.getPluginInstance());
     }
 
     @Override
@@ -309,6 +309,7 @@ public class SRBukkitInit implements SRServerPlatformInit {
         if (adapter.isPluginEnabled("PlaceholderAPI")) {
             new SRPlaceholderAPIExpansion(
                     SkinsRestorerProvider.get(),
+                    logger,
                     adapter.getPluginInstance().getDescription(),
                     injector
             ).register();

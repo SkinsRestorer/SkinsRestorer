@@ -85,7 +85,7 @@ public class SRProxyPlugin {
 
             player.sendDataToServer("sr:messagechannel", b.toByteArray());
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.severe("Error while sending skin update request", e);
         }
     }
 

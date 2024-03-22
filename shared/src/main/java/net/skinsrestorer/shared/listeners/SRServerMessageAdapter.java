@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
 import net.skinsrestorer.shared.listeners.event.SRServerMessageEvent;
+import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.utils.MessageProtocolUtil;
@@ -36,6 +37,7 @@ import java.util.Optional;
 public final class SRServerMessageAdapter {
     private final SRServerAdapter<?, ?> plugin;
     private final SharedSkinApplier<Object> skinApplier;
+    private final SRLogger logger;
 
     public void handlePluginMessage(SRServerMessageEvent event) {
         if (!event.getChannel().equals("sr:messagechannel")) {
@@ -67,7 +69,7 @@ public final class SRServerMessageAdapter {
                         SkinProperty.of(in.readUTF(), in.readUTF()));
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.severe("Error while handling plugin message", e);
         }
     }
 }

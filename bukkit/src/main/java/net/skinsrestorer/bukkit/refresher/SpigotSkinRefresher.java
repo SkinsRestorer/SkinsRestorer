@@ -23,6 +23,7 @@ import net.skinsrestorer.bukkit.utils.OPRefreshUtil;
 import net.skinsrestorer.mappings.shared.MappingReflection;
 import net.skinsrestorer.mappings.shared.ViaPacketData;
 import net.skinsrestorer.shared.exception.InitializeException;
+import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.utils.FluentList;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.SRHelpers;
@@ -35,6 +36,7 @@ import java.util.List;
 
 public final class SpigotSkinRefresher implements SkinRefresher {
     private final SRBukkitAdapter adapter;
+    private final SRLogger logger;
     private final boolean viaWorkaround;
     private final Class<?> playOutRespawn;
     private final Class<?> playOutPlayerInfo;
@@ -44,8 +46,9 @@ public final class SpigotSkinRefresher implements SkinRefresher {
     private Enum<?> removePlayerEnum;
     private Enum<?> addPlayerEnum;
 
-    public SpigotSkinRefresher(SRBukkitAdapter adapter, boolean viaWorkaround) throws InitializeException {
+    public SpigotSkinRefresher(SRBukkitAdapter adapter, SRLogger logger, boolean viaWorkaround) throws InitializeException {
         this.adapter = adapter;
+        this.logger = logger;
         this.viaWorkaround = viaWorkaround;
 
         try {
@@ -249,7 +252,7 @@ public final class SpigotSkinRefresher implements SkinRefresher {
             // TODO: Send proper permission level instead of this workaround
             OPRefreshUtil.refreshOP(player, adapter);
         } catch (ReflectiveOperationException e) {
-            e.printStackTrace();
+            logger.severe("Failed to refresh skin for player " + player.getName(), e);
         }
     }
 
@@ -276,7 +279,7 @@ public final class SpigotSkinRefresher implements SkinRefresher {
                     }
                 }
             } catch (ReflectiveOperationException e2) {
-                e2.printStackTrace();
+                logger.severe("Failed to get DimensionManager from " + worldObject.getClass().getSimpleName(), e2);
             }
         }
 

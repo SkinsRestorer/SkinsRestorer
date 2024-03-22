@@ -19,6 +19,7 @@ package net.skinsrestorer;
 
 import ch.jalu.configme.SettingsManager;
 import ch.jalu.injector.Injector;
+import lombok.extern.slf4j.Slf4j;
 import net.skinsrestorer.api.connections.model.MineSkinResponse;
 import net.skinsrestorer.shared.config.APIConfig;
 import net.skinsrestorer.shared.config.AdvancedConfig;
@@ -34,6 +35,7 @@ import java.util.UUID;
 
 import static org.mockito.Mockito.when;
 
+@Slf4j
 @ExtendWith({MockitoExtension.class, SRExtension.class})
 public class MineSkinTest {
     private static final String TEST_URL = "https://skinsrestorer.net/skinsrestorer-skin.png";
@@ -58,7 +60,7 @@ public class MineSkinTest {
             MineSkinResponse response = injector.getSingleton(MineSkinAPIImpl.class)
                     .genSkin(randomUrl, null);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Failed to generate skin", e);
         }
 
         /*

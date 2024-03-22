@@ -38,4 +38,7 @@ public class BuildData {
         String values = "{{ locales }}";
         return values.split("\\|");
     }
+
+    private BuildData() {
+    }
 }

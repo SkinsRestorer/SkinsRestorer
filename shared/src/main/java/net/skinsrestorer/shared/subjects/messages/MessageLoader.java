@@ -59,8 +59,13 @@ public class MessageLoader {
             int count = 0;
             try (InputStream is = adapter.getResource(resourcePath)) {
                 for (Map.Entry<String, String> entry : TranslationReader.readJsonTranslation(is).entrySet()) {
+                    var message = Message.fromKey(entry.getKey());
+                    if (message.isEmpty() && locale != LocaleManager.BASE_LOCALE) {
+                        continue;
+                    }
+
                     manager.addMessage(
-                            Message.fromKey(entry.getKey())
+                            message
                                     .orElseThrow(() -> new IllegalArgumentException(
                                             String.format("No message enum found for key %s", entry.getKey())
                                     )),

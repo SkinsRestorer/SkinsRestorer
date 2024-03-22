@@ -67,7 +67,7 @@ public class MappingManager {
 
     @SuppressWarnings({"deprecation"})
     public static Optional<String> getMappingsVersion(Server server) {
-        org.bukkit.UnsafeValues craftMagicNumbers = server.getUnsafe();
+        var craftMagicNumbers = server.getUnsafe();
         try {
             Method method = craftMagicNumbers.getClass().getMethod("getMappingsVersion");
             return Optional.of((String) method.invoke(craftMagicNumbers, new Object[0]));

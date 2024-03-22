@@ -26,6 +26,7 @@ import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.bukkit.utils.SkinApplyBukkitAdapter;
+import net.skinsrestorer.shared.log.SRLogger;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -40,6 +41,7 @@ public class SRPlaceholderAPIExpansion extends PlaceholderExpansion {
     private static final String ALEX_URL = "https://textures.minecraft.net/texture/fb9ab3483f8106ecc9e76bd47c71312b0f16a58784d606864f3b3e9cb1fd7b6c";
     private static final String ERROR_MESSAGE = "Error";
     private final SkinsRestorer api;
+    private final SRLogger logger;
     private final PluginDescriptionFile description;
     private final Injector injector;
 
@@ -113,7 +115,7 @@ public class SRPlaceholderAPIExpansion extends PlaceholderExpansion {
                     }
                 }
             } catch (DataRequestException e) {
-                e.printStackTrace();
+                logger.severe("Failed to get skin data of player " + offlinePlayer.getUniqueId(), e);
             }
 
             return ERROR_MESSAGE;
@@ -141,7 +143,7 @@ public class SRPlaceholderAPIExpansion extends PlaceholderExpansion {
                     }
                 }
             } catch (DataRequestException e) {
-                e.printStackTrace();
+                logger.severe("Failed to get skin data of player " + offlinePlayer.getUniqueId(), e);
             }
 
             return ERROR_MESSAGE;

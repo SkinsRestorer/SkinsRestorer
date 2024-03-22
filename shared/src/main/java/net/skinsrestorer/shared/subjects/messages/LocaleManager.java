@@ -25,7 +25,7 @@ import java.util.*;
 @NoArgsConstructor(onConstructor_ = @Inject)
 public class LocaleManager {
     private final Map<Message, Map<Locale, String>> messages = new EnumMap<>(Message.class);
-    private final Locale defaultLocale = Locale.ENGLISH;
+    public static final Locale BASE_LOCALE = Locale.ENGLISH;
 
     public void addMessage(Message key, Locale locale, String message) {
         messages.computeIfAbsent(key, k -> new HashMap<>()).put(locale, message);
@@ -41,7 +41,7 @@ public class LocaleManager {
         for (Message message : Message.values()) {
             Map<Locale, String> localeMap = messages.get(message);
 
-            if (!localeMap.containsKey(defaultLocale)) {
+            if (!localeMap.containsKey(BASE_LOCALE)) {
                 throw new IllegalStateException(String.format("Message %s does not have a default translation", message.name()));
             }
         }
@@ -53,6 +53,6 @@ public class LocaleManager {
         // First try language_country, then language and finally default
         return Optional.ofNullable(localeMap.get(new Locale(locale.getLanguage(), locale.getCountry())))
                 .orElseGet(() -> Optional.ofNullable(localeMap.get(new Locale(locale.getLanguage())))
-                        .orElse(localeMap.get(defaultLocale)));
+                        .orElse(localeMap.get(BASE_LOCALE)));
     }
 }

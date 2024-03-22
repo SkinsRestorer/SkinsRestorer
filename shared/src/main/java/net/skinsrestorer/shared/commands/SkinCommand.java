@@ -116,7 +116,7 @@ public final class SkinCommand {
                 sender.sendMessage(Message.SUCCESS_SKIN_CLEAR_OTHER, Placeholder.unparsed("name", target.getName()));
             }
         } catch (DataRequestException e) {
-            e.printStackTrace();
+            logger.severe("Error while clearing skin", e);
             sender.sendMessage(Message.ERROR_UPDATING_SKIN); // TODO: Better error message
         }
     }

@@ -20,6 +20,7 @@ package net.skinsrestorer.shared.listeners;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.commands.library.CommandManager;
 import net.skinsrestorer.shared.listeners.event.SRProxyMessageEvent;
+import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRProxyAdapter;
 import net.skinsrestorer.shared.plugin.SRProxyPlugin;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
@@ -38,6 +39,7 @@ public final class SRProxyMessageAdapter {
     private final SRProxyAdapter<?, ?> plugin;
     private final CommandManager<SRCommandSender> commandManager;
     private final SRProxyPlugin proxyPlugin;
+    private final SRLogger logger;
 
     public void handlePluginMessage(SRProxyMessageEvent event) {
         if (event.isCancelled()) {
@@ -75,7 +77,7 @@ public final class SRProxyMessageAdapter {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.severe("Error while handling plugin message", e);
         }
     }
 }

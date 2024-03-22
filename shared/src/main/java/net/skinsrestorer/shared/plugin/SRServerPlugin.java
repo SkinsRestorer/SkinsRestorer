@@ -74,7 +74,7 @@ public class SRServerPlugin {
                 Files.deleteIfExists(warning);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.severe("Failed to create proxy warning file", e);
         }
 
         if (proxyMode) {

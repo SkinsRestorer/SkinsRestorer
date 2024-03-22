@@ -55,7 +55,7 @@ public class PlayerStorageImpl implements PlayerStorage {
                 return Optional.ofNullable(playerData.getSkinIdentifier());
             }
         } catch (StorageAdapter.StorageException e) {
-            e.printStackTrace();
+            logger.severe("Failed to get skin data of player " + uuid, e);
         }
 
         return Optional.empty();
@@ -74,7 +74,7 @@ public class PlayerStorageImpl implements PlayerStorage {
                 adapterReference.get().setPlayerData(uuid, PlayerData.of(uuid, identifier));
             }
         } catch (StorageAdapter.StorageException e) {
-            e.printStackTrace();
+            logger.severe("Failed to set skin data of player " + uuid, e);
         }
     }
 
@@ -89,7 +89,7 @@ public class PlayerStorageImpl implements PlayerStorage {
                 adapterReference.get().setPlayerData(uuid, playerData);
             }
         } catch (StorageAdapter.StorageException e) {
-            e.printStackTrace();
+            logger.severe("Failed to remove skin data of player " + uuid, e);
         }
     }
 

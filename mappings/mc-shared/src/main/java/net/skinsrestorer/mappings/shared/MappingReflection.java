@@ -24,8 +24,7 @@ public class MappingReflection {
         try {
             return serverPlayerClass.cast(player.getClass().getMethod("getHandle").invoke(player));
         } catch (ReflectiveOperationException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
+            throw new RuntimeException("Failed to get handle of player", e);
         }
     }
 }

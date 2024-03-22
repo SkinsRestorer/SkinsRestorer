@@ -23,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.listeners.LoginProfileListenerAdapter;
 import net.skinsrestorer.shared.listeners.event.SRLoginProfileEvent;
+import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.event.EventListener;
@@ -34,13 +35,14 @@ import java.util.UUID;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class LoginListener implements EventListener<ServerSideConnectionEvent.Auth> {
     private final LoginProfileListenerAdapter<Void> adapter;
+    private final SRLogger logger;
 
     @Override
     public void handle(@NotNull ServerSideConnectionEvent.Auth event) {
         try {
             adapter.handleLogin(wrap(event));
         } catch (Throwable e) {
-            e.printStackTrace();
+            logger.severe("Failed to handle login event", e);
         }
     }
 
