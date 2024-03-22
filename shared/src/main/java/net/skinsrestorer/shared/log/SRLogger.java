@@ -79,6 +79,10 @@ public class SRLogger {
         log(SRLogLevel.SEVERE, message, thrown);
     }
 
+    public void severe(Throwable thrown) {
+        log(SRLogLevel.SEVERE, "Received error", thrown);
+    }
+
     private void log(SRLogLevel level, String message) {
         logger.log(level, formatMessage(message));
     }

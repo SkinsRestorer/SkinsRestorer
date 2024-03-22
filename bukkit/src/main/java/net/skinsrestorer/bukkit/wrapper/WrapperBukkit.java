@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.bukkit.SRBukkitAdapter;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRServerPlayer;
+import net.skinsrestorer.shared.subjects.SRSubjectWrapper;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -29,11 +30,12 @@ import org.bukkit.entity.Player;
 import javax.inject.Inject;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class WrapperBukkit {
+public class WrapperBukkit implements SRSubjectWrapper<CommandSender, Player, SRServerPlayer> {
     private final SettingsManager settings;
     private final SkinsRestorerLocale locale;
     private final SRBukkitAdapter adapter;
 
+    @Override
     public SRCommandSender commandSender(CommandSender sender) {
         if (sender instanceof Player) {
             return player((Player) sender);
@@ -42,6 +44,7 @@ public class WrapperBukkit {
         return WrapperCommandSender.builder().sender(sender).locale(locale).settings(settings).adapter(adapter).build();
     }
 
+    @Override
     public SRServerPlayer player(Player player) {
         return WrapperPlayer.builder().player(player).sender(player).locale(locale).settings(settings).adapter(adapter).build();
     }

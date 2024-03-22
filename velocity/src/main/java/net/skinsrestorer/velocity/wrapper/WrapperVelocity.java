@@ -23,15 +23,17 @@ import com.velocitypowered.api.proxy.Player;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRProxyPlayer;
+import net.skinsrestorer.shared.subjects.SRSubjectWrapper;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 
 import javax.inject.Inject;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class WrapperVelocity {
+public class WrapperVelocity implements SRSubjectWrapper<CommandSource, Player, SRProxyPlayer> {
     private final SettingsManager settings;
     private final SkinsRestorerLocale locale;
 
+    @Override
     public SRCommandSender commandSender(CommandSource sender) {
         if (sender instanceof Player) {
             return player((Player) sender);
@@ -40,6 +42,7 @@ public class WrapperVelocity {
         return WrapperCommandSender.builder().sender(sender).locale(locale).settings(settings).build();
     }
 
+    @Override
     public SRProxyPlayer player(Player player) {
         return WrapperPlayer.builder().player(player).sender(player).locale(locale).settings(settings).build();
     }
