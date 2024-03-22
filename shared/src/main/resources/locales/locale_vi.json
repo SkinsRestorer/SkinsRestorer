@@ -13,7 +13,6 @@
   "skinsrestorer.help_sr_reload": "Khởi động lại file chỉnh sửa.",
   "skinsrestorer.help_sr_status": "Kiểm tra các dịch vụ API plugin cần thiết.",
   "skinsrestorer.help_sr_drop": "Xóa người chơi hoặc dữ liệu skin từ cơ sở dữ liệu.",
-  "skinsrestorer.help_sr_props": "Hiển thị thông tin về skins của người chơi hiện tại.",
   "skinsrestorer.help_sr_apply_skin": "Tái áp dụng skin tới người chơi cụ thể.",
   "skinsrestorer.help_sr_create_custom": "Tạo một skin ngẫu nhiên.",
   "skinsrestorer.help_sr_set_skin_all": "Đặt skin của mỗi người chơi thành một skin duy nhất.",
