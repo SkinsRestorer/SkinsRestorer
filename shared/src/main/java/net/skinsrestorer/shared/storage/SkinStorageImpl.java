@@ -18,7 +18,6 @@
 package net.skinsrestorer.shared.storage;
 
 import ch.jalu.configme.SettingsManager;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.PropertyUtils;
 import net.skinsrestorer.api.connections.model.MineSkinResponse;

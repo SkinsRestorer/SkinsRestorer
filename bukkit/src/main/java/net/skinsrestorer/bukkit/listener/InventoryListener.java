@@ -18,7 +18,6 @@
 package net.skinsrestorer.bukkit.listener;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import net.skinsrestorer.bukkit.gui.SkinsGUIHolder;
 import net.skinsrestorer.shared.log.SRLogger;
 import org.bukkit.event.EventHandler;

@@ -17,8 +17,6 @@
  */
 package net.skinsrestorer.shared.utils;
 
-import java.util.UUID;
-
 public class ValidationUtil {
     private ValidationUtil() {
     }

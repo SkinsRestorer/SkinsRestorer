@@ -17,7 +17,6 @@
  */
 package net.skinsrestorer;
 
-import lombok.extern.slf4j.Slf4j;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.skinsrestorer.bukkit.SRBukkitAdapter;
 import net.skinsrestorer.bukkit.SRBukkitInit;

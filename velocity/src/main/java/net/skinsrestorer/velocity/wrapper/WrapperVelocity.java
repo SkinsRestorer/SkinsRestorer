@@ -35,8 +35,8 @@ public class WrapperVelocity implements SRSubjectWrapper<CommandSource, Player, 
 
     @Override
     public SRCommandSender commandSender(CommandSource sender) {
-        if (sender instanceof Player) {
-            return player((Player) sender);
+        if (sender instanceof Player player) {
+            return player(player);
         }
 
         return WrapperCommandSender.builder().sender(sender).locale(locale).settings(settings).build();

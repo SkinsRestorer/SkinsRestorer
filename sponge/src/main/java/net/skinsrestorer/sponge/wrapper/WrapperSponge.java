@@ -37,8 +37,8 @@ public class WrapperSponge implements SRSubjectWrapper<CommandCause, ServerPlaye
     @Override
     public SRCommandSender commandSender(CommandCause sender) {
         Subject subject = sender.subject();
-        if (subject instanceof ServerPlayer) {
-            return player((ServerPlayer) subject);
+        if (subject instanceof ServerPlayer player) {
+            return player(player);
         }
 
         return WrapperCommandSender.builder().subject(subject).audience(sender.audience()).locale(locale).settings(settings).build();
