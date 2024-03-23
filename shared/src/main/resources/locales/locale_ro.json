@@ -20,10 +20,5 @@
   "skinsrestorer.admincommand_status_summary_commit": "<gray>Comite: <gold><hash>",
   "skinsrestorer.admincommand_status_summary_finished": "<gray>S-a finalizat verificarea serviciilor.",
   "skinsrestorer.admincommand_drop_player_not_found": "<red>Jucătorul <yellow><player></yellow> nu a fost găsit.",
-  "skinsrestorer.admincommand_drop_skin_not_found": "<red>Jucătorul <yellow><skin></yellow> nu a fost găsit.",
-  "skinsrestorer.admincommand_props_request_time": "<green>Timpul solicitării: <yellow><request_time>",
-  "skinsrestorer.admincommand_props_profile_id": "<green>IdProfil: <yellow><profile_id>",
-  "skinsrestorer.admincommand_props_name": "<green>Nume: <yellow><profile_name>",
-  "skinsrestorer.admincommand_props_skin_texture": "<green>TexturăSkin: <yellow><skin_texture>",
-  "skinsrestorer.admincommand_props_more_info_in_console": "<red>Mai multe informații în consolă!"
+  "skinsrestorer.admincommand_drop_skin_not_found": "<red>Jucătorul <yellow><skin></yellow> nu a fost găsit."
 }
