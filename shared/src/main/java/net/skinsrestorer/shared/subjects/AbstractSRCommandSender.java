@@ -18,6 +18,7 @@
 package net.skinsrestorer.shared.subjects;
 
 import ch.jalu.configme.SettingsManager;
+import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.skinsrestorer.shared.config.MessageConfig;
@@ -30,14 +31,17 @@ import java.util.Optional;
 
 @SuperBuilder
 public abstract class AbstractSRCommandSender implements SRCommandSender {
+    protected final @NonNull SettingsManager settings;
+    protected final @NonNull SkinsRestorerLocale locale;
+
     @Override
     public Locale getLocale() {
-        return getSettings().getProperty(MessageConfig.LOCALE);
+        return settings.getProperty(MessageConfig.LOCALE);
     }
 
     @Override
     public void sendMessage(Message key, TagResolver... resolvers) {
-        Optional<ComponentString> translatedMessage = getSRLocale().getMessageOptional(this, key, resolvers);
+        Optional<ComponentString> translatedMessage = locale.getMessageOptional(this, key, resolvers);
 
         if (translatedMessage.isEmpty()) {
             return;
@@ -45,8 +49,4 @@ public abstract class AbstractSRCommandSender implements SRCommandSender {
 
         sendMessage(translatedMessage.get());
     }
-
-    protected abstract SkinsRestorerLocale getSRLocale();
-
-    protected abstract SettingsManager getSettings();
 }

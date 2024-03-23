@@ -19,6 +19,7 @@ package net.skinsrestorer.velocity.wrapper;
 
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
+import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.SRProxyPlayer;
@@ -29,7 +30,7 @@ import java.util.UUID;
 
 @SuperBuilder
 public class WrapperPlayer extends WrapperCommandSender implements SRProxyPlayer {
-    private final Player player;
+    private final @NonNull Player player;
 
     @Override
     public Locale getLocale() {

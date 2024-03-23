@@ -17,6 +17,7 @@
  */
 package net.skinsrestorer.bungee.wrapper;
 
+import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.skinsrestorer.shared.subjects.SRPlayer;
@@ -28,7 +29,7 @@ import java.util.UUID;
 
 @SuperBuilder
 public class WrapperPlayer extends WrapperCommandSender implements SRProxyPlayer {
-    private final ProxiedPlayer player;
+    private final @NonNull ProxiedPlayer player;
 
     @Override
     public Locale getLocale() {

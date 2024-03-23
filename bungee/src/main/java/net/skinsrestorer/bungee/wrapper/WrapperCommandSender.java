@@ -17,22 +17,19 @@
  */
 package net.skinsrestorer.bungee.wrapper;
 
-import ch.jalu.configme.SettingsManager;
+import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 import net.md_5.bungee.api.CommandSender;
 import net.skinsrestorer.bungee.SRBungeeAdapter;
 import net.skinsrestorer.shared.subjects.AbstractSRCommandSender;
-import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.Permission;
 import net.skinsrestorer.shared.utils.ComponentString;
 import net.skinsrestorer.shared.utils.Tristate;
 
 @SuperBuilder
 public class WrapperCommandSender extends AbstractSRCommandSender {
-    private final SettingsManager settings;
-    private final SkinsRestorerLocale locale;
-    private final CommandSender sender;
-    private final SRBungeeAdapter adapter;
+    private final @NonNull CommandSender sender;
+    private final @NonNull SRBungeeAdapter adapter;
 
     @Override
     public void sendMessage(ComponentString messageJson) {
@@ -50,15 +47,5 @@ public class WrapperCommandSender extends AbstractSRCommandSender {
                 return Tristate.UNDEFINED;
             }
         });
-    }
-
-    @Override
-    protected SkinsRestorerLocale getSRLocale() {
-        return locale;
-    }
-
-    @Override
-    protected SettingsManager getSettings() {
-        return settings;
     }
 }

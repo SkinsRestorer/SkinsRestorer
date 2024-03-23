@@ -17,11 +17,10 @@
  */
 package net.skinsrestorer.sponge.wrapper;
 
-import ch.jalu.configme.SettingsManager;
+import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 import net.kyori.adventure.audience.Audience;
 import net.skinsrestorer.shared.subjects.AbstractSRCommandSender;
-import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.Permission;
 import net.skinsrestorer.shared.subjects.permissions.PermissionGroup;
 import net.skinsrestorer.shared.utils.ComponentString;
@@ -30,10 +29,8 @@ import org.spongepowered.api.service.permission.Subject;
 
 @SuperBuilder
 public class WrapperCommandSender extends AbstractSRCommandSender {
-    private final SettingsManager settings;
-    private final SkinsRestorerLocale locale;
-    private final Subject subject;
-    private final Audience audience;
+    private final @NonNull Subject subject;
+    private final @NonNull Audience audience;
 
     @Override
     public void sendMessage(ComponentString messageJson) {
@@ -49,15 +46,5 @@ public class WrapperCommandSender extends AbstractSRCommandSender {
                     PermissionGroup.DEFAULT_GROUP.hasPermission(permission)
             );
         });
-    }
-
-    @Override
-    protected SkinsRestorerLocale getSRLocale() {
-        return locale;
-    }
-
-    @Override
-    protected SettingsManager getSettings() {
-        return settings;
     }
 }

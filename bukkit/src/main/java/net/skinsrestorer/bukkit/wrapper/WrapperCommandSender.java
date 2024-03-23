@@ -17,12 +17,11 @@
  */
 package net.skinsrestorer.bukkit.wrapper;
 
-import ch.jalu.configme.SettingsManager;
+import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 import net.kyori.adventure.text.Component;
 import net.skinsrestorer.bukkit.SRBukkitAdapter;
 import net.skinsrestorer.shared.subjects.AbstractSRCommandSender;
-import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.Permission;
 import net.skinsrestorer.shared.utils.ComponentString;
 import net.skinsrestorer.shared.utils.Tristate;
@@ -31,10 +30,8 @@ import org.bukkit.command.CommandSender;
 
 @SuperBuilder
 public class WrapperCommandSender extends AbstractSRCommandSender {
-    private final SettingsManager settings;
-    private final SkinsRestorerLocale locale;
-    private final SRBukkitAdapter adapter;
-    private final CommandSender sender;
+    private final @NonNull SRBukkitAdapter adapter;
+    private final @NonNull CommandSender sender;
 
     @Override
     public void sendMessage(ComponentString messageJson) {
@@ -58,15 +55,5 @@ public class WrapperCommandSender extends AbstractSRCommandSender {
             boolean explicit = hasPermission || sender.isPermissionSet(p);
             return explicit ? Tristate.fromBoolean(hasPermission) : Tristate.UNDEFINED;
         });
-    }
-
-    @Override
-    protected SkinsRestorerLocale getSRLocale() {
-        return locale;
-    }
-
-    @Override
-    protected SettingsManager getSettings() {
-        return settings;
     }
 }

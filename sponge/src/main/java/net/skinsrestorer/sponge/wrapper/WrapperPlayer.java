@@ -17,6 +17,7 @@
  */
 package net.skinsrestorer.sponge.wrapper;
 
+import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.SRServerPlayer;
@@ -28,7 +29,7 @@ import java.util.UUID;
 
 @SuperBuilder
 public class WrapperPlayer extends WrapperCommandSender implements SRServerPlayer {
-    private final ServerPlayer player;
+    private final @NonNull ServerPlayer player;
 
     @Override
     public Locale getLocale() {

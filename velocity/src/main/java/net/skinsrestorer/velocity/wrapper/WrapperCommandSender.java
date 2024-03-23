@@ -17,11 +17,10 @@
  */
 package net.skinsrestorer.velocity.wrapper;
 
-import ch.jalu.configme.SettingsManager;
 import com.velocitypowered.api.command.CommandSource;
+import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 import net.skinsrestorer.shared.subjects.AbstractSRCommandSender;
-import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.Permission;
 import net.skinsrestorer.shared.subjects.permissions.PermissionGroup;
 import net.skinsrestorer.shared.utils.ComponentString;
@@ -29,9 +28,7 @@ import net.skinsrestorer.shared.utils.Tristate;
 
 @SuperBuilder
 public class WrapperCommandSender extends AbstractSRCommandSender {
-    private final SettingsManager settings;
-    private final SkinsRestorerLocale locale;
-    private final CommandSource sender;
+    private final @NonNull CommandSource sender;
 
     @Override
     public void sendMessage(ComponentString messageJson) {
@@ -47,15 +44,5 @@ public class WrapperCommandSender extends AbstractSRCommandSender {
                     PermissionGroup.DEFAULT_GROUP.hasPermission(permission)
             );
         });
-    }
-
-    @Override
-    protected SkinsRestorerLocale getSRLocale() {
-        return locale;
-    }
-
-    @Override
-    protected SettingsManager getSettings() {
-        return settings;
     }
 }
