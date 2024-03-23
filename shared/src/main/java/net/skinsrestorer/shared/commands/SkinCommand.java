@@ -204,7 +204,7 @@ public final class SkinCommand {
             return;
         }
 
-        if (playerEqual(sender, target)) {
+        if (senderEqual(sender, target)) {
             sender.sendMessage(Message.SUCCESS_SKIN_CHANGE);
         } else {
             sender.sendMessage(Message.SUCCESS_SKIN_CHANGE_OTHER, Placeholder.unparsed("name", target.getName()));
@@ -297,8 +297,8 @@ public final class SkinCommand {
     }
 
     private void setCoolDown(SRCommandSender sender, Property<Integer> time) {
-        if (sender instanceof SRPlayer) {
-            UUID senderUUID = ((SRPlayer) sender).getUniqueId();
+        if (sender instanceof SRPlayer player) {
+            UUID senderUUID = player.getUniqueId();
             cooldownStorage.setCooldown(senderUUID, settings.getProperty(time), TimeUnit.SECONDS);
         }
     }
@@ -342,19 +342,13 @@ public final class SkinCommand {
         return true;
     }
 
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    private boolean playerEqual(SRCommandSender sender, SRPlayer player) {
-        return sender instanceof SRPlayer && ((SRPlayer) sender).getUniqueId().equals(player.getUniqueId());
-    }
-
-    private boolean senderEqual(SRCommandSender sender, SRCommandSender target) {
-        boolean senderIsPlayer = sender instanceof SRPlayer;
-        boolean targetIsPlayer = target instanceof SRPlayer;
-
-        if (senderIsPlayer && targetIsPlayer) {
-            return ((SRPlayer) sender).getUniqueId().equals(((SRPlayer) target).getUniqueId());
+    private boolean senderEqual(SRCommandSender sender, SRCommandSender other) {
+        if (sender instanceof SRPlayer player && other instanceof SRPlayer otherPlayer) {
+            // Player == Player
+            return player.getUniqueId().equals(otherPlayer.getUniqueId());
         } else {
-            return !senderIsPlayer && !targetIsPlayer; // Console == Console
+            // Console == Console
+            return !(sender instanceof SRPlayer) && !(other instanceof SRPlayer);
         }
     }
 }

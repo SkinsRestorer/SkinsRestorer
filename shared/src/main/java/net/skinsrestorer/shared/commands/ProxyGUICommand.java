@@ -40,12 +40,12 @@ public final class ProxyGUICommand {
 
     @RootCommand
     private void onDefault(SRPlayer player) {
-        if (!(player instanceof SRProxyPlayer)) {
+        if (!(player instanceof SRProxyPlayer proxyPlayer)) {
             throw new IllegalStateException("Player is not a proxy player");
         }
 
         player.sendMessage(Message.SKINSMENU_OPEN);
 
-        proxyPlugin.sendPage(0, (SRProxyPlayer) player, skinStorage);
+        proxyPlugin.sendPage(0, proxyPlayer, skinStorage);
     }
 }

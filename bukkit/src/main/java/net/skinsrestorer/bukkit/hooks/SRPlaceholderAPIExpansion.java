@@ -160,11 +160,11 @@ public class SRPlaceholderAPIExpansion extends PlaceholderExpansion {
         return PropertyUtils.getSkinTextureUrlStripped(property);
     }
 
-    private Optional<SkinProperty> getCurrentProperties(OfflinePlayer player) throws DataRequestException {
-        if (player instanceof Player) {
-            return injector.getSingleton(SkinApplyBukkitAdapter.class).getSkinProperty((Player) player);
+    private Optional<SkinProperty> getCurrentProperties(OfflinePlayer offlinePlayer) throws DataRequestException {
+        if (offlinePlayer instanceof Player player) {
+            return injector.getSingleton(SkinApplyBukkitAdapter.class).getSkinProperty(player);
         } else {
-            return api.getPlayerStorage().getSkinForPlayer(player.getUniqueId(), player.getName());
+            return api.getPlayerStorage().getSkinForPlayer(offlinePlayer.getUniqueId(), offlinePlayer.getName());
         }
     }
 }

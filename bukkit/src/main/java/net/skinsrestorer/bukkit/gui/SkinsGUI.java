@@ -52,7 +52,7 @@ public class SkinsGUI implements GUIManager<Inventory> {
     private final Server server;
     private final WrapperBukkit wrapper;
 
-    private static ItemStack createSkull(SRLogger log, SkinsRestorerLocale locale, SRForeign player, String name, String property) {
+    private ItemStack createSkull(SRForeign player, String name, String property) {
         ItemStack itemStack = XMaterial.PLAYER_HEAD.parseItem();
 
         if (itemStack == null) {
@@ -75,7 +75,7 @@ public class SkinsGUI implements GUIManager<Inventory> {
         return itemStack;
     }
 
-    private static ItemStack createGlass(GlassType type, SRForeign player, SkinsRestorerLocale locale) {
+    private ItemStack createGlass(GlassType type, SRForeign player) {
         ItemStack itemStack = type.getMaterial().parseItem();
 
         if (itemStack == null) {
@@ -103,10 +103,10 @@ public class SkinsGUI implements GUIManager<Inventory> {
                         Placeholder.unparsed("page_number", String.valueOf(page + 1)))));
         instance.setInventory(inventory);
 
-        ItemStack none = createGlass(GlassType.NONE, player, locale);
-        ItemStack delete = createGlass(GlassType.DELETE, player, locale);
-        ItemStack prev = createGlass(GlassType.PREV, player, locale);
-        ItemStack next = createGlass(GlassType.NEXT, player, locale);
+        ItemStack none = createGlass(GlassType.NONE, player);
+        ItemStack delete = createGlass(GlassType.DELETE, player);
+        ItemStack prev = createGlass(GlassType.PREV, player);
+        ItemStack next = createGlass(GlassType.NEXT, player);
 
         int skinCount = 0;
         for (Map.Entry<String, String> entry : skinsList.entrySet()) {
@@ -115,7 +115,7 @@ public class SkinsGUI implements GUIManager<Inventory> {
                 break;
             }
 
-            inventory.addItem(createSkull(logger, locale, player, entry.getKey(), entry.getValue()));
+            inventory.addItem(createSkull(player, entry.getKey(), entry.getValue()));
             skinCount++;
         }
 
