@@ -67,8 +67,8 @@ public class ComponentHelper {
 
     public static void sendException(Throwable t, SRCommandSender sender, SkinsRestorerLocale locale, SRLogger logger) {
         Optional<ComponentString> message;
-        if (t instanceof TranslatableException) {
-            message = ((TranslatableException) t).getMessageOptional(sender, locale);
+        if (t instanceof TranslatableException exception) {
+            message = exception.getMessageOptional(sender, locale);
         } else {
             logger.warning("An unexpected error occurred while executing a command", t);
 

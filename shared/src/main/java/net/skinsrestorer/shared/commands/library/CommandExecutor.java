@@ -42,8 +42,8 @@ public class CommandExecutor<T> {
     }
 
     public CompletableFuture<List<String>> tabComplete(SRCommandSender executor, String input) {
-        if (executor instanceof SRPlayer) {
-            logger.debug(String.format("Tab completing: '%s' for '%s'", input, ((SRPlayer) executor).getName()));
+        if (executor instanceof SRPlayer player) {
+            logger.debug(String.format("Tab completing: '%s' for '%s'", input, player.getName()));
         } else {
             logger.debug(String.format("Tab completing: '%s' for console", input));
         }

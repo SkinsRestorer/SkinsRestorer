@@ -83,10 +83,10 @@ public class RecursiveCustomMerger {
             Map<String, ArgumentCommandNode<T, ?>> arguments = (Map<String, ArgumentCommandNode<T, ?>>) argumentsField.get(base);
 
             children.put(other.getName(), other);
-            if (other instanceof LiteralCommandNode) {
-                literals.put(other.getName(), (LiteralCommandNode<T>) other);
-            } else if (other instanceof ArgumentCommandNode) {
-                arguments.put(other.getName(), (ArgumentCommandNode<T, ?>) other);
+            if (other instanceof LiteralCommandNode<T> literalCommandNode) {
+                literals.put(other.getName(), literalCommandNode);
+            } else if (other instanceof ArgumentCommandNode<T, ?> argumentCommandNode) {
+                arguments.put(other.getName(), argumentCommandNode);
             }
         }
     }

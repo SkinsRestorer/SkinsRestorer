@@ -56,8 +56,8 @@ public class BrigadierCommand implements CommandWrapper {
 
                 Object value = context.getArgument(parameter.getName(), parameter.getType());
 
-                if (value instanceof String) {
-                    value = handleStringArgument(context.getSource(), (String) value);
+                if (value instanceof String string) {
+                    value = handleStringArgument(context.getSource(), string);
                 }
 
                 parameters[i] = value;

@@ -158,7 +158,7 @@ public class SRPlugin {
         CooldownStorage cooldownStorage = injector.getSingleton(CooldownStorage.class);
 
         manager.registerCondition("allowed-server", sender -> {
-            if (!(sender instanceof SRProxyPlayer)) {
+            if (!(sender instanceof SRProxyPlayer proxyPlayer)) {
                 return true;
             }
 
@@ -166,7 +166,7 @@ public class SRPlugin {
                 return true;
             }
 
-            Optional<String> optional = ((SRProxyPlayer) sender).getCurrentServer();
+            Optional<String> optional = proxyPlayer.getCurrentServer();
             if (optional.isEmpty()) {
                 if (!settings.getProperty(ProxyConfig.NOT_ALLOWED_COMMAND_SERVERS_IF_NONE_BLOCK_COMMAND)) {
                     sender.sendMessage(Message.NOT_CONNECTED_TO_SERVER);
@@ -189,8 +189,8 @@ public class SRPlugin {
         });
 
         manager.registerCondition("cooldown", sender -> {
-            if (sender instanceof SRPlayer) {
-                UUID senderUUID = ((SRPlayer) sender).getUniqueId();
+            if (sender instanceof SRPlayer player) {
+                UUID senderUUID = player.getUniqueId();
                 if (!sender.hasPermission(PermissionRegistry.BYPASS_COOLDOWN) && cooldownStorage.hasCooldown(senderUUID)) {
                     sender.sendMessage(Message.SKIN_COOLDOWN, Placeholder.unparsed("time", String.valueOf(cooldownStorage.getCooldownSeconds(senderUUID))));
 

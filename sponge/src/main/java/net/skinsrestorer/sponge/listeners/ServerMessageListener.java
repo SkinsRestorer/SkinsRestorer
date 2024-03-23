@@ -36,11 +36,11 @@ public class ServerMessageListener implements RawPlayDataHandler<EngineConnectio
 
     @Override
     public void handlePayload(ChannelBuf data, EngineConnection connection) {
-        if (!(connection instanceof ServerPlayerConnection)) {
+        if (!(connection instanceof ServerPlayerConnection serverPlayerConnection)) {
             return;
         }
 
-        adapter.handlePluginMessage(wrap(data, (ServerPlayerConnection) connection));
+        adapter.handlePluginMessage(wrap(data, serverPlayerConnection));
     }
 
     private SRServerMessageEvent wrap(ChannelBuf data, ServerPlayerConnection player) {

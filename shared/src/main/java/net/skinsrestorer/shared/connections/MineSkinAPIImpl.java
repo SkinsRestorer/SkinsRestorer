@@ -97,10 +97,10 @@ public class MineSkinAPIImpl implements MineSkinAPI {
 
                 retryAttempts.incrementAndGet();
             } catch (CompletionException e) {
-                if (e.getCause() instanceof DataRequestException) {
-                    throw new DataRequestExceptionShared(e.getCause());
-                } else if (e.getCause() instanceof MineSkinException) {
-                    throw new MineSkinExceptionShared((MineSkinException) e.getCause());
+                if (e.getCause() instanceof DataRequestException dataRequestException) {
+                    throw new DataRequestExceptionShared(dataRequestException);
+                } else if (e.getCause() instanceof MineSkinException mineSkinException) {
+                    throw new MineSkinExceptionShared(mineSkinException);
                 } else {
                     throw new RuntimeException(e);
                 }

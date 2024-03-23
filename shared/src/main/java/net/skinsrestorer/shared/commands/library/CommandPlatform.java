@@ -34,8 +34,8 @@ public interface CommandPlatform<T> {
     Class<T> getPlatformSenderClass();
 
     default SRCommandSender detectAndConvertSender(Object sender) {
-        if (sender instanceof SRCommandSender) {
-            return (SRCommandSender) sender;
+        if (sender instanceof SRCommandSender commandSender) {
+            return commandSender;
         } else {
             return convertPlatformSender(getPlatformSenderClass().cast(sender));
         }

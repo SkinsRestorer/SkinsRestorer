@@ -46,10 +46,10 @@ public class SRBootstrapper {
 
             SRPlatformAdapter<?, ?> adapter = injector.getSingleton(adapterClass);
             injector.register(SRPlatformAdapter.class, adapter);
-            if (adapter instanceof SRServerAdapter) {
-                injector.register(SRServerAdapter.class, (SRServerAdapter<?, ?>) adapter);
-            } else if (adapter instanceof SRProxyAdapter) {
-                injector.register(SRProxyAdapter.class, (SRProxyAdapter<?, ?>) adapter);
+            if (adapter instanceof SRServerAdapter<?, ?> serverAdapter) {
+                injector.register(SRServerAdapter.class, serverAdapter);
+            } else if (adapter instanceof SRProxyAdapter<?, ?> proxyAdapter) {
+                injector.register(SRProxyAdapter.class, proxyAdapter);
             }
 
             srPlugin = new SRPlugin(injector, dataFolder);

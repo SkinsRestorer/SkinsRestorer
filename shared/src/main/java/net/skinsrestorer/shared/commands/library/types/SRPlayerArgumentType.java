@@ -42,13 +42,13 @@ public class SRPlayerArgumentType implements ArgumentType<SRPlayer> {
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
         for (SRPlayer player : platform.getOnlinePlayers()) {
-            if (player.getName().toLowerCase(Locale.ROOT).startsWith(builder.getRemaining().toLowerCase(Locale.ROOT))) {
-                if (context.getSource() instanceof SRPlayer && !((SRPlayer) context.getSource()).canSee(player)) {
-                    continue;
-                }
-
-                builder.suggest(player.getName());
+            if (!player.getName().toLowerCase(Locale.ROOT).startsWith(builder.getRemaining().toLowerCase(Locale.ROOT))) {
+                continue;
+            } else if (context.getSource() instanceof SRPlayer sourcePlayer && !sourcePlayer.canSee(player)) {
+                continue;
             }
+
+            builder.suggest(player.getName());
         }
         return builder.buildFuture();
     }
