@@ -1,5 +1,5 @@
 {
-  "skinsrestorer.help_skin": "Mengubah skin-mu sendiri.",
+  "skinsrestorer.help_skin": "Mengubah skin milikmu.",
   "skinsrestorer.help_skins": "Membuka GUI skin.",
   "skinsrestorer.help_sr": "Perintah admin untuk SkinsRestorer.",
   "skinsrestorer.help_skin_set": "Mengubah skin-mu.",
@@ -61,6 +61,7 @@
   "skinsrestorer.admincommand_info_hardcoded_skin": "<gray>Skin yang Dikodekan: <gold><skin>",
   "skinsrestorer.admincommand_info_custom_skin": "<gray>Skin Kustom: <gold><skin>",
   "skinsrestorer.admincommand_info_player_skin": "<gray>Skin Pemain: <gold><skin>",
+  "skinsrestorer.admincommand_info_generic": "<gray>URL Tekstur: <gold><url><newline><gray>Varian: <gold><variant><newline><gray>UUID Profil: <gold><uuid><newline>Nama Profil: <gold><name><newline><gray>Permintaan waktu: <gold><time>",
   "skinsrestorer.admincommand_setskinall_not_found": "<dark_red>Tidak ada skin ditemukan di database",
   "skinsrestorer.admincommand_setskinall_success": "<green>Berhasil mengatur skin semua pemain yang online ke <skin>",
   "skinsrestorer.admincommand_applyskinall_player_error": "<red>Gagal menerapkan skin ke <player>!",
@@ -111,6 +112,7 @@
   "skinsrestorer.permission_admincommand_reload": "Memungkinkan akses ke \"/sr reload\".",
   "skinsrestorer.permission_admincommand_status": "Memungkinkan akses ke \"/sr status\".",
   "skinsrestorer.permission_admincommand_drop": "Memungkinkan akses untuk menghapus sebuah file .SKIN .",
+  "skinsrestorer.permission_admincommand_info": "Mengizinkan akses untuk mengambil informasi skin dari pemain atau skin.",
   "skinsrestorer.permission_admincommand_applyskin": "Memungkinkan akses untuk menerapkan kembali skin pemain lain.",
   "skinsrestorer.permission_admincommand_createcustom": "Memungkinkan akses untuk membuat skin global kustom dengan URL.",
   "skinsrestorer.permission_admincommand_applyskinall": "Memungkinkan akses untuk menerapkan skin ke semua pemain.",
