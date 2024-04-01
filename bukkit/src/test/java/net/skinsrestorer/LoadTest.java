@@ -102,7 +102,7 @@ public class LoadTest {
                         try {
                             runnable.run();
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            throw new RuntimeException(e);
                         }
                     },
                     injector -> {
@@ -124,8 +124,7 @@ public class LoadTest {
                 try {
                     runQueue.poll().run();
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    throw e;
+                    throw new RuntimeException(e);
                 }
             }
         }

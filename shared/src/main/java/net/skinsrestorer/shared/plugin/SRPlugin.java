@@ -382,7 +382,7 @@ public class SRPlugin {
         metrics.addCustomChart(new SimplePie("proxy_mode", metricsCounter::isProxyMode));
     }
 
-    public void startup(Class<? extends SRPlatformInit> initClass) throws InitializeException {
+    public void startup(Class<? extends SRPlatformInit> initClass) throws Exception {
         SRServerPlugin serverPlugin = injector.getIfAvailable(SRServerPlugin.class);
         SRProxyPlugin proxyPlugin = injector.getIfAvailable(SRProxyPlugin.class);
 
@@ -400,12 +400,8 @@ public class SRPlugin {
             serverPlugin.checkProxyMode();
         }
 
-        try {
-            moveOldFiles();
-            loadLocales();
-        } catch (IOException e) {
-            throw new InitializeException(e);
-        }
+        moveOldFiles();
+        loadLocales();
 
         // Instantiate API classes and assign them to their interfaces
         injector.register(MineSkinAPI.class, injector.getSingleton(MineSkinAPIImpl.class));

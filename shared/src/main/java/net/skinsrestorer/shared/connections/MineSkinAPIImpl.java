@@ -37,7 +37,6 @@ import net.skinsrestorer.shared.exception.MineSkinExceptionShared;
 import net.skinsrestorer.shared.log.SRLogLevel;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.subjects.messages.Message;
-import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import org.jetbrains.annotations.Nullable;
 
@@ -68,7 +67,6 @@ public class MineSkinAPIImpl implements MineSkinAPI {
     private final SRLogger logger;
     private final MetricsCounter metricsCounter;
     private final SettingsManager settings;
-    private final SkinsRestorerLocale locale;
     private final HttpClient httpClient;
 
     @Override
@@ -188,7 +186,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
     }
 
     private HttpResponse queryURL(String query) throws IOException {
-        for (int i = 0; true; i++) { // try 3 times, if server not responding
+        for (int i = 0; true; i++) { // try 3 times if server not responding
             try {
                 metricsCounter.increment(MetricsCounter.Service.MINE_SKIN);
 
@@ -209,7 +207,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                 );
             } catch (IOException e) {
                 if (i >= 2) {
-                    throw e;
+                    throw new IOException(e);
                 }
             }
         }

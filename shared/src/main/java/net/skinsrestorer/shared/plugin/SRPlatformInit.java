@@ -17,13 +17,11 @@
  */
 package net.skinsrestorer.shared.plugin;
 
-import net.skinsrestorer.shared.exception.InitializeException;
-
 public interface SRPlatformInit {
     default void checkPluginSupport() {
     }
 
-    void initSkinApplier() throws InitializeException;
+    void initSkinApplier();
 
     void initLoginProfileListener();
 

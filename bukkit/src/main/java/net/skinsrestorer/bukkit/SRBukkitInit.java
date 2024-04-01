@@ -79,17 +79,17 @@ public class SRBukkitInit implements SRServerPlatformInit {
     private final SettingsManager settingsManager;
 
     @Override
-    public void initSkinApplier() throws InitializeException {
+    public void initSkinApplier() {
         injector.register(SkinApplyBukkitAdapter.class, selectSkinApplyAdapter());
 
         try {
             injector.register(SkinRefresher.class, detectRefresh());
         } catch (NoMappingException e) {
             logger.severe("Your Minecraft version is not supported by this version of SkinsRestorer! Is there a newer version available? If not, join our discord server!", e);
-            throw e;
+            throw new IllegalStateException(e);
         } catch (InitializeException e) {
-            logger.severe(SRChatColor.RED + SRChatColor.UNDERLINE.toString() + "Could not initialize SkinApplier! Please report this on our discord server!");
-            throw e;
+            logger.severe(SRChatColor.RED + SRChatColor.UNDERLINE.toString() + "Could not initialize SkinApplier! Please report this on our discord server!", e);
+            throw new IllegalStateException(e);
         }
 
         plugin.registerSkinApplier(injector.getSingleton(SkinApplierBukkit.class), Player.class, wrapper::player);
@@ -112,11 +112,9 @@ public class SRBukkitInit implements SRServerPlatformInit {
         }
     }
 
-    private SkinRefresher detectRefresh() throws InitializeException {
+    private SkinRefresher detectRefresh() throws InitializeException, NoMappingException {
         if (SRPlugin.isUnitTest()) {
-            // NO-OP in unit tests
-            return player -> {
-            };
+            return SkinRefresher.NO_OP;
         }
 
         if (isPaper()) {
@@ -133,8 +131,6 @@ public class SRBukkitInit implements SRServerPlatformInit {
             try {
                 logger.debug("Using PaperSkinRefresher");
                 return new PaperSkinRefresher();
-            } catch (NoMappingException e) {
-                throw e;
             } catch (InitializeException e) {
                 logger.severe("PaperSkinRefresher failed! (Are you using hybrid software?) Only limited support can be provided. Falling back to SpigotSkinRefresher.");
             }
@@ -143,7 +139,7 @@ public class SRBukkitInit implements SRServerPlatformInit {
         return selectSpigotRefresher(server);
     }
 
-    private SkinRefresher selectSpigotRefresher(Server server) throws InitializeException {
+    private SkinRefresher selectSpigotRefresher(Server server) throws InitializeException, NoMappingException {
         // Wait to run task in order for ViaVersion to determine server protocol
         boolean viaWorkaround = adapter.isPluginEnabled("ViaBackwards")
                 && ViaWorkaround.isProtocolNewer();

@@ -24,13 +24,9 @@ import java.io.Serial;
  */
 public class InitializeException extends Exception {
     @Serial
-    private static final long serialVersionUID = 7174618370827939357L;
+    private static final long serialVersionUID = 1L;
 
     public InitializeException(Exception e) {
         super(e);
-    }
-
-    public InitializeException(String m) {
-        super(m);
     }
 }
