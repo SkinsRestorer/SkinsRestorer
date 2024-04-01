@@ -13,7 +13,6 @@
   "skinsrestorer.help_sr_reload": "重新載入設定檔案。",
   "skinsrestorer.help_sr_status": "檢查需要的挿件API服務。",
   "skinsrestorer.help_sr_drop": "從資料庫中删除玩家或皮膚數據。",
-  "skinsrestorer.help_sr_props": "顯示玩家當前的皮膚内容。",
   "skinsrestorer.help_sr_apply_skin": "為指定玩家重新套用皮膚。",
   "skinsrestorer.help_sr_create_custom": "建立一個伺服器範圍的自訂皮膚。",
   "skinsrestorer.help_sr_set_skin_all": "將每個玩家的皮膚設定為一個皮膚。",

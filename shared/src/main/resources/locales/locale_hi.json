@@ -12,7 +12,6 @@
   "skinsrestorer.help_sr_reload": "Configuration file को reload करें।",
   "skinsrestorer.help_sr_status": "आवश्यक प्लगिन API सर्विसेस चेक करें।",
   "skinsrestorer.help_sr_drop": "डेटाबेस से प्लेयर या स्किन डाटा को हटाए।",
-  "skinsrestorer.help_sr_props": "दूसरे प्लेयर की स्किन के बारे में जाने।",
   "skinsrestorer.help_sr_apply_skin": "चुने हुए प्लेयर पे पुनः स्किन लगाए।",
   "skinsrestorer.help_sr_create_custom": "पूरे सर्वर के लिए मन मुताबिक स्किन बनाए।",
   "skinsrestorer.help_sr_set_skin_all": "सभी प्लेयर पे एक ही स्किन लगाए।",

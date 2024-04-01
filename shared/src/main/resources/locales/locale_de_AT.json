@@ -13,7 +13,6 @@
   "skinsrestorer.help_sr_reload": "Lädt die Konfigurations-Datei neu.",
   "skinsrestorer.help_sr_status": "Prüft die benötigten Plugin-API-Dienste.",
   "skinsrestorer.help_sr_drop": "Entfernt Spieler- oder Skin-Daten aus der Datenbank.",
-  "skinsrestorer.help_sr_props": "Zeigt die aktuellen Skin-Eigenschaften des Spielers an.",
   "skinsrestorer.help_sr_apply_skin": "Lege den Skin für einen Spieler deiner Wahl erneut an.",
   "skinsrestorer.help_sr_create_custom": "Erstelle einen benutzerdefinierten Server-weiten Skin.",
   "skinsrestorer.help_sr_set_skin_all": "Setze den Skin von jedem Spieler zu einem einzigen Skin.",
