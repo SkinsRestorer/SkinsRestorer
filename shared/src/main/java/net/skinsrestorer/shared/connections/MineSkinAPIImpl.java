@@ -51,19 +51,16 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class MineSkinAPIImpl implements MineSkinAPI {
+    private static final int MAX_RETRIES = 5;
     private static final URI MINESKIN_ENDPOINT = URI.create("https://api.mineskin.org/generate/url/");
     private static final String NAMEMC_SKIN_URL = "https://namemc.com/skin/";
     private static final String NAMEMC_IMG_URL = "https://s.namemc.com/i/%s.png";
-    private final ExecutorService executorService = Executors.newSingleThreadExecutor((Runnable r) -> {
-        Thread t = new Thread(r);
-        t.setName("SkinsRestorer-MineSkinAPI");
-        return t;
-    });
+    private final ReentrantLock lock = new ReentrantLock();
     private final SRLogger logger;
     private final MetricsCounter metricsCounter;
     private final SettingsManager settings;
@@ -71,39 +68,27 @@ public class MineSkinAPIImpl implements MineSkinAPI {
 
     @Override
     public MineSkinResponse genSkin(String imageUrl, @Nullable SkinVariant skinVariant) throws DataRequestException, MineSkinException {
-        String resultUrl = imageUrl.startsWith(NAMEMC_SKIN_URL) ? NAMEMC_IMG_URL.replace("%s", imageUrl.substring(24)) : imageUrl; // Fix NameMC skins
-        AtomicInteger retryAttempts = new AtomicInteger(0);
+        String resultUrl = imageUrl.startsWith(NAMEMC_SKIN_URL) ? NAMEMC_IMG_URL
+                .replace("%s", imageUrl.substring(NAMEMC_SKIN_URL.length())) : imageUrl; // Fix NameMC skins
 
+        int retryAttempts = 0;
         do {
+            lock.lock();
             try {
-                Optional<MineSkinResponse> optional = CompletableFuture.supplyAsync(() -> {
-                    try {
-                        return genSkinInternal(resultUrl, skinVariant);
-                    } catch (DataRequestException | MineSkinException e) {
-                        throw new CompletionException(e);
-                    } catch (IOException e) {
-                        logger.debug(SRLogLevel.WARNING, "[ERROR] MineSkin Failed! IOException (connection/disk): (" + resultUrl + ")", e);
-                        throw new CompletionException(new DataRequestExceptionShared(e));
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                }, executorService).join();
+                Optional<MineSkinResponse> optional = genSkinInternal(resultUrl, skinVariant);
 
                 if (optional.isPresent()) {
                     return optional.get();
                 }
-
-                retryAttempts.incrementAndGet();
-            } catch (CompletionException e) {
-                if (e.getCause() instanceof DataRequestException dataRequestException) {
-                    throw new DataRequestExceptionShared(dataRequestException);
-                } else if (e.getCause() instanceof MineSkinException mineSkinException) {
-                    throw new MineSkinExceptionShared(mineSkinException);
-                } else {
-                    throw new RuntimeException(e);
-                }
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                logger.debug(SRLogLevel.WARNING, "[ERROR] MineSkin Failed! IOException (connection/disk): (" + resultUrl + ")", e);
+                throw new DataRequestExceptionShared(e);
+            } finally {
+                lock.unlock();
             }
-        } while (retryAttempts.get() < 5);
+        } while (++retryAttempts < MAX_RETRIES);
 
         throw new MineSkinExceptionShared(Message.ERROR_MS_API_FAILED);
     }
