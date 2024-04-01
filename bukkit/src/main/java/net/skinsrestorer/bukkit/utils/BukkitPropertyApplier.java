@@ -19,14 +19,20 @@ package net.skinsrestorer.bukkit.utils;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.shared.log.SRLogger;
 import org.bukkit.entity.Player;
 
+import javax.inject.Inject;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Optional;
 
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class BukkitPropertyApplier implements SkinApplyBukkitAdapter {
+    private final SRLogger logger;
+
     @Override
     public void applyProperty(Player player, SkinProperty property) {
         try {
@@ -34,7 +40,7 @@ public class BukkitPropertyApplier implements SkinApplyBukkitAdapter {
             profile.getProperties().removeAll(SkinProperty.TEXTURES_NAME);
             profile.getProperties().put(SkinProperty.TEXTURES_NAME, new Property(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
         } catch (ReflectiveOperationException e) {
-            e.printStackTrace();
+            logger.severe("Failed to apply skin property to player " + player.getName(), e);
         }
     }
 
@@ -49,7 +55,7 @@ public class BukkitPropertyApplier implements SkinApplyBukkitAdapter {
                     .map(this::convertToSRProperty)
                     .findFirst();
         } catch (ReflectiveOperationException e) {
-            e.printStackTrace();
+            logger.severe("Failed to get skin property from player " + player.getName(), e);
             return Optional.empty();
         }
     }

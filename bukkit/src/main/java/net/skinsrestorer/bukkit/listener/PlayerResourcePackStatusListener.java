@@ -29,7 +29,7 @@ import org.bukkit.event.player.PlayerResourcePackStatusEvent;
 import javax.inject.Inject;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class PlayerResourcePackStatus implements Listener {
+public class PlayerResourcePackStatusListener implements Listener {
     private final SettingsManager settings;
     private final LoginProfileListenerAdapter<Void> adapter;
     private final EventWrapper eventWrapper;
@@ -40,7 +40,7 @@ public class PlayerResourcePackStatus implements Listener {
             return;
         }
 
-        PlayerJoin.setResourcePack(true);
+        PlayerJoinListener.setResourcePack(true);
 
         adapter.handleLogin(eventWrapper.wrap(event));
     }

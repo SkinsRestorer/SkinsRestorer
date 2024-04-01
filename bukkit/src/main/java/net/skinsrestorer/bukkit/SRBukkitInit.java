@@ -26,8 +26,8 @@ import net.skinsrestorer.bukkit.command.SRBukkitCommand;
 import net.skinsrestorer.bukkit.command.SRHelpTopic;
 import net.skinsrestorer.bukkit.hooks.SRPlaceholderAPIExpansion;
 import net.skinsrestorer.bukkit.listener.InventoryListener;
-import net.skinsrestorer.bukkit.listener.PlayerJoin;
-import net.skinsrestorer.bukkit.listener.PlayerResourcePackStatus;
+import net.skinsrestorer.bukkit.listener.PlayerJoinListener;
+import net.skinsrestorer.bukkit.listener.PlayerResourcePackStatusListener;
 import net.skinsrestorer.bukkit.listener.ServerMessageListener;
 import net.skinsrestorer.bukkit.paper.PaperPlayerJoinEvent;
 import net.skinsrestorer.bukkit.refresher.*;
@@ -105,10 +105,10 @@ public class SRBukkitInit implements SRServerPlatformInit {
     private SkinApplyBukkitAdapter selectSkinApplyAdapter() {
         if (ReflectionUtil.classExists("com.mojang.authlib.GameProfile")) {
             logger.debug("Using BukkitPropertyApplier");
-            return new BukkitPropertyApplier();
+            return injector.getSingleton(BukkitPropertyApplier.class);
         } else {
             logger.debug("Using BukkitLegacyPropertyApplier");
-            return new BukkitLegacyPropertyApplier();
+            return injector.getSingleton(BukkitLegacyPropertyApplier.class);
         }
     }
 
@@ -189,10 +189,10 @@ public class SRBukkitInit implements SRServerPlatformInit {
             logger.info("Using paper join listener!");
             server.getPluginManager().registerEvents(injector.newInstance(PaperPlayerJoinEvent.class), adapter.getPluginInstance());
         } else {
-            server.getPluginManager().registerEvents(injector.newInstance(PlayerJoin.class), adapter.getPluginInstance());
+            server.getPluginManager().registerEvents(injector.newInstance(PlayerJoinListener.class), adapter.getPluginInstance());
 
             if (ReflectionUtil.classExists("org.bukkit.event.player.PlayerResourcePackStatusEvent")) {
-                server.getPluginManager().registerEvents(injector.newInstance(PlayerResourcePackStatus.class), adapter.getPluginInstance());
+                server.getPluginManager().registerEvents(injector.newInstance(PlayerResourcePackStatusListener.class), adapter.getPluginInstance());
             }
         }
     }

@@ -30,7 +30,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import javax.inject.Inject;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class PlayerJoin implements Listener {
+public class PlayerJoinListener implements Listener {
     @Setter
     private static boolean resourcePack;
     private final SettingsManager settings;
