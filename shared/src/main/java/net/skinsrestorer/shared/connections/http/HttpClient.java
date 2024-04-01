@@ -127,9 +127,7 @@ public class HttpClient {
     @Getter
     @RequiredArgsConstructor
     public enum HttpType {
-        JSON("application/json"),
-        TEXT("text/plain"),
-        FORM("application/x-www-form-urlencoded");
+        JSON("application/json");
 
         private final String contentType;
     }
