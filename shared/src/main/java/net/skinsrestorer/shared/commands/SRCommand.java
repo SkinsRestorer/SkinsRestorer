@@ -68,7 +68,6 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -132,27 +131,32 @@ public final class SRCommand {
         sender.sendMessage(breakLine);
 
         ServiceCheckerService.ServiceCheckResponse response = serviceCheckerService.checkServices();
-        List<String> results = response.getResults();
-
-        int workingUUIDCount = response.getWorkingUUID();
-        int workingProfileCount = response.getWorkingProfile();
-
-        // only print per API results if in a not working state
-        if (settings.getProperty(DevConfig.DEBUG) || workingUUIDCount == 0 || workingProfileCount == 0) {
-            for (String result : results) {
-                if (settings.getProperty(DevConfig.DEBUG) || result.contains("✘")) {
-                    sender.sendMessage(ComponentHelper.parseMiniMessageToJsonString(result));
-                }
+        for (ServiceCheckerService.ServiceCheckResponse.ServiceCheckMessage message : response.getResults()) {
+            if (!message.success() || settings.getProperty(DevConfig.DEBUG)) {
+                sender.sendMessage(ComponentHelper.parseMiniMessageToJsonString(message.message()));
             }
         }
 
-        sender.sendMessage(Message.ADMINCOMMAND_STATUS_WORKING_COUNT, Placeholder.unparsed("count", String.valueOf(workingUUIDCount)));
-        sender.sendMessage(Message.ADMINCOMMAND_STATUS_WORKING_COUNT, Placeholder.unparsed("count", String.valueOf(workingProfileCount)));
+        sender.sendMessage(Message.ADMINCOMMAND_STATUS_UUID_API,
+                Placeholder.unparsed("count", String.valueOf(response.getSuccessCount(ServiceCheckerService.ServiceCheckResponse.ServiceCheckType.UUID))),
+                Placeholder.unparsed("total", String.valueOf(response.getTotalCount(ServiceCheckerService.ServiceCheckResponse.ServiceCheckType.UUID)))
+        );
+        sender.sendMessage(Message.ADMINCOMMAND_STATUS_PROFILE_API,
+                Placeholder.unparsed("count", String.valueOf(response.getSuccessCount(ServiceCheckerService.ServiceCheckResponse.ServiceCheckType.PROFILE))),
+                Placeholder.unparsed("total", String.valueOf(response.getTotalCount(ServiceCheckerService.ServiceCheckResponse.ServiceCheckType.PROFILE))
+        ));
 
-        if (workingUUIDCount != 0 && workingProfileCount != 0) {
+        if (response.allFullySuccessful()) {
+            // There were no unavailable services
             sender.sendMessage(Message.ADMINCOMMAND_STATUS_WORKING);
-        } else {
+        } else if (response.minOneServiceUnavailable()) {
+            // At least one service was fully unavailable
             sender.sendMessage(Message.ADMINCOMMAND_STATUS_BROKEN);
+            sender.sendMessage(Message.ADMINCOMMAND_STATUS_FIREWALL);
+        } else {
+            // No services are unavailable, but some APIs are not working
+            sender.sendMessage(Message.ADMINCOMMAND_STATUS_DEGRADED);
+            sender.sendMessage(Message.ADMINCOMMAND_STATUS_FIREWALL);
         }
 
         sender.sendMessage(breakLine);
@@ -165,7 +169,6 @@ public final class SRCommand {
         }
 
         sender.sendMessage(Message.ADMINCOMMAND_STATUS_SUMMARY_COMMIT, Placeholder.unparsed("hash", BuildData.COMMIT_SHORT));
-        sender.sendMessage(Message.ADMINCOMMAND_STATUS_SUMMARY_FINISHED);
         sender.sendMessage(breakLine);
     }
 

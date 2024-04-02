@@ -457,8 +457,7 @@ public class SRPlugin {
 
     private void runServiceCheck() {
         ServiceCheckerService.ServiceCheckResponse response = injector.getSingleton(ServiceCheckerService.class).checkServices();
-
-        if (response.getWorkingUUID() == 0 || response.getWorkingProfile() == 0) {
+        if (response.minOneServiceUnavailable()) {
             logger.info("§c[§4Critical§c] ------------------[§2SkinsRestorer §cis §c§l§nOFFLINE§r§c] -------------------------");
             logger.info("§c[§4Critical§c] §cPlugin currently can't fetch new skins due to blocked connection!");
             logger.info("§c[§4Critical§c] §cSee https://skinsrestorer.net/firewall for steps to resolve your issue!");

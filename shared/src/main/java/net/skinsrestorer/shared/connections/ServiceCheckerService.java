@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.property.MojangSkinDataResult;
 import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.utils.SRHelpers;
 
 import javax.inject.Inject;
@@ -40,6 +41,7 @@ public class ServiceCheckerService {
     private static final String UUID_MESSAGE = "%s <green>✔ %s UUID: <aqua>%s";
     private static final String PROFILE_MESSAGE = "%s <green>✔ %s Profile: <aqua>%s";
     private final MojangAPIImpl mojangAPI;
+    private final SRLogger logger;
 
     public ServiceCheckResponse checkServices() {
         ServiceCheckResponse response = new ServiceCheckResponse();
@@ -52,11 +54,13 @@ public class ServiceCheckerService {
         try {
             Optional<MojangSkinDataResult> uuidAshcon = mojangAPI.getDataAshcon(selectedUsername);
             if (uuidAshcon.isPresent()) {
-                response.addResult(String.format(PROFILE_MESSAGE, "Ashcon", selectedUsername, uuidAshcon.get().getUniqueId()));
-                response.incrementWorkingUUID();
-            } else response.addResult(String.format(MESSAGE_ERROR, "Ashcon", "UUID"));
+                response.addResult(String.format(PROFILE_MESSAGE, "Ashcon", selectedUsername, uuidAshcon.get().getUniqueId()), true, ServiceCheckResponse.ServiceCheckType.UUID);
+            } else {
+                response.addResult(String.format(MESSAGE_ERROR, "Ashcon", "UUID"), false, ServiceCheckResponse.ServiceCheckType.UUID);
+            }
         } catch (DataRequestException e) {
-            response.addResult(String.format(MESSAGE_ERROR_EXCEPTION, "Ashcon", "UUID", e.getMessage()));
+            logger.severe("Error getting Ashcon UUID", e);
+            response.addResult(String.format(MESSAGE_ERROR_EXCEPTION, "Ashcon", "UUID", e.getMessage()), false, ServiceCheckResponse.ServiceCheckType.UUID);
         }
 
         // ##### UUID requests #####
@@ -64,73 +68,103 @@ public class ServiceCheckerService {
             Optional<UUID> uuid = mojangAPI.getUUIDMojang(selectedUsername);
 
             if (uuid.isPresent()) {
-                response.addResult(String.format(UUID_MESSAGE, "Mojang", selectedUsername, uuid.get()));
-                response.incrementWorkingUUID();
-            } else response.addResult(String.format(MESSAGE_ERROR, "Mojang", "UUID"));
+                response.addResult(String.format(UUID_MESSAGE, "Mojang", selectedUsername, uuid.get()), true, ServiceCheckResponse.ServiceCheckType.UUID);
+            } else {
+                response.addResult(String.format(MESSAGE_ERROR, "Mojang", "UUID"), false, ServiceCheckResponse.ServiceCheckType.UUID);
+            }
         } catch (DataRequestException e) {
-            response.addResult(String.format(MESSAGE_ERROR_EXCEPTION, "Mojang", "UUID", e.getMessage()));
+            logger.severe("Error getting Mojang UUID", e);
+            response.addResult(String.format(MESSAGE_ERROR_EXCEPTION, "Mojang", "UUID", e.getMessage()), false, ServiceCheckResponse.ServiceCheckType.UUID);
         }
 
         try {
             Optional<UUID> uuid = mojangAPI.getUUIDMineTools(selectedUsername);
 
             if (uuid.isPresent()) {
-                response.addResult(String.format(UUID_MESSAGE, "MineTools", selectedUsername, uuid.get()));
-                response.incrementWorkingUUID();
-            } else response.addResult(String.format(MESSAGE_ERROR, "MineTools", "UUID"));
+                response.addResult(String.format(UUID_MESSAGE, "MineTools", selectedUsername, uuid.get()), true, ServiceCheckResponse.ServiceCheckType.UUID);
+            } else {
+                response.addResult(String.format(MESSAGE_ERROR, "MineTools", "UUID"), false, ServiceCheckResponse.ServiceCheckType.UUID);
+            }
         } catch (DataRequestException e) {
-            response.addResult(String.format(MESSAGE_ERROR_EXCEPTION, "MineTools", "UUID", e.getMessage()));
+            logger.severe("Error getting MineTools UUID", e);
+            response.addResult(String.format(MESSAGE_ERROR_EXCEPTION, "MineTools", "UUID", e.getMessage()), false, ServiceCheckResponse.ServiceCheckType.UUID);
         }
 
         // ##### Profile requests #####
         try {
             Optional<MojangSkinDataResult> nameAshcon = mojangAPI.getDataAshcon(selectedUUID.toString());
             if (nameAshcon.isPresent()) {
-                response.addResult(String.format(PROFILE_MESSAGE, "Ashcon", selectedUUID, nameAshcon.get().getSkinProperty()));
-                response.incrementWorkingProfile();
-            } else response.addResult(String.format(MESSAGE_ERROR, "Ashcon", "Profile"));
+                response.addResult(String.format(PROFILE_MESSAGE, "Ashcon", selectedUUID, nameAshcon.get().getSkinProperty()), true, ServiceCheckResponse.ServiceCheckType.PROFILE);
+            } else {
+                response.addResult(String.format(MESSAGE_ERROR, "Ashcon", "Profile"), false, ServiceCheckResponse.ServiceCheckType.PROFILE);
+            }
         } catch (DataRequestException e) {
-            response.addResult(String.format(MESSAGE_ERROR_EXCEPTION, "Ashcon", "Profile", e.getMessage()));
+            logger.severe("Error getting Ashcon Profile", e);
+            response.addResult(String.format(MESSAGE_ERROR_EXCEPTION, "Ashcon", "Profile", e.getMessage()), false, ServiceCheckResponse.ServiceCheckType.PROFILE);
         }
 
         try {
             Optional<SkinProperty> mojang = mojangAPI.getProfileMojang(selectedUUID);
             if (mojang.isPresent()) {
-                response.addResult(String.format(PROFILE_MESSAGE, "Mojang", selectedUUID, mojang.get()));
-                response.incrementWorkingProfile();
-            } else response.addResult(String.format(MESSAGE_ERROR, "Mojang", "Profile"));
+                response.addResult(String.format(PROFILE_MESSAGE, "Mojang", selectedUUID, mojang.get()), true, ServiceCheckResponse.ServiceCheckType.PROFILE);
+            } else {
+                response.addResult(String.format(MESSAGE_ERROR, "Mojang", "Profile"), false, ServiceCheckResponse.ServiceCheckType.PROFILE);
+            }
         } catch (DataRequestException e) {
-            response.addResult(String.format(MESSAGE_ERROR_EXCEPTION, "Mojang", "Profile", e.getMessage()));
+            logger.severe("Error getting Mojang Profile", e);
+            response.addResult(String.format(MESSAGE_ERROR_EXCEPTION, "Mojang", "Profile", e.getMessage()), false, ServiceCheckResponse.ServiceCheckType.PROFILE);
         }
 
         try {
             Optional<SkinProperty> minetools = mojangAPI.getProfileMineTools(selectedUUID);
             if (minetools.isPresent()) {
-                response.addResult(String.format(PROFILE_MESSAGE, "MineTools", selectedUUID, minetools.get()));
-                response.incrementWorkingProfile();
-            } else response.addResult(String.format(MESSAGE_ERROR, "MineTools", "Profile"));
+                response.addResult(String.format(PROFILE_MESSAGE, "MineTools", selectedUUID, minetools.get()), true, ServiceCheckResponse.ServiceCheckType.PROFILE);
+            } else {
+                response.addResult(String.format(MESSAGE_ERROR, "MineTools", "Profile"), false, ServiceCheckResponse.ServiceCheckType.PROFILE);
+            }
         } catch (DataRequestException e) {
-            response.addResult(String.format(MESSAGE_ERROR_EXCEPTION, "MineTools", "Profile", e.getMessage()));
+            logger.severe("Error getting MineTools Profile", e);
+            response.addResult(String.format(MESSAGE_ERROR_EXCEPTION, "MineTools", "Profile", e.getMessage()), false, ServiceCheckResponse.ServiceCheckType.PROFILE);
         }
         return response;
     }
 
     @Getter
     public static class ServiceCheckResponse {
-        private final List<String> results = new LinkedList<>();
-        private int workingUUID = 0;
-        private int workingProfile = 0;
+        private final List<ServiceCheckMessage> results = new LinkedList<>();
 
-        private void addResult(String result) {
-            results.add(result);
+        public boolean allFullySuccessful() {
+            return results.stream().allMatch(ServiceCheckMessage::success);
         }
 
-        private void incrementWorkingUUID() {
-            workingUUID++;
+        public boolean minOneServiceUnavailable() {
+            for (ServiceCheckType type : ServiceCheckType.values()) {
+                if (getSuccessCount(type) == 0) {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
-        private void incrementWorkingProfile() {
-            workingProfile++;
+        public int getSuccessCount(ServiceCheckType type) {
+            return (int) results.stream().filter(message -> message.type() == type && message.success()).count();
+        }
+
+        public int getTotalCount(ServiceCheckType type) {
+            return (int) results.stream().filter(message -> message.type() == type).count();
+        }
+
+        private void addResult(String message, boolean success, ServiceCheckType type) {
+            results.add(new ServiceCheckMessage(message, success, type));
+        }
+
+        public record ServiceCheckMessage(String message, boolean success, ServiceCheckType type) {
+        }
+
+        public enum ServiceCheckType {
+            UUID,
+            PROFILE
         }
     }
 }

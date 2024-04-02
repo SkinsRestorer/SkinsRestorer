@@ -27,6 +27,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.DataRequestException;
+import net.skinsrestorer.shared.config.APIConfig;
 import net.skinsrestorer.shared.connections.http.HttpClient;
 import net.skinsrestorer.shared.connections.http.HttpResponse;
 import net.skinsrestorer.shared.connections.requests.DumpInfo;
@@ -93,7 +94,7 @@ public class DumpService {
         for (Property<?> key : configurationData.getProperties()) {
             // Exclude sensitive data
             if (key.getPath().startsWith("database.")
-                    || key.getPath().startsWith("api.mineskinAPIKey")) {
+                    || key.getPath().equals(APIConfig.MINESKIN_API_KEY.getPath())) {
                 continue;
             }
 
