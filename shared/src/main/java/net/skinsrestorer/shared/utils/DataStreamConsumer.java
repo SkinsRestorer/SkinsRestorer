@@ -15,23 +15,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package net.skinsrestorer.shared.plugin;
+package net.skinsrestorer.shared.utils;
 
-import net.skinsrestorer.shared.subjects.SRPlayer;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
-import java.util.Map;
-import java.util.Optional;
+public interface DataStreamConsumer extends IOExceptionConsumer<DataOutputStream> {
+    default byte[] toByteArray() {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        DataOutputStream out = new DataOutputStream(bytes);
 
-public interface SRServerAdapter<P, C> extends SRPlatformAdapter<P, C> {
-    void runSync(Runnable runnable);
+        try {
+            accept(out);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
-    void runSyncToPlayer(SRPlayer player, Runnable runnable);
-
-    boolean determineProxy();
-
-    void openServerGUI(SRPlayer player, int page);
-
-    void openProxyGUI(SRPlayer player, int page, Map<String, String> skinList);
-
-    Optional<SRPlayer> getPlayer(String name);
+        return bytes.toByteArray();
+    }
 }

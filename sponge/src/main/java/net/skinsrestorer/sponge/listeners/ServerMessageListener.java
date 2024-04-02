@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.listeners.SRServerMessageAdapter;
 import net.skinsrestorer.shared.listeners.event.SRServerMessageEvent;
 import net.skinsrestorer.shared.subjects.SRPlayer;
+import net.skinsrestorer.shared.utils.SRConstants;
 import net.skinsrestorer.sponge.wrapper.WrapperSponge;
 import org.spongepowered.api.network.EngineConnection;
 import org.spongepowered.api.network.ServerPlayerConnection;
@@ -62,7 +63,7 @@ public class ServerMessageListener implements RawPlayDataHandler<EngineConnectio
 
             @Override
             public String getChannel() {
-                return "sr:messagechannel";
+                return SRConstants.MESSAGE_CHANNEL;
             }
         };
     }

@@ -24,7 +24,6 @@ import net.skinsrestorer.shared.plugin.SRServerAdapter;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRForeign;
-import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.SRServerPlayer;
 import org.jetbrains.annotations.Nullable;
 
@@ -84,7 +83,7 @@ public class SharedGUI {
             switch (event.material()) {
                 case HEAD -> {
                     String skinName = event.displayName();
-                    adapter.runAsync(() -> adapter.sendToMessageChannel(event.player(), out -> {
+                    adapter.runAsync(() -> event.player().sendToMessageChannel(out -> {
                         out.writeUTF("setSkin");
                         out.writeUTF(player.getName());
                         out.writeUTF(skinName);
@@ -92,16 +91,16 @@ public class SharedGUI {
                     player.closeInventory();
                 }
                 case RED_PANE -> {
-                    adapter.runAsync(() -> adapter.sendToMessageChannel(event.player(), out -> {
+                    adapter.runAsync(() -> event.player().sendToMessageChannel(out -> {
                         out.writeUTF("clearSkin");
                         out.writeUTF(player.getName());
                     }));
                     player.closeInventory();
                 }
                 case GREEN_PANE -> adapter.runAsync(() ->
-                        adapter.requestSkinsFromProxy(event.player(), event.currentPage() + 1));
+                        event.player().requestSkinsFromProxy(event.currentPage() + 1));
                 case YELLOW_PANE -> adapter.runAsync(() ->
-                        adapter.requestSkinsFromProxy(event.player(), event.currentPage() - 1));
+                        event.player().requestSkinsFromProxy(event.currentPage() - 1));
             }
         }
     }

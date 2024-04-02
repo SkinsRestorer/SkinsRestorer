@@ -22,6 +22,7 @@ import lombok.experimental.SuperBuilder;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.SRServerPlayer;
 import net.skinsrestorer.shared.utils.LocaleParser;
+import net.skinsrestorer.shared.utils.SRConstants;
 import org.bukkit.entity.Player;
 
 import java.util.Locale;
@@ -63,5 +64,10 @@ public class WrapperPlayer extends WrapperCommandSender implements SRServerPlaye
     @Override
     public void closeInventory() {
         player.closeInventory();
+    }
+
+    @Override
+    public void sendToMessageChannel(byte[] data) {
+        player.sendPluginMessage(adapter.getPluginInstance(), SRConstants.MESSAGE_CHANNEL, data);
     }
 }

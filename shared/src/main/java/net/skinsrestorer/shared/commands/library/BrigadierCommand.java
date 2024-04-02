@@ -63,6 +63,7 @@ public class BrigadierCommand implements CommandWrapper {
                 parameters[i] = value;
                 i++;
             }
+
             logger.debug(String.format("Executing command %s with method parameters %s", method.getName(), Arrays.toString(parameters)));
             platform.runAsync(() -> {
                 try {

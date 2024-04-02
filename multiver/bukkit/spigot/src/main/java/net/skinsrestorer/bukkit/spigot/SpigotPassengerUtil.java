@@ -31,6 +31,15 @@ public class SpigotPassengerUtil {
     private final SchedulerProvider scheduler;
     private final SettingsManager settings;
 
+    public static boolean isAvailable() {
+        try {
+            Entity.class.getMethod("getPassengers");
+            return true;
+        } catch (NoSuchMethodException e) {
+            return false;
+        }
+    }
+
     public void ejectPassengers(Player player) {
         Entity vehicle = player.getVehicle();
 
@@ -54,15 +63,6 @@ public class SpigotPassengerUtil {
             for (Entity passenger : player.getPassengers()) {
                 player.removePassenger(passenger);
             }
-        }
-    }
-
-    public static boolean isAvailable() {
-        try {
-            Entity.class.getMethod("getPassengers");
-            return true;
-        } catch (NoSuchMethodException e) {
-            return false;
         }
     }
 }

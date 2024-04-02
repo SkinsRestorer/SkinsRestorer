@@ -27,7 +27,6 @@ import net.skinsrestorer.shared.api.SkinApplierAccess;
 import net.skinsrestorer.shared.api.event.EventBusImpl;
 import net.skinsrestorer.shared.api.event.SkinApplyEventImpl;
 import net.skinsrestorer.shared.config.AdvancedConfig;
-import net.skinsrestorer.shared.plugin.SRProxyPlugin;
 import net.skinsrestorer.velocity.wrapper.WrapperVelocity;
 
 import javax.inject.Inject;
@@ -38,7 +37,6 @@ import java.util.List;
 public class SkinApplierVelocity implements SkinApplierAccess<Player> {
     private final SettingsManager settings;
     private final WrapperVelocity wrapper;
-    private final SRProxyPlugin proxyPlugin;
     private final EventBusImpl eventBus;
 
     @Override
@@ -53,7 +51,7 @@ public class SkinApplierVelocity implements SkinApplierAccess<Player> {
         SkinProperty appliedProperty = applyEvent.getProperty();
 
         player.setGameProfileProperties(updatePropertiesSkin(player.getGameProfileProperties(), appliedProperty));
-        proxyPlugin.sendUpdateRequest(wrapper.player(player), settings.getProperty(AdvancedConfig.FORWARD_TEXTURES) ? appliedProperty : null);
+        wrapper.player(player).sendUpdateRequest(settings.getProperty(AdvancedConfig.FORWARD_TEXTURES) ? appliedProperty : null);
     }
 
     public GameProfile updateProfileSkin(GameProfile profile, SkinProperty property) {

@@ -18,9 +18,9 @@
 package net.skinsrestorer.bukkit.refresher;
 
 import net.skinsrestorer.bukkit.SRBukkitAdapter;
-import net.skinsrestorer.bukkit.utils.HandleReflection;
 import net.skinsrestorer.bukkit.mappings.ViaPacketData;
 import net.skinsrestorer.bukkit.utils.BukkitReflection;
+import net.skinsrestorer.bukkit.utils.HandleReflection;
 import net.skinsrestorer.bukkit.utils.OPRefreshUtil;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.log.SRLogger;

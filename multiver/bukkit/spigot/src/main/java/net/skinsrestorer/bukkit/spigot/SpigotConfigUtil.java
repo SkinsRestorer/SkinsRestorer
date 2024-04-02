@@ -25,7 +25,7 @@ import java.util.Optional;
 public class SpigotConfigUtil {
     public static Optional<YamlConfiguration> getSpigotConfig(Server server) {
         try {
-           return Optional.of(server.spigot().getConfig());
+            return Optional.of(server.spigot().getConfig());
         } catch (Throwable ignored) { // We're not running spigot
             return Optional.empty();
         }

@@ -98,11 +98,6 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin, CommandSende
     }
 
     @Override
-    public void sendMessageToChannel(SRPlayer player, byte[] data) {
-        player.getAs(Player.class).sendPluginMessage(pluginInstance, "sr:messagechannel", data);
-    }
-
-    @Override
     public boolean isPluginEnabled(String pluginName) {
         return server.getPluginManager().getPlugin(pluginName) != null;
     }

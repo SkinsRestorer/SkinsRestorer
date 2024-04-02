@@ -23,6 +23,7 @@ import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.SRProxyPlayer;
+import net.skinsrestorer.shared.utils.SRConstants;
 
 import java.util.Locale;
 import java.util.Optional;
@@ -58,9 +59,9 @@ public class WrapperPlayer extends WrapperCommandSender implements SRProxyPlayer
     }
 
     @Override
-    public void sendDataToServer(String channel, byte[] data) {
+    public void sendToMessageChannel(byte[] data) {
         player.getCurrentServer().map(server ->
-                server.sendPluginMessage(MinecraftChannelIdentifier.from(channel), data));
+                server.sendPluginMessage(MinecraftChannelIdentifier.from(SRConstants.MESSAGE_CHANNEL), data));
     }
 
     @Override

@@ -25,6 +25,7 @@ import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.utils.MessageProtocolUtil;
+import net.skinsrestorer.shared.utils.SRConstants;
 
 import javax.inject.Inject;
 import java.io.ByteArrayInputStream;
@@ -40,7 +41,7 @@ public final class SRServerMessageAdapter {
     private final SRLogger logger;
 
     public void handlePluginMessage(SRServerMessageEvent event) {
-        if (!event.getChannel().equals("sr:messagechannel")) {
+        if (!event.getChannel().equals(SRConstants.MESSAGE_CHANNEL)) {
             return;
         }
 

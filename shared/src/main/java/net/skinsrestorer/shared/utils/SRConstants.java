@@ -21,4 +21,5 @@ import net.skinsrestorer.api.property.SkinProperty;
 
 public class SRConstants {
     public static final SkinProperty EMPTY_SKIN = SkinProperty.of("", "");
+    public static final String MESSAGE_CHANNEL = "sr:messagechannel";
 }

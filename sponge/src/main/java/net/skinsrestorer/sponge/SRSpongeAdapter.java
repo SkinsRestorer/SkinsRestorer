@@ -40,7 +40,6 @@ import net.skinsrestorer.sponge.wrapper.WrapperSponge;
 import org.bstats.sponge.Metrics;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.api.Game;
-import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.command.Command;
 import org.spongepowered.api.command.CommandCause;
 import org.spongepowered.api.command.CommandCompletion;
@@ -54,7 +53,6 @@ import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.lifecycle.ConstructPluginEvent;
 import org.spongepowered.api.event.lifecycle.RegisterCommandEvent;
 import org.spongepowered.api.item.inventory.menu.InventoryMenu;
-import org.spongepowered.api.network.channel.raw.RawDataChannel;
 import org.spongepowered.api.profile.property.ProfileProperty;
 import org.spongepowered.api.util.metric.MetricsConfigManager;
 import org.spongepowered.configurate.ConfigurateException;
@@ -157,13 +155,6 @@ public class SRSpongeAdapter implements SRServerAdapter<PluginContainer, Command
     public Optional<SRPlayer> getPlayer(String name) {
         return game.server().player(name).map(p -> injector.getSingleton(WrapperSponge.class).player(p));
     }
-
-    @Override
-    public void sendMessageToChannel(SRPlayer player, byte[] data) {
-        game.channelManager().ofType(ResourceKey.of("sr", "messagechannel"), RawDataChannel.class)
-                .play().sendTo(player.getAs(ServerPlayer.class), buf -> buf.writeBytes(data));
-    }
-
 
     @Override
     public void runRepeatAsync(Runnable runnable, int delay, int interval, TimeUnit timeUnit) {

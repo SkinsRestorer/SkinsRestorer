@@ -30,7 +30,7 @@ import org.bukkit.command.CommandSender;
 
 @SuperBuilder
 public class WrapperCommandSender extends AbstractSRCommandSender {
-    private final @NonNull SRBukkitAdapter adapter;
+    protected final @NonNull SRBukkitAdapter adapter;
     private final @NonNull CommandSender sender;
 
     @Override

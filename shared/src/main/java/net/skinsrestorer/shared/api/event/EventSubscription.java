@@ -24,4 +24,14 @@ import java.util.function.Consumer;
 
 public record EventSubscription<E extends SkinsRestorerEvent>(WeakReference<Object> plugin, Class<E> eventClass,
                                                               WeakReference<Consumer<E>> listener) {
+    public void callEvent(Object event) {
+        if (!eventClass.isAssignableFrom(event.getClass())) {
+            return;
+        }
+
+        Consumer<E> listener = this.listener().get();
+        if (listener != null) {
+            listener.accept(eventClass.cast(event));
+        }
+    }
 }

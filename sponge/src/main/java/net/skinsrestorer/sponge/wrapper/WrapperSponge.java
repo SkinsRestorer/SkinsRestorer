@@ -23,6 +23,7 @@ import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRServerPlayer;
 import net.skinsrestorer.shared.subjects.SRSubjectWrapper;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
+import org.spongepowered.api.Game;
 import org.spongepowered.api.command.CommandCause;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.service.permission.Subject;
@@ -33,6 +34,7 @@ import javax.inject.Inject;
 public class WrapperSponge implements SRSubjectWrapper<CommandCause, ServerPlayer, SRServerPlayer> {
     private final SettingsManager settings;
     private final SkinsRestorerLocale locale;
+    private final Game game;
 
     @Override
     public SRCommandSender commandSender(CommandCause sender) {
@@ -46,6 +48,6 @@ public class WrapperSponge implements SRSubjectWrapper<CommandCause, ServerPlaye
 
     @Override
     public SRServerPlayer player(ServerPlayer player) {
-        return WrapperPlayer.builder().player(player).subject(player).audience(player).locale(locale).settings(settings).build();
+        return WrapperPlayer.builder().player(player).game(game).subject(player).audience(player).locale(locale).settings(settings).build();
     }
 }

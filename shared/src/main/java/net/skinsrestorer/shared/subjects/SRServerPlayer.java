@@ -17,6 +17,22 @@
  */
 package net.skinsrestorer.shared.subjects;
 
+import net.skinsrestorer.shared.utils.DataStreamConsumer;
+
 public interface SRServerPlayer extends SRPlayer {
     void closeInventory();
+
+    default void requestSkinsFromProxy(int page) {
+        sendToMessageChannel(out -> {
+            out.writeUTF("getSkins");
+            out.writeUTF(getName());
+            out.writeInt(page);
+        });
+    }
+
+    default void sendToMessageChannel(DataStreamConsumer consumer) {
+        sendToMessageChannel(consumer.toByteArray());
+    }
+
+    void sendToMessageChannel(byte[] data);
 }

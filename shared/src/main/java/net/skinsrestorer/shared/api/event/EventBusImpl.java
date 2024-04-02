@@ -20,6 +20,7 @@ package net.skinsrestorer.shared.api.event;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.event.EventBus;
 import net.skinsrestorer.api.event.SkinsRestorerEvent;
+import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 
 import javax.inject.Inject;
@@ -32,6 +33,7 @@ import java.util.function.Consumer;
 public class EventBusImpl implements EventBus {
     private final Queue<EventSubscription<?>> subscriptions = new ConcurrentLinkedQueue<>();
     private final SRPlatformAdapter<Object, ?> platformAdapter;
+    private final SRLogger logger;
 
     @Override
     public <E extends SkinsRestorerEvent> void subscribe(Object plugin, Class<E> eventClass, Consumer<E> listener) {
@@ -39,25 +41,15 @@ public class EventBusImpl implements EventBus {
         subscriptions.add(new EventSubscription<>(new WeakReference<>(plugin), eventClass, new WeakReference<>(listener)));
     }
 
-    @SuppressWarnings("unchecked")
     public void callEvent(SkinsRestorerEvent event) {
-        subscriptions.removeIf(subscription -> subscription.plugin().get() == null || subscription.listener().get() == null);
+        subscriptions.removeIf(subscription -> subscription.plugin().refersTo(null)
+                || subscription.listener().refersTo(null));
 
         for (EventSubscription<?> subscription : subscriptions) {
-            if (!subscription.eventClass().isAssignableFrom(event.getClass())) {
-                continue;
-            }
-
-            Consumer<?> listener = subscription.listener().get();
-
-            if (listener == null) {
-                continue;
-            }
-
             try {
-                ((Consumer<SkinsRestorerEvent>) listener).accept(event);
+                subscription.callEvent(event);
             } catch (Throwable t) {
-                t.printStackTrace();
+                logger.severe("Error while calling event " + event.getClass().getSimpleName(), t);
             }
         }
     }

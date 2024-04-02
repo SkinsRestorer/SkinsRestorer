@@ -21,8 +21,12 @@ import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.SRServerPlayer;
+import net.skinsrestorer.shared.utils.SRConstants;
+import org.spongepowered.api.Game;
+import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
+import org.spongepowered.api.network.channel.raw.RawDataChannel;
 
 import java.util.Locale;
 import java.util.UUID;
@@ -30,6 +34,7 @@ import java.util.UUID;
 @SuperBuilder
 public class WrapperPlayer extends WrapperCommandSender implements SRServerPlayer {
     private final @NonNull ServerPlayer player;
+    private final @NonNull Game game;
 
     @Override
     public Locale getLocale() {
@@ -59,5 +64,11 @@ public class WrapperPlayer extends WrapperCommandSender implements SRServerPlaye
     @Override
     public void closeInventory() {
         player.closeInventory();
+    }
+
+    @Override
+    public void sendToMessageChannel(byte[] data) {
+        game.channelManager().ofType(ResourceKey.resolve(SRConstants.MESSAGE_CHANNEL), RawDataChannel.class)
+                .play().sendTo(player, buf -> buf.writeBytes(data));
     }
 }

@@ -143,7 +143,7 @@ public final class SRCommand {
         sender.sendMessage(Message.ADMINCOMMAND_STATUS_PROFILE_API,
                 Placeholder.unparsed("count", String.valueOf(response.getSuccessCount(ServiceCheckerService.ServiceCheckResponse.ServiceCheckType.PROFILE))),
                 Placeholder.unparsed("total", String.valueOf(response.getTotalCount(ServiceCheckerService.ServiceCheckResponse.ServiceCheckType.PROFILE))
-        ));
+                ));
 
         if (response.allFullySuccessful()) {
             // There were no unavailable services

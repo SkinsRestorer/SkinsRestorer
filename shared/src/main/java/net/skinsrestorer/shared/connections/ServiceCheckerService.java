@@ -159,12 +159,12 @@ public class ServiceCheckerService {
             results.add(new ServiceCheckMessage(message, success, type));
         }
 
-        public record ServiceCheckMessage(String message, boolean success, ServiceCheckType type) {
-        }
-
         public enum ServiceCheckType {
             UUID,
             PROFILE
+        }
+
+        public record ServiceCheckMessage(String message, boolean success, ServiceCheckType type) {
         }
     }
 }

@@ -93,6 +93,6 @@ public class SkinApplierBungee implements SkinApplierAccess<ProxiedPlayer> {
             return;
         }
 
-        proxyPlugin.sendUpdateRequest(wrapper.player(player), settings.getProperty(AdvancedConfig.FORWARD_TEXTURES) ? textures : null);
+        wrapper.player(player).sendUpdateRequest(settings.getProperty(AdvancedConfig.FORWARD_TEXTURES) ? textures : null);
     }
 }

@@ -17,10 +17,43 @@
  */
 package net.skinsrestorer.shared.subjects;
 
+import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.shared.utils.DataStreamConsumer;
+import net.skinsrestorer.shared.utils.MessageProtocolUtil;
+
+import java.util.Map;
 import java.util.Optional;
 
 public interface SRProxyPlayer extends SRPlayer {
     Optional<String> getCurrentServer();
 
-    void sendDataToServer(String channel, byte[] data);
+    default void sendPage(int page, Map<String, String> skins) {
+        byte[] ba = MessageProtocolUtil.convertToByteArray(skins);
+
+        sendToMessageChannel(out -> {
+            out.writeUTF("returnSkinsV3");
+            out.writeUTF(getName());
+            out.writeInt(page);
+
+            out.writeShort(ba.length);
+            out.write(ba);
+        });
+    }
+
+    default void sendUpdateRequest(SkinProperty textures) {
+        sendToMessageChannel(out -> {
+            out.writeUTF("SkinUpdateV2");
+
+            if (textures != null) {
+                out.writeUTF(textures.getValue());
+                out.writeUTF(textures.getSignature());
+            }
+        });
+    }
+
+    default void sendToMessageChannel(DataStreamConsumer consumer) {
+        sendToMessageChannel(consumer.toByteArray());
+    }
+
+    void sendToMessageChannel(byte[] data);
 }

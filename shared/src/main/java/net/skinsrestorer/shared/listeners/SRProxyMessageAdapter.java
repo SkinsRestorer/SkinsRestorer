@@ -22,10 +22,10 @@ import net.skinsrestorer.shared.commands.library.CommandManager;
 import net.skinsrestorer.shared.listeners.event.SRProxyMessageEvent;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRProxyAdapter;
-import net.skinsrestorer.shared.plugin.SRProxyPlugin;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRProxyPlayer;
+import net.skinsrestorer.shared.utils.SRConstants;
 
 import javax.inject.Inject;
 import java.io.ByteArrayInputStream;
@@ -38,7 +38,6 @@ public final class SRProxyMessageAdapter {
     private final SkinStorageImpl skinStorage;
     private final SRProxyAdapter<?, ?> plugin;
     private final CommandManager<SRCommandSender> commandManager;
-    private final SRProxyPlugin proxyPlugin;
     private final SRLogger logger;
 
     public void handlePluginMessage(SRProxyMessageEvent event) {
@@ -46,7 +45,7 @@ public final class SRProxyMessageAdapter {
             return;
         }
 
-        if (!event.getChannel().equals("sr:messagechannel")) {
+        if (!event.getChannel().equals(SRConstants.MESSAGE_CHANNEL)) {
             return;
         }
 
@@ -68,12 +67,12 @@ public final class SRProxyMessageAdapter {
             switch (subChannel) {
                 case "getSkins" -> {
                     int page = Math.min(in.readInt(), 999);
-                    proxyPlugin.sendPage(page, player, skinStorage);
+                    player.sendPage(page, skinStorage.getGUISkins(page * 36));
                 }
                 case "clearSkin" -> commandManager.executeCommand(player, "skin clear");
                 case "setSkin" -> {
                     String skin = in.readUTF();
-                    commandManager.executeCommand(player, "skin set " + skin);
+                    commandManager.executeCommand(player, String.format("skin set %s", skin));
                 }
             }
         } catch (IOException e) {

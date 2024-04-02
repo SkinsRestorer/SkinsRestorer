@@ -46,6 +46,6 @@ public final class ProxyGUICommand {
 
         player.sendMessage(Message.SKINSMENU_OPEN);
 
-        proxyPlugin.sendPage(0, proxyPlayer, skinStorage);
+        proxyPlayer.sendPage(0, skinStorage.getGUISkins(0));
     }
 }

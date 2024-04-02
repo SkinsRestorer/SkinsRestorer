@@ -50,6 +50,7 @@ import net.skinsrestorer.shared.subjects.permissions.PermissionGroup;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
 import net.skinsrestorer.shared.utils.ComponentHelper;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
+import net.skinsrestorer.shared.utils.SRConstants;
 import org.bukkit.Server;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -295,8 +296,8 @@ public class SRBukkitInit implements SRServerPlatformInit {
 
     @Override
     public void initMessageChannel() {
-        server.getMessenger().registerOutgoingPluginChannel(adapter.getPluginInstance(), "sr:messagechannel");
-        server.getMessenger().registerIncomingPluginChannel(adapter.getPluginInstance(), "sr:messagechannel",
+        server.getMessenger().registerOutgoingPluginChannel(adapter.getPluginInstance(), SRConstants.MESSAGE_CHANNEL);
+        server.getMessenger().registerIncomingPluginChannel(adapter.getPluginInstance(), SRConstants.MESSAGE_CHANNEL,
                 injector.getSingleton(ServerMessageListener.class));
     }
 
