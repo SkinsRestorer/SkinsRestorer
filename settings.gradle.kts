@@ -73,21 +73,20 @@ gradleEnterprise {
     }
 }
 
-setOf(
-    "shared",
-    "1-18", "1-18-2",
-    "1-19", "1-19-1", "1-19-2", "1-19-3", "1-19-4",
-    "1-20", "1-20-2", "1-20-4"
-).forEach {
-    include("mappings:mc-$it")
-}
-
 setOf("shared", "propertyold", "propertynew").forEach {
     include("multiver:bungee:$it")
 }
 
 setOf("shared", "v1-7", "spigot", "paper", "multipaper", "folia").forEach {
     include("multiver:bukkit:$it")
+}
+
+setOf(
+    "1-18", "1-18-2",
+    "1-19", "1-19-1", "1-19-2", "1-19-3", "1-19-4",
+    "1-20", "1-20-2", "1-20-4"
+).forEach {
+    include("mappings:mc-$it")
 }
 
 setupSRSubproject("build-data")

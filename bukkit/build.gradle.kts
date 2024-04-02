@@ -5,7 +5,6 @@ plugins {
 dependencies {
     implementation(projects.skinsrestorerApi)
     implementation(projects.skinsrestorerShared)
-    implementation(projects.mappings.mcShared)
     implementation(projects.multiver.bukkit.shared)
     implementation(projects.multiver.bukkit.spigot)
     implementation(projects.multiver.bukkit.paper)

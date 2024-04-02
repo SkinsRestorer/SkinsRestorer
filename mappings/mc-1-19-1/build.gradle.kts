@@ -4,7 +4,7 @@ tasks {
     }
 }
 
-dependencies.apply {
+dependencies {
     compileOnly("org.spigotmc:spigot:1.19.1-R0.1-SNAPSHOT:remapped-mojang@jar") {
         isTransitive = false
     }

@@ -17,17 +17,17 @@
  */
 package net.skinsrestorer.bukkit.utils;
 
-import net.skinsrestorer.mappings.mapping1_18.Mapping1_18;
-import net.skinsrestorer.mappings.mapping1_18_2.Mapping1_18_2;
-import net.skinsrestorer.mappings.mapping1_19.Mapping1_19;
-import net.skinsrestorer.mappings.mapping1_19_1.Mapping1_19_1;
-import net.skinsrestorer.mappings.mapping1_19_2.Mapping1_19_2;
-import net.skinsrestorer.mappings.mapping1_19_3.Mapping1_19_3;
-import net.skinsrestorer.mappings.mapping1_19_4.Mapping1_19_4;
-import net.skinsrestorer.mappings.mapping1_20.Mapping1_20;
-import net.skinsrestorer.mappings.mapping1_20_2.Mapping1_20_2;
-import net.skinsrestorer.mappings.mapping1_20_4.Mapping1_20_4;
-import net.skinsrestorer.mappings.shared.IMapping;
+import net.skinsrestorer.bukkit.mappings.Mapping1_18;
+import net.skinsrestorer.bukkit.mappings.Mapping1_18_2;
+import net.skinsrestorer.bukkit.mappings.Mapping1_19;
+import net.skinsrestorer.bukkit.mappings.Mapping1_19_1;
+import net.skinsrestorer.bukkit.mappings.Mapping1_19_2;
+import net.skinsrestorer.bukkit.mappings.Mapping1_19_3;
+import net.skinsrestorer.bukkit.mappings.Mapping1_19_4;
+import net.skinsrestorer.bukkit.mappings.Mapping1_20;
+import net.skinsrestorer.bukkit.mappings.Mapping1_20_2;
+import net.skinsrestorer.bukkit.mappings.Mapping1_20_4;
+import net.skinsrestorer.bukkit.mappings.IMapping;
 import net.skinsrestorer.shared.utils.FluentList;
 import org.bukkit.Server;
 
@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class MappingManager {
-    private static final List<IMapping> mappings = FluentList.of(
+    private static final List<IMapping> MAPPINGS = FluentList.of(
             new Mapping1_18(),
             new Mapping1_18_2(),
             new Mapping1_19(),
@@ -50,19 +50,10 @@ public class MappingManager {
     );
 
     public static Optional<IMapping> getMapping(Server server) {
-        Optional<String> mappingVersion = getMappingsVersion(server);
-
-        if (mappingVersion.isEmpty()) {
-            return Optional.empty();
-        }
-
-        for (IMapping mapping : mappings) {
-            if (mapping.getSupportedVersions().contains(mappingVersion.get())) {
-                return Optional.of(mapping);
-            }
-        }
-
-        return Optional.empty();
+        return getMappingsVersion(server)
+                .flatMap(version -> MAPPINGS.stream()
+                        .filter(mapping -> mapping.getSupportedVersions().contains(version))
+                        .findFirst());
     }
 
     @SuppressWarnings({"deprecation"})

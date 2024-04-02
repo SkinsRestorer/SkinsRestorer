@@ -5,14 +5,18 @@ plugins {
     id("io.github.patrick.remapper")
 }
 
-dependencies.implementation(project(":mappings:mc-shared"))
-
-tasks.remap.get().apply {
-    archiveClassifier.set("remapped")
+dependencies {
+    implementation(project(":multiver:bukkit:shared"))
 }
 
-tasks.named("remap").get().dependsOn("jar")
-tasks.named("build").get().dependsOn("remap")
+tasks.remap {
+    archiveClassifier.set("remapped")
+    dependsOn(tasks.jar)
+}
+
+tasks.build {
+    dependsOn(tasks.remap)
+}
 
 configurations {
     create("remapped") {

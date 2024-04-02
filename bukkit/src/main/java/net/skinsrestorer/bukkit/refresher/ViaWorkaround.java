@@ -24,7 +24,7 @@ import com.viaversion.viaversion.api.protocol.packet.PacketWrapper;
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import com.viaversion.viaversion.api.type.Type;
 import com.viaversion.viaversion.protocols.protocol1_15to1_14_4.ClientboundPackets1_15;
-import net.skinsrestorer.mappings.shared.ViaPacketData;
+import net.skinsrestorer.bukkit.mappings.ViaPacketData;
 
 public final class ViaWorkaround {
     private ViaWorkaround() {
