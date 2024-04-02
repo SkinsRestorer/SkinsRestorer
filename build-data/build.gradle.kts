@@ -17,7 +17,7 @@ sourceSets {
                 property("url", "https://skinsrestorer.net")
                 property("commit", indraGit.commit()?.name ?: "unknown")
                 property("branch", indraGit.branch()?.name ?: "unknown")
-                property("build_time", SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date()))
+                property("build_time", SimpleDateFormat("dd MMMM yyyy HH:mm:ss").format(Date()))
                 property("ci_name", getCIName())
                 property("ci_build_number", getBuildNumber())
 

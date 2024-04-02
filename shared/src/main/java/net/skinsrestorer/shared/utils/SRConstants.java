@@ -22,4 +22,5 @@ import net.skinsrestorer.api.property.SkinProperty;
 public class SRConstants {
     public static final SkinProperty EMPTY_SKIN = SkinProperty.of("", "");
     public static final String MESSAGE_CHANNEL = "sr:messagechannel";
+    public static final String DATE_FORMAT = "dd MMMM yyyy HH:mm:ss";
 }

@@ -29,16 +29,14 @@ import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.exception.MineSkinException;
 import net.skinsrestorer.api.model.MojangProfileResponse;
 import net.skinsrestorer.api.model.MojangProfileTextureMeta;
-import net.skinsrestorer.api.property.InputDataResult;
-import net.skinsrestorer.api.property.SkinApplier;
-import net.skinsrestorer.api.property.SkinProperty;
-import net.skinsrestorer.api.property.SkinVariant;
+import net.skinsrestorer.api.property.*;
 import net.skinsrestorer.api.storage.CacheStorage;
 import net.skinsrestorer.api.storage.PlayerStorage;
 import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.shared.commands.library.CommandManager;
 import net.skinsrestorer.shared.commands.library.annotations.*;
 import net.skinsrestorer.shared.config.DevConfig;
+import net.skinsrestorer.shared.config.StorageConfig;
 import net.skinsrestorer.shared.connections.DumpService;
 import net.skinsrestorer.shared.connections.ServiceCheckerService;
 import net.skinsrestorer.shared.exception.InitializeException;
@@ -60,6 +58,7 @@ import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
 import net.skinsrestorer.shared.utils.ComponentHelper;
+import net.skinsrestorer.shared.utils.SRConstants;
 import net.skinsrestorer.shared.utils.UUIDUtils;
 import net.skinsrestorer.shared.utils.ValidationUtil;
 
@@ -70,6 +69,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 @SuppressWarnings("unused")
@@ -142,8 +142,8 @@ public final class SRCommand {
         );
         sender.sendMessage(Message.ADMINCOMMAND_STATUS_PROFILE_API,
                 Placeholder.unparsed("count", String.valueOf(response.getSuccessCount(ServiceCheckerService.ServiceCheckResponse.ServiceCheckType.PROFILE))),
-                Placeholder.unparsed("total", String.valueOf(response.getTotalCount(ServiceCheckerService.ServiceCheckResponse.ServiceCheckType.PROFILE))
-                ));
+                Placeholder.unparsed("total", String.valueOf(response.getTotalCount(ServiceCheckerService.ServiceCheckResponse.ServiceCheckType.PROFILE)))
+        );
 
         if (response.allFullySuccessful()) {
             // There were no unavailable services
@@ -229,7 +229,20 @@ public final class SRCommand {
     }
 
     private Consumer<SRCommandSender> getPlayerInfoMessage(String input) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        Optional<UUID> parsedUniqueId = UUIDUtils.tryParseUniqueId(input);
+        if (parsedUniqueId.isEmpty()) {
+            return sender -> sender.sendMessage(Message.ADMINCOMMAND_INFO_INVALID_UUID);
+        }
+
+        Optional<SkinIdentifier> playerSkinData = playerStorage.getSkinIdOfPlayer(parsedUniqueId.get());
+
+        return playerSkinData.<Consumer<SRCommandSender>>map(skinData -> sender -> {
+            sender.sendMessage(Message.ADMINCOMMAND_INFO_PLAYER,
+                    Placeholder.parsed("uuid", parsedUniqueId.get().toString()),
+                    Placeholder.parsed("identifier", skinData.getIdentifier()),
+                    Placeholder.parsed("variant", String.valueOf(skinData.getSkinVariant())),
+                    Placeholder.parsed("type", skinData.getSkinType().toString()));
+        }).orElseGet(() -> sender -> sender.sendMessage(Message.ADMINCOMMAND_INFO_NO_SET_SKIN));
     }
 
     private void sendGenericSkinInfoMessage(SRCommandSender sender, SkinProperty property) {
@@ -239,7 +252,7 @@ public final class SRCommand {
         MojangProfileTextureMeta skinMetadata = profile.getTextures().getSKIN().getMetadata();
 
         long timestamp = profile.getTimestamp();
-        String requestTime = new SimpleDateFormat("dd MMMM yyyy HH:mm:ss", sender.getLocale())
+        String requestTime = new SimpleDateFormat(SRConstants.DATE_FORMAT, sender.getLocale())
                 .format(new Date(timestamp));
 
         sender.sendMessage(Message.ADMINCOMMAND_INFO_GENERIC,
@@ -247,7 +260,7 @@ public final class SRCommand {
                 Placeholder.parsed("variant", variant.name().toLowerCase(Locale.ROOT)),
                 Placeholder.parsed("uuid", UUIDUtils.convertToDashed(profile.getProfileId()).toString()),
                 Placeholder.parsed("name", profile.getProfileName()),
-                Placeholder.parsed("time", requestTime));
+                Placeholder.parsed("request_time", requestTime));
     }
 
     private Consumer<SRCommandSender> getSkinInfoMessage(String input) throws StorageAdapter.StorageException, DataRequestException {
@@ -261,10 +274,10 @@ public final class SRCommand {
             Optional<URLSkinData> urlSkinData = adapterReference.get().getURLSkinData(input, urlSkinIndex.get().getSkinVariant());
             return urlSkinData.<Consumer<SRCommandSender>>map(skinData -> sender -> {
                 sender.sendMessage(Message.ADMINCOMMAND_INFO_URL_SKIN,
-                        Placeholder.parsed("url", input));
+                        Placeholder.parsed("url", input),
+                        Placeholder.parsed("mine_skin_id", urlSkinData.get().getMineSkinId()));
                 sendGenericSkinInfoMessage(sender, skinData.getProperty());
             }).orElseGet(() -> sender -> sender.sendMessage(Message.NO_SKIN_DATA));
-
         } else {
             Optional<InputDataResult> result = HardcodedSkins.getHardcodedSkin(input);
 
@@ -296,7 +309,12 @@ public final class SRCommand {
 
             return playerSkinData.<Consumer<SRCommandSender>>map(skinData -> sender -> {
                 sender.sendMessage(Message.ADMINCOMMAND_INFO_PLAYER_SKIN,
-                        Placeholder.parsed("skin", input));
+                        Placeholder.parsed("skin", input),
+                        Placeholder.parsed("timestamp", new SimpleDateFormat(SRConstants.DATE_FORMAT, sender.getLocale())
+                                .format(new Date(TimeUnit.SECONDS.toMillis(playerSkinData.get().getTimestamp())))),
+                        Placeholder.parsed("expires", new SimpleDateFormat(SRConstants.DATE_FORMAT, sender.getLocale())
+                                .format(new Date(TimeUnit.SECONDS.toMillis(playerSkinData.get().getTimestamp()
+                                        + TimeUnit.MINUTES.toSeconds(settings.getProperty(StorageConfig.SKIN_EXPIRES_AFTER)))))));
                 sendGenericSkinInfoMessage(sender, skinData.getProperty());
             }).orElseGet(() -> sender -> sender.sendMessage(Message.NO_SKIN_DATA));
         }
