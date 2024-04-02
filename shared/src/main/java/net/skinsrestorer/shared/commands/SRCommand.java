@@ -60,7 +60,6 @@ import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
 import net.skinsrestorer.shared.utils.ComponentHelper;
-import net.skinsrestorer.shared.utils.ComponentString;
 import net.skinsrestorer.shared.utils.UUIDUtils;
 import net.skinsrestorer.shared.utils.ValidationUtil;
 
@@ -68,6 +67,7 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -127,8 +127,7 @@ public final class SRCommand {
     private void onStatus(SRCommandSender sender) {
         sender.sendMessage(Message.ADMINCOMMAND_STATUS_CHECKING);
 
-        ComponentString breakLine = ComponentHelper.parseMiniMessageToJsonString("<dark_aqua>----------------------------------------------");
-        sender.sendMessage(breakLine);
+        sender.sendMessage(Message.DIVIDER);
 
         ServiceCheckerService.ServiceCheckResponse response = serviceCheckerService.checkServices();
         for (ServiceCheckerService.ServiceCheckResponse.ServiceCheckMessage message : response.getResults()) {
@@ -159,7 +158,7 @@ public final class SRCommand {
             sender.sendMessage(Message.ADMINCOMMAND_STATUS_FIREWALL);
         }
 
-        sender.sendMessage(breakLine);
+        sender.sendMessage(Message.DIVIDER);
         sender.sendMessage(Message.ADMINCOMMAND_STATUS_SUMMARY_VERSION, Placeholder.unparsed("version", BuildData.VERSION));
         sender.sendMessage(Message.ADMINCOMMAND_STATUS_SUMMARY_SERVER, Placeholder.unparsed("version", adapter.getPlatformVersion()));
 
@@ -169,7 +168,7 @@ public final class SRCommand {
         }
 
         sender.sendMessage(Message.ADMINCOMMAND_STATUS_SUMMARY_COMMIT, Placeholder.unparsed("hash", BuildData.COMMIT_SHORT));
-        sender.sendMessage(breakLine);
+        sender.sendMessage(Message.DIVIDER);
     }
 
     @Subcommand({"drop", "remove"})
@@ -214,12 +213,15 @@ public final class SRCommand {
     @Description(Message.HELP_SR_INFO)
     private void onInfo(SRCommandSender sender, PlayerOrSkin playerOrSkin, String input) {
         try {
+            sender.sendMessage(Message.ADMINCOMMAND_INFO_CHECKING);
             var message = switch (playerOrSkin) {
                 case PLAYER -> getPlayerInfoMessage(input);
                 case SKIN -> getSkinInfoMessage(input);
             };
 
+            sender.sendMessage(Message.DIVIDER);
             message.accept(sender);
+            sender.sendMessage(Message.DIVIDER);
         } catch (StorageAdapter.StorageException | DataRequestException e) {
             logger.severe("Failed to get data", e);
             sender.sendMessage(Message.ERROR_GENERIC);
@@ -232,20 +234,17 @@ public final class SRCommand {
 
     private void sendGenericSkinInfoMessage(SRCommandSender sender, SkinProperty property) {
         MojangProfileResponse profile = PropertyUtils.getSkinProfileData(property);
-        String texturesUrl = profile.getTextures().getSKIN().getUrl();
+        String texturesUrl = PropertyUtils.getSkinTextureUrl(property);
+        SkinVariant variant = PropertyUtils.getSkinVariant(property);
         MojangProfileTextureMeta skinMetadata = profile.getTextures().getSKIN().getMetadata();
-        String variant;
-        if (skinMetadata == null) {
-            variant = "classic";
-        } else {
-            variant = skinMetadata.getModel();
-        }
+
         long timestamp = profile.getTimestamp();
-        String requestTime = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new Date(timestamp));
+        String requestTime = new SimpleDateFormat("dd MMMM yyyy HH:mm:ss", sender.getLocale())
+                .format(new Date(timestamp));
 
         sender.sendMessage(Message.ADMINCOMMAND_INFO_GENERIC,
                 Placeholder.parsed("url", texturesUrl),
-                Placeholder.parsed("variant", variant),
+                Placeholder.parsed("variant", variant.name().toLowerCase(Locale.ROOT)),
                 Placeholder.parsed("uuid", UUIDUtils.convertToDashed(profile.getProfileId()).toString()),
                 Placeholder.parsed("name", profile.getProfileName()),
                 Placeholder.parsed("time", requestTime));
