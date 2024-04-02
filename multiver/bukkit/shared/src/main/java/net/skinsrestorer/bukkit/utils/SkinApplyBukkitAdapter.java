@@ -29,11 +29,15 @@ public interface SkinApplyBukkitAdapter {
     Optional<SkinProperty> getSkinProperty(Player player);
 
     default <G> G getGameProfile(Player player, Class<G> gClass) throws ReflectiveOperationException {
-        Object entityPlayer = ReflectionUtil.invokeMethod(player.getClass(), player, "getHandle");
+        Object serverPlayer = HandleReflection.getHandle(player, Object.class);
+
+        Object profile;
         try {
-            return gClass.cast(ReflectionUtil.invokeMethod(entityPlayer.getClass(), entityPlayer, "getProfile"));
+            profile = ReflectionUtil.invokeObjectMethod(serverPlayer, "getProfile");
         } catch (ReflectiveOperationException e) {
-            return gClass.cast(ReflectionUtil.getFieldByType(entityPlayer, "GameProfile"));
+            profile = ReflectionUtil.getFieldByType(serverPlayer, "GameProfile");
         }
+
+        return gClass.cast(profile);
     }
 }

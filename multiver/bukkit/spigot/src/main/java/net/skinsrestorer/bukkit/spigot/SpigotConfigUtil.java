@@ -19,28 +19,15 @@ package net.skinsrestorer.bukkit.spigot;
 
 import org.bukkit.Server;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Entity;
 
-public class SpigotUtil {
-    public static YamlConfiguration getSpigotConfig(Server server) {
-        return server.spigot().getConfig();
-    }
+import java.util.Optional;
 
-    public static boolean isRealSpigot(Server server) {
+public class SpigotConfigUtil {
+    public static Optional<YamlConfiguration> getSpigotConfig(Server server) {
         try {
-            server.spigot().getConfig();
-            return true;
+           return Optional.of(server.spigot().getConfig());
         } catch (UnsupportedOperationException e) { // Hypbrid forks don't have a spigot config
-            return false;
-        }
-    }
-
-    public static boolean hasPassengerMethods() {
-        try {
-            Entity.class.getMethod("getPassengers");
-            return true;
-        } catch (NoSuchMethodException e) {
-            return false;
+            return Optional.empty();
         }
     }
 }

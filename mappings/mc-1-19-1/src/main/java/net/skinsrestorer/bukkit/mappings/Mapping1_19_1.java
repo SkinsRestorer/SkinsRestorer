@@ -28,6 +28,7 @@ import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.level.biome.BiomeManager;
+import net.skinsrestorer.bukkit.utils.HandleReflection;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -43,7 +44,7 @@ public class Mapping1_19_1 implements IMapping {
 
     @Override
     public void accept(Player player, Predicate<ViaPacketData> viaFunction) {
-        ServerPlayer entityPlayer = MappingReflection.getHandle(player, ServerPlayer.class);
+        ServerPlayer entityPlayer = HandleReflection.getHandle(player, ServerPlayer.class);
 
         ClientboundPlayerInfoPacket removePlayer = new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.REMOVE_PLAYER, List.of(entityPlayer));
         ClientboundPlayerInfoPacket addPlayer = new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, List.of(entityPlayer));

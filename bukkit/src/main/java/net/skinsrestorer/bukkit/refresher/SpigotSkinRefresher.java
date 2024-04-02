@@ -18,7 +18,7 @@
 package net.skinsrestorer.bukkit.refresher;
 
 import net.skinsrestorer.bukkit.SRBukkitAdapter;
-import net.skinsrestorer.bukkit.mappings.MappingReflection;
+import net.skinsrestorer.bukkit.utils.HandleReflection;
 import net.skinsrestorer.bukkit.mappings.ViaPacketData;
 import net.skinsrestorer.bukkit.utils.BukkitReflection;
 import net.skinsrestorer.bukkit.utils.OPRefreshUtil;
@@ -38,11 +38,11 @@ public final class SpigotSkinRefresher implements SkinRefresher {
     private final SRBukkitAdapter adapter;
     private final SRLogger logger;
     private final boolean viaWorkaround;
-    private final Class<?> playOutRespawn;
-    private final Class<?> playOutPlayerInfo;
-    private final Class<?> playOutPosition;
-    private final Class<?> packet;
-    private final Class<?> playOutHeldItemSlot;
+    private final Class<?> playOutRespawnClass;
+    private final Class<?> playOutPlayerInfoClass;
+    private final Class<?> playOutPositionClass;
+    private final Class<?> packetClass;
+    private final Class<?> playOutHeldItemSlotClass;
     private Enum<?> removePlayerEnum;
     private Enum<?> addPlayerEnum;
 
@@ -52,14 +52,14 @@ public final class SpigotSkinRefresher implements SkinRefresher {
         this.viaWorkaround = viaWorkaround;
 
         try {
-            packet = BukkitReflection.getNMSClass("Packet", "net.minecraft.network.protocol.Packet");
-            playOutHeldItemSlot = BukkitReflection.getNMSClass("PacketPlayOutHeldItemSlot", "net.minecraft.network.protocol.game.PacketPlayOutHeldItemSlot");
-            playOutPosition = BukkitReflection.getNMSClass("PacketPlayOutPosition", "net.minecraft.network.protocol.game.PacketPlayOutPosition");
-            playOutPlayerInfo = BukkitReflection.getNMSClass("PacketPlayOutPlayerInfo", "net.minecraft.network.protocol.game.PacketPlayOutPlayerInfo");
-            playOutRespawn = BukkitReflection.getNMSClass("PacketPlayOutRespawn", "net.minecraft.network.protocol.game.PacketPlayOutRespawn");
+            packetClass = BukkitReflection.getNMSClass("Packet", "net.minecraft.network.protocol.Packet");
+            playOutHeldItemSlotClass = BukkitReflection.getNMSClass("PacketPlayOutHeldItemSlot", "net.minecraft.network.protocol.game.PacketPlayOutHeldItemSlot");
+            playOutPositionClass = BukkitReflection.getNMSClass("PacketPlayOutPosition", "net.minecraft.network.protocol.game.PacketPlayOutPosition");
+            playOutPlayerInfoClass = BukkitReflection.getNMSClass("PacketPlayOutPlayerInfo", "net.minecraft.network.protocol.game.PacketPlayOutPlayerInfo");
+            playOutRespawnClass = BukkitReflection.getNMSClass("PacketPlayOutRespawn", "net.minecraft.network.protocol.game.PacketPlayOutRespawn");
             try {
-                removePlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "EnumPlayerInfoAction", "REMOVE_PLAYER");
-                addPlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "EnumPlayerInfoAction", "ADD_PLAYER");
+                removePlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfoClass, "EnumPlayerInfoAction", "REMOVE_PLAYER");
+                addPlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfoClass, "EnumPlayerInfoAction", "ADD_PLAYER");
             } catch (ReflectiveOperationException e1) {
                 try {
                     Class<?> enumPlayerInfoActionClass = Class.forName("net.minecraft.network.protocol.game.PacketPlayOutPlayerInfo$EnumPlayerInfoAction");
@@ -70,8 +70,8 @@ public final class SpigotSkinRefresher implements SkinRefresher {
                 } catch (ReflectiveOperationException e2) {
                     try {
                         // Forge
-                        removePlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "Action", "REMOVE_PLAYER");
-                        addPlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "Action", "ADD_PLAYER");
+                        removePlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfoClass, "Action", "REMOVE_PLAYER");
+                        addPlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfoClass, "Action", "ADD_PLAYER");
                     } catch (ReflectiveOperationException e3) {
                         try {
                             Class<?> enumPlayerInfoAction = BukkitReflection.getNMSClass("EnumPlayerInfoAction", null);
@@ -91,56 +91,60 @@ public final class SpigotSkinRefresher implements SkinRefresher {
     }
 
     private void sendPacket(Object playerConnection, Object packet) throws ReflectiveOperationException {
-        ReflectionUtil.invokeMethod(playerConnection.getClass(), playerConnection, "sendPacket", new Class<?>[]{this.packet}, packet);
+        ReflectionUtil.invokeObjectMethod(
+                playerConnection,
+                "sendPacket",
+                new ReflectionUtil.ParameterPair<>(packetClass, packet)
+        );
     }
 
     @Override
     public void refresh(Player player) {
         try {
-            final Object entityPlayer = MappingReflection.getHandle(player, Object.class);
+            final Object entityPlayer = HandleReflection.getHandle(player, Object.class);
             Object removePlayer;
             Object addPlayer;
             try {
-                removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, removePlayerEnum, FluentList.of(entityPlayer));
-                addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, addPlayerEnum, FluentList.of(entityPlayer));
+                removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfoClass, removePlayerEnum, FluentList.of(entityPlayer));
+                addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfoClass, addPlayerEnum, FluentList.of(entityPlayer));
             } catch (ReflectiveOperationException e) {
                 try {
                     int ping = ReflectionUtil.getObject(entityPlayer, "ping");
-                    removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, player.getPlayerListName(), false, 9999);
-                    addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, player.getPlayerListName(), true, ping);
+                    removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfoClass, player.getPlayerListName(), false, 9999);
+                    addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfoClass, player.getPlayerListName(), true, ping);
                 } catch (ReflectiveOperationException e2) {
                     // 1.7.10 and below | pre-netty
-                    removePlayer = ReflectionUtil.invokeMethod(playOutPlayerInfo, null, "removePlayer", new Class<?>[]{entityPlayer.getClass()}, entityPlayer);
-                    addPlayer = ReflectionUtil.invokeMethod(playOutPlayerInfo, null, "addPlayer", new Class<?>[]{entityPlayer.getClass()}, entityPlayer);
+                    removePlayer = ReflectionUtil.invokeStaticMethod(playOutPlayerInfoClass, "removePlayer", new ReflectionUtil.ParameterPair<>(entityPlayer));
+                    addPlayer = ReflectionUtil.invokeStaticMethod(playOutPlayerInfoClass, "addPlayer", new ReflectionUtil.ParameterPair<>(entityPlayer));
                 }
             }
 
             // Slowly getting from object to object till we get what is needed for
             // the respawn packet
-            Object world = ReflectionUtil.invokeMethod(entityPlayer, "getWorld");
+            Object world = ReflectionUtil.invokeObjectMethod(entityPlayer, "getWorld");
             Object difficulty;
             try {
-                difficulty = ReflectionUtil.invokeMethod(world, "getDifficulty");
+                difficulty = ReflectionUtil.invokeObjectMethod(world, "getDifficulty");
             } catch (ReflectiveOperationException e) {
                 difficulty = ReflectionUtil.getObject(world, "difficulty");
             }
 
             Object worldData;
             try {
-                worldData = ReflectionUtil.invokeMethod(world, "getWorldData");
+                worldData = ReflectionUtil.invokeObjectMethod(world, "getWorldData");
             } catch (ReflectiveOperationException ignored) {
                 worldData = ReflectionUtil.getObject(world, "worldData");
             }
 
             Object worldType;
             try {
-                worldType = ReflectionUtil.invokeMethod(worldData, "getType");
+                worldType = ReflectionUtil.invokeObjectMethod(worldData, "getType");
             } catch (ReflectiveOperationException ignored) {
-                worldType = ReflectionUtil.invokeMethod(worldData, "getGameType");
+                worldType = ReflectionUtil.invokeObjectMethod(worldData, "getGameType");
             }
 
             Object playerIntManager = ReflectionUtil.getFieldByType(entityPlayer, "PlayerInteractManager");
-            Enum<?> enumGamemode = (Enum<?>) ReflectionUtil.invokeMethod(playerIntManager, "getGameMode");
+            Enum<?> enumGamemode = (Enum<?>) ReflectionUtil.invokeObjectMethod(playerIntManager, "getGameMode");
 
             @SuppressWarnings("deprecation")
             int gamemodeId = player.getGameMode().getValue();
@@ -149,42 +153,42 @@ public final class SpigotSkinRefresher implements SkinRefresher {
 
             Object respawn;
             try {
-                respawn = ReflectionUtil.invokeConstructor(playOutRespawn, dimension, difficulty, worldType, enumGamemode);
+                respawn = ReflectionUtil.invokeConstructor(playOutRespawnClass, dimension, difficulty, worldType, enumGamemode);
             } catch (Exception ignored) {
                 // 1.13.x needs the dimensionManager instead of dimension id
                 Object worldObject = ReflectionUtil.getFieldByType(entityPlayer, "World");
                 Object dimensionManager = getDimensionManager(worldObject, dimension);
 
                 try {
-                    respawn = ReflectionUtil.invokeConstructor(playOutRespawn, dimensionManager, difficulty, worldType, enumGamemode);
+                    respawn = ReflectionUtil.invokeConstructor(playOutRespawnClass, dimensionManager, difficulty, worldType, enumGamemode);
                 } catch (ReflectiveOperationException ignored2) {
                     // 1.14.x removed the difficulty from PlayOutRespawn
                     // https://wiki.vg/Pre-release_protocol#Respawn
                     try {
-                        respawn = ReflectionUtil.invokeConstructor(playOutRespawn, dimensionManager, worldType, enumGamemode);
+                        respawn = ReflectionUtil.invokeConstructor(playOutRespawnClass, dimensionManager, worldType, enumGamemode);
                     } catch (ReflectiveOperationException ignored3) {
                         // Minecraft 1.15 changes
                         // PacketPlayOutRespawn now needs the world seed
 
                         long seedEncrypted = SRHelpers.hashSha256String(String.valueOf(player.getWorld().getSeed()));
                         try {
-                            respawn = ReflectionUtil.invokeConstructor(playOutRespawn, dimensionManager, seedEncrypted, worldType, enumGamemode);
+                            respawn = ReflectionUtil.invokeConstructor(playOutRespawnClass, dimensionManager, seedEncrypted, worldType, enumGamemode);
                         } catch (ReflectiveOperationException ignored5) {
-                            Object dimensionKey = ReflectionUtil.invokeMethod(worldObject, "getDimensionKey");
-                            boolean debug = (boolean) ReflectionUtil.invokeMethod(worldObject, "isDebugWorld");
-                            boolean flat = (boolean) ReflectionUtil.invokeMethod(worldObject, "isFlatWorld");
+                            Object dimensionKey = ReflectionUtil.invokeObjectMethod(worldObject, "getDimensionKey");
+                            boolean debug = (boolean) ReflectionUtil.invokeObjectMethod(worldObject, "isDebugWorld");
+                            boolean flat = (boolean) ReflectionUtil.invokeObjectMethod(worldObject, "isFlatWorld");
                             List<Object> gameModeList = ReflectionUtil.getFieldByTypeList(playerIntManager, "EnumGamemode");
 
                             Enum<?> enumGamemodePrevious = (Enum<?>) getFromListExcluded(gameModeList, enumGamemode);
 
                             // Minecraft 1.16.1 changes
                             try {
-                                Object typeKey = ReflectionUtil.invokeMethod(worldObject, "getTypeKey");
+                                Object typeKey = ReflectionUtil.invokeObjectMethod(worldObject, "getTypeKey");
 
-                                respawn = ReflectionUtil.invokeConstructor(playOutRespawn, typeKey, dimensionKey, seedEncrypted, enumGamemode, enumGamemodePrevious, debug, flat, true);
+                                respawn = ReflectionUtil.invokeConstructor(playOutRespawnClass, typeKey, dimensionKey, seedEncrypted, enumGamemode, enumGamemodePrevious, debug, flat, true);
                             } catch (ReflectiveOperationException ignored6) {
                                 // Minecraft 1.16.2 changes
-                                respawn = ReflectionUtil.invokeConstructor(playOutRespawn, dimensionManager, dimensionKey, seedEncrypted, enumGamemode, enumGamemodePrevious, debug, flat, true);
+                                respawn = ReflectionUtil.invokeConstructor(playOutRespawnClass, dimensionManager, dimensionKey, seedEncrypted, enumGamemode, enumGamemodePrevious, debug, flat, true);
                             }
                         }
                     }
@@ -195,23 +199,23 @@ public final class SpigotSkinRefresher implements SkinRefresher {
             Object pos;
             try {
                 // 1.17+
-                pos = ReflectionUtil.invokeConstructor(playOutPosition, l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<Enum<?>>(), 0, false);
+                pos = ReflectionUtil.invokeConstructor(playOutPositionClass, l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<Enum<?>>(), 0, false);
             } catch (ReflectiveOperationException e1) {
                 try {
                     // 1.9-1.16.5
-                    pos = ReflectionUtil.invokeConstructor(playOutPosition, l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<Enum<?>>(), 0);
+                    pos = ReflectionUtil.invokeConstructor(playOutPositionClass, l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<Enum<?>>(), 0);
                 } catch (ReflectiveOperationException e2) {
                     try {
                         // 1.8
-                        pos = ReflectionUtil.invokeConstructor(playOutPosition, l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<Enum<?>>());
+                        pos = ReflectionUtil.invokeConstructor(playOutPositionClass, l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<Enum<?>>());
                     } catch (ReflectiveOperationException e3) {
                         // 1.7
-                        pos = ReflectionUtil.invokeConstructor(playOutPosition, l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), false);
+                        pos = ReflectionUtil.invokeConstructor(playOutPositionClass, l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), false);
                     }
                 }
             }
 
-            Object slot = ReflectionUtil.invokeConstructor(playOutHeldItemSlot, player.getInventory().getHeldItemSlot());
+            Object slot = ReflectionUtil.invokeConstructor(playOutHeldItemSlotClass, player.getInventory().getHeldItemSlot());
             Object playerCon = ReflectionUtil.getFieldByType(entityPlayer, "PlayerConnection");
 
             sendPacket(playerCon, removePlayer);
@@ -221,7 +225,7 @@ public final class SpigotSkinRefresher implements SkinRefresher {
             if (viaWorkaround) {
                 try {
                     Object worldObject = ReflectionUtil.getFieldByType(entityPlayer, "World");
-                    boolean flat = (boolean) ReflectionUtil.invokeMethod(worldObject, "isFlatWorld");
+                    boolean flat = (boolean) ReflectionUtil.invokeObjectMethod(worldObject, "isFlatWorld");
 
                     sendRespawnPacketDirectly = ViaWorkaround.sendCustomPacketVia(new ViaPacketData(
                             player,
@@ -238,14 +242,14 @@ public final class SpigotSkinRefresher implements SkinRefresher {
                 sendPacket(playerCon, respawn);
             }
 
-            ReflectionUtil.invokeMethod(entityPlayer, "updateAbilities");
+            ReflectionUtil.invokeObjectMethod(entityPlayer, "updateAbilities");
 
             sendPacket(playerCon, pos);
             sendPacket(playerCon, slot);
 
-            ReflectionUtil.invokeMethod(player, "updateScaledHealth");
+            ReflectionUtil.invokeObjectMethod(player, "updateScaledHealth");
             player.updateInventory();
-            ReflectionUtil.invokeMethod(entityPlayer, "triggerHealthUpdate");
+            ReflectionUtil.invokeObjectMethod(entityPlayer, "triggerHealthUpdate");
 
             // TODO: Resend potion effects
 

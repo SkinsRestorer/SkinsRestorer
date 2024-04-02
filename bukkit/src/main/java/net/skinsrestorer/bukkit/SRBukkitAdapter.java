@@ -28,7 +28,7 @@ import net.skinsrestorer.bukkit.gui.SkinsGUI;
 import net.skinsrestorer.bukkit.listener.ForceAliveListener;
 import net.skinsrestorer.bukkit.paper.PaperTabCompleteEvent;
 import net.skinsrestorer.bukkit.paper.PaperUtil;
-import net.skinsrestorer.bukkit.spigot.SpigotUtil;
+import net.skinsrestorer.bukkit.spigot.SpigotConfigUtil;
 import net.skinsrestorer.bukkit.utils.BukkitSchedulerProvider;
 import net.skinsrestorer.bukkit.utils.SchedulerProvider;
 import net.skinsrestorer.bukkit.utils.SkinApplyBukkitAdapter;
@@ -86,6 +86,7 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin, CommandSende
                         () -> injector.getSingleton(FoliaSchedulerProvider.class))
                 .addDefault(injector.getSingleton(BukkitSchedulerProvider.class))
                 .get();
+        injector.register(SchedulerProvider.class, schedulerProvider);
     }
 
     @Override
@@ -129,10 +130,9 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin, CommandSende
 
     @Override
     public boolean determineProxy() {
-        if (ClassInfo.get().isSpigot() && SpigotUtil.isRealSpigot(server)) {
-            if (SpigotUtil.getSpigotConfig(server).getBoolean("settings.bungeecord")) {
-                return true;
-            }
+        if (ClassInfo.get().isSpigot() && SpigotConfigUtil.getSpigotConfig(server).map(config ->
+                config.getBoolean("settings.bungeecord")).orElse(false)) {
+            return true;
         }
 
         // sometimes it does not get the right "bungeecord: true" setting
@@ -257,7 +257,7 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin, CommandSende
         WrapperBukkit wrapper = injector.getSingleton(WrapperBukkit.class);
 
         try {
-            CommandMap commandMap = (CommandMap) ReflectionUtil.invokeMethod(server, "getCommandMap");
+            CommandMap commandMap = (CommandMap) ReflectionUtil.invokeObjectMethod(server, "getCommandMap");
             SRBukkitCommand command = new SRBukkitCommand(payload, pluginInstance, injector.getSingleton(WrapperBukkit.class));
 
             if (settingsManager.getProperty(AdvancedConfig.ENABLE_PAPER_ASYNC_TAB_LISTENER)

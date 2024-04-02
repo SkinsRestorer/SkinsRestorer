@@ -23,6 +23,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.skinsrestorer.bukkit.utils.HandleReflection;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -36,7 +37,7 @@ public class Mapping1_20_2 implements IMapping {
 
     @Override
     public void accept(Player player, Predicate<ViaPacketData> viaFunction) {
-        ServerPlayer entityPlayer = MappingReflection.getHandle(player, ServerPlayer.class);
+        ServerPlayer entityPlayer = HandleReflection.getHandle(player, ServerPlayer.class);
 
         // Slowly getting from object to object till we get what is needed for
         // the respawn packet

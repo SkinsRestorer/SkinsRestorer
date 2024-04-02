@@ -17,6 +17,8 @@
  */
 package net.skinsrestorer.shared.utils;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -109,18 +111,6 @@ public class ReflectionUtil {
         f.setAccessible(true);
 
         return f;
-    }
-
-    private static Method getMethod(Class<?> clazz, String methodName) throws ReflectiveOperationException {
-        Method m;
-        try {
-            m = clazz.getDeclaredMethod(methodName);
-        } catch (Exception e) {
-            m = clazz.getMethod(methodName);
-        }
-
-        m.setAccessible(true);
-        return m;
     }
 
     private static Method getMethod(Class<?> clazz, String methodName, Class<?>... args) throws ReflectiveOperationException {
@@ -226,15 +216,29 @@ public class ReflectionUtil {
         return wrap2primitiveMap.getOrDefault(clazz, clazz);
     }
 
-    public static Object invokeMethod(Class<?> clazz, Object obj, String method) throws ReflectiveOperationException {
-        return Objects.requireNonNull(getMethod(clazz, method)).invoke(obj);
+    public static Object invokeObjectMethod(@NotNull Object obj, String method, ParameterPair<?>... parameters) throws ReflectiveOperationException {
+        return getMethod(obj.getClass(), method, ParameterPair.classesFromArgs(parameters)).invoke(obj, ParameterPair.valuesFromArgs(parameters));
     }
 
-    public static Object invokeMethod(Class<?> clazz, Object obj, String method, Class<?>[] args, Object... initArgs) throws ReflectiveOperationException {
-        return Objects.requireNonNull(getMethod(clazz, method, args)).invoke(obj, initArgs);
+    public static Object invokeStaticMethod(@NotNull Class<?> clazz, String method, ParameterPair<?>... parameters) throws ReflectiveOperationException {
+        return getMethod(clazz, method, ParameterPair.classesFromArgs(parameters)).invoke(null, ParameterPair.valuesFromArgs(parameters));
     }
 
-    public static Object invokeMethod(Object obj, String method) throws ReflectiveOperationException {
-        return Objects.requireNonNull(getMethod(obj.getClass(), method)).invoke(obj);
+    public record ParameterPair<P>(Class<?> clazz, P value) {
+        public ParameterPair(P value) {
+            this(value.getClass(), value);
+        }
+
+        private static Class<?>[] classesFromArgs(ParameterPair<?>... args) {
+            return Arrays.stream(args)
+                    .map(ParameterPair::clazz)
+                    .toArray(Class<?>[]::new);
+        }
+
+        private static Object[] valuesFromArgs(ParameterPair<?>... args) {
+            return Arrays.stream(args)
+                    .map(ParameterPair::value)
+                    .toArray(Object[]::new);
+        }
     }
 }

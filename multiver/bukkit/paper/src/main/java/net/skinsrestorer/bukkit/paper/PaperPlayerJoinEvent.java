@@ -35,6 +35,7 @@ public class PaperPlayerJoinEvent implements Listener {
 
     public static boolean isAvailable() {
         try {
+            // Paper API method
             AsyncPlayerPreLoginEvent.class.getMethod("getPlayerProfile");
             return true;
         } catch (ReflectiveOperationException e) {

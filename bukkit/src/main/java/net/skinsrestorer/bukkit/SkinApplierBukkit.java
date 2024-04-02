@@ -17,19 +17,16 @@
  */
 package net.skinsrestorer.bukkit;
 
-import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.bukkit.paper.PaperSkinApplier;
 import net.skinsrestorer.bukkit.refresher.SkinRefresher;
 import net.skinsrestorer.bukkit.spigot.SpigotPassengerUtil;
-import net.skinsrestorer.bukkit.spigot.SpigotUtil;
 import net.skinsrestorer.bukkit.utils.MultiPaperUtil;
 import net.skinsrestorer.bukkit.utils.SkinApplyBukkitAdapter;
 import net.skinsrestorer.shared.api.SkinApplierAccess;
 import net.skinsrestorer.shared.api.event.EventBusImpl;
 import net.skinsrestorer.shared.api.event.SkinApplyEventImpl;
-import net.skinsrestorer.shared.info.ClassInfo;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
@@ -41,10 +38,10 @@ import java.util.Collection;
 public class SkinApplierBukkit implements SkinApplierAccess<Player> {
     private final SkinApplyBukkitAdapter applyAdapter;
     private final SRBukkitAdapter adapter;
-    private final SettingsManager settings;
     private final Server server;
     private final EventBusImpl eventBus;
     private final SkinRefresher refresh;
+    private final SpigotPassengerUtil passengerUtil;
 
     @Override
     public void applySkin(Player player, SkinProperty property) {
@@ -71,7 +68,9 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
             return;
         }
 
-        ejectPassengers(player);
+        if (SpigotPassengerUtil.isAvailable()) {
+            passengerUtil.ejectPassengers(player);
+        }
 
         if (ReflectionUtil.classExists("com.destroystokyo.paper.profile.PlayerProfile")
                 && PaperSkinApplier.hasProfileMethod()) {
@@ -110,12 +109,6 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
         } catch (NoSuchMethodError ignored) {
             // Backwards compatibility
             player.showPlayer(other);
-        }
-    }
-
-    private void ejectPassengers(Player player) {
-        if (ClassInfo.get().isSpigot() && SpigotUtil.hasPassengerMethods()) {
-            SpigotPassengerUtil.ejectPassengers(adapter.getSchedulerProvider(), player, settings);
         }
     }
 

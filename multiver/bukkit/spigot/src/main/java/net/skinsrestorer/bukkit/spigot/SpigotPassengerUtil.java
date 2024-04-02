@@ -18,13 +18,20 @@
 package net.skinsrestorer.bukkit.spigot;
 
 import ch.jalu.configme.SettingsManager;
+import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.bukkit.utils.SchedulerProvider;
 import net.skinsrestorer.shared.config.ServerConfig;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
+import javax.inject.Inject;
+
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SpigotPassengerUtil {
-    public static void ejectPassengers(SchedulerProvider scheduler, Player player, SettingsManager settings) {
+    private final SchedulerProvider scheduler;
+    private final SettingsManager settings;
+
+    public void ejectPassengers(Player player) {
         Entity vehicle = player.getVehicle();
 
         // Dismounts a player on refreshing, which prevents desync caused by riding a horse, or plugins that allow sitting
@@ -47,6 +54,15 @@ public class SpigotPassengerUtil {
             for (Entity passenger : player.getPassengers()) {
                 player.removePassenger(passenger);
             }
+        }
+    }
+
+    public static boolean isAvailable() {
+        try {
+            Entity.class.getMethod("getPassengers");
+            return true;
+        } catch (NoSuchMethodException e) {
+            return false;
         }
     }
 }

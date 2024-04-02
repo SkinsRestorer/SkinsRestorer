@@ -18,7 +18,7 @@
 package net.skinsrestorer.bukkit.refresher;
 
 import lombok.SneakyThrows;
-import net.skinsrestorer.bukkit.mappings.MappingReflection;
+import net.skinsrestorer.bukkit.utils.HandleReflection;
 import net.skinsrestorer.bukkit.utils.BukkitReflection;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
@@ -41,9 +41,9 @@ public final class PaperSkinRefresher implements SkinRefresher {
             // XP won't get updated on unsupported Paper builds
             this.triggerHealthUpdate = player -> {
                 try {
-                    Object entityPlayer = MappingReflection.getHandle(player, Object.class);
+                    Object entityPlayer = HandleReflection.getHandle(player, Object.class);
 
-                    ReflectionUtil.invokeMethod(entityPlayer, "triggerHealthUpdate");
+                    ReflectionUtil.invokeObjectMethod(entityPlayer, "triggerHealthUpdate");
                 } catch (ReflectiveOperationException e) {
                     player.resetMaxHealth();
                 }

@@ -15,11 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package net.skinsrestorer.bukkit.mappings;
+package net.skinsrestorer.bukkit.utils;
 
 import org.bukkit.entity.Player;
 
-public class MappingReflection {
+public class HandleReflection {
     public static <S> S getHandle(Player player, Class<S> serverPlayerClass) {
         try {
             return serverPlayerClass.cast(player.getClass().getMethod("getHandle").invoke(player));
