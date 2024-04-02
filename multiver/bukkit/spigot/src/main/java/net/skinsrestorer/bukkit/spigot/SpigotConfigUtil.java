@@ -26,7 +26,7 @@ public class SpigotConfigUtil {
     public static Optional<YamlConfiguration> getSpigotConfig(Server server) {
         try {
            return Optional.of(server.spigot().getConfig());
-        } catch (UnsupportedOperationException e) { // Hypbrid forks don't have a spigot config
+        } catch (Throwable ignored) { // We're not running spigot
             return Optional.empty();
         }
     }

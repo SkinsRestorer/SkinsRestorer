@@ -26,6 +26,7 @@ import net.skinsrestorer.shared.commands.library.SRRegisterPayload;
 import net.skinsrestorer.shared.gui.SharedGUI;
 import net.skinsrestorer.shared.info.Platform;
 import net.skinsrestorer.shared.info.PluginInfo;
+import net.skinsrestorer.shared.listeners.event.ClickEventInfo;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
@@ -37,6 +38,7 @@ import net.skinsrestorer.sponge.listeners.ForceAliveListener;
 import net.skinsrestorer.sponge.wrapper.SpongeComponentHelper;
 import net.skinsrestorer.sponge.wrapper.WrapperSponge;
 import org.bstats.sponge.Metrics;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.command.Command;
@@ -64,6 +66,7 @@ import javax.inject.Inject;
 import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
@@ -135,16 +138,17 @@ public class SRSpongeAdapter implements SRServerAdapter<PluginContainer, Command
 
     @Override
     public void openServerGUI(SRPlayer player, int page) {
-        InventoryMenu inventory = injector.getSingleton(SharedGUI.class)
-                .createGUI(injector.getSingleton(SkinsGUI.class), injector.getSingleton(SharedGUI.ServerGUIActions.class), player, page);
-
-        runSyncToPlayer(player, () -> inventory.open(player.getAs(ServerPlayer.class)));
+        openGUI(player, SharedGUI.ServerGUIActions.class, page, null);
     }
 
     @Override
     public void openProxyGUI(SRPlayer player, int page, Map<String, String> skinList) {
-        InventoryMenu inventory = injector.getSingleton(SkinsGUI.class)
-                .createGUI(injector.getSingleton(SharedGUI.ProxyGUIActions.class), player, page, skinList);
+        openGUI(player, SharedGUI.ProxyGUIActions.class, page, skinList);
+    }
+
+    private void openGUI(SRPlayer player, Class<? extends Consumer<ClickEventInfo>> consumer, int page, @Nullable Map<String, String> skinList) {
+        InventoryMenu inventory = injector.getSingleton(SharedGUI.class)
+                .createGUI(injector.getSingleton(SkinsGUI.class), injector.getSingleton(consumer), player, page, skinList);
 
         runSyncToPlayer(player, () -> inventory.open(player.getAs(ServerPlayer.class)));
     }

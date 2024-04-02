@@ -36,9 +36,9 @@ import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
 import net.skinsrestorer.shared.commands.library.SRRegisterPayload;
 import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.gui.SharedGUI;
-import net.skinsrestorer.shared.info.ClassInfo;
 import net.skinsrestorer.shared.info.Platform;
 import net.skinsrestorer.shared.info.PluginInfo;
+import net.skinsrestorer.shared.listeners.event.ClickEventInfo;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
@@ -53,6 +53,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
 import java.io.InputStream;
@@ -61,6 +62,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin, CommandSender> {
@@ -130,50 +132,36 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin, CommandSende
 
     @Override
     public boolean determineProxy() {
-        if (ClassInfo.get().isSpigot() && SpigotConfigUtil.getSpigotConfig(server).map(config ->
+        Path spigotFile = Paths.get("spigot.yml");
+        Path paperFile = Paths.get("paper.yml");
+
+        if (SpigotConfigUtil.getSpigotConfig(server).map(config ->
                 config.getBoolean("settings.bungeecord")).orElse(false)) {
             return true;
-        }
-
-        // sometimes it does not get the right "bungeecord: true" setting
-        // we will try it again with the old function from SR 13.3
-        Path spigotFile = Paths.get("spigot.yml");
-        if (Files.exists(spigotFile)) {
-            if (YamlConfiguration.loadConfiguration(spigotFile.toFile()).getBoolean("settings.bungeecord")) {
-                return true;
-            }
-        }
-
-        if (ClassInfo.get().isPaper()) {
-            // Load paper velocity-support.enabled to allow velocity compatability.
-            Path oldPaperFile = Paths.get("paper.yml");
-            if (Files.exists(oldPaperFile)) {
-                if (YamlConfiguration.loadConfiguration(oldPaperFile.toFile()).getBoolean("settings.velocity-support.enabled")) {
-                    return true;
-                }
-            }
-
-            YamlConfiguration config = PaperUtil.getPaperConfig(server);
-
-            return config != null
-                    && (config.getBoolean("settings.velocity-support.enabled") || config.getBoolean("proxies.velocity.enabled"));
-        }
-
-        return false;
+        } else if (Files.exists(spigotFile) && YamlConfiguration.loadConfiguration(spigotFile.toFile())
+                .getBoolean("settings.bungeecord")) {
+            return true;
+        } else if (PaperUtil.getPaperConfig(server).map(config ->
+                config.getBoolean("settings.velocity-support.enabled")
+                        || config.getBoolean("proxies.velocity.enabled")).orElse(false)) {
+            return true;
+        } else return Files.exists(paperFile) && YamlConfiguration.loadConfiguration(paperFile.toFile())
+                .getBoolean("settings.velocity-support.enabled");
     }
 
     @Override
     public void openServerGUI(SRPlayer player, int page) {
-        Inventory inventory = injector.getSingleton(SharedGUI.class)
-                .createGUI(injector.getSingleton(SkinsGUI.class), injector.getSingleton(SharedGUI.ServerGUIActions.class), player, page);
-
-        runSyncToPlayer(player, () -> player.getAs(Player.class).openInventory(inventory));
+        openGUI(player, SharedGUI.ServerGUIActions.class, page, null);
     }
 
     @Override
     public void openProxyGUI(SRPlayer player, int page, Map<String, String> skinList) {
-        Inventory inventory = injector.getSingleton(SkinsGUI.class)
-                .createGUI(injector.getSingleton(SharedGUI.ProxyGUIActions.class), player, page, skinList);
+        openGUI(player, SharedGUI.ProxyGUIActions.class, page, skinList);
+    }
+
+    private void openGUI(SRPlayer player, Class<? extends Consumer<ClickEventInfo>> consumer, int page, @Nullable Map<String, String> skinList) {
+        Inventory inventory = injector.getSingleton(SharedGUI.class)
+                .createGUI(injector.getSingleton(SkinsGUI.class), injector.getSingleton(consumer), player, page, skinList);
 
         runSyncToPlayer(player, () -> player.getAs(Player.class).openInventory(inventory));
     }

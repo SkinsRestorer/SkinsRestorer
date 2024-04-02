@@ -24,9 +24,12 @@ import net.skinsrestorer.shared.plugin.SRServerAdapter;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRForeign;
+import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.SRServerPlayer;
+import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
+import java.util.Map;
 import java.util.function.Consumer;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
@@ -34,14 +37,18 @@ public class SharedGUI {
     public static final int HEAD_COUNT_PER_PAGE = 36;
     private final SkinStorageImpl skinStorage;
 
-    public <T> T createGUI(GUIManager<T> manager, Consumer<ClickEventInfo> callback, SRForeign player, int page) {
+    public <T> T createGUI(GUIManager<T> manager, Consumer<ClickEventInfo> callback, SRForeign player, int page, @Nullable Map<String, String> skinList) {
         if (page > 999) {
             page = 999;
         }
 
-        int skinNumber = HEAD_COUNT_PER_PAGE * page;
+        if (skinList == null) {
+            int skinOffset = HEAD_COUNT_PER_PAGE * page;
 
-        return manager.createGUI(callback, player, page, skinStorage.getGUISkins(skinNumber));
+            skinList = skinStorage.getGUISkins(skinOffset);
+        }
+
+        return manager.createGUI(callback, player, page, skinList);
     }
 
     @RequiredArgsConstructor(onConstructor_ = @Inject)

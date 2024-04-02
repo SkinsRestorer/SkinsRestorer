@@ -20,13 +20,14 @@ package net.skinsrestorer.bukkit.paper;
 import org.bukkit.Server;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import java.util.Optional;
+
 public class PaperUtil {
-    public static YamlConfiguration getPaperConfig(Server server) {
+    public static Optional<YamlConfiguration> getPaperConfig(Server server) {
         try {
-            return (YamlConfiguration) Server.Spigot.class.getMethod("getPaperConfig").invoke(server.spigot());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            return Optional.of(server.spigot().getPaperConfig());
+        } catch (Throwable ignored) { // We're not running paper
+            return Optional.empty();
         }
     }
 }
