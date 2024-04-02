@@ -36,6 +36,7 @@ import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
 import net.skinsrestorer.shared.commands.library.SRRegisterPayload;
 import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.gui.SharedGUI;
+import net.skinsrestorer.shared.info.ClassInfo;
 import net.skinsrestorer.shared.info.Platform;
 import net.skinsrestorer.shared.info.PluginInfo;
 import net.skinsrestorer.shared.listeners.event.ClickEventInfo;
@@ -138,14 +139,18 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin, CommandSende
         if (SpigotConfigUtil.getSpigotConfig(server).map(config ->
                 config.getBoolean("settings.bungeecord")).orElse(false)) {
             return true;
-        } else if (Files.exists(spigotFile) && YamlConfiguration.loadConfiguration(spigotFile.toFile())
+        } else if (ClassInfo.get().isSpigot() // Only consider files if classes for that platform are present
+                && Files.exists(spigotFile)
+                && YamlConfiguration.loadConfiguration(spigotFile.toFile())
                 .getBoolean("settings.bungeecord")) {
             return true;
         } else if (PaperUtil.getPaperConfig(server).map(config ->
                 config.getBoolean("settings.velocity-support.enabled")
                         || config.getBoolean("proxies.velocity.enabled")).orElse(false)) {
             return true;
-        } else return Files.exists(paperFile) && YamlConfiguration.loadConfiguration(paperFile.toFile())
+        } else return ClassInfo.get().isPaper() // Only consider files if classes for that platform are present
+                && Files.exists(paperFile)
+                && YamlConfiguration.loadConfiguration(paperFile.toFile())
                 .getBoolean("settings.velocity-support.enabled");
     }
 
