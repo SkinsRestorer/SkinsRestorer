@@ -19,7 +19,7 @@
 
 <p align="center">
 <a href="https://github.com/SkinsRestorer/SkinsRestorer/releases/latest/download/SkinsRestorer.jar"><img src="https://img.shields.io/badge/DOWNLOAD-LATEST-success?style=for-the-badge" alt="download badge"></a>
-<a href="https://ci.codemc.io/job/SkinsRestorer/job/SkinsRestorer-DEV/lastSuccessfulBuild/artifact/build/libs/SkinsRestorer.jar"><img src="https://img.shields.io/badge/DOWNLOAD-DEV__BUILD-important?style=for-the-badge" alt="download2 badge"></a>
+<a href="https://ci.codemc.io/job/SkinsRestorer/job/SkinsRestorer/lastSuccessfulBuild/artifact/build/libs/SkinsRestorer.jar"><img src="https://img.shields.io/badge/DOWNLOAD-DEV__BUILD-important?style=for-the-badge" alt="download2 badge"></a>
 </p>
 
 This is the development repository for [SkinsRestorer](https://skinsrestorer.net/) (Minecraft plugin).
@@ -45,7 +45,7 @@ Implementation:
 - [Hangar](https://hangar.papermc.io/SRTeam/SkinsRestorer)
 - [BuiltByBit](https://builtbybit.com/resources/skinsrestorer.21982/)
 - [Mcbbs](https://www.mcbbs.net/forum.php?mod=viewthread&tid=805404)
-- [Jenkins](https://ci.codemc.io/job/SkinsRestorer/job/SkinsRestorer-DEV/)
+- [Jenkins](https://ci.codemc.io/job/SkinsRestorer/job/SkinsRestorer/)
 - [Discord](https://skinsrestorer.net/discord)
 - [Website](https://skinsrestorer.net)
 - [Documentation](https://skinsrestorer.net/docs)
