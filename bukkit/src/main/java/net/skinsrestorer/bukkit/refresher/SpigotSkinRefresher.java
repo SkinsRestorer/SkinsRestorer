@@ -22,7 +22,6 @@ import net.skinsrestorer.bukkit.mappings.ViaPacketData;
 import net.skinsrestorer.bukkit.utils.BukkitReflection;
 import net.skinsrestorer.bukkit.utils.HandleReflection;
 import net.skinsrestorer.bukkit.utils.OPRefreshUtil;
-import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.utils.FluentList;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
@@ -30,6 +29,7 @@ import net.skinsrestorer.shared.utils.SRHelpers;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import javax.inject.Inject;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.List;
@@ -37,26 +37,30 @@ import java.util.List;
 public final class SpigotSkinRefresher implements SkinRefresher {
     private final SRBukkitAdapter adapter;
     private final SRLogger logger;
-    private final boolean viaWorkaround;
+    private final ViaRefreshProvider viaProvider;
     private final Class<?> playOutRespawnClass;
     private final Class<?> playOutPlayerInfoClass;
     private final Class<?> playOutPositionClass;
     private final Class<?> packetClass;
     private final Class<?> playOutHeldItemSlotClass;
-    private Enum<?> removePlayerEnum;
-    private Enum<?> addPlayerEnum;
+    private final Enum<?> removePlayerEnum;
+    private final Enum<?> addPlayerEnum;
 
-    public SpigotSkinRefresher(SRBukkitAdapter adapter, SRLogger logger, boolean viaWorkaround) throws InitializeException {
+    @Inject
+    public SpigotSkinRefresher(SRBukkitAdapter adapter, SRLogger logger, ViaRefreshProvider viaProvider) {
         this.adapter = adapter;
         this.logger = logger;
-        this.viaWorkaround = viaWorkaround;
+        this.viaProvider = viaProvider;
 
         try {
-            packetClass = BukkitReflection.getNMSClass("Packet", "net.minecraft.network.protocol.Packet");
-            playOutHeldItemSlotClass = BukkitReflection.getNMSClass("PacketPlayOutHeldItemSlot", "net.minecraft.network.protocol.game.PacketPlayOutHeldItemSlot");
-            playOutPositionClass = BukkitReflection.getNMSClass("PacketPlayOutPosition", "net.minecraft.network.protocol.game.PacketPlayOutPosition");
-            playOutPlayerInfoClass = BukkitReflection.getNMSClass("PacketPlayOutPlayerInfo", "net.minecraft.network.protocol.game.PacketPlayOutPlayerInfo");
-            playOutRespawnClass = BukkitReflection.getNMSClass("PacketPlayOutRespawn", "net.minecraft.network.protocol.game.PacketPlayOutRespawn");
+            this.packetClass = BukkitReflection.getNMSClass("Packet", "net.minecraft.network.protocol.Packet");
+            this.playOutHeldItemSlotClass = BukkitReflection.getNMSClass("PacketPlayOutHeldItemSlot", "net.minecraft.network.protocol.game.PacketPlayOutHeldItemSlot");
+            this.playOutPositionClass = BukkitReflection.getNMSClass("PacketPlayOutPosition", "net.minecraft.network.protocol.game.PacketPlayOutPosition");
+            this.playOutPlayerInfoClass = BukkitReflection.getNMSClass("PacketPlayOutPlayerInfo", "net.minecraft.network.protocol.game.PacketPlayOutPlayerInfo");
+            this.playOutRespawnClass = BukkitReflection.getNMSClass("PacketPlayOutRespawn", "net.minecraft.network.protocol.game.PacketPlayOutRespawn");
+
+            Enum<?> removePlayerEnum;
+            Enum<?> addPlayerEnum;
             try {
                 removePlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfoClass, "EnumPlayerInfoAction", "REMOVE_PLAYER");
                 addPlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfoClass, "EnumPlayerInfoAction", "ADD_PLAYER");
@@ -81,12 +85,18 @@ public final class SpigotSkinRefresher implements SkinRefresher {
                             addPlayerEnum = ReflectionUtil.getEnum(enumPlayerInfoAction, "ADD_PLAYER");
                         } catch (ReflectiveOperationException e4) {
                             // 1.7 and below uses a boolean instead of an enum
+                            removePlayerEnum = null;
+                            addPlayerEnum = null;
                         }
                     }
                 }
             }
+
+            this.removePlayerEnum = removePlayerEnum;
+            this.addPlayerEnum = addPlayerEnum;
+
         } catch (ReflectiveOperationException e) {
-            throw new InitializeException(e);
+            throw new RuntimeException("Failed to initialize SpigotSkinRefresher", e);
         }
     }
 
@@ -221,21 +231,19 @@ public final class SpigotSkinRefresher implements SkinRefresher {
             sendPacket(playerCon, removePlayer);
             sendPacket(playerCon, addPlayer);
 
-            boolean sendRespawnPacketDirectly = true;
-            if (viaWorkaround) {
-                try {
-                    Object worldObject = ReflectionUtil.getFieldByType(entityPlayer, "World");
-                    boolean flat = (boolean) ReflectionUtil.invokeObjectMethod(worldObject, "isFlatWorld");
-
-                    sendRespawnPacketDirectly = ViaWorkaround.sendCustomPacketVia(new ViaPacketData(
-                            player,
-                            SRHelpers.hashSha256String(String.valueOf(player.getWorld().getSeed())),
-                            ((Integer) gamemodeId).shortValue(),
-                            flat
-                    ));
-                } catch (Exception e) {
-                    logger.severe("Failed to send ViaVersion packet for player " + player.getName(), e);
-                }
+            boolean sendRespawnPacketDirectly;
+            try {
+                Object worldObject = ReflectionUtil.getFieldByType(entityPlayer, "World");
+                boolean flat = (boolean) ReflectionUtil.invokeObjectMethod(worldObject, "isFlatWorld");
+                sendRespawnPacketDirectly = viaProvider.test(new ViaPacketData(
+                        player,
+                        SRHelpers.hashSha256String(String.valueOf(player.getWorld().getSeed())),
+                        ((Integer) gamemodeId).shortValue(),
+                        flat
+                ));
+            } catch (ReflectiveOperationException e) {
+                logger.warning("Failed to send custom packet via ViaVersion, falling back to default method.", e);
+                sendRespawnPacketDirectly = true;
             }
 
             if (sendRespawnPacketDirectly) {

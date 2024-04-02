@@ -18,25 +18,27 @@
 package net.skinsrestorer.bukkit.refresher;
 
 import net.skinsrestorer.bukkit.mappings.IMapping;
-import net.skinsrestorer.bukkit.mappings.ViaPacketData;
 import net.skinsrestorer.bukkit.utils.MappingManager;
-import net.skinsrestorer.bukkit.utils.NoMappingException;
+import net.skinsrestorer.shared.log.SRLogger;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 
+import javax.inject.Inject;
 import java.util.Optional;
-import java.util.function.Predicate;
 
 public class MappingSpigotSkinRefresher implements SkinRefresher {
     private final IMapping mapping;
-    private final boolean viaWorkaround;
+    private final ViaRefreshProvider viaProvider;
 
-    public MappingSpigotSkinRefresher(Server server, boolean viaWorkaround) throws NoMappingException {
-        this.viaWorkaround = viaWorkaround;
+    @Inject
+    public MappingSpigotSkinRefresher(Server server, SRLogger logger, ViaRefreshProvider viaProvider) {
+        this.viaProvider = viaProvider;
 
         Optional<IMapping> mapping = MappingManager.getMapping(server);
         if (mapping.isEmpty()) {
-            throw new NoMappingException(server);
+            logger.severe(String.format("Your Minecraft version (%s) is not supported by this version of SkinsRestorer! Is there a newer version available? If not, join our discord server!",
+                    MappingManager.getVersion(server)));
+            throw new IllegalStateException("No mapping found for this server version!");
         }
 
         this.mapping = mapping.get();
@@ -44,14 +46,6 @@ public class MappingSpigotSkinRefresher implements SkinRefresher {
 
     @Override
     public void refresh(Player player) {
-        Predicate<ViaPacketData> viaFunction;
-
-        if (viaWorkaround) {
-            viaFunction = ViaWorkaround::sendCustomPacketVia;
-        } else {
-            viaFunction = data -> true;
-        }
-
-        mapping.accept(player, viaFunction);
+        mapping.accept(player, viaProvider);
     }
 }

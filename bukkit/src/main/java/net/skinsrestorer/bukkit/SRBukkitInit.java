@@ -33,12 +33,10 @@ import net.skinsrestorer.bukkit.paper.PaperPlayerJoinEvent;
 import net.skinsrestorer.bukkit.refresher.*;
 import net.skinsrestorer.bukkit.utils.BukkitPropertyApplier;
 import net.skinsrestorer.bukkit.utils.BukkitReflection;
-import net.skinsrestorer.bukkit.utils.NoMappingException;
 import net.skinsrestorer.bukkit.utils.SkinApplyBukkitAdapter;
 import net.skinsrestorer.bukkit.v1_7.BukkitLegacyPropertyApplier;
 import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
 import net.skinsrestorer.shared.config.AdvancedConfig;
-import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.info.ClassInfo;
 import net.skinsrestorer.shared.log.SRChatColor;
 import net.skinsrestorer.shared.log.SRLogLevel;
@@ -82,16 +80,7 @@ public class SRBukkitInit implements SRServerPlatformInit {
     @Override
     public void initSkinApplier() {
         injector.register(SkinApplyBukkitAdapter.class, selectSkinApplyAdapter());
-
-        try {
-            injector.register(SkinRefresher.class, detectRefresh());
-        } catch (NoMappingException e) {
-            logger.severe("Your Minecraft version is not supported by this version of SkinsRestorer! Is there a newer version available? If not, join our discord server!", e);
-            throw new IllegalStateException(e);
-        } catch (InitializeException e) {
-            logger.severe(SRChatColor.RED + SRChatColor.UNDERLINE.toString() + "Could not initialize SkinApplier! Please report this on our discord server!", e);
-            throw new IllegalStateException(e);
-        }
+        injector.register(SkinRefresher.class, detectRefresh());
 
         plugin.registerSkinApplier(injector.getSingleton(SkinApplierBukkit.class), Player.class, wrapper::player);
 
@@ -113,48 +102,47 @@ public class SRBukkitInit implements SRServerPlatformInit {
         }
     }
 
-    private SkinRefresher detectRefresh() throws InitializeException, NoMappingException {
+    private SkinRefresher detectRefresh() {
         if (SRPlugin.isUnitTest()) {
             return SkinRefresher.NO_OP;
         }
 
         if (isPaper()) {
-            // force SpigotSkinRefresher for unsupported plugins (ViaVersion & other ProtocolHack).
-            // Ran with #getPlugin() != null instead of #isPluginEnabled() as older Spigot builds return false during the login process even if enabled
             boolean viaVersionExists = adapter.isPluginEnabled("ViaVersion");
             boolean protocolSupportExists = adapter.isPluginEnabled("ProtocolSupport");
             if (viaVersionExists || protocolSupportExists) {
                 logger.debug(SRLogLevel.WARNING, "Unsupported plugin (ViaVersion or ProtocolSupport) detected, forcing SpigotSkinRefresher");
-                return selectSpigotRefresher(server);
+                return selectSpigotRefresher();
             }
 
             // use PaperSkinRefresher if no VersionHack plugin found
             try {
                 logger.debug("Using PaperSkinRefresher");
-                return new PaperSkinRefresher();
-            } catch (InitializeException e) {
-                logger.severe("PaperSkinRefresher failed! (Are you using hybrid software?) Only limited support can be provided. Falling back to SpigotSkinRefresher.");
+                return injector.getSingleton(PaperSkinRefresher.class);
+            } catch (Exception e) {
+                logger.severe("PaperSkinRefresher failed! (Are you using hybrid software?) Only limited support can be provided. Falling back to SpigotSkinRefresher.", e);
             }
         }
 
-        return selectSpigotRefresher(server);
+        return selectSpigotRefresher();
     }
 
-    private SkinRefresher selectSpigotRefresher(Server server) throws InitializeException, NoMappingException {
+    private SkinRefresher selectSpigotRefresher() {
         // Wait to run task in order for ViaVersion to determine server protocol
-        boolean viaWorkaround = adapter.isPluginEnabled("ViaBackwards")
-                && ViaWorkaround.isProtocolNewer();
-
-        if (viaWorkaround) {
+        if (adapter.isPluginEnabled("ViaBackwards")
+                && ViaWorkaround.isProtocolNewer()) {
             logger.debug("Activating ViaBackwards workaround.");
+            injector.register(ViaRefreshProvider.class, ViaWorkaround::sendCustomPacketVia);
+        } else {
+            injector.register(ViaRefreshProvider.class, ViaRefreshProvider.NO_OP);
         }
 
         if (BukkitReflection.SERVER_VERSION.isNewerThan(new SemanticVersion(1, 17, 1))) {
             logger.debug("Using MappingSpigotSkinRefresher");
-            return new MappingSpigotSkinRefresher(server, viaWorkaround);
+            return injector.getSingleton(MappingSpigotSkinRefresher.class);
         } else {
             logger.debug("Using SpigotSkinRefresher");
-            return new SpigotSkinRefresher(adapter, logger, viaWorkaround);
+            return injector.getSingleton(SpigotSkinRefresher.class);
         }
     }
 

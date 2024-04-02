@@ -37,26 +37,26 @@ public final class ViaWorkaround {
     @SuppressWarnings("deprecation")
     public static boolean sendCustomPacketVia(ViaPacketData packetData) {
         UserConnection connection = Via.getManager().getConnectionManager().getConnectedClient(packetData.player().getUniqueId());
-        if (connection != null
-                && connection.getProtocolInfo() != null
-                && connection.getProtocolInfo().getProtocolVersion() < ProtocolVersion.v1_16.getVersion()) {
-            // ViaBackwards double-sends isProtocolNewer respawn packet when its dimension ID matches the current world's.
-            // In order to get around this, we send isProtocolNewer packet directly into Via's connection, bypassing the 1.16 conversion step
-            // and therefore bypassing their workaround.
-            PacketWrapper packet = PacketWrapper.create(ClientboundPackets1_15.RESPAWN, connection);
-
-            packet.write(Type.INT, packetData.player().getWorld().getEnvironment().getId());
-            packet.write(Type.LONG, packetData.seed());
-            packet.write(Type.UNSIGNED_BYTE, (short) packetData.gamemodeId());
-            packet.write(Type.STRING, packetData.isFlat() ? "flat" : "default");
-            try {
-                packet.send(Protocol1_15_2To1_16.class);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return false;
+        if (connection == null
+                || connection.getProtocolInfo() == null
+                || connection.getProtocolInfo().getProtocolVersion() >= ProtocolVersion.v1_16.getVersion()) {
+            return true;
         }
 
-        return true;
+        // ViaBackwards double-sends isProtocolNewer respawn packet when its dimension ID matches the current world's.
+        // In order to get around this, we send isProtocolNewer packet directly into Via's connection, bypassing the 1.16 conversion step
+        // and therefore bypassing their workaround.
+        PacketWrapper packet = PacketWrapper.create(ClientboundPackets1_15.RESPAWN, connection);
+
+        packet.write(Type.INT, packetData.player().getWorld().getEnvironment().getId());
+        packet.write(Type.LONG, packetData.seed());
+        packet.write(Type.UNSIGNED_BYTE, (short) packetData.gamemodeId());
+        packet.write(Type.STRING, packetData.isFlat() ? "flat" : "default");
+        try {
+            packet.send(Protocol1_15_2To1_16.class);
+            return false;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

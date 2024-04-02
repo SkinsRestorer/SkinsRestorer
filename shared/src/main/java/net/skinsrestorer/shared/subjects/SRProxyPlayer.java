@@ -28,13 +28,12 @@ public interface SRProxyPlayer extends SRPlayer {
     Optional<String> getCurrentServer();
 
     default void sendPage(int page, Map<String, String> skins) {
-        byte[] ba = MessageProtocolUtil.convertToByteArray(skins);
-
         sendToMessageChannel(out -> {
             out.writeUTF("returnSkinsV3");
             out.writeUTF(getName());
             out.writeInt(page);
 
+            byte[] ba = MessageProtocolUtil.convertToByteArray(skins);
             out.writeShort(ba.length);
             out.write(ba);
         });
