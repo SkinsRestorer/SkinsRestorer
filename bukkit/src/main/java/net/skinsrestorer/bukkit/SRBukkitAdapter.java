@@ -41,7 +41,7 @@ import net.skinsrestorer.shared.info.Platform;
 import net.skinsrestorer.shared.info.PluginInfo;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
-import net.skinsrestorer.shared.provider.ProviderSelector;
+import net.skinsrestorer.shared.utils.ProviderSelector;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
@@ -81,9 +81,10 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin, CommandSende
         this.pluginInstance = pluginInstance;
         this.adventure = adventure;
         this.logger = injector.getSingleton(SRLogger.class);
-        this.schedulerProvider = ProviderSelector.<SchedulerProvider>builder()
-                .add(new FoliaSchedulerProvider())
-                .add(new BukkitSchedulerProvider())
+        this.schedulerProvider = ProviderSelector.<SchedulerProvider>selector()
+                .add(FoliaSchedulerProvider::isAvailable,
+                        () -> injector.getSingleton(FoliaSchedulerProvider.class))
+                .addDefault(injector.getSingleton(BukkitSchedulerProvider.class))
                 .get();
     }
 
@@ -109,12 +110,12 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin, CommandSende
 
     @Override
     public void runAsync(Runnable runnable) {
-        schedulerProvider.runAsync(server, pluginInstance, runnable);
+        schedulerProvider.runAsync(runnable);
     }
 
     @Override
     public void runSync(Runnable runnable) {
-        schedulerProvider.runSync(server, pluginInstance, runnable);
+        schedulerProvider.runSync( runnable);
     }
 
     @Override
@@ -123,7 +124,7 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin, CommandSende
     }
 
     public void runSyncToPlayer(Player player, Runnable runnable) {
-        schedulerProvider.runSyncToEntity(server, pluginInstance, player, runnable);
+        schedulerProvider.runSyncToEntity(player, runnable);
     }
 
     @Override
@@ -184,7 +185,7 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin, CommandSende
 
     @Override
     public void runRepeatAsync(Runnable runnable, int delay, int interval, TimeUnit timeUnit) {
-        schedulerProvider.runRepeatAsync(server, pluginInstance, runnable, delay, interval, timeUnit);
+        schedulerProvider.runRepeatAsync(runnable, delay, interval, timeUnit);
     }
 
     @Override
@@ -273,6 +274,6 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin, CommandSende
 
     @Override
     public void shutdownCleanup() {
-        schedulerProvider.unregisterTasks(server, pluginInstance);
+        schedulerProvider.unregisterTasks();
     }
 }

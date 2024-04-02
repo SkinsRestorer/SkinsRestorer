@@ -17,21 +17,22 @@
  */
 package net.skinsrestorer.bukkit.utils;
 
-import net.skinsrestorer.shared.provider.FeatureProvider;
-import org.bukkit.Server;
 import org.bukkit.entity.Entity;
-import org.bukkit.plugin.Plugin;
 
 import java.util.concurrent.TimeUnit;
 
-public interface SchedulerProvider extends FeatureProvider {
-    void runAsync(Server server, Plugin plugin, Runnable runnable);
+public interface SchedulerProvider {
+    void runAsync(Runnable runnable);
 
-    void runSync(Server server, Plugin plugin, Runnable runnable);
+    void runSync(Runnable runnable);
 
-    void runSyncToEntity(Server server, Plugin plugin, Entity entity, Runnable runnable);
+    void runSyncDelayed(Runnable runnable, long ticks);
 
-    void runRepeatAsync(Server server, Plugin plugin, Runnable runnable, int delay, int interval, TimeUnit timeUnit);
+    void runSyncToEntity(Entity entity, Runnable runnable);
 
-    void unregisterTasks(Server server, Plugin plugin);
+    void runSyncToEntityDelayed(Entity entity, Runnable runnable, long ticks);
+
+    void runRepeatAsync(Runnable runnable, int delay, int interval, TimeUnit timeUnit);
+
+    void unregisterTasks();
 }

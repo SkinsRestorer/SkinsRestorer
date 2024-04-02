@@ -17,40 +17,51 @@
  */
 package net.skinsrestorer.bukkit.utils;
 
+import lombok.RequiredArgsConstructor;
 import org.bukkit.Server;
 import org.bukkit.entity.Entity;
-import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 
+import javax.inject.Inject;
 import java.util.concurrent.TimeUnit;
 
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class BukkitSchedulerProvider implements SchedulerProvider {
+    private final Server server;
+    private final JavaPlugin plugin;
+
     @Override
-    public void runAsync(Server server, Plugin plugin, Runnable runnable) {
+    public void runAsync(Runnable runnable) {
         server.getScheduler().runTaskAsynchronously(plugin, runnable);
     }
 
     @Override
-    public void runSync(Server server, Plugin plugin, Runnable runnable) {
+    public void runSync(Runnable runnable) {
         server.getScheduler().runTask(plugin, runnable);
     }
 
     @Override
-    public void runSyncToEntity(Server server, Plugin plugin, Entity entity, Runnable runnable) {
-        runSync(server, plugin, runnable);
+    public void runSyncDelayed(Runnable runnable, long ticks) {
+        server.getScheduler().runTaskLater(plugin, runnable, ticks);
     }
 
     @Override
-    public void runRepeatAsync(Server server, Plugin plugin, Runnable runnable, int delay, int interval, TimeUnit timeUnit) {
+    public void runSyncToEntity(Entity entity, Runnable runnable) {
+        runSync(runnable);
+    }
+
+    @Override
+    public void runSyncToEntityDelayed(Entity entity, Runnable runnable, long ticks) {
+        runSyncDelayed(runnable, ticks);
+    }
+
+    @Override
+    public void runRepeatAsync(Runnable runnable, int delay, int interval, TimeUnit timeUnit) {
         server.getScheduler().runTaskTimerAsynchronously(plugin, runnable, timeUnit.toSeconds(delay) * 20L, timeUnit.toSeconds(interval) * 20L);
     }
 
     @Override
-    public void unregisterTasks(Server server, Plugin plugin) {
+    public void unregisterTasks() {
         server.getScheduler().cancelTasks(plugin);
-    }
-
-    @Override
-    public boolean isAvailable() {
-        return true;
     }
 }

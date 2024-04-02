@@ -14,7 +14,7 @@ dependencies {
     implementation("net.kyori:adventure-platform-bukkit:4.3.2")
 
     rootProject.subprojects.forEach {
-        if (!it.name.startsWith("mc-") || it.name.contains("shared")) return@forEach
+        if (!it.name.startsWith("mc-")) return@forEach
 
         compileOnly(project(":mappings:${it.name}"))
         runtimeOnly(project(":mappings:${it.name}", "remapped"))
@@ -26,9 +26,7 @@ dependencies {
     }
 
     implementation("org.bstats:bstats-bukkit:3.0.2")
-    implementation("com.github.cryptomorin:XSeries:9.9.0") {
-        isTransitive = false
-    }
+    implementation("com.github.cryptomorin:XSeries:9.9.0")
 
     // MultiPaper support
     implementation("com.github.puregero:multilib:1.1.13")

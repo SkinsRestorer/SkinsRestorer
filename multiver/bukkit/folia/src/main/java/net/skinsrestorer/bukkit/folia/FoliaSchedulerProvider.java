@@ -18,46 +18,57 @@
 package net.skinsrestorer.bukkit.folia;
 
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
+import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.bukkit.utils.SchedulerProvider;
 import org.bukkit.Server;
 import org.bukkit.entity.Entity;
-import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 
+import javax.inject.Inject;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-@SuppressWarnings("unused")
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class FoliaSchedulerProvider implements SchedulerProvider {
-    @Override
-    public void runAsync(Server server, Plugin plugin, Runnable runnable) {
-        server.getAsyncScheduler().runNow(plugin, getCancellingTaskConsumer(plugin, runnable));
-    }
+    private final Server server;
+    private final JavaPlugin plugin;
 
-    /**
-     * @deprecated Use {@link #runSyncToEntity(Server, Plugin, Entity, Runnable)} instead because folia doesn't support sync tasks.
-     */
     @Override
-    @Deprecated
-    public void runSync(Server server, Plugin plugin, Runnable runnable) {
-        runAsync(server, plugin, runnable);
+    public void runAsync(Runnable runnable) {
+        server.getAsyncScheduler().runNow(plugin, getCancellingTaskConsumer(runnable));
     }
 
     @Override
-    public void runSyncToEntity(Server server, Plugin plugin, Entity entity, Runnable runnable) {
-        entity.getScheduler().run(plugin, getCancellingTaskConsumer(plugin, runnable), null);
+    public void runSync(Runnable runnable) {
+        server.getGlobalRegionScheduler().run(plugin, getCancellingTaskConsumer(runnable));
     }
 
     @Override
-    public void runRepeatAsync(Server server, Plugin plugin, Runnable runnable, int delay, int interval, TimeUnit timeUnit) {
-        server.getAsyncScheduler().runAtFixedRate(plugin, getCancellingTaskConsumer(plugin, runnable), delay, interval, timeUnit);
+    public void runSyncDelayed(Runnable runnable, long ticks) {
+        server.getGlobalRegionScheduler().runDelayed(plugin, getCancellingTaskConsumer(runnable), ticks);
     }
 
     @Override
-    public void unregisterTasks(Server server, Plugin plugin) {
+    public void runSyncToEntity(Entity entity, Runnable runnable) {
+        entity.getScheduler().run(plugin, getCancellingTaskConsumer(runnable), null);
+    }
+
+    @Override
+    public void runSyncToEntityDelayed(Entity entity, Runnable runnable, long ticks) {
+        entity.getScheduler().runDelayed(plugin, getCancellingTaskConsumer(runnable), null, ticks);
+    }
+
+    @Override
+    public void runRepeatAsync(Runnable runnable, int delay, int interval, TimeUnit timeUnit) {
+        server.getAsyncScheduler().runAtFixedRate(plugin, getCancellingTaskConsumer(runnable), delay, interval, timeUnit);
+    }
+
+    @Override
+    public void unregisterTasks() {
         server.getAsyncScheduler().cancelTasks(plugin);
     }
 
-    private Consumer<ScheduledTask> getCancellingTaskConsumer(Plugin plugin, Runnable runnable) {
+    private Consumer<ScheduledTask> getCancellingTaskConsumer(Runnable runnable) {
         return scheduledTask -> {
             if (plugin.isEnabled()) {
                 runnable.run();
@@ -68,8 +79,7 @@ public class FoliaSchedulerProvider implements SchedulerProvider {
         };
     }
 
-    @Override
-    public boolean isAvailable() {
+    public static boolean isAvailable() {
         try {
             Server.class.getMethod("getAsyncScheduler");
             return true;

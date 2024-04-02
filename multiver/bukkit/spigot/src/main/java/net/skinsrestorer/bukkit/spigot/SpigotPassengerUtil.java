@@ -18,14 +18,13 @@
 package net.skinsrestorer.bukkit.spigot;
 
 import ch.jalu.configme.SettingsManager;
+import net.skinsrestorer.bukkit.utils.SchedulerProvider;
 import net.skinsrestorer.shared.config.ServerConfig;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
 public class SpigotPassengerUtil {
-    public static void ejectPassengers(JavaPlugin plugin, Player player, SettingsManager settings) {
+    public static void ejectPassengers(SchedulerProvider scheduler, Player player, SettingsManager settings) {
         Entity vehicle = player.getVehicle();
 
         // Dismounts a player on refreshing, which prevents desync caused by riding a horse, or plugins that allow sitting
@@ -34,13 +33,12 @@ public class SpigotPassengerUtil {
 
             if (settings.getProperty(ServerConfig.REMOUNT_PLAYER_ON_UPDATE)) {
                 // This is delayed to next tick to allow the accepter to propagate if necessary (IE: Paper's health update)
-                // TODO: Support folia for this
-                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                scheduler.runSyncToEntityDelayed(player, () -> {
                     // This is not really necessary, as addPassenger on vanilla despawned vehicles won't do anything, but better to be safe in case the server has plugins that do strange things
                     if (vehicle.isValid()) {
                         vehicle.addPassenger(player);
                     }
-                }, 1);
+                }, 1L);
             }
         }
 

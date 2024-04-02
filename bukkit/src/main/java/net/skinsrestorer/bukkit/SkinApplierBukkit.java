@@ -115,7 +115,7 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
 
     private void ejectPassengers(Player player) {
         if (ClassInfo.get().isSpigot() && SpigotUtil.hasPassengerMethods()) {
-            SpigotPassengerUtil.ejectPassengers(adapter.getPluginInstance(), player, settings);
+            SpigotPassengerUtil.ejectPassengers(adapter.getSchedulerProvider(), player, settings);
         }
     }
 
