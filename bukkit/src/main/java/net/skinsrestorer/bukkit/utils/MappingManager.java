@@ -50,21 +50,20 @@ public class MappingManager {
     );
 
     public static Optional<IMapping> getMapping(Server server) {
-        return getMappingsVersion(server)
-                .flatMap(version -> MAPPINGS.stream()
+        String version = getVersion(server);
+        return MAPPINGS.stream()
                         .filter(mapping -> mapping.getSupportedVersions().contains(version))
-                        .findFirst());
+                        .findFirst();
     }
 
     @SuppressWarnings({"deprecation"})
-    public static Optional<String> getMappingsVersion(Server server) {
+    public static String getVersion(Server server) {
         var craftMagicNumbers = server.getUnsafe();
         try {
             Method method = craftMagicNumbers.getClass().getMethod("getMappingsVersion");
-            return Optional.of((String) method.invoke(craftMagicNumbers, new Object[0]));
+            return (String) method.invoke(craftMagicNumbers, new Object[0]);
         } catch (ReflectiveOperationException e) {
-            e.printStackTrace();
-            return Optional.empty();
+            throw new RuntimeException("Failed to get mappings version", e);
         }
     }
 }
