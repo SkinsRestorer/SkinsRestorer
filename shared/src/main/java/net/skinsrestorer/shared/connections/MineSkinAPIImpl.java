@@ -130,13 +130,13 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                     logger.severe("[ERROR] MineSkin API key is not invalid! Reason: " + error);
                     switch (error) {
                         case "Invalid API Key" ->
-                                logger.severe("The API Key provided is not registered on MineSkin! Please empty \"api.mineSkinKey\" in plugins/SkinsRestorer/config.yml and run /sr reload");
+                                logger.severe(String.format("The API Key provided is not registered on MineSkin! Please empty \"%s\" in plugins/SkinsRestorer/config.yml and run /sr reload", APIConfig.MINESKIN_API_KEY.getPath()));
                         case "Client not allowed" ->
-                                logger.severe("This server ip is not on the apikey allowed IPs list!");
+                                logger.severe("This server ip is not on the api key allowed IPs list!");
                         case "Origin not allowed" ->
-                                logger.severe("This server Origin is not on the apikey allowed Origins list!");
+                                logger.severe("This server Origin is not on the api key allowed Origins list!");
                         case "Agent not allowed" ->
-                                logger.severe("SkinsRestorer's agent \"SkinsRestorer/MineSkinAPI\" is not on the apikey allowed agents list!");
+                                logger.severe(String.format("SkinsRestorer's agent \"%s\" is not on the api key allowed agents list!", MINESKIN_USER_AGENT));
                         default -> logger.severe("Unknown error, please report this to SkinsRestorer's discord!");
                     }
 
