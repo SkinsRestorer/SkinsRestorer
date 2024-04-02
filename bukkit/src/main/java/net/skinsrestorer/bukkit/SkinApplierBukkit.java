@@ -20,7 +20,7 @@ package net.skinsrestorer.bukkit;
 import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinProperty;
-import net.skinsrestorer.bukkit.multipaper.MultiPaperUtil;
+import net.skinsrestorer.bukkit.utils.MultiPaperUtil;
 import net.skinsrestorer.bukkit.paper.PaperSkinApplier;
 import net.skinsrestorer.bukkit.refresher.SkinRefresher;
 import net.skinsrestorer.bukkit.spigot.SpigotPassengerUtil;

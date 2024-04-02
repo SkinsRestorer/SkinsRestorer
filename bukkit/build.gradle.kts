@@ -8,7 +8,6 @@ dependencies {
     implementation(projects.multiver.bukkit.shared)
     implementation(projects.multiver.bukkit.spigot)
     implementation(projects.multiver.bukkit.paper)
-    implementation(projects.multiver.bukkit.multipaper)
     implementation(projects.multiver.bukkit.v17)
     implementation(projects.multiver.bukkit.folia)
 
@@ -30,6 +29,9 @@ dependencies {
     implementation("com.github.cryptomorin:XSeries:9.9.0") {
         isTransitive = false
     }
+
+    // MultiPaper support
+    implementation("com.github.puregero:multilib:1.1.13")
 
     // PAPI API hook
     compileOnly("me.clip:placeholderapi:2.11.5") {
