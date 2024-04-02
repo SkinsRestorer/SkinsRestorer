@@ -18,10 +18,10 @@
 package net.skinsrestorer.bukkit.refresher;
 
 import net.skinsrestorer.bukkit.SRBukkitAdapter;
-import net.skinsrestorer.bukkit.utils.BukkitReflection;
-import net.skinsrestorer.bukkit.utils.OPRefreshUtil;
 import net.skinsrestorer.bukkit.mappings.MappingReflection;
 import net.skinsrestorer.bukkit.mappings.ViaPacketData;
+import net.skinsrestorer.bukkit.utils.BukkitReflection;
+import net.skinsrestorer.bukkit.utils.OPRefreshUtil;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.utils.FluentList;
@@ -230,7 +230,7 @@ public final class SpigotSkinRefresher implements SkinRefresher {
                             flat
                     ));
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logger.severe("Failed to send ViaVersion packet for player " + player.getName(), e);
                 }
             }
 

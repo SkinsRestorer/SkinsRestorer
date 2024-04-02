@@ -17,17 +17,7 @@
  */
 package net.skinsrestorer.bukkit.utils;
 
-import net.skinsrestorer.bukkit.mappings.Mapping1_18;
-import net.skinsrestorer.bukkit.mappings.Mapping1_18_2;
-import net.skinsrestorer.bukkit.mappings.Mapping1_19;
-import net.skinsrestorer.bukkit.mappings.Mapping1_19_1;
-import net.skinsrestorer.bukkit.mappings.Mapping1_19_2;
-import net.skinsrestorer.bukkit.mappings.Mapping1_19_3;
-import net.skinsrestorer.bukkit.mappings.Mapping1_19_4;
-import net.skinsrestorer.bukkit.mappings.Mapping1_20;
-import net.skinsrestorer.bukkit.mappings.Mapping1_20_2;
-import net.skinsrestorer.bukkit.mappings.Mapping1_20_4;
-import net.skinsrestorer.bukkit.mappings.IMapping;
+import net.skinsrestorer.bukkit.mappings.*;
 import net.skinsrestorer.shared.utils.FluentList;
 import org.bukkit.Server;
 
@@ -52,8 +42,8 @@ public class MappingManager {
     public static Optional<IMapping> getMapping(Server server) {
         String version = getVersion(server);
         return MAPPINGS.stream()
-                        .filter(mapping -> mapping.getSupportedVersions().contains(version))
-                        .findFirst();
+                .filter(mapping -> mapping.getSupportedVersions().contains(version))
+                .findFirst();
     }
 
     @SuppressWarnings({"deprecation"})

@@ -34,11 +34,11 @@ public class BuildData {
     public static final String COMMIT_SHORT = COMMIT.substring(0, 7);
     public static final String[] LOCALES = supportedLocales();
 
+    private BuildData() {
+    }
+
     private static String[] supportedLocales() {
         String values = "{{ locales }}";
         return values.split("\\|");
-    }
-
-    private BuildData() {
     }
 }

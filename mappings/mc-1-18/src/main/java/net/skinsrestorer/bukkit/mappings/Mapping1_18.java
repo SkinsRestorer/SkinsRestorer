@@ -27,9 +27,6 @@ import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.level.biome.BiomeManager;
-import net.skinsrestorer.bukkit.mappings.IMapping;
-import net.skinsrestorer.bukkit.mappings.MappingReflection;
-import net.skinsrestorer.bukkit.mappings.ViaPacketData;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -81,7 +78,7 @@ public class Mapping1_18 implements IMapping {
 
         // Resend their effects
         for (MobEffectInstance effect : entityPlayer.getActiveEffects()) {
-            sendPacket(entityPlayer,  new ClientboundUpdateMobEffectPacket(entityPlayer.getId(), effect));
+            sendPacket(entityPlayer, new ClientboundUpdateMobEffectPacket(entityPlayer.getId(), effect));
         }
     }
 

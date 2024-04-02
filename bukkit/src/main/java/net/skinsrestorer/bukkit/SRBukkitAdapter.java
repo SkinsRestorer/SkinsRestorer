@@ -41,9 +41,9 @@ import net.skinsrestorer.shared.info.Platform;
 import net.skinsrestorer.shared.info.PluginInfo;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
-import net.skinsrestorer.shared.utils.ProviderSelector;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
+import net.skinsrestorer.shared.utils.ProviderSelector;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Server;
@@ -115,7 +115,7 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin, CommandSende
 
     @Override
     public void runSync(Runnable runnable) {
-        schedulerProvider.runSync( runnable);
+        schedulerProvider.runSync(runnable);
     }
 
     @Override

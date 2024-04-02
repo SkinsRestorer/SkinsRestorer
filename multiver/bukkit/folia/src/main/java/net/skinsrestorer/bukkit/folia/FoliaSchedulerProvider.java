@@ -33,6 +33,15 @@ public class FoliaSchedulerProvider implements SchedulerProvider {
     private final Server server;
     private final JavaPlugin plugin;
 
+    public static boolean isAvailable() {
+        try {
+            Server.class.getMethod("getAsyncScheduler");
+            return true;
+        } catch (NoSuchMethodException e) {
+            return false;
+        }
+    }
+
     @Override
     public void runAsync(Runnable runnable) {
         server.getAsyncScheduler().runNow(plugin, getCancellingTaskConsumer(runnable));
@@ -77,14 +86,5 @@ public class FoliaSchedulerProvider implements SchedulerProvider {
                 scheduledTask.cancel();
             }
         };
-    }
-
-    public static boolean isAvailable() {
-        try {
-            Server.class.getMethod("getAsyncScheduler");
-            return true;
-        } catch (NoSuchMethodException e) {
-            return false;
-        }
     }
 }

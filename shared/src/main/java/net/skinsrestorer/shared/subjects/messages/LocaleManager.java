@@ -24,8 +24,8 @@ import java.util.*;
 
 @NoArgsConstructor(onConstructor_ = @Inject)
 public class LocaleManager {
-    private final Map<Message, Map<Locale, String>> messages = new EnumMap<>(Message.class);
     public static final Locale BASE_LOCALE = Locale.ENGLISH;
+    private final Map<Message, Map<Locale, String>> messages = new EnumMap<>(Message.class);
 
     public void addMessage(Message key, Locale locale, String message) {
         messages.computeIfAbsent(key, k -> new HashMap<>()).put(locale, message);
