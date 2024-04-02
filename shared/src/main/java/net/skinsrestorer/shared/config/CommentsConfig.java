@@ -69,7 +69,7 @@ public class CommentsConfig implements SettingsHolder {
                 "Website: https://skinsrestorer.net",
                 "Docs: https://skinsrestorer.net/docs",
                 "Spigot: https://skinsrestorer.net/spigot",
-                "Github: https://github.com/SkinsRestorer/SkinsRestorerX",
+                "Github: https://github.com/SkinsRestorer/SkinsRestorer",
                 "Discord: https://skinsrestorer.net/discord"
         );
     }

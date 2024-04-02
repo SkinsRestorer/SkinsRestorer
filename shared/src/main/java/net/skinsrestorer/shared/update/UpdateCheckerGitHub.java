@@ -42,7 +42,7 @@ import java.util.Optional;
  */
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class UpdateCheckerGitHub {
-    private static final URI RELEASES_URL_LATEST = URI.create("https://api.github.com/repos/SkinsRestorer/SkinsRestorerX/releases/latest");
+    private static final URI RELEASES_URL_LATEST = URI.create("https://api.github.com/repos/SkinsRestorer/SkinsRestorer/releases/latest");
     private static final String JAR_ASSET_NAME = "SkinsRestorer.jar";
     private static final String LOG_ROW = "§a----------------------------------------------";
     private final SRLogger logger;

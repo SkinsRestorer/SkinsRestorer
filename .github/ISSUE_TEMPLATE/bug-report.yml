@@ -9,7 +9,7 @@ body:
       description: |
         Please search to see if an issue already exists for the bug you encountered.
 
-        Tip: You can go to the [GitHub issue tab](https://github.com/SkinsRestorer/SkinsRestorerX/issues?q=is%3Aopen+is%3Aissue+label%3A%22type%3A+%3Abug%3A+bug%22) for a list of open issues
+        Tip: You can go to the [GitHub issue tab](https://github.com/SkinsRestorer/SkinsRestorer/issues?q=is%3Aopen+is%3Aissue+label%3A%22type%3A+%3Abug%3A+bug%22) for a list of open issues
       options:
       - label: I have searched the existing issues
         required: true
@@ -28,7 +28,7 @@ body:
       label: Installed conforming to our guide?
       description: |
         Please check conduct our installation guide and check if all step's have been performed at the [installation guide](https://skinsrestorer.net/docs/installation)
-        
+
         Unsure or have questions? -> Ask in our [SkinsRestorer discord server](https://skinsrestorer.net/discord)
       options:
       - label: I have read the installation guide and performed all steps
@@ -73,14 +73,14 @@ body:
       label: Minecraft implementation
       description: |
         Use /version, /bungee or /velocity to get the version!
-        Examples: 
+        Examples:
           - **Proxy**: This server is running BungeeCord version git:BungeeCord-Bootstrap:1.18-R0.1-SNAPSHOT:a17d8f8:1634
           - **Backend**: This server is running Paper version git-Paper-220 (MC: 1.18.2) (Implementing API version 1.18.2-R0.1-SNAPSHOT) (Git: 63aa4d3)
-          
+
           TIP: If you don't use a proxy (like BungeeCord, Waterfall or Velocity) or don't know what this means? Then you can ignore the proxy part.
       value: |
-          - Proxy: 
-          - Backend: 
+          - Proxy:
+          - Backend:
       render: markdown
     validations:
       required: false

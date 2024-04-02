@@ -40,7 +40,7 @@ tasks {
 }
 
 indra {
-    github("SkinsRestorer", "SkinsRestorerX") {
+    github("SkinsRestorer", "SkinsRestorer") {
         ci(true)
     }
 
