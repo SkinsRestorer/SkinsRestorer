@@ -14,7 +14,6 @@
   "skinsrestorer.help_sr_dump": "Carica i dati di supporto su bytebin.lucko.me.",
   "skinsrestorer.not_connected_to_server": "<red>Non sei connesso a nessun server.",
   "skinsrestorer.admincommand_status_checking": "<gray>Verifica dei servizi necessari affinché SR funzioni correttamente...",
-  "skinsrestorer.admincommand_status_working_count": "<gray>Working <count> conteggio API",
   "skinsrestorer.admincommand_status_summary_server": "<gray>Server: <gold><version>",
   "skinsrestorer.admincommand_status_summary_proxymode": "<gray>ProxyMode: <gold><proxy_mode>",
   "skinsrestorer.skinsmenu_open": "{prefix} &2Apertura del menù delle skin...",
