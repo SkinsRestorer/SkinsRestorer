@@ -23,7 +23,6 @@
   "skinsrestorer.admincommand_status_summary_server": "<gray>伺服器: <gold><version>",
   "skinsrestorer.admincommand_status_summary_proxymode": "<gray>代理模式: <gold><proxy_mode>",
   "skinsrestorer.admincommand_status_summary_commit": "<gray>提交: <gold><hash>",
-  "skinsrestorer.admincommand_status_summary_finished": "<gray>已完成檢查。",
   "skinsrestorer.admincommand_drop_player_not_found": "<red>未找到玩家 <yellow><player></yellow>。",
   "skinsrestorer.admincommand_drop_skin_not_found": "<red>皮膚 <yellow><skin></yellow> 未找到。",
   "skinsrestorer.permission_admincommand_applyskin": "允許訪問以重新應用其他玩家的皮膚。",
