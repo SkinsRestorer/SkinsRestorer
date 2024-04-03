@@ -44,7 +44,6 @@
   "skinsrestorer.error_ms_unknown": "Unbekannter MineSkin Fehler!",
   "skinsrestorer.not_connected_to_server": "<red>Sie sind mit keinem Server verbunden.",
   "skinsrestorer.admincommand_status_checking": "<gray>Überprüfe benötigte Dienste damit SR richtig funktioniert...",
-  "skinsrestorer.admincommand_status_working_count": "<gray>Arbeitende <count> API-Anzahl",
   "skinsrestorer.admincommand_status_working": "<green>Das Plugin befindet sich derzeit in einem Arbeitszustand.",
   "skinsrestorer.admincommand_status_broken": "<red>Das Plugin kann derzeit keine neuen Skins abrufen.<newline>Die Verbindung ist wahrscheinlich wegen einer Firewall gesperrt.<newline>Weitere Informationen finden Sie unter https://skinsrestorer.net/firewall"
 }
