@@ -14,11 +14,9 @@
   "skinsrestorer.help_sr_dump": "Încărcați datele de suport pe bytebin.lucko.me.",
   "skinsrestorer.not_connected_to_server": "<red>Nu ești conectat la niciun server.",
   "skinsrestorer.admincommand_status_checking": "<gray>Se verifică serviciile necesare pentru ca SR să funcționeze corect...",
-  "skinsrestorer.admincommand_status_working_count": "<gray> Numărul de API <count> care funcționează",
   "skinsrestorer.admincommand_status_summary_server": "<gray>Server: <gold><version>",
   "skinsrestorer.admincommand_status_summary_proxymode": "<gray>ModProxy: <gold><proxy_mode>",
   "skinsrestorer.admincommand_status_summary_commit": "<gray>Comite: <gold><hash>",
-  "skinsrestorer.admincommand_status_summary_finished": "<gray>S-a finalizat verificarea serviciilor.",
   "skinsrestorer.admincommand_drop_player_not_found": "<red>Jucătorul <yellow><player></yellow> nu a fost găsit.",
   "skinsrestorer.admincommand_drop_skin_not_found": "<red>Jucătorul <yellow><skin></yellow> nu a fost găsit."
 }
