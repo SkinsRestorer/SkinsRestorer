@@ -67,10 +67,13 @@ dependencyResolutionManagement {
 
 develocity {
     buildScan {
-        if (!System.getenv("CI").isNullOrEmpty()) {
+        val isCi = !System.getenv("CI").isNullOrEmpty()
+        if (isCi) {
             termsOfUseUrl = "https://gradle.com/help/legal-terms-of-use"
             termsOfUseAgree = "yes"
+            tag("CI")
         }
+        publishing.onlyIf { isCi }
     }
 }
 
