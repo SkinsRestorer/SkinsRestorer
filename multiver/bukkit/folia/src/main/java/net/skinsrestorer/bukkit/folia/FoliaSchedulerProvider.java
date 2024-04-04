@@ -75,6 +75,7 @@ public class FoliaSchedulerProvider implements SchedulerProvider {
     @Override
     public void unregisterTasks() {
         server.getAsyncScheduler().cancelTasks(plugin);
+        server.getGlobalRegionScheduler().cancelTasks(plugin);
     }
 
     private Consumer<ScheduledTask> getCancellingTaskConsumer(Runnable runnable) {

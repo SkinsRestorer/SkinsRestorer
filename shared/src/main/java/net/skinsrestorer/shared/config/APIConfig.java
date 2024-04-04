@@ -30,4 +30,11 @@ public class APIConfig implements SettingsHolder {
             "[?] A key is not required, but recommended."
     })
     public static final Property<String> MINESKIN_API_KEY = newProperty("api.mineskinAPIKey", "key");
+    @Comment({
+            "This option disables the use of api.ashcon.app",
+            "It is recommended to keep this enabled, as it is used for fetching and caching skins.",
+            "You may hit Mojang ratelimits if you disable this, as it will fall back to Mojang and then MineTools",
+            "Both of which are not sufficient for servers with many players."
+    })
+    public static final Property<Boolean> DISABLE_ASHCON = newProperty("api.disableAshcon", false);
 }

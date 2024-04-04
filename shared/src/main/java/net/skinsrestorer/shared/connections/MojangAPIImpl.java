@@ -17,11 +17,13 @@
  */
 package net.skinsrestorer.shared.connections;
 
+import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.connections.MojangAPI;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.property.MojangSkinDataResult;
 import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.shared.config.APIConfig;
 import net.skinsrestorer.shared.connections.http.HttpClient;
 import net.skinsrestorer.shared.connections.http.HttpResponse;
 import net.skinsrestorer.shared.connections.responses.AshconResponse;
@@ -53,6 +55,7 @@ public class MojangAPIImpl implements MojangAPI {
     private static final String PROFILE_MINETOOLS = "https://api.minetools.eu/profile/%uuid%";
 
     private final MetricsCounter metricsCounter;
+    private final SettingsManager settings;
     private final SRLogger logger;
     private final SRPlugin plugin;
     private final HttpClient httpClient;
@@ -65,18 +68,22 @@ public class MojangAPIImpl implements MojangAPI {
         }
 
         try {
-            return getDataAshcon(nameOrUniqueId);
+            if (!settings.getProperty(APIConfig.DISABLE_ASHCON)) {
+                return getDataAshcon(nameOrUniqueId);
+            }
         } catch (DataRequestException e) {
             logger.debug(e);
-            Optional<UUID> uuidResult = uuidParseResult.isEmpty()
-                    ? getUUIDStartMojang(nameOrUniqueId) : uuidParseResult;
-            if (uuidResult.isEmpty()) {
-                return Optional.empty();
-            }
-
-            return getProfileStartMojang(uuidResult.get()).flatMap(propertyResponse ->
-                    Optional.of(MojangSkinDataResult.of(uuidResult.get(), propertyResponse)));
         }
+
+        // Fall back to Mojang API
+        Optional<UUID> uuidResult = uuidParseResult.isEmpty()
+                ? getUUIDStartMojang(nameOrUniqueId) : uuidParseResult;
+        if (uuidResult.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return getProfileStartMojang(uuidResult.get()).flatMap(propertyResponse ->
+                Optional.of(MojangSkinDataResult.of(uuidResult.get(), propertyResponse)));
     }
 
     /**
@@ -91,11 +98,15 @@ public class MojangAPIImpl implements MojangAPI {
         }
 
         try {
-            return getDataAshcon(playerName).map(MojangSkinDataResult::getUniqueId);
+            if (!settings.getProperty(APIConfig.DISABLE_ASHCON)) {
+                return getDataAshcon(playerName).map(MojangSkinDataResult::getUniqueId);
+            }
         } catch (DataRequestException e) {
             logger.debug(e);
-            return getUUIDStartMojang(playerName);
         }
+
+        // Fall back to Mojang API
+        return getUUIDStartMojang(playerName);
     }
 
     private Optional<UUID> getUUIDStartMojang(String playerName) throws DataRequestException {
@@ -103,8 +114,10 @@ public class MojangAPIImpl implements MojangAPI {
             return getUUIDMojang(playerName);
         } catch (DataRequestException e) {
             logger.debug(e);
-            return getUUIDMineTools(playerName);
         }
+
+        // Fall back to MineTools API
+        return getUUIDMineTools(playerName);
     }
 
     protected Optional<MojangSkinDataResult> getDataAshcon(String nameOrUniqueId) throws DataRequestException {
@@ -176,11 +189,15 @@ public class MojangAPIImpl implements MojangAPI {
 
     public Optional<SkinProperty> getProfile(UUID uuid) throws DataRequestException {
         try {
-            return getDataAshcon(uuid.toString().replace("-", "")).map(MojangSkinDataResult::getSkinProperty);
+            if (!settings.getProperty(APIConfig.DISABLE_ASHCON)) {
+                return getDataAshcon(UUIDUtils.convertToNoDashes(uuid)).map(MojangSkinDataResult::getSkinProperty);
+            }
         } catch (DataRequestException e) {
             logger.debug(e);
-            return getProfileStartMojang(uuid);
         }
+
+        // Fall back to Mojang API
+        return getProfileStartMojang(uuid);
     }
 
     private Optional<SkinProperty> getProfileStartMojang(UUID uuid) throws DataRequestException {
@@ -188,8 +205,10 @@ public class MojangAPIImpl implements MojangAPI {
             return getProfileMojang(uuid);
         } catch (DataRequestException e) {
             logger.debug(e);
-            return getProfileMineTools(uuid);
         }
+
+        // Fall back to MineTools API
+        return getProfileMineTools(uuid);
     }
 
     public Optional<SkinProperty> getProfileMojang(UUID uuid) throws DataRequestException {
