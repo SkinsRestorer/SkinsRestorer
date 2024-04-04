@@ -49,6 +49,7 @@ public class CommentsConfig implements SettingsHolder {
                 "\n",
                 "(!) IF YOU ARE USING A PROXY (BungeeCord, Waterfall or Velocity), YOU NEED TO INSTALL SKINSRESTORER ON THE PROXY AND ALL SERVERS! (!)",
                 "(!) YOU ALSO NEED TO CONFIGURE YOUR SERVERS TO DETECT THE PROXY! (!)",
+                "(!) AND YOU ALSO NEED TO PUT THE SAME CONFIG FILE IN ALL PROXIES AND SERVERS! (!)",
                 "(!) You can find detailed proxy instructions here: https://skinsrestorer.net/docs/installation"
         );
         conf.setFooter(
@@ -61,7 +62,7 @@ public class CommentsConfig implements SettingsHolder {
                 "With SkinFile Generator, you can upload your own custom skin to get a unique .skin file that you can put in your skins folder, to use with SkinsRestorer.",
                 "Check it out here: https://generator.skinsrestorer.net",
                 "",
-                "SkinSystem :",
+                "SkinSystem:",
                 "With SkinSystem, you, as a server owner, can connect AuthMe with the SkinSystem website that you can host, to give your players the ability to upload custom skins.",
                 "Check it out here: https://github.com/SkinsRestorer/SkinSystem",
                 "",
