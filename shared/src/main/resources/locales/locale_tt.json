@@ -26,6 +26,9 @@
   "skinsrestorer.error_skin_disabled": "Бу кыяфәт администратор тарафыннан сүндерелде.",
   "skinsrestorer.error_ms_unknown": "Билгесез MineSkin хатасы!",
   "skinsrestorer.not_connected_to_server": "<red>Сез теләгән серверга тоташылмады.",
+  "skinsrestorer.divider": "<dark_aqua>----------------------------------------------",
+  "skinsrestorer.admincommand_status_uuid_api": "<gray>Эшлә торган UUID API-лары: <total> саннан <count> сан",
+  "skinsrestorer.admincommand_status_profile_api": "<gray>Эшлә торган профиль API-лары: <total> саннан <count> сан",
   "skinsrestorer.admincommand_status_summary_server": "<gray>Сервер: <gold><version>",
   "skinsrestorer.admincommand_status_summary_proxymode": "<gray>Прокси шарты: <gold><proxy_mode>",
   "skinsrestorer.admincommand_status_summary_commit": "<gray>Өлеш: <gold><hash>",
@@ -58,6 +61,7 @@
   "skinsrestorer.skinsmenu_select_skin": "<dark_green>Бу кыяфәтне сайлау өчен басыгыз",
   "skinsrestorer.sponge_metrics_consent": "Хөрмәтле сервер администраторы, <b>SkinsRestorer өчен Sponge ны хуплауны дәвам итәргә</b> кирәк микән дип хәл итәргә ярдәм итү өчен, <newline><dark_green>/sr metrics enable</dark_green> кабызып яки бу хәбәргә басып, метрикларны керү мөмкинлеген карагыз.",
   "skinsrestorer.sponge_metrics_hover": "<dark_green>Метриканы кушу өчен басыгыз.",
+  "skinsrestorer.no_skin_data": "<dark_red>Хата<dark_gray>: <red>Кыяфәт мәгълүматы табылмады!",
   "skinsrestorer.outdated": "<dark_red>Сез SkinsRestorer искергән версиясен кулланасыз!<newline><red>Spigot-дагы хәзерге версияне яңартыгызчы: <newline><yellow>https://www.spigotmc.org/resources/skinsrestorer.2124/",
   "skinsrestorer.permission_player_wildcard": "Уенчылар өчен тулы хокук",
   "skinsrestorer.permission_admin_wildcard": "Администраторлар өчен тулы хокук"
