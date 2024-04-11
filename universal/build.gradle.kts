@@ -2,7 +2,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import net.raphimc.javadowngrader.gradle.task.DowngradeJarTask
 
 plugins {
-    id("net.raphimc.java-downgrader") version "1.1.2-SNAPSHOT"
+    id("net.raphimc.java-downgrader") version "1.1.2"
 }
 
 val platforms = setOf(
