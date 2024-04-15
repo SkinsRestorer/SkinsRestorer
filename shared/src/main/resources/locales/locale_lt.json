@@ -61,7 +61,6 @@
   "skinsrestorer.skin_search_message": "<dark_green>Galite rasti tinkamą išvaizdą <green><search></green> čia: <newline><green>https://namemc.com/minecraft-skins/tag/<search> <newline><newline><dark_green>Jei išvaizdų nerandate čia, jų visada galite rasti https://namemc.com/minecraft-skins/tag <newline>Galite nustatyti savo išvaizdą naudodami išvaizdos nuorodą:<newline>/skin https://namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>Klaida<dark_gray>: <red>Negauta jokių išvaizdos duomenų! Ar šis žaidėjas turi išvaizdą?",
   "skinsrestorer.info_no_brackets": "<bold>Nerašykite</bold> jūsų teksto tarp <bold>< ></bold> ir <bold>[ ]</bold> skliaustelių.<newline>Pavyzdžiui: <dark_green>/skin <jebb></dark_green> pakeisdami į <dark_green>/skin jebb</dark_green>",
-  "skinsrestorer.outdated": "<dark_red>Jūs naudojate pasenusią SkinsRestorer versiją!<newline><red>Atsisiųskite naujausią versiją iš Spigot: <newline><yellow>https://www.spigotmc.org/resources/skinsrestorer.2124/",
   "skinsrestorer.permission_player_wildcard": "Pakaitos simbolių leidimas žaidėjams",
   "skinsrestorer.permission_command": "Leidžia naudoti pagrindines \"/skin\" komandas.",
   "skinsrestorer.permission_command_set": "Leidžia pakeisti savo išvaizdą.",
