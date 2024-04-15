@@ -101,7 +101,6 @@
   "skinsrestorer.skin_search_message": "<dark_green> ile eşleşen skinleri burada <green><search></green> bulabilirsiniz: <newline><green>https://namemc.com/minecraft-skins/tag/<search> <newline><newline><dark_green>Eğer hiçbir skin bulunamadıysa, her zaman bazı skinleri https://namemc.com/minecraft-skins/tag adresinden bulabilirsiniz. <newline>Skin bağlantısını kullanarak skin'i ayarlayabilirsiniz:<newline>/skin https://namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>Hata<dark_gray>: <red>Skin verisi bulunamadı! Bu oyuncunun bir skin'i var mı?",
   "skinsrestorer.info_no_brackets": "<bold>Metninizi <bold>< ></bold> ve <bold>[ ]</bold><newline>parantezleri arasına koymayın</bold>Örnek: <dark_green>/skin <jebb></dark_green> yerine sadece <dark_green>/skin jebb</dark_green>",
-  "skinsrestorer.outdated": "<dark_red>SkinsRestorer'ın güncellenmemiş bir sürümünü çalıştırıyorsunuz!<newline><red>Lütfen en son sürüme güncelleyin: <newline><yellow>https://www.spigotmc.org/resources/skinsrestorer.2124/",
   "skinsrestorer.permission_player_wildcard": "Oyuncular için Wildcard izni.",
   "skinsrestorer.permission_command": "\"/skin\" komutlarının ana erişimine izin verir.",
   "skinsrestorer.permission_command_set": "Skininizi değiştirmeye erişim sağlar.",

@@ -86,7 +86,6 @@
   "skinsrestorer.skin_search_message": "<dark_green>Skiny vyhovujúce <green><search></green> nájdeš tu: <newline><green>https://namemc.com/minecraft-skins/tag/<search> <newline><newline><dark_green>Ak sa nenašli žiadne skiny, vždy je možné nájsť nejaké skiny na adrese https://namemc.com/minecraft-skins/tag <newline>Skin môžeš nastaviť pomocou odkazu skin:<newline>/skin https://namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>Chyba<dark_gray>: <red>Nenašli sa žiadne údaje o skine! Má tento hráč skin?",
   "skinsrestorer.info_no_brackets": "<bold>Nevkladaj</bold> text medzi tieto <bold>< ></bold> a ani tieto <bold>[ ]</bold> zátvorky<newline>Príklad: <dark_green>/skin <jebb></dark_green> má byť len <dark_green>/skin jebb</dark_green>",
-  "skinsrestorer.outdated": "<dark_red>Používaš zastaranú verziu pluginu SkinsRestorer!<newline><red>Aktualizujte na najnovšiu verziu na Spigote: <newline><yellow>https://www.spigotmc.org/resources/skinsrestorer.2124/",
   "skinsrestorer.permission_player_wildcard": "Voľné oprávnenia pre hráčov",
   "skinsrestorer.permission_command": "Umožňuje prístup k hlavným príkazom \"/skin\".",
   "skinsrestorer.permission_command_set": "Umožňuje zmenu skinu.",

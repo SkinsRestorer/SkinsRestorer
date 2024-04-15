@@ -62,7 +62,6 @@
   "skinsrestorer.sponge_metrics_consent": "Хөрмәтле сервер администраторы, <b>SkinsRestorer өчен Sponge ны хуплауны дәвам итәргә</b> кирәк микән дип хәл итәргә ярдәм итү өчен, <newline><dark_green>/sr metrics enable</dark_green> кабызып яки бу хәбәргә басып, метрикларны керү мөмкинлеген карагыз.",
   "skinsrestorer.sponge_metrics_hover": "<dark_green>Метриканы кушу өчен басыгыз.",
   "skinsrestorer.no_skin_data": "<dark_red>Хата<dark_gray>: <red>Кыяфәт мәгълүматы табылмады!",
-  "skinsrestorer.outdated": "<dark_red>Сез SkinsRestorer искергән версиясен кулланасыз!<newline><red>Spigot-дагы хәзерге версияне яңартыгызчы: <newline><yellow>https://www.spigotmc.org/resources/skinsrestorer.2124/",
   "skinsrestorer.permission_player_wildcard": "Уенчылар өчен тулы хокук",
   "skinsrestorer.permission_admin_wildcard": "Администраторлар өчен тулы хокук"
 }

@@ -42,7 +42,6 @@
   "skinsrestorer.skinsmenu_previous_page": "<yellow>\"<bold>« <gray>Vorige Pagina</gray> <bold>\"</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[</bold> <gray>Verwijder Skin</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_select_skin": "<dark_green>Klik om deze skin te selecteren",
-  "skinsrestorer.outdated": "<dark_red>Je gebruikt een verouderde versie van SkinsRestorer!<newline><red>Update aub naar de laatste versie op Spigot: \n<newline><yellow>https&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/",
   "skinsrestorer.permission_player_wildcard": "Toestemming met jokertekens voor spelers",
   "skinsrestorer.permission_command": "Geeft toegang tot de \"/skin\" hub commando.",
   "skinsrestorer.permission_command_set": "Sta toegang toe om je skin te wijzigen.",

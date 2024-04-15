@@ -101,7 +101,6 @@
   "skinsrestorer.skin_search_message": "<dark_green>Możesz znaleźć skiny pasujące <green><search></green> tutaj: <newline><green>https://namemc.com/minecraft-skins/tag/<search> <newline><newline><dark_green>Jeśli nie znaleziono skinów, zawsze znajdziesz kilka skinów na https://namemc.com/minecraft-skins/tag <newline>Możesz ustawić skórkę za pomocą linku skórki:<newline> /skin https://namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>Błąd<dark_gray>: <red>Nie znaleziono danych skórki! Czy ten gracz ma skórkę?",
   "skinsrestorer.info_no_brackets": "<bold>Nie</bold> umieszczaj tekstu między nawiasami <bold>< </bold> i <bold>[ ]</bold><newline>Przykład: <dark_green>/skin <jebb></dark_green> do po prostu <dark_green>/skin jebb</dark_green>",
-  "skinsrestorer.outdated": "<dark_red>Korzystasz z przestarzałej wersji SkinsRestorer!<newline><red>Zaktualizuj do najnowszej wersji na Spigot: <newline><yellow>https://www.spigotmc.org/resources/skinsrestorer.2124/",
   "skinsrestorer.permission_player_wildcard": "Permisje dla graczy",
   "skinsrestorer.permission_command": "Umożliwia dostęp do głównych poleceń „/skin”.",
   "skinsrestorer.permission_command_set": "Umożliwia dostęp do zmiany skórki.",
