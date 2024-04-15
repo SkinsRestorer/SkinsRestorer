@@ -86,7 +86,6 @@
   "skinsrestorer.skin_search_message": "<dark_green>Možete pronaći skinove koji odgovaraju <green><search></green> ovdje: <newline><green>https://namemc.com/minecraft-skins/tag/<search> <newline><newline><dark_green>Ako nije pronađen nijedan skin, uvijek možete pronaći neki skin na https://namemc.com/minecraft-skins/tag <newline>Možete postaviti skin koristeći link skina:<newline>/skin https:// namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>Greška<dark_gray>: <red>Nisu pronađeni podaci o skinu! Ima li ovaj igrač skin?",
   "skinsrestorer.info_no_brackets": "<bold>Nemojte</bold> stavljati tekst između zagrada <bold>< ></bold> i <bold>[ ]</bold><newline>Primjer: <dark_green>/skin <jebb></dark_green> na samo <dark_green>/skin jebb</dark_green>",
-  "skinsrestorer.outdated": "<dark_red>Imate zastarjelu verziju SkinsRestorera!<newline><red>Molimo ažurirajte na najnoviju verziju na Spigotu: <newline><yellow>https://www.spigotmc.org/resources/skinsrestorer.2124/",
   "skinsrestorer.permission_player_wildcard": "Wildcard dopuštenje za igrača",
   "skinsrestorer.permission_command": "Omogućuje pristup glavnim \"/skin\" naredbama.",
   "skinsrestorer.permission_command_set": "Omogućuje pristup za promjenu skina.",
