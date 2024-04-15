@@ -86,7 +86,6 @@
   "skinsrestorer.skin_search_message": "<dark_green>Puedes encontrar skins que coincidan con <green><search></green> aquí: <newline><green>https://namemc.com/minecraft-skins/tag/<search> <newline><newline><dark_green>Si no se encuentran skins, siempre puede encontrar algunas en https://namemc.com/minecraft-skins/tag <newline>Puedes establecer la skin usando el enlace de la misma:<newline> /skin https://namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>Error<dark_gray>: <red>¡No se encontraron datos de skin! ¿Este jugador tiene un skin?",
   "skinsrestorer.info_no_brackets": "<bold>No</bold> pongas tu texto entre paréntesis <bold>< ></bold> o <bold>[ ]</bold><newline>Ejemplo: <dark_green>/skin <jebb></dark_green> a solo <dark_green>/skin jebb</dark_green>",
-  "skinsrestorer.outdated": "<dark_red>¡Estás usando una versión vieja de SkinsRestorer!<newline><red>Puede actualizarlo mediante el siguiente link: <newline><yellow>https://www.spigotmc.org/resources/skinsrestorer.2124/",
   "skinsrestorer.permission_player_wildcard": "Permiso wildcard para jugadores.",
   "skinsrestorer.permission_command": "Permite el acceso a los comandos principales \"/skin\".",
   "skinsrestorer.permission_command_set": "Permite el acceso para cambiar tu skin.",
