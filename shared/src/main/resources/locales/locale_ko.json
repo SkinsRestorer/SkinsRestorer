@@ -101,7 +101,6 @@
   "skinsrestorer.skin_search_message": "<green><search></green><dark_green>와(과) 일치하는 스킨을 아래에서 찾아보세요.<newline><green>https://https://namemc.com/minecraft-skins/tag/<search><newline><newline><dark_green>어떠한 스킨도 찾지 못한 경우, https://namemc.com/minecraft-skins/tag 에서 언제든지 스킨을 찾을 수 있어요.<newline>스킨의 링크를 사용해서 스킨을 설정할 수도 있어요.<newline>/skin https://namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>오류<dark_gray>: <red>스킨 데이터를 찾지 못했어요!",
   "skinsrestorer.info_no_brackets": "<bold>부등호</bold>나 <bold>대괄호</bold> 사이에 텍스트를 <bold>넣지 마세요</bold><newline>예: <dark_green>/skin <jebb></dark_green>은 <dark_green>/skin jebb이라고 적어야 해요</dark_green>",
-  "skinsrestorer.outdated": "<dark_red>SkinRestorer 구버전을 사용 중이에요!\n<newline><red>Spigot에서 최신 버전으로 업데이트하세요.\n<newline><yellow>https://www.spigotmc.org/resources/skinsrestorer.2124/",
   "skinsrestorer.permission_player_wildcard": "플레이어에 대한 와일드카드 권한",
   "skinsrestorer.permission_command": "주요 \"/skin\" 명령어를 사용하도록 허용해요.",
   "skinsrestorer.permission_command_set": "스킨을 변경하도록 허용해요.",
