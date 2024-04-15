@@ -86,7 +86,6 @@
   "skinsrestorer.skin_search_message": "<dark_green>您可以在这里找到匹配 <green><search></green> 的皮肤: <newline><green>htps://namemc.com/minecraft-skins/tag/<search> <newline><newline><dark_green>如果找不到皮肤，您可以在 https://namemc.com/minecraft-skins/tag 找到其他皮肤。 <newline>您可以通过以下命令使用链接设置皮肤：<newline> /skin https://namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>错误<dark_gray>：<red>没有获取到皮肤数据！确定这个玩家有皮肤吗？",
   "skinsrestorer.info_no_brackets": "<bold>不要</bold>把文本放在括号<bold>< ></bold>和<bold>[ ]</bold>之间<newline>例子：<dark_green>/skin <jebb></dark_green> 只要 <dark_green>/skin jebb</dark_green>即可",
-  "skinsrestorer.outdated": "<dark_red>你正在运行一个旧版本的 SkinsRestorer！ <newline><red>请到 SpigotMC 更新 SkinsRestorer 至最新版本: <newline><yellow>https://www.spigotmc.org/resources/skinsrestorer.2124/",
   "skinsrestorer.permission_player_wildcard": "玩家通配符权限",
   "skinsrestorer.permission_command": "允许使用\"/skin\"命令。",
   "skinsrestorer.permission_command_set": "允许更改你的皮肤。",
