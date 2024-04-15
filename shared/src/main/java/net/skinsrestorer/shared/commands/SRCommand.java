@@ -137,12 +137,12 @@ public final class SRCommand {
         }
 
         sender.sendMessage(Message.ADMINCOMMAND_STATUS_UUID_API,
-                Placeholder.unparsed("count", String.valueOf(response.getSuccessCount(ServiceCheckerService.ServiceCheckResponse.ServiceCheckType.UUID))),
-                Placeholder.unparsed("total", String.valueOf(response.getTotalCount(ServiceCheckerService.ServiceCheckResponse.ServiceCheckType.UUID)))
+                Placeholder.parsed("count", String.valueOf(response.getSuccessCount(ServiceCheckerService.ServiceCheckResponse.ServiceCheckType.UUID))),
+                Placeholder.parsed("total", String.valueOf(response.getTotalCount(ServiceCheckerService.ServiceCheckResponse.ServiceCheckType.UUID)))
         );
         sender.sendMessage(Message.ADMINCOMMAND_STATUS_PROFILE_API,
-                Placeholder.unparsed("count", String.valueOf(response.getSuccessCount(ServiceCheckerService.ServiceCheckResponse.ServiceCheckType.PROFILE))),
-                Placeholder.unparsed("total", String.valueOf(response.getTotalCount(ServiceCheckerService.ServiceCheckResponse.ServiceCheckType.PROFILE)))
+                Placeholder.parsed("count", String.valueOf(response.getSuccessCount(ServiceCheckerService.ServiceCheckResponse.ServiceCheckType.PROFILE))),
+                Placeholder.parsed("total", String.valueOf(response.getTotalCount(ServiceCheckerService.ServiceCheckResponse.ServiceCheckType.PROFILE)))
         );
 
         if (response.allFullySuccessful()) {
@@ -159,15 +159,15 @@ public final class SRCommand {
         }
 
         sender.sendMessage(Message.DIVIDER);
-        sender.sendMessage(Message.ADMINCOMMAND_STATUS_SUMMARY_VERSION, Placeholder.unparsed("version", BuildData.VERSION));
-        sender.sendMessage(Message.ADMINCOMMAND_STATUS_SUMMARY_SERVER, Placeholder.unparsed("version", adapter.getPlatformVersion()));
+        sender.sendMessage(Message.ADMINCOMMAND_STATUS_SUMMARY_VERSION, Placeholder.parsed("version", BuildData.VERSION));
+        sender.sendMessage(Message.ADMINCOMMAND_STATUS_SUMMARY_SERVER, Placeholder.parsed("version", adapter.getPlatformVersion()));
 
         SRServerPlugin serverPlugin = injector.getIfAvailable(SRServerPlugin.class);
         if (serverPlugin != null) {
-            sender.sendMessage(Message.ADMINCOMMAND_STATUS_SUMMARY_PROXYMODE, Placeholder.unparsed("proxy_mode", Boolean.toString(serverPlugin.isProxyMode())));
+            sender.sendMessage(Message.ADMINCOMMAND_STATUS_SUMMARY_PROXYMODE, Placeholder.parsed("proxy_mode", Boolean.toString(serverPlugin.isProxyMode())));
         }
 
-        sender.sendMessage(Message.ADMINCOMMAND_STATUS_SUMMARY_COMMIT, Placeholder.unparsed("hash", BuildData.COMMIT_SHORT));
+        sender.sendMessage(Message.ADMINCOMMAND_STATUS_SUMMARY_COMMIT, Placeholder.parsed("hash", BuildData.COMMIT_SHORT));
         sender.sendMessage(Message.DIVIDER);
     }
 
@@ -236,13 +236,11 @@ public final class SRCommand {
 
         Optional<SkinIdentifier> playerSkinData = playerStorage.getSkinIdOfPlayer(parsedUniqueId.get());
 
-        return playerSkinData.<Consumer<SRCommandSender>>map(skinData -> sender -> {
-            sender.sendMessage(Message.ADMINCOMMAND_INFO_PLAYER,
-                    Placeholder.parsed("uuid", parsedUniqueId.get().toString()),
-                    Placeholder.parsed("identifier", skinData.getIdentifier()),
-                    Placeholder.parsed("variant", String.valueOf(skinData.getSkinVariant())),
-                    Placeholder.parsed("type", skinData.getSkinType().toString()));
-        }).orElseGet(() -> sender -> sender.sendMessage(Message.ADMINCOMMAND_INFO_NO_SET_SKIN));
+        return playerSkinData.<Consumer<SRCommandSender>>map(skinData -> sender -> sender.sendMessage(Message.ADMINCOMMAND_INFO_PLAYER,
+                Placeholder.parsed("uuid", parsedUniqueId.get().toString()),
+                Placeholder.parsed("identifier", skinData.getIdentifier()),
+                Placeholder.parsed("variant", String.valueOf(skinData.getSkinVariant())),
+                Placeholder.parsed("type", skinData.getSkinType().toString()))).orElseGet(() -> sender -> sender.sendMessage(Message.ADMINCOMMAND_INFO_NO_SET_SKIN));
     }
 
     private void sendGenericSkinInfoMessage(SRCommandSender sender, SkinProperty property) {

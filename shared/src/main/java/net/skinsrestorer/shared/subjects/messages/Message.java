@@ -154,7 +154,8 @@ public enum Message {
     SKIN_SEARCH_MESSAGE(Message.PREFIX_FORMAT),
     NO_SKIN_DATA(Message.PREFIX_FORMAT),
     INFO_NO_BRACKETS(Message.PREFIX_FORMAT),
-    OUTDATED(Message.PREFIX_FORMAT);
+    OUTDATED(Message.PREFIX_FORMAT),
+    UNSUPPORTED_JAVA(Message.PREFIX_FORMAT);
 
     private final String key = "skinsrestorer." + this.name().toLowerCase(Locale.ROOT);
     @Getter

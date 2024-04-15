@@ -15,29 +15,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package net.skinsrestorer.velocity.listener;
+package net.skinsrestorer.bukkit.listener;
 
-import com.velocitypowered.api.event.PostOrder;
-import com.velocitypowered.api.event.Subscribe;
-import com.velocitypowered.api.event.player.ServerConnectedEvent;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.listeners.ConnectListenerAdapter;
+import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
+import net.skinsrestorer.shared.listeners.AdminInfoListenerAdapter;
 import net.skinsrestorer.shared.listeners.event.SRServerConnectedEvent;
-import net.skinsrestorer.velocity.wrapper.WrapperVelocity;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 import javax.inject.Inject;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class ConnectListener {
-    private final WrapperVelocity wrapper;
-    private final ConnectListenerAdapter adapter;
+public class AdminInfoListener implements Listener {
+    private final WrapperBukkit wrapper;
+    private final AdminInfoListenerAdapter adapter;
 
-    @Subscribe(order = PostOrder.LAST)
-    public void onServerConnect(ServerConnectedEvent event) {
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerJoin(PlayerJoinEvent event) {
         adapter.handleConnect(wrap(event));
     }
 
-    private SRServerConnectedEvent wrap(ServerConnectedEvent event) {
+    private SRServerConnectedEvent wrap(PlayerJoinEvent event) {
         return () -> wrapper.player(event.getPlayer());
     }
 }

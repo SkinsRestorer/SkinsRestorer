@@ -25,10 +25,7 @@ import net.skinsrestorer.api.semver.SemanticVersion;
 import net.skinsrestorer.bukkit.command.SRBukkitCommand;
 import net.skinsrestorer.bukkit.command.SRHelpTopic;
 import net.skinsrestorer.bukkit.hooks.SRPlaceholderAPIExpansion;
-import net.skinsrestorer.bukkit.listener.InventoryListener;
-import net.skinsrestorer.bukkit.listener.PlayerJoinListener;
-import net.skinsrestorer.bukkit.listener.PlayerResourcePackStatusListener;
-import net.skinsrestorer.bukkit.listener.ServerMessageListener;
+import net.skinsrestorer.bukkit.listener.*;
 import net.skinsrestorer.bukkit.paper.PaperPlayerJoinEvent;
 import net.skinsrestorer.bukkit.refresher.*;
 import net.skinsrestorer.bukkit.utils.BukkitPropertyApplier;
@@ -180,6 +177,11 @@ public class SRBukkitInit implements SRServerPlatformInit {
                 server.getPluginManager().registerEvents(injector.newInstance(PlayerResourcePackStatusListener.class), adapter.getPluginInstance());
             }
         }
+    }
+
+    @Override
+    public void initAdminInfoListener() {
+        server.getPluginManager().registerEvents(injector.getSingleton(AdminInfoListener.class), adapter.getPluginInstance());
     }
 
     @Override

@@ -108,23 +108,6 @@ public class SRPlugin {
         this.dataFolder = dataFolder;
     }
 
-    private static int getJavaVersion(String specVersion) {
-        String[] split = specVersion.split("\\.");
-
-        String majorVersion;
-        if (split.length == 0 || split.length > 2) {
-            throw new IllegalArgumentException("Invalid Java version: " + specVersion);
-        } else if (split.length == 1) {
-            majorVersion = split[0];
-        } else if (split[0].equals("1")) {
-            majorVersion = split[1];
-        } else {
-            throw new IllegalArgumentException("Invalid Java version: " + specVersion);
-        }
-
-        return Integer.parseInt(majorVersion);
-    }
-
     public void initCommands() {
         CommandManager<?> manager = new CommandManager<>(adapter, logger,
                 injector.getSingleton(SkinsRestorerLocale.class),
@@ -192,7 +175,7 @@ public class SRPlugin {
             if (sender instanceof SRPlayer player) {
                 UUID senderUUID = player.getUniqueId();
                 if (!sender.hasPermission(PermissionRegistry.BYPASS_COOLDOWN) && cooldownStorage.hasCooldown(senderUUID)) {
-                    sender.sendMessage(Message.SKIN_COOLDOWN, Placeholder.unparsed("time", String.valueOf(cooldownStorage.getCooldownSeconds(senderUUID))));
+                    sender.sendMessage(Message.SKIN_COOLDOWN, Placeholder.parsed("time", String.valueOf(cooldownStorage.getCooldownSeconds(senderUUID))));
 
                     return false;
                 }
@@ -336,11 +319,6 @@ public class SRPlugin {
         }
 
         updaterInitialized = true;
-        Path updaterDisabled = dataFolder.resolve("noupdate.txt");
-        if (Files.exists(updaterDisabled)) {
-            logger.info("Updater Disabled");
-            return;
-        }
 
         injector.getSingleton(UpdateCheckInit.class).run(cause);
     }
@@ -440,18 +418,18 @@ public class SRPlugin {
     }
 
     private void runJavaCheck() {
-        String specVersion = System.getProperty("java.specification.version");
-
         try {
-            int version = getJavaVersion(specVersion);
-            if (version < 17) {
-                logger.warning(SRChatColor.YELLOW + "Your Java version \"" + specVersion + "\" is not recommended! SkinsRestorer now uses Java 17 primarily.");
-                logger.warning(SRChatColor.YELLOW + "The plugin was \"downgraded\" to Java 1.8 (Java 8) to ensure compatibility with your server, but it may cause issues.");
-                logger.warning(SRChatColor.YELLOW + "The plugin still works, but it may have Java version related issues.");
-                logger.warning(SRChatColor.YELLOW + "Please update your server Java version to 17 or higher to get the best performance, security and to avoid issues with SkinsRestorer.");
+            int version = SRHelpers.getJavaVersion();
+            if (version >= 17) {
+                return;
             }
+
+            logger.warning(SRChatColor.YELLOW + "Your Java version \"" + version + "\" is not supported! SkinsRestorer now uses Java 17 primarily.");
+            logger.warning(SRChatColor.YELLOW + "The plugin was \"downgraded\" to Java 1.8 (Java 8) to ensure compatibility with your server, but it may cause issues.");
+            logger.warning(SRChatColor.YELLOW + "The plugin still works, but it may have Java version related issues.");
+            logger.warning(SRChatColor.YELLOW + "Please update your server Java version to 17 or higher to get the best performance, security and to avoid issues with SkinsRestorer.");
         } catch (Exception e) {
-            logger.warning("Failed to parse Java version: " + specVersion, e);
+            logger.warning("Failed to parse Java version.", e);
         }
     }
 

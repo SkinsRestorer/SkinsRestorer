@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.plugin.SRProxyPlatformInit;
 import net.skinsrestorer.shared.utils.SRConstants;
-import net.skinsrestorer.velocity.listener.ConnectListener;
+import net.skinsrestorer.velocity.listener.AdminInfoListener;
 import net.skinsrestorer.velocity.listener.GameProfileRequest;
 import net.skinsrestorer.velocity.listener.ProxyMessageListener;
 import net.skinsrestorer.velocity.wrapper.WrapperVelocity;
@@ -53,8 +53,8 @@ public class SRVelocityInit implements SRProxyPlatformInit {
     }
 
     @Override
-    public void initConnectListener() {
-        proxy.getEventManager().register(adapter.pluginInstance(), injector.newInstance(ConnectListener.class));
+    public void initAdminInfoListener() {
+        proxy.getEventManager().register(adapter.pluginInstance(), injector.newInstance(AdminInfoListener.class));
     }
 
     @Override

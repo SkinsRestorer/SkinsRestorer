@@ -18,7 +18,5 @@
 package net.skinsrestorer.shared.plugin;
 
 public interface SRProxyPlatformInit extends SRPlatformInit {
-    void initConnectListener();
-
     void initMessageChannel();
 }

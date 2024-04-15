@@ -15,31 +15,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package net.skinsrestorer.shared.plugin;
+package net.skinsrestorer.velocity.listener;
 
+import com.velocitypowered.api.event.PostOrder;
+import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.player.ServerConnectedEvent;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.exception.InitializeException;
+import net.skinsrestorer.shared.listeners.AdminInfoListenerAdapter;
+import net.skinsrestorer.shared.listeners.event.SRServerConnectedEvent;
+import net.skinsrestorer.velocity.wrapper.WrapperVelocity;
 
 import javax.inject.Inject;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class SRProxyPlugin {
-    private final SRPlugin plugin;
+public class AdminInfoListener {
+    private final WrapperVelocity wrapper;
+    private final AdminInfoListenerAdapter adapter;
 
-    public void startupPlatform(SRProxyPlatformInit init) throws InitializeException {
-        // Init storage
-        plugin.loadStorage();
+    @Subscribe(order = PostOrder.LAST)
+    public void onServerConnected(ServerConnectedEvent event) {
+        adapter.handleConnect(wrap(event));
+    }
 
-        // Init API
-        plugin.registerAPI();
-
-        // Init listener
-        init.initLoginProfileListener();
-        init.initAdminInfoListener();
-
-        // Init commands
-        plugin.initCommands();
-
-        init.initMessageChannel();
+    private SRServerConnectedEvent wrap(ServerConnectedEvent event) {
+        return () -> wrapper.player(event.getPlayer());
     }
 }

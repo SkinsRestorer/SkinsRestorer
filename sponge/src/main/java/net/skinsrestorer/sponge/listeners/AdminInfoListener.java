@@ -15,32 +15,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package net.skinsrestorer.shared.listeners;
+package net.skinsrestorer.sponge.listeners;
 
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.shared.listeners.AdminInfoListenerAdapter;
 import net.skinsrestorer.shared.listeners.event.SRServerConnectedEvent;
-import net.skinsrestorer.shared.plugin.SRPlugin;
-import net.skinsrestorer.shared.plugin.SRProxyAdapter;
-import net.skinsrestorer.shared.subjects.SRPlayer;
-import net.skinsrestorer.shared.subjects.messages.Message;
-import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
+import net.skinsrestorer.sponge.wrapper.WrapperSponge;
+import org.jetbrains.annotations.NotNull;
+import org.spongepowered.api.event.EventListener;
+import org.spongepowered.api.event.network.ServerSideConnectionEvent;
 
 import javax.inject.Inject;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public final class ConnectListenerAdapter {
-    private final SRPlugin plugin;
-    private final SRProxyAdapter<?, ?> adapter;
+public class AdminInfoListener implements EventListener<ServerSideConnectionEvent.Join> {
+    private final WrapperSponge wrapper;
+    private final AdminInfoListenerAdapter adapter;
 
-    public void handleConnect(SRServerConnectedEvent event) {
-        adapter.runAsync(() -> {
-            if (plugin.isOutdated()) {
-                SRPlayer player = event.getPlayer();
+    @Override
+    public void handle(@NotNull ServerSideConnectionEvent.Join event) {
+        adapter.handleConnect(wrap(event));
+    }
 
-                if (player.hasPermission(PermissionRegistry.SR)) {
-                    player.sendMessage(Message.OUTDATED);
-                }
-            }
-        });
+    private SRServerConnectedEvent wrap(ServerSideConnectionEvent.Join event) {
+        return () -> wrapper.player(event.player());
     }
 }

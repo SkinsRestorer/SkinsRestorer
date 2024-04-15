@@ -20,22 +20,30 @@ package net.skinsrestorer.shared.update;
 import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
+import net.skinsrestorer.shared.plugin.SRPlugin;
 
 import javax.inject.Inject;
+import java.nio.file.Files;
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class UpdateCheckInit {
+    private final SRPlugin plugin;
     private final SRPlatformAdapter<?, ?> adapter;
     private final UpdateCheckerGitHub updateChecker;
     private final UpdateCheckExecutor updateCheckExecutor;
     private final Injector injector;
 
-    public void run(InitCause cause) {
+    public Optional<UpdateDownloader> getDownloader() {
+        boolean downloaderDisabled = Files.exists(plugin.getDataFolder().resolve("noupdate.txt"));
         DownloaderClassProvider downloaderClassProvider = injector.getIfAvailable(DownloaderClassProvider.class);
-        UpdateDownloader downloader = downloaderClassProvider == null ? null : injector.getSingleton(downloaderClassProvider.get());
+        return downloaderClassProvider == null || downloaderDisabled ? Optional.empty() : Optional.of(injector.getSingleton(downloaderClassProvider.get()));
+    }
 
+    public void run(InitCause cause) {
+        UpdateDownloader downloader = getDownloader().orElse(null);
         updateCheckExecutor.checkUpdate(cause.toUpdateCause(), updateChecker, downloader, true);
 
         int delayInt = 60 + ThreadLocalRandom.current().nextInt(240 - 60 + 1);

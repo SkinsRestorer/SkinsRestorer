@@ -21,7 +21,7 @@ import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.skinsrestorer.bungee.listeners.ConnectListener;
+import net.skinsrestorer.bungee.listeners.AdminInfoListener;
 import net.skinsrestorer.bungee.listeners.LoginListener;
 import net.skinsrestorer.bungee.listeners.ProxyMessageListener;
 import net.skinsrestorer.bungee.wrapper.WrapperBungee;
@@ -56,8 +56,8 @@ public class SRBungeeInit implements SRProxyPlatformInit {
     }
 
     @Override
-    public void initConnectListener() {
-        proxy.getPluginManager().registerListener(adapter.getPluginInstance(), injector.newInstance(ConnectListener.class));
+    public void initAdminInfoListener() {
+        proxy.getPluginManager().registerListener(adapter.getPluginInstance(), injector.newInstance(AdminInfoListener.class));
     }
 
     @Override

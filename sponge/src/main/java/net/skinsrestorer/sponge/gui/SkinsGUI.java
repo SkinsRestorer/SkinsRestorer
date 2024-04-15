@@ -138,7 +138,7 @@ public class SkinsGUI implements GUIManager<InventoryMenu> {
         InventoryMenu menu = inventory.asMenu();
 
         menu.setTitle(SpongeComponentHelper.deserialize(locale.getMessageRequired(player, Message.SKINSMENU_TITLE_NEW,
-                Placeholder.unparsed("page_number", String.valueOf(page + 1)))));
+                Placeholder.parsed("page_number", String.valueOf(page + 1)))));
         menu.setReadOnly(true);
         menu.registerSlotClick(new GUIListener(callback, page, wrapper));
 

@@ -23,18 +23,18 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 import net.skinsrestorer.bungee.wrapper.WrapperBungee;
-import net.skinsrestorer.shared.listeners.ConnectListenerAdapter;
+import net.skinsrestorer.shared.listeners.AdminInfoListenerAdapter;
 import net.skinsrestorer.shared.listeners.event.SRServerConnectedEvent;
 
 import javax.inject.Inject;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class ConnectListener implements Listener {
+public class AdminInfoListener implements Listener {
     private final WrapperBungee wrapper;
-    private final ConnectListenerAdapter adapter;
+    private final AdminInfoListenerAdapter adapter;
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onServerConnect(ServerConnectedEvent event) {
+    public void onServerConnected(ServerConnectedEvent event) {
         adapter.handleConnect(wrap(event));
     }
 

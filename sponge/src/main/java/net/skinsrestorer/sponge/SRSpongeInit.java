@@ -27,6 +27,7 @@ import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.Permission;
 import net.skinsrestorer.shared.subjects.permissions.PermissionGroup;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
+import net.skinsrestorer.sponge.listeners.AdminInfoListener;
 import net.skinsrestorer.sponge.listeners.LoginListener;
 import net.skinsrestorer.sponge.listeners.MetricsJoinListener;
 import net.skinsrestorer.sponge.listeners.ServerMessageListener;
@@ -70,6 +71,15 @@ public class SRSpongeInit implements SRServerPlatformInit {
                 .plugin(adapter.getPluginContainer())
                 .order(Order.DEFAULT)
                 .listener(injector.newInstance(LoginListener.class)).build());
+    }
+
+    @Override
+    public void initAdminInfoListener() {
+        game.eventManager().registerListener(EventListenerRegistration
+                .builder(ServerSideConnectionEvent.Join.class)
+                .plugin(adapter.getPluginContainer())
+                .order(Order.DEFAULT)
+                .listener(injector.newInstance(AdminInfoListener.class)).build());
     }
 
     @Override

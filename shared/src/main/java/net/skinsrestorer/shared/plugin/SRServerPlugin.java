@@ -109,6 +109,8 @@ public class SRServerPlugin {
 
         init.initGUIListener();
 
+        init.initAdminInfoListener();
+
         if (proxyMode) {
             if (Files.exists(plugin.getDataFolder().resolve("enableSkinStorageAPI.txt"))) {
                 plugin.loadStorage();

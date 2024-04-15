@@ -26,6 +26,7 @@ import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
@@ -104,5 +105,39 @@ public class SRHelpers {
         }
 
         throw new IllegalStateException("Failed to get random entry");
+    }
+
+    public static int getJavaVersion() {
+        String specVersion = System.getProperty("java.specification.version");
+        String[] split = specVersion.split("\\.");
+
+        String majorVersion;
+        if (split.length == 0 || split.length > 2) {
+            throw new IllegalArgumentException("Invalid Java version: " + specVersion);
+        } else if (split.length == 1) {
+            majorVersion = split[0];
+        } else if (split[0].equals("1")) {
+            majorVersion = split[1];
+        } else {
+            throw new IllegalArgumentException("Invalid Java version: " + specVersion);
+        }
+
+        return Integer.parseInt(majorVersion);
+    }
+
+    public static String lowerCaseCapitalize(String str) {
+        if (str == null || str.isEmpty()) {
+            return str;
+        }
+
+        return capitalize(str.toLowerCase(Locale.ROOT));
+    }
+
+    public static String capitalize(String str) {
+        if (str == null || str.isEmpty()) {
+            return str;
+        }
+
+        return str.substring(0, 1).toUpperCase(Locale.ROOT) + str.substring(1);
     }
 }

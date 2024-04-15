@@ -21,10 +21,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class UUIDUtils {
-    public static boolean isValidUniqueId(String str) {
-        return tryParseUniqueId(str).isPresent();
-    }
-
     public static Optional<UUID> tryParseUniqueId(String str) {
         try {
             return Optional.of(UUID.fromString(str));

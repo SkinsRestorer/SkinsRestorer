@@ -100,7 +100,7 @@ public class SkinsGUI implements GUIManager<Inventory> {
         SkinsGUIHolder instance = new SkinsGUIHolder(page, callback, wrapper);
         Inventory inventory = server.createInventory(instance, 9 * 6, ComponentHelper.convertJsonToLegacy(
                 locale.getMessageRequired(player, Message.SKINSMENU_TITLE_NEW,
-                        Placeholder.unparsed("page_number", String.valueOf(page + 1)))));
+                        Placeholder.parsed("page_number", String.valueOf(page + 1)))));
         instance.setInventory(inventory);
 
         ItemStack none = createGlass(GlassType.NONE, player);
