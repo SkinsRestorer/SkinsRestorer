@@ -42,8 +42,8 @@ public class EventBusImpl implements EventBus {
     }
 
     public void callEvent(SkinsRestorerEvent event) {
-        subscriptions.removeIf(subscription -> subscription.plugin().refersTo(null)
-                || subscription.listener().refersTo(null));
+        subscriptions.removeIf(subscription -> subscription.plugin().get() == null
+                || subscription.listener().get() == null);
 
         for (EventSubscription<?> subscription : subscriptions) {
             try {
