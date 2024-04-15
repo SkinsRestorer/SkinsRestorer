@@ -45,7 +45,7 @@ public final class AdminInfoListenerAdapter {
             }
 
             int version = SRHelpers.getJavaVersion();
-            if (version < 17) {
+            if (version < 17 && player.hasPermission(PermissionRegistry.SR)) {
                 player.sendMessage(Message.UNSUPPORTED_JAVA, Placeholder.parsed("version", String.valueOf(version)), Placeholder.parsed("platform", adapter.getPlatform().getPlatformDescription()));
             }
         });
