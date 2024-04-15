@@ -93,7 +93,6 @@
   "skinsrestorer.skin_search_message": "<dark_green>Kamu bisa menemukan skin yang cocok <green><search></green> disini:<newline><green>https://namemc.com/minecraft-skins/tag/<search><newline><newline><dark_green>Jika tidak ada skin yang ditemukan, kamu selalu dapat menemukan beberapa skin di https://namemc.com/minecraft-skins/tag <newline>Kamu bisa mengatur skin menggunakan link skin:<newline>/skin https://namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>Kesalahan<dark_gray>: <red>Tidak ada data skin ditemukan! Apakah pemain ini memiliki skin?",
   "skinsrestorer.info_no_brackets": "<bold>Jangan</bold> meletakkan teks mu diantara tanda kurung <bold>< ></bold> dan <bold>[ ]</bold><newline>Contoh: <dark_green>/skin <jebb></dark_green> jadi hanya <dark_green>/skin jebb</dark_green>",
-  "skinsrestorer.outdated": "<dark_red>Kamu menjalankan versi usang dari SkinsRestorer!<newline><red>Harap perbarui ke versi terbaru di Spigot: <newline><yellow>https://www.spigotmc.org/resources/skinsrestorer.2124/",
   "skinsrestorer.permission_player_wildcard": "Izin wildcard untuk pemain",
   "skinsrestorer.permission_command": "Memungkinkan akses ke perintah utama \"/skin\".",
   "skinsrestorer.permission_command_set": "Memungkinkan akses untuk mengubah skin mu.",
