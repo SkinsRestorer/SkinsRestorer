@@ -101,7 +101,6 @@
   "skinsrestorer.skin_search_message": "<dark_green>「<green><search></green>」に一致するスキンが見つかりました：<newline><green>https://namemc.com/minecraft-skins/tag/<search> <newline><newline><dark_green>スキンが見つからない場合は、「https://namemc.com/minecraft-skins/tag」でスキンを探すことができます。<newline>スキンのリンクを使用してスキンを設定できます：<newline>/skin https://namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>エラー<dark_gray>：<red>スキンのデータが見つかりませんでした。",
   "skinsrestorer.info_no_brackets": "< >と[ ]の間にテキストを入れることはできません<newline>ヒント：<dark_green>/skin <jebb></dark_green>を</dark_green>/skin jebb<dark_green>に変更する",
-  "skinsrestorer.outdated": "<dark_red>古いバージョンのSkinsRestorerを実行しています。<newline><red>Spigotで最新バージョンに更新してください。<newline><yellow>https://www.spigotmc.org/resources/skinsrestorer.2124/",
   "skinsrestorer.permission_player_wildcard": "プレイヤーに対するワイルドカードの権限",
   "skinsrestorer.permission_command": "メインの「/skin」コマンドを使用するアクセスを許可します。",
   "skinsrestorer.permission_command_set": "スキンを変更するアクセスを許可します。",
