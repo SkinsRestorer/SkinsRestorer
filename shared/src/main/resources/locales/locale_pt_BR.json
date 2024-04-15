@@ -101,7 +101,6 @@
   "skinsrestorer.skin_search_message": "<dark_green>Voce pore procurar skins correspondentes<green><search></green> aqui: <newline><green>https://namemc.com/minecraft-skins/tag/<search> <newline><newline><dark_green>se nenhuma skin relacionada for encontrada, você pode achar alguma em https://namemc.com/minecraft-skins/tag <newline>Você pode alterar usando o link da skin:<newline>/skin https://namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>Erro<dark_gray>: <red>Nenhuma informação de skin encontrada! Este player tem uma skin?",
   "skinsrestorer.info_no_brackets": "<bold>Não</bold> coloque seu texto entre <bold> < > </bold> ou <bold> [ ] </bold><newline>Exemplo: não use <dark_green>/skin <jebb></dark_green> mas sim <dark_green>/skin jebb</dark_green>",
-  "skinsrestorer.outdated": "<dark_red>Você está usando uma versão antiga do SkinsRestorer!<newline><red>Por favor atualize para uma versão mais recente no Spigot: <newline><yellow>https://www.spigotmc.org/resources/skinsrestorer.2124/",
   "skinsrestorer.permission_player_wildcard": "Permissões adicionais de jogadores",
   "skinsrestorer.permission_command": "Permite acesso ao comando principal \"/sr\".",
   "skinsrestorer.permission_command_set": "Permite acesso para mudar sua skin.",
