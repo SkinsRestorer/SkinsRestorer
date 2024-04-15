@@ -86,7 +86,6 @@
   "skinsrestorer.skin_search_message": "<dark_green>Ви можете знайти скіни, які відповідають <green><search></green> тут: <newline><green>https://namemc.com/minecraft-skins/tag/<search> <newline><newline><dark_green>Якщо скіни не знайдено, ви завжди можете знайти кілька скінів на https://namemc.com/minecraft-skins/tag<newline>Ви можете встановити скін за посиланням:<newline> /skin https://namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>Помилка<dark_gray>: <red>Цей скін не знайдено! Чи має цей гравець скін?",
   "skinsrestorer.info_no_brackets": "<bold>Не</bold> ставте ваш текст поміж дужок <bold>< ></bold> та <bold>[ ]</bold><newline>Наприклад: <dark_green>/skin <jebb></dark_green> просто як <dark_green>/skin jebb</dark_green>",
-  "skinsrestorer.outdated": "<dark_red>Ви використовуєте застарілу версію SkinsRestorer!<newline><red>Оновіть до останньої версії на Spigot: <newline><yellow>https://www.spigotmc.org/resources/skinsrestorer.2124/",
   "skinsrestorer.permission_player_wildcard": "Дозвіл на використання wildcard для гравців",
   "skinsrestorer.permission_command": "Дозволяє отримати доступ до основних команд \"/skin\".",
   "skinsrestorer.permission_command_set": "Дозволяє отримати доступ до зміни вашого скіна.",
