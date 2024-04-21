@@ -8,7 +8,6 @@ plugins {
 val platforms = setOf(
     rootProject.projects.skinsrestorerBukkit,
     rootProject.projects.skinsrestorerBungee,
-    rootProject.projects.skinsrestorerSponge,
     rootProject.projects.skinsrestorerVelocity
 ).map { it.dependencyProject }
 

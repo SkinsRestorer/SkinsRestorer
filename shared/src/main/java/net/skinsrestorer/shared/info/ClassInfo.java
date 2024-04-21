@@ -27,9 +27,6 @@ public class ClassInfo {
     private final boolean spigot;
     private final boolean paper;
     private final boolean folia;
-    private final boolean spongeAPI;
-    private final boolean spongeVanilla;
-    private final boolean spongeForge;
     private final boolean bungeecord;
     private final boolean velocity;
 
@@ -38,9 +35,6 @@ public class ClassInfo {
         paper = ReflectionUtil.classExists("com.destroystokyo.paper.PaperConfig", "io.papermc.paper.configuration.Configuration");
         craftBukkit = ReflectionUtil.classExists("org.bukkit.Bukkit");
         folia = ReflectionUtil.classExists("io.papermc.paper.threadedregions.RegionizedServerInitEvent");
-        spongeVanilla = ReflectionUtil.classExists("org.spongepowered.server.SpongeVanilla");
-        spongeForge = ReflectionUtil.classExists("org.spongepowered.mod.SpongeCoremod");
-        spongeAPI = ReflectionUtil.classExists("org.spongepowered.api.Sponge");
         bungeecord = ReflectionUtil.classExists("net.md_5.bungee.BungeeCord");
         velocity = ReflectionUtil.classExists("com.velocitypowered.proxy.Velocity");
     }

@@ -41,7 +41,6 @@ Implementation:
 ## :link: Links
 
 - [SpigotMC](https://www.spigotmc.org/resources/2124)
-- [Ore](https://ore.spongepowered.org/SRTeam/SkinsRestorer)
 - [Hangar](https://hangar.papermc.io/SRTeam/SkinsRestorer)
 - [BuiltByBit](https://builtbybit.com/resources/skinsrestorer.21982/)
 - [Mcbbs](https://www.mcbbs.net/forum.php?mod=viewthread&tid=805404)

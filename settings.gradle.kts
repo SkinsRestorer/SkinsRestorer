@@ -28,9 +28,6 @@ dependencyResolutionManagement {
         maven("https://repo.papermc.io/repository/maven-public/") {
             name = "PaperMC Repository"
         }
-        maven("https://repo.spongepowered.org/maven/") {
-            name = "SpongePowered Repository"
-        }
         maven("https://repo.codemc.org/repository/maven-public/") {
             name = "CodeMC Repository"
         }
@@ -100,7 +97,6 @@ setupSRSubproject("shared")
 setupSRSubproject("bukkit")
 setupSRSubproject("bungee")
 setupSRSubproject("velocity")
-setupSRSubproject("sponge")
 
 setupSubproject("skinsrestorer") {
     projectDir = file("universal")

@@ -98,8 +98,6 @@
   "skinsrestorer.skinsmenu_previous_page": "<yellow><bold>« <gray>Previous Page</gray> <bold>«</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[</bold> <gray>Remove Skin</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_select_skin": "<dark_green>Click to select this skin",
-  "skinsrestorer.sponge_metrics_consent": "Dear server admin, in order to help us decide whether we should <b>continue supporting Sponge for SkinsRestorer</b>, consider enabling metrics <newline>by executing <dark_green>/srmetricsenable</dark_green> or click this message.",
-  "skinsrestorer.sponge_metrics_hover": "<dark_green>Click to enable metrics.",
   "skinsrestorer.skin_search_message": "<dark_green>You can find skins matching <green><search></green> here: <newline><green>https://namemc.com/minecraft-skins/tag/<search> <newline><newline><dark_green>If no skins are found, you can always find some skins at https://namemc.com/minecraft-skins/tag <newline>You can set the skin using the skin link:<newline>/skin https://namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>Error<dark_gray>: <red>No skin data found!",
   "skinsrestorer.info_no_brackets": "<bold>Do not</bold> put your text between brackets <bold>< ></bold> and <bold>[ ]</bold><newline>Example: <dark_green>/skin <jebb></dark_green> to just <dark_green>/skin jebb</dark_green>",

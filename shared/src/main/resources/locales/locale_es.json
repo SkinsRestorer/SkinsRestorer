@@ -81,8 +81,6 @@
   "skinsrestorer.skinsmenu_previous_page": "<yellow><bold>«<gray> Página anterior</gray><bold> «</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[</bold> <gray>Remover Skin</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_select_skin": "Haga clic para seleccionar esta skin",
-  "skinsrestorer.sponge_metrics_consent": "Estimado administrador del servidor, para ayudarnos a decidir si debemos <b>continuar manteniendo SkinsRestorer para Sponge</b>, considera habilitar las métricas <newline>ejecutando <dark_green>/srmetricsenable</dark_green> o haciendo clic en este mensaje.",
-  "skinsrestorer.sponge_metrics_hover": "<dark_green>Haz clic para habilitar las métricas.",
   "skinsrestorer.skin_search_message": "<dark_green>Puedes encontrar skins que coincidan con <green><search></green> aquí: <newline><green>https://namemc.com/minecraft-skins/tag/<search> <newline><newline><dark_green>Si no se encuentran skins, siempre puede encontrar algunas en https://namemc.com/minecraft-skins/tag <newline>Puedes establecer la skin usando el enlace de la misma:<newline> /skin https://namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>Error<dark_gray>: <red>¡No se encontraron datos de skin! ¿Este jugador tiene un skin?",
   "skinsrestorer.info_no_brackets": "<bold>No</bold> pongas tu texto entre paréntesis <bold>< ></bold> o <bold>[ ]</bold><newline>Ejemplo: <dark_green>/skin <jebb></dark_green> a solo <dark_green>/skin jebb</dark_green>",

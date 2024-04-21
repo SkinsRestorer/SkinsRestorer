@@ -15,14 +15,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package net.skinsrestorer.sponge.wrapper;
+package net.skinsrestorer.shared.connections.responses.uuid;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
-import net.skinsrestorer.shared.utils.ComponentString;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import lombok.Getter;
 
-public class SpongeComponentHelper {
-    public static Component deserialize(ComponentString messageJson) {
-        return GsonComponentSerializer.gson().deserialize(messageJson.jsonString());
-    }
+@Getter
+@SuppressWarnings("unused")
+@SuppressFBWarnings({"UWF_UNWRITTEN_FIELD", "URF_UNREAD_FIELD"})
+public class EclipseUUIDResponse {
+    private String name;
+    /**
+     * UUID without dashes
+     */
+    private String id;
+    private String error;
+    private String errorMessage;
 }
