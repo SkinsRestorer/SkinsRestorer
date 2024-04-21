@@ -20,7 +20,6 @@ package net.skinsrestorer.shared.connections;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.DataRequestException;
-import net.skinsrestorer.api.property.MojangSkinDataResult;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.utils.SRHelpers;
@@ -50,20 +49,20 @@ public class ServiceCheckerService {
         String selectedUsername = selectedUser.getKey();
         UUID selectedUUID = selectedUser.getValue();
 
-        // ##### Ashcon request #####
+        // ##### UUID requests #####
         try {
-            Optional<MojangSkinDataResult> uuidAshcon = mojangAPI.getDataAshcon(selectedUsername);
-            if (uuidAshcon.isPresent()) {
-                response.addResult(String.format(PROFILE_MESSAGE, "Ashcon", selectedUsername, uuidAshcon.get().getUniqueId()), true, ServiceCheckResponse.ServiceCheckType.UUID);
+            Optional<UUID> uuid = mojangAPI.getUUIDEclipse(selectedUsername);
+
+            if (uuid.isPresent()) {
+                response.addResult(String.format(UUID_MESSAGE, "Eclipse", selectedUsername, uuid.get()), true, ServiceCheckResponse.ServiceCheckType.UUID);
             } else {
-                response.addResult(String.format(MESSAGE_ERROR, "Ashcon", "UUID"), false, ServiceCheckResponse.ServiceCheckType.UUID);
+                response.addResult(String.format(MESSAGE_ERROR, "Eclipse", "UUID"), false, ServiceCheckResponse.ServiceCheckType.UUID);
             }
         } catch (DataRequestException e) {
-            logger.severe("Error getting Ashcon UUID", e);
-            response.addResult(String.format(MESSAGE_ERROR_EXCEPTION, "Ashcon", "UUID", e.getMessage()), false, ServiceCheckResponse.ServiceCheckType.UUID);
+            logger.severe("Error getting Eclipse UUID", e);
+            response.addResult(String.format(MESSAGE_ERROR_EXCEPTION, "Eclipse", "UUID", e.getMessage()), false, ServiceCheckResponse.ServiceCheckType.UUID);
         }
 
-        // ##### UUID requests #####
         try {
             Optional<UUID> uuid = mojangAPI.getUUIDMojang(selectedUsername);
 
@@ -92,15 +91,15 @@ public class ServiceCheckerService {
 
         // ##### Profile requests #####
         try {
-            Optional<MojangSkinDataResult> nameAshcon = mojangAPI.getDataAshcon(selectedUUID.toString());
-            if (nameAshcon.isPresent()) {
-                response.addResult(String.format(PROFILE_MESSAGE, "Ashcon", selectedUUID, nameAshcon.get().getSkinProperty()), true, ServiceCheckResponse.ServiceCheckType.PROFILE);
+            Optional<SkinProperty> eclipse = mojangAPI.getProfileEclipse(selectedUUID);
+            if (eclipse.isPresent()) {
+                response.addResult(String.format(PROFILE_MESSAGE, "Eclipse", selectedUUID, eclipse.get()), true, ServiceCheckResponse.ServiceCheckType.PROFILE);
             } else {
-                response.addResult(String.format(MESSAGE_ERROR, "Ashcon", "Profile"), false, ServiceCheckResponse.ServiceCheckType.PROFILE);
+                response.addResult(String.format(MESSAGE_ERROR, "Eclipse", "Profile"), false, ServiceCheckResponse.ServiceCheckType.PROFILE);
             }
         } catch (DataRequestException e) {
-            logger.severe("Error getting Ashcon Profile", e);
-            response.addResult(String.format(MESSAGE_ERROR_EXCEPTION, "Ashcon", "Profile", e.getMessage()), false, ServiceCheckResponse.ServiceCheckType.PROFILE);
+            logger.severe("Error getting Eclipse Profile", e);
+            response.addResult(String.format(MESSAGE_ERROR_EXCEPTION, "Eclipse", "Profile", e.getMessage()), false, ServiceCheckResponse.ServiceCheckType.PROFILE);
         }
 
         try {
@@ -116,9 +115,9 @@ public class ServiceCheckerService {
         }
 
         try {
-            Optional<SkinProperty> minetools = mojangAPI.getProfileMineTools(selectedUUID);
-            if (minetools.isPresent()) {
-                response.addResult(String.format(PROFILE_MESSAGE, "MineTools", selectedUUID, minetools.get()), true, ServiceCheckResponse.ServiceCheckType.PROFILE);
+            Optional<SkinProperty> mineTools = mojangAPI.getProfileMineTools(selectedUUID);
+            if (mineTools.isPresent()) {
+                response.addResult(String.format(PROFILE_MESSAGE, "MineTools", selectedUUID, mineTools.get()), true, ServiceCheckResponse.ServiceCheckType.PROFILE);
             } else {
                 response.addResult(String.format(MESSAGE_ERROR, "MineTools", "Profile"), false, ServiceCheckResponse.ServiceCheckType.PROFILE);
             }

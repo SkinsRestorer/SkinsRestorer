@@ -27,9 +27,7 @@ public record EnvironmentInfo(boolean hybrid, Platform platform, PlatformType pl
 
         // Find common hybrid class mixes
         boolean hybrid = (platform == Platform.BUNGEE_CORD && info.isVelocity())
-                || (platform == Platform.VELOCITY && info.isBungeecord())
-                || (platform == Platform.SPONGE && info.isCraftBukkit())
-                || (platform == Platform.BUKKIT && (info.isSpongeVanilla() || info.isSpongeForge()));
+                || (platform == Platform.VELOCITY && info.isBungeecord());
 
         return new EnvironmentInfo(hybrid, platform, platform.getPlatformType(), info);
     }

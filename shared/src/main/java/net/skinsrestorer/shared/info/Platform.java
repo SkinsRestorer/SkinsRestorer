@@ -26,7 +26,6 @@ import net.skinsrestorer.shared.utils.SRHelpers;
 public enum Platform {
     BUKKIT(PlatformType.SERVER),
     BUNGEE_CORD(PlatformType.PROXY),
-    SPONGE(PlatformType.SERVER),
     VELOCITY(PlatformType.PROXY);
 
     private final PlatformType platformType;
