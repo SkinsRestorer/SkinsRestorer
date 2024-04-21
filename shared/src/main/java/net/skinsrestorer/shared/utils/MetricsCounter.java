@@ -64,6 +64,7 @@ public class MetricsCounter {
         MINE_SKIN,
         MINE_TOOLS,
         MOJANG,
-        ASHCON
+        ECLIPSE_UUID,
+        ECLIPSE_PROFILE
     }
 }

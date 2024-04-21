@@ -355,7 +355,7 @@ public class SRPlugin {
         metrics.addCustomChart(new SingleLineChart("mineskin_calls", () -> metricsCounter.collect(MetricsCounter.Service.MINE_SKIN)));
         metrics.addCustomChart(new SingleLineChart("minetools_calls", () -> metricsCounter.collect(MetricsCounter.Service.MINE_TOOLS)));
         metrics.addCustomChart(new SingleLineChart("mojang_calls", () -> metricsCounter.collect(MetricsCounter.Service.MOJANG)));
-        metrics.addCustomChart(new SingleLineChart("ashcon_calls", () -> metricsCounter.collect(MetricsCounter.Service.ASHCON)));
+        metrics.addCustomChart(new SingleLineChart("ashcon_calls", () -> metricsCounter.collect(MetricsCounter.Service.ECLIPSE_UUID)));
         metrics.addCustomChart(new SimplePie("uses_mysql", metricsCounter::usesMySQL));
         metrics.addCustomChart(new SimplePie("proxy_mode", metricsCounter::isProxyMode));
     }

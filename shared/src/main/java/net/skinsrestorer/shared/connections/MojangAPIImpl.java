@@ -17,19 +17,18 @@
  */
 package net.skinsrestorer.shared.connections;
 
-import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.connections.MojangAPI;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.property.MojangSkinDataResult;
 import net.skinsrestorer.api.property.SkinProperty;
-import net.skinsrestorer.shared.config.APIConfig;
 import net.skinsrestorer.shared.connections.http.HttpClient;
 import net.skinsrestorer.shared.connections.http.HttpResponse;
-import net.skinsrestorer.shared.connections.responses.AshconResponse;
+import net.skinsrestorer.shared.connections.responses.profile.EclipseProfileResponse;
 import net.skinsrestorer.shared.connections.responses.profile.MineToolsProfileResponse;
 import net.skinsrestorer.shared.connections.responses.profile.MojangProfileResponse;
 import net.skinsrestorer.shared.connections.responses.profile.PropertyResponse;
+import net.skinsrestorer.shared.connections.responses.uuid.EclipseUUIDResponse;
 import net.skinsrestorer.shared.connections.responses.uuid.MineToolsUUIDResponse;
 import net.skinsrestorer.shared.connections.responses.uuid.MojangUUIDResponse;
 import net.skinsrestorer.shared.exception.DataRequestExceptionShared;
@@ -48,14 +47,14 @@ import java.util.UUID;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class MojangAPIImpl implements MojangAPI {
-    private static final String ASHCON = "https://api.ashcon.app/mojang/v2/user/%nameOrUniqueId%";
+    private static final String UUID_ECLIPSE = "https://eclipse.skinsrestorer.net/mojang/uuid/%playerName%";
     private static final String UUID_MOJANG = "https://api.mojang.com/users/profiles/minecraft/%playerName%";
     private static final String UUID_MINETOOLS = "https://api.minetools.eu/uuid/%playerName%";
+    private static final String PROFILE_ECLIPSE = "https://eclipse.skinsrestorer.net/mojang/skin/%uuid%";
     private static final String PROFILE_MOJANG = "https://sessionserver.mojang.com/session/minecraft/profile/%uuid%?unsigned=false";
     private static final String PROFILE_MINETOOLS = "https://api.minetools.eu/profile/%uuid%";
 
     private final MetricsCounter metricsCounter;
-    private final SettingsManager settings;
     private final SRLogger logger;
     private final SRPlugin plugin;
     private final HttpClient httpClient;
@@ -67,22 +66,13 @@ public class MojangAPIImpl implements MojangAPI {
             return Optional.empty();
         }
 
-        try {
-            if (!settings.getProperty(APIConfig.DISABLE_ASHCON)) {
-                return getDataAshcon(nameOrUniqueId);
-            }
-        } catch (DataRequestException e) {
-            logger.debug(e);
-        }
-
-        // Fall back to Mojang API
         Optional<UUID> uuidResult = uuidParseResult.isEmpty()
-                ? getUUIDStartMojang(nameOrUniqueId) : uuidParseResult;
+                ? getUUID(nameOrUniqueId) : uuidParseResult;
         if (uuidResult.isEmpty()) {
             return Optional.empty();
         }
 
-        return getProfileStartMojang(uuidResult.get()).flatMap(propertyResponse ->
+        return getProfile(uuidResult.get()).flatMap(propertyResponse ->
                 Optional.of(MojangSkinDataResult.of(uuidResult.get(), propertyResponse)));
     }
 
@@ -98,18 +88,12 @@ public class MojangAPIImpl implements MojangAPI {
         }
 
         try {
-            if (!settings.getProperty(APIConfig.DISABLE_ASHCON)) {
-                return getDataAshcon(playerName).map(MojangSkinDataResult::getUniqueId);
-            }
+            return getUUIDEclipse(playerName);
         } catch (DataRequestException e) {
             logger.debug(e);
         }
 
         // Fall back to Mojang API
-        return getUUIDStartMojang(playerName);
-    }
-
-    private Optional<UUID> getUUIDStartMojang(String playerName) throws DataRequestException {
         try {
             return getUUIDMojang(playerName);
         } catch (DataRequestException e) {
@@ -117,51 +101,27 @@ public class MojangAPIImpl implements MojangAPI {
         }
 
         // Fall back to MineTools API
-        return getUUIDMineTools(playerName);
+        try {
+            return getUUIDMineTools(playerName);
+        } catch (DataRequestException e) {
+            logger.debug(e);
+        }
+
+        throw new DataRequestExceptionShared("Failed to get UUID for player: " + playerName);
     }
 
-    protected Optional<MojangSkinDataResult> getDataAshcon(String nameOrUniqueId) throws DataRequestException {
-        HttpResponse httpResponse = readURL(URI.create(ASHCON.replace("%nameOrUniqueId%", nameOrUniqueId)), MetricsCounter.Service.ASHCON);
-        AshconResponse response = httpResponse.getBodyAs(AshconResponse.class);
-
-        if (response.getCode() == 404) {
-            return Optional.empty();
+    public Optional<UUID> getUUIDEclipse(String playerName) throws DataRequestException {
+        HttpResponse httpResponse = readURL(URI.create(UUID_ECLIPSE.replace("%playerName%", playerName)), MetricsCounter.Service.ECLIPSE_UUID);
+        if (httpResponse.statusCode() != 200) {
+            throw new DataRequestExceptionShared("Eclipse error: " + httpResponse.statusCode());
         }
 
-        if (response.getError() != null) {
-            throw new DataRequestExceptionShared("Ashcon error: " + response.getError());
-        }
-
-        if (response.getCode() != 0) {
-            throw new DataRequestExceptionShared("Ashcon error code: " + response.getCode());
-        }
-
-        if (response.getUuid() == null) {
-            return Optional.empty();
-        }
-
-        AshconResponse.Textures textures = response.getTextures();
-
-        if (textures == null) {
-            return Optional.empty();
-        }
-
-        AshconResponse.Textures.Raw rawTextures = textures.getRaw();
-        if (rawTextures == null) {
-            return Optional.empty();
-        }
-
-        if (rawTextures.getValue().isEmpty() || rawTextures.getSignature().isEmpty()) {
-            return Optional.empty();
-        }
-
-        return Optional.of(MojangSkinDataResult.of(UUID.fromString(response.getUuid()),
-                SkinProperty.of(rawTextures.getValue(), rawTextures.getSignature())));
+        EclipseUUIDResponse response = httpResponse.getBodyAs(EclipseUUIDResponse.class);
+        return Optional.ofNullable(response.uuid());
     }
 
     public Optional<UUID> getUUIDMojang(String playerName) throws DataRequestException {
         HttpResponse httpResponse = readURL(URI.create(UUID_MOJANG.replace("%playerName%", playerName)), MetricsCounter.Service.MOJANG);
-
         if (httpResponse.statusCode() == 204 || httpResponse.statusCode() == 404 || httpResponse.body().isEmpty()) {
             return Optional.empty();
         }
@@ -189,18 +149,12 @@ public class MojangAPIImpl implements MojangAPI {
 
     public Optional<SkinProperty> getProfile(UUID uuid) throws DataRequestException {
         try {
-            if (!settings.getProperty(APIConfig.DISABLE_ASHCON)) {
-                return getDataAshcon(UUIDUtils.convertToNoDashes(uuid)).map(MojangSkinDataResult::getSkinProperty);
-            }
+            return getProfileEclipse(uuid);
         } catch (DataRequestException e) {
             logger.debug(e);
         }
 
         // Fall back to Mojang API
-        return getProfileStartMojang(uuid);
-    }
-
-    private Optional<SkinProperty> getProfileStartMojang(UUID uuid) throws DataRequestException {
         try {
             return getProfileMojang(uuid);
         } catch (DataRequestException e) {
@@ -208,7 +162,27 @@ public class MojangAPIImpl implements MojangAPI {
         }
 
         // Fall back to MineTools API
-        return getProfileMineTools(uuid);
+        try {
+            return getProfileMineTools(uuid);
+        } catch (DataRequestException e) {
+            logger.debug(e);
+        }
+
+        throw new DataRequestExceptionShared("Failed to get profile for player: " + uuid);
+    }
+
+    public Optional<SkinProperty> getProfileEclipse(UUID uuid) throws DataRequestException {
+        HttpResponse httpResponse = readURL(URI.create(PROFILE_ECLIPSE.replace("%uuid%", uuid.toString())), MetricsCounter.Service.ECLIPSE_PROFILE);
+        if (httpResponse.statusCode() != 200) {
+            throw new DataRequestExceptionShared("Eclipse error: " + httpResponse.statusCode());
+        }
+
+        EclipseProfileResponse response = httpResponse.getBodyAs(EclipseProfileResponse.class);
+        if (response.skinProperty() == null) {
+            return Optional.empty();
+        }
+
+        return Optional.of(SkinProperty.of(response.skinProperty().value(), response.skinProperty().signature()));
     }
 
     public Optional<SkinProperty> getProfileMojang(UUID uuid) throws DataRequestException {
