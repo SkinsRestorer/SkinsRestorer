@@ -81,8 +81,6 @@
   "skinsrestorer.skinsmenu_previous_page": "<yellow><bold>«<gray>Prethodna Stranica</gray> <bold>«</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[</bold> <gray>Ukloni skin</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_select_skin": "<dark_green>Kliknite za odabir ovog skina",
-  "skinsrestorer.sponge_metrics_consent": "Poštovani administratore servera, kako biste nam pomogli odlučiti trebamo li <b>nastaviti podržavati Sponge for SkinsRestorer</b>, razmislite o omogućavanju metrike <newline>izvršavanjem <dark_green>/srmetricsenable</dark_green> ili kliknite ovu poruku.",
-  "skinsrestorer.sponge_metrics_hover": "<dark_green>Kliknite da omogućite metriku.",
   "skinsrestorer.skin_search_message": "<dark_green>Možete pronaći skinove koji odgovaraju <green><search></green> ovdje: <newline><green>https://namemc.com/minecraft-skins/tag/<search> <newline><newline><dark_green>Ako nije pronađen nijedan skin, uvijek možete pronaći neki skin na https://namemc.com/minecraft-skins/tag <newline>Možete postaviti skin koristeći link skina:<newline>/skin https:// namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>Greška<dark_gray>: <red>Nisu pronađeni podaci o skinu! Ima li ovaj igrač skin?",
   "skinsrestorer.info_no_brackets": "<bold>Nemojte</bold> stavljati tekst između zagrada <bold>< ></bold> i <bold>[ ]</bold><newline>Primjer: <dark_green>/skin <jebb></dark_green> na samo <dark_green>/skin jebb</dark_green>",
