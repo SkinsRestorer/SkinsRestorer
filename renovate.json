@@ -9,18 +9,13 @@
     "xknat"
   ],
   "ignoreDeps": [
-    "com.viaversion:viaversion"
+    "com.viaversion:viaversion",
+    "org.spigotmc:spigot-api"
   ],
   "labels": [
     "renovate"
   ],
   "packageRules": [
-    {
-      "matchPackageNames": [
-        "org.spigotmc:spigot-api"
-      ],
-      "enabled": false
-    },
     {
       "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
       "automerge": true
