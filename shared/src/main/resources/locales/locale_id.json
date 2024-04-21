@@ -88,8 +88,6 @@
   "skinsrestorer.skinsmenu_previous_page": "<yellow><bold>« <gray>Halaman Sebelumnya</gray> <bold>«</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[</bold> <gray>Hapus Skin</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_select_skin": "<dark_green>Klik untuk memilih skin ini",
-  "skinsrestorer.sponge_metrics_consent": "Admin server yang terhormat, untuk membantu kami memutuskan apakah kami harus <b>terus mendukung Sponge untuk SkinsRestorer</b>, pertimbangkan untuk mengaktifkan metrik<newline>dengan menjalankan <dark_green>/srmetricsenable</dark_green> atau klik pesan ini.",
-  "skinsrestorer.sponge_metrics_hover": "<dark_green>Klik untuk mengaktifkan metrik.",
   "skinsrestorer.skin_search_message": "<dark_green>Kamu bisa menemukan skin yang cocok <green><search></green> disini:<newline><green>https://namemc.com/minecraft-skins/tag/<search><newline><newline><dark_green>Jika tidak ada skin yang ditemukan, kamu selalu dapat menemukan beberapa skin di https://namemc.com/minecraft-skins/tag <newline>Kamu bisa mengatur skin menggunakan link skin:<newline>/skin https://namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>Kesalahan<dark_gray>: <red>Tidak ada data skin ditemukan! Apakah pemain ini memiliki skin?",
   "skinsrestorer.info_no_brackets": "<bold>Jangan</bold> meletakkan teks mu diantara tanda kurung <bold>< ></bold> dan <bold>[ ]</bold><newline>Contoh: <dark_green>/skin <jebb></dark_green> jadi hanya <dark_green>/skin jebb</dark_green>",
