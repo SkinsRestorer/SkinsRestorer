@@ -16,6 +16,12 @@
   ],
   "packageRules": [
     {
+      "matchPackageNames": [
+        "org.spigotmc:spigot-api"
+      ],
+      "enabled": false
+    },
+    {
       "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
       "automerge": true
     }
