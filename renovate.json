@@ -9,7 +9,8 @@
     "xknat"
   ],
   "ignoreDeps": [
-    "com.viaversion:viaversion"
+    "com.viaversion:viaversion",
+    "org.spigotmc:spigot-api"
   ],
   "labels": [
     "renovate"
