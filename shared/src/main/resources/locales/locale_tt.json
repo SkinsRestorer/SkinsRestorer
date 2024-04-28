@@ -13,6 +13,7 @@
   "skinsrestorer.help_sr_reload": "Көйләү файлын яңадан йөкли.",
   "skinsrestorer.success_generic": "<dark_green><message>",
   "skinsrestorer.success_skin_change": "Сезнең кыяфәт үзгәртелде.",
+  "skinsrestorer.success_skin_change_other": "Сез <name> кыяфәтен үзгәртте.",
   "skinsrestorer.success_skin_clear": "Сезнең кыяфәт чистартылды.",
   "skinsrestorer.success_skin_clear_other": "<name> өчен кыяфәт чистартылды.",
   "skinsrestorer.success_updating_skin": "Сезнең кыяфәт яңартылды.",
@@ -59,8 +60,6 @@
   "skinsrestorer.skinsmenu_previous_page": "<yellow><bold>« <gray>Элекке бит</gray> <bold>«</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[</bold> <gray>Кыяфәтне бетерү</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_select_skin": "<dark_green>Бу кыяфәтне сайлау өчен басыгыз",
-  "skinsrestorer.sponge_metrics_consent": "Хөрмәтле сервер администраторы, <b>SkinsRestorer өчен Sponge ны хуплауны дәвам итәргә</b> кирәк микән дип хәл итәргә ярдәм итү өчен, <newline><dark_green>/sr metrics enable</dark_green> кабызып яки бу хәбәргә басып, метрикларны керү мөмкинлеген карагыз.",
-  "skinsrestorer.sponge_metrics_hover": "<dark_green>Метриканы кушу өчен басыгыз.",
   "skinsrestorer.no_skin_data": "<dark_red>Хата<dark_gray>: <red>Кыяфәт мәгълүматы табылмады!",
   "skinsrestorer.permission_player_wildcard": "Уенчылар өчен тулы хокук",
   "skinsrestorer.permission_admin_wildcard": "Администраторлар өчен тулы хокук"
