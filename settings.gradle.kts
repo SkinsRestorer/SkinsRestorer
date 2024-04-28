@@ -2,12 +2,6 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
     repositories {
-        maven("https://maven.lenni0451.net/releases") {
-            name = "lenni0451MavenReleases"
-        }
-        maven("https://maven.lenni0451.net/snapshots") {
-            name = "lenni0451MavenSnapshots"
-        }
         gradlePluginPortal()
     }
 }

@@ -1,28 +1,21 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import net.raphimc.javadowngrader.gradle.task.DowngradeJarTask
 
 plugins {
-    id("net.raphimc.java-downgrader") version "1.1.2"
+    id("sr.base-logic")
+    id("net.raphimc.java-downgrader")
 }
 
-val platforms = setOf(
-    rootProject.projects.skinsrestorerBukkit,
-    rootProject.projects.skinsrestorerBungee,
-    rootProject.projects.skinsrestorerVelocity
-).map { it.dependencyProject }
+dependencies {
+    implementation(project(":skinsrestorer-bukkit", "shadow"))
+    implementation(project(":skinsrestorer-bungee", "shadow"))
+    implementation(project(":skinsrestorer-velocity", "shadow"))
+}
 
 tasks {
     jar {
         archiveClassifier.set("")
         archiveFileName.set("SkinsRestorer-java17.jar")
         destinationDirectory.set(rootProject.projectDir.resolve("build/libs"))
-        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-        platforms.forEach { platform ->
-            val shadowJarTask = platform.tasks.named<ShadowJar>("shadowJar").get()
-            dependsOn(shadowJarTask)
-            dependsOn(platform.tasks.withType<Jar>())
-            from(zipTree(shadowJarTask.archiveFile))
-        }
         finalizedBy("java8Jar")
     }
     val java8Jar = register<DowngradeJarTask>("java8Jar") {

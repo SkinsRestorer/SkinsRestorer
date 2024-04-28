@@ -1,3 +1,7 @@
+plugins {
+    id("sr.shadow-logic")
+}
+
 dependencies {
     implementation(projects.skinsrestorerBuildData)
     implementation(projects.skinsrestorerApi)

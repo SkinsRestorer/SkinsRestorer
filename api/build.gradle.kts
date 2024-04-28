@@ -1,4 +1,5 @@
 plugins {
+    id("sr.base-logic")
     id("net.kyori.indra.publishing")
 }
 
