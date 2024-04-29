@@ -16,6 +16,16 @@ tasks {
         archiveClassifier.set("")
         archiveFileName.set("SkinsRestorer-java17.jar")
         destinationDirectory.set(rootProject.projectDir.resolve("build/libs"))
+
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        dependsOn(configurations.runtimeClasspath)
+        from({
+            configurations.runtimeClasspath.get()
+                .filter { it.name.endsWith("jar") }
+                .filter { it.toString().contains("build/libs") }
+                .map { zipTree(it) }
+        })
+
         finalizedBy("java8Jar")
     }
     val java8Jar = register<DowngradeJarTask>("java8Jar") {
