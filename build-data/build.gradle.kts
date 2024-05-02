@@ -2,9 +2,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 plugins {
-    id("sr.formatting-logic")
+    id("sr.base-logic")
     alias(libs.plugins.blossom)
-    id("sr.core-dependencies")
     id("net.kyori.indra.git")
 }
 
