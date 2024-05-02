@@ -32,7 +32,7 @@ servers.
 **WE DO NOT SUPPORT FORGE / FABRIC**
 
 - Java 17+ ([Get Adoptium](https://adoptium.net/))
-- Minecraft 1.8.0 - 1.20.4
+- Minecraft 1.8.0 - 1.20.6
 
 Implementation:
 - Proxy: BungeeCord (Waterfall) & Velocity
