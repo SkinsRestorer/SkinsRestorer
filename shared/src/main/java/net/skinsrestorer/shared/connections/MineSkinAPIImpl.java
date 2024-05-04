@@ -114,8 +114,8 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                 // try again
                 return switch (error) {
                     case "failed_to_create_id", "skin_change_failed" -> {
-                        logger.debug("Trying again in 5 seconds...");
-                        TimeUnit.SECONDS.sleep(5);
+                        logger.debug("Trying again in 6 seconds...");
+                        TimeUnit.SECONDS.sleep(6);
                         yield Optional.empty();
                     }
                     case "no_account_available" -> throw new MineSkinExceptionShared(Message.ERROR_MS_FULL);
@@ -159,7 +159,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                         TimeUnit.SECONDS.sleep(delay);
                     }
                 } else { // Should normally not happen
-                    TimeUnit.SECONDS.sleep(2);
+                    TimeUnit.SECONDS.sleep(6);
                 }
 
                 return Optional.empty(); // try again after nextRequest
