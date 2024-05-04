@@ -81,8 +81,6 @@
   "skinsrestorer.skinsmenu_previous_page": "<yellow><bold>« <gray>Prejsnja stran</gray> <bold>«</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[</bold> <gray>Odstrani skin</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_select_skin": "<dark_green>Klikni, da izberes ta skin",
-  "skinsrestorer.sponge_metrics_consent": "Spostovani skrbnik streznika, ce zelite pomagati pri odlocitvi ali bi naj se naprej podpirali <b>Sponge</b>, prosim razmislite o omogocanju meritev <newline>z izvedbo <dark_green>/srmetricsenable</dark_green> ali s klikom na to sporocilo.",
-  "skinsrestorer.sponge_metrics_hover": "<dark_green>Klikni, da omogocis meritve.",
   "skinsrestorer.skin_search_message": "<dark_green>Lahko najdes skine, ki se ujemajo <green><search></green> tukaj: <newline><green>https://namemc.com/minecraft-skins/tag/<search> <newline><newline><dark_green>Ce ni najdenih nobenih skinov, jih lahko vedno najdes na https://namemc.com/minecraft-skins/tag <newline>Skin lahko nastavis s povezavo:<newline>/skin https://namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>Napaka<dark_gray>: <red>Nobenega skina ni bilo najdeno! Ali ima igralec sploh skin?",
   "skinsrestorer.info_no_brackets": "<bold>Ne</bold> postavljajte besedila med oklepaje <bold>< ></bold> in <bold>[ ]</bold><newline>Primer: <dark_green>/skin <jebb></dark_green> uporabite <dark_green>/skin jebb</dark_green>",
