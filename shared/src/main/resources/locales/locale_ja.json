@@ -2,6 +2,7 @@
   "skinsrestorer.help_skin": "スキンを変更します。",
   "skinsrestorer.help_skins": "スキンGUIを開きます。",
   "skinsrestorer.help_sr": "SkinsRestorerの管理者コマンドです。",
+  "skinsrestorer.help_skin_help": "このヘルプコマンドを表示します。",
   "skinsrestorer.help_skin_set": "スキンを変更します。",
   "skinsrestorer.help_skin_set_other": "対象のプレイヤーのスキンを設定します。",
   "skinsrestorer.help_skin_set_url": "URLからスキンを変更します。",
