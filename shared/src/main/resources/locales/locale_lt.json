@@ -56,8 +56,6 @@
   "skinsrestorer.skinsmenu_previous_page": "<yellow><bold>« <gray>Ankstesnis puslapis</gray> <bold>«</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[</bold> <gray>Pašalinti išvaizdą</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_select_skin": "<dark_green>Spustelėkite, kad pasirinktumėte šią išvaizdą",
-  "skinsrestorer.sponge_metrics_consent": "Gerbiamas serverio administratoriau, padėdami mums nuspręsti dėl <b>Sponge palaikymo SkinsRestorer įskiepiui</b>, apsvarstykite įjungti <newline>panaudodami <dark_green>/srmetricsenable</dark_green> arba paspausdami ant šios žinutės.",
-  "skinsrestorer.sponge_metrics_hover": "<dark_green>Paspasukite, jog įjungtumėte metrikas.",
   "skinsrestorer.skin_search_message": "<dark_green>Galite rasti tinkamą išvaizdą <green><search></green> čia: <newline><green>https://namemc.com/minecraft-skins/tag/<search> <newline><newline><dark_green>Jei išvaizdų nerandate čia, jų visada galite rasti https://namemc.com/minecraft-skins/tag <newline>Galite nustatyti savo išvaizdą naudodami išvaizdos nuorodą:<newline>/skin https://namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>Klaida<dark_gray>: <red>Negauta jokių išvaizdos duomenų! Ar šis žaidėjas turi išvaizdą?",
   "skinsrestorer.info_no_brackets": "<bold>Nerašykite</bold> jūsų teksto tarp <bold>< ></bold> ir <bold>[ ]</bold> skliaustelių.<newline>Pavyzdžiui: <dark_green>/skin <jebb></dark_green> pakeisdami į <dark_green>/skin jebb</dark_green>",
