@@ -60,6 +60,7 @@ indra {
                 developer {
                     id.set("xknat")
                     timezone.set("Europe/Amsterdam")
+                    url.set("https://github.com/xknat")
                 }
                 developer {
                     id.set("AlexProgrammerDE")
