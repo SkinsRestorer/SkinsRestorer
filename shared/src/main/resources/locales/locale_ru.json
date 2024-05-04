@@ -81,8 +81,6 @@
   "skinsrestorer.skinsmenu_previous_page": "<yellow><bold>«<gray> Предыдущая страница</gray><bold> «</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[ <gray> Удалить скин</gray><bold> ]</bold>",
   "skinsrestorer.skinsmenu_select_skin": "<dark_green>Нажмите, чтобы выбрать этот скин",
-  "skinsrestorer.sponge_metrics_consent": "Уважаемый администратор сервера, чтобы помочь нам решить, следует ли нам <b> продолжать поддерживать Sponge для SkinsRestorer</b>, рассмотрите возможность включения метрик <новая строка>, выполнив <dark_green>/srmetricsenable</dark_green> или нажав на это сообщение.",
-  "skinsrestorer.sponge_metrics_hover": "<dark_green>Кликните, чтобы включить метрику.",
   "skinsrestorer.skin_search_message": "<dark_green>Вы можете найти скины по запросу <green><search></green> здесь: <newline><green>https://namemc.com/minecraft-skins/tag/<search> <newline><newline><dark_green>Если скинов не найдено, вы всегда можете найти некоторые скины по адресу https://namemc.com/minecraft-skins/tag <newline>Вы можете установить скин по ссылке скина:<newline> /skin https://namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>Ошибка<dark_gray>: <red>Не найдены данные скина! Имеет ли этот игрок скин?",
   "skinsrestorer.info_no_brackets": "<bold>Не</bold> пишите свой текст между знаками <bold>< ></bold> и <bold> [ ]</bold><newline>Пример: <dark_green>/skin<jebb></dark_green> Просто пишите: <dark_green>/skiin jebb</dark_green>",
