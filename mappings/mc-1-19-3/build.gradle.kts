@@ -1,14 +1,7 @@
-tasks {
-    remap {
-        version.set("1.19.3")
-    }
+plugins {
+    id("sr.mapping-logic")
 }
 
-dependencies {
-    compileOnly("org.spigotmc:spigot:1.19.3-R0.1-SNAPSHOT:remapped-mojang@jar") {
-        isTransitive = false
-    }
-    compileOnly("org.spigotmc:spigot-api:1.19.3-R0.1-SNAPSHOT") {
-        isTransitive = false
-    }
+mapping {
+    mcVersion = "1.19.3"
 }

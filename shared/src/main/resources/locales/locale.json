@@ -3,6 +3,7 @@
   "skinsrestorer.help_skin": "Changes your own skin.",
   "skinsrestorer.help_skins": "Opens the skins GUI.",
   "skinsrestorer.help_sr": "Admin commands for SkinsRestorer.",
+  "skinsrestorer.help_skin_help": "Shows this help command.",
   "skinsrestorer.help_skin_set": "Changes your skin.",
   "skinsrestorer.help_skin_set_other": "Sets the skin for a target player.",
   "skinsrestorer.help_skin_set_url": "Changes your skin from a URL.",

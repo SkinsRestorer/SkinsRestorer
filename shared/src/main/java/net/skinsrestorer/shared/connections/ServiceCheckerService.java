@@ -59,7 +59,8 @@ public class ServiceCheckerService {
                 response.addResult(String.format(MESSAGE_ERROR, "Eclipse", "UUID"), false, ServiceCheckResponse.ServiceCheckType.UUID);
             }
         } catch (DataRequestException e) {
-            logger.severe("Error getting Eclipse UUID", e);
+            logger.severe("Error getting Eclipse UUID");
+            logger.debug(e);
             response.addResult(String.format(MESSAGE_ERROR_EXCEPTION, "Eclipse", "UUID", e.getMessage()), false, ServiceCheckResponse.ServiceCheckType.UUID);
         }
 
@@ -72,7 +73,8 @@ public class ServiceCheckerService {
                 response.addResult(String.format(MESSAGE_ERROR, "Mojang", "UUID"), false, ServiceCheckResponse.ServiceCheckType.UUID);
             }
         } catch (DataRequestException e) {
-            logger.severe("Error getting Mojang UUID", e);
+            logger.severe("Error getting Mojang UUID");
+            logger.debug(e);
             response.addResult(String.format(MESSAGE_ERROR_EXCEPTION, "Mojang", "UUID", e.getMessage()), false, ServiceCheckResponse.ServiceCheckType.UUID);
         }
 
@@ -85,7 +87,8 @@ public class ServiceCheckerService {
                 response.addResult(String.format(MESSAGE_ERROR, "MineTools", "UUID"), false, ServiceCheckResponse.ServiceCheckType.UUID);
             }
         } catch (DataRequestException e) {
-            logger.severe("Error getting MineTools UUID", e);
+            logger.severe("Error getting MineTools UUID");
+            logger.debug(e);
             response.addResult(String.format(MESSAGE_ERROR_EXCEPTION, "MineTools", "UUID", e.getMessage()), false, ServiceCheckResponse.ServiceCheckType.UUID);
         }
 
@@ -98,7 +101,8 @@ public class ServiceCheckerService {
                 response.addResult(String.format(MESSAGE_ERROR, "Eclipse", "Profile"), false, ServiceCheckResponse.ServiceCheckType.PROFILE);
             }
         } catch (DataRequestException e) {
-            logger.severe("Error getting Eclipse Profile", e);
+            logger.severe("Error getting Eclipse Profile");
+            logger.debug(e);
             response.addResult(String.format(MESSAGE_ERROR_EXCEPTION, "Eclipse", "Profile", e.getMessage()), false, ServiceCheckResponse.ServiceCheckType.PROFILE);
         }
 
@@ -110,7 +114,8 @@ public class ServiceCheckerService {
                 response.addResult(String.format(MESSAGE_ERROR, "Mojang", "Profile"), false, ServiceCheckResponse.ServiceCheckType.PROFILE);
             }
         } catch (DataRequestException e) {
-            logger.severe("Error getting Mojang Profile", e);
+            logger.severe("Error getting Mojang Profile");
+            logger.debug(e);
             response.addResult(String.format(MESSAGE_ERROR_EXCEPTION, "Mojang", "Profile", e.getMessage()), false, ServiceCheckResponse.ServiceCheckType.PROFILE);
         }
 
@@ -122,7 +127,8 @@ public class ServiceCheckerService {
                 response.addResult(String.format(MESSAGE_ERROR, "MineTools", "Profile"), false, ServiceCheckResponse.ServiceCheckType.PROFILE);
             }
         } catch (DataRequestException e) {
-            logger.severe("Error getting MineTools Profile", e);
+            logger.severe("Error getting MineTools Profile");
+            logger.debug(e);
             response.addResult(String.format(MESSAGE_ERROR_EXCEPTION, "MineTools", "Profile", e.getMessage()), false, ServiceCheckResponse.ServiceCheckType.PROFILE);
         }
         return response;

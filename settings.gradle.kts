@@ -2,12 +2,6 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
     repositories {
-        maven("https://maven.lenni0451.net/releases") {
-            name = "lenni0451MavenReleases"
-        }
-        maven("https://maven.lenni0451.net/snapshots") {
-            name = "lenni0451MavenSnapshots"
-        }
         gradlePluginPortal()
     }
 }
@@ -85,7 +79,7 @@ setOf("shared", "v1-7", "spigot", "paper", "folia").forEach {
 setOf(
     "1-18", "1-18-2",
     "1-19", "1-19-1", "1-19-2", "1-19-3", "1-19-4",
-    "1-20", "1-20-2", "1-20-4"
+    "1-20", "1-20-2", "1-20-4", "1-20-5"
 ).forEach {
     include("mappings:mc-$it")
 }

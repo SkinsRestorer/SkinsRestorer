@@ -1,4 +1,5 @@
 plugins {
+    id("sr.platform-logic")
     alias(libs.plugins.runwaterfall)
 }
 
