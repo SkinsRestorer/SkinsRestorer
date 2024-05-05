@@ -81,8 +81,6 @@
   "skinsrestorer.skinsmenu_previous_page": "<yellow><bold>« <gray>Predchádzajúca strana</gray> <bold>«</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[</bold> <gray>Odstrániť skin</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_select_skin": "<dark_green>Kliknutím vyber tento skin",
-  "skinsrestorer.sponge_metrics_consent": "Vážený správca servera, aby si nám pomohol rozhodnúť, či máme <b>pokračovať v podpore Sponge pre SkinsRestorer</b>, zváž povolenie metriky <newline> príkazom <dark_green>/srmetricsenable</dark_green>, alebo klikni na túto správu.",
-  "skinsrestorer.sponge_metrics_hover": "<dark_green>Kliknutím aktivuj metriky.",
   "skinsrestorer.skin_search_message": "<dark_green>Skiny vyhovujúce <green><search></green> nájdeš tu: <newline><green>https://namemc.com/minecraft-skins/tag/<search> <newline><newline><dark_green>Ak sa nenašli žiadne skiny, vždy je možné nájsť nejaké skiny na adrese https://namemc.com/minecraft-skins/tag <newline>Skin môžeš nastaviť pomocou odkazu skin:<newline>/skin https://namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>Chyba<dark_gray>: <red>Nenašli sa žiadne údaje o skine! Má tento hráč skin?",
   "skinsrestorer.info_no_brackets": "<bold>Nevkladaj</bold> text medzi tieto <bold>< ></bold> a ani tieto <bold>[ ]</bold> zátvorky<newline>Príklad: <dark_green>/skin <jebb></dark_green> má byť len <dark_green>/skin jebb</dark_green>",

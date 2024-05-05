@@ -56,8 +56,6 @@
   "skinsrestorer.skinsmenu_previous_page": "<yellow><bold>« <gray>Page Précédente</gray> <bold>«</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[</bold> <gray>Retirer le Skin</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_select_skin": "<dark_green>Clique pour choisir ce skin",
-  "skinsrestorer.sponge_metrics_consent": "Cher admin du serveur, afin de nous aider à décider si nous devons <b>continuer de supporter Sponge pour SkinsRestorer</b>, considérer d'activer metrics <newline>en exécutant <dark_green>/sponge metrics skinsrestorer enable</dark_green> ou en cliquant ce message.",
-  "skinsrestorer.sponge_metrics_hover": "<dark_green>Cliquez pour activer les métriques.",
   "skinsrestorer.skin_search_message": "<dark_green>Vous pouvez trouvez des skins correspondant <green><search></green> ici : <newline><green>https://namemc.com/minecraft-skins/tag/<search> <newline><newline><dark_green>Si aucun skins ne sont trouvés, vous pouvez toujours trouvés quelques skins ici : https://namemc.com/minecraft-skins/tag <newline>Vous pouvez mettre le skin enj utilisant le lien du skin :<newline>/skin https://namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>Erreur<dark_gray> : <red>Aucune donnée de skin trouvée ! Ce joueur a-t-il un skin ?",
   "skinsrestorer.info_no_brackets": "<bold>Ne mettez pas</bold> votre text entre chevrons <bold><></bold> ou crochets <bold>[]</bold><newline>Exemple : <dark_green>/skin<jebb></dark_green> pour seulement <dark_green>/skin jebb</dark_green>.",
