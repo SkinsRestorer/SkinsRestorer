@@ -1,8 +1,6 @@
-import net.raphimc.javadowngrader.gradle.task.DowngradeJarTask
-
 plugins {
     id("sr.base-logic")
-    id("net.raphimc.java-downgrader")
+    id("xyz.wagyourtail.jvmdowngrader")
 }
 
 dependencies {
@@ -13,9 +11,8 @@ dependencies {
 
 tasks {
     jar {
-        archiveClassifier.set("")
-        archiveFileName.set("SkinsRestorer-java17.jar")
-        destinationDirectory.set(rootProject.projectDir.resolve("build/libs"))
+        archiveFileName = "SkinsRestorer-java17.jar"
+        destinationDirectory = rootProject.projectDir.resolve("build/libs")
 
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         dependsOn(configurations.runtimeClasspath)
@@ -26,21 +23,11 @@ tasks {
                 .map { zipTree(it) }
         })
 
-        finalizedBy("java8Jar")
+        finalizedBy(downgradeJar)
     }
-    val java8Jar = register<DowngradeJarTask>("java8Jar") {
-        input.set(jar.get().archiveFile.get().asFile)
-        dependsOn(jar)
-        finalizedBy("fixJava8FileName")
-    }
-    register<Copy>("fixJava8FileName") {
-        val outputFolder = rootProject.projectDir.resolve("build/libs")
-        val inputName = "SkinsRestorer-java17-downgraded.jar"
-        val outputName = "SkinsRestorer.jar"
-        from(outputFolder)
-        include(inputName)
-        destinationDir = outputFolder
-        rename(inputName, outputName)
-        dependsOn(java8Jar)
+    downgradeJar {
+        downgradeTo = JavaVersion.VERSION_1_8
+        destinationDirectory = rootProject.projectDir.resolve("build/libs")
+        archiveFileName = "SkinsRestorer.jar"
     }
 }

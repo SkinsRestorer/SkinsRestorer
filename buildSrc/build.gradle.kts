@@ -8,11 +8,11 @@ repositories {
     maven("https://repo.papermc.io/repository/maven-public/") {
         name = "PaperMC Repository"
     }
-    maven("https://maven.lenni0451.net/releases") {
-        name = "lenni0451MavenReleases"
+    maven("https://maven.wagyourtail.xyz/releases") {
+        name = "PaperMC Repository"
     }
-    maven("https://maven.lenni0451.net/snapshots") {
-        name = "lenni0451MavenSnapshots"
+    maven("https://maven.wagyourtail.xyz/snapshots") {
+        name = "PaperMC Repository"
     }
 }
 
@@ -25,7 +25,7 @@ dependencies {
     implementation("net.kyori:indra-git:3.1.3")
     implementation("io.github.patrick.remapper:io.github.patrick.remapper.gradle.plugin:1.4.0")
     implementation("io.freefair.gradle:lombok-plugin:8.6")
-    implementation("net.raphimc.java-downgrader:net.raphimc.java-downgrader.gradle.plugin:1.1.2")
+    implementation("xyz.wagyourtail.jvmdowngrader:xyz.wagyourtail.jvmdowngrader.gradle.plugin:0.2.1")
 }
 
 java {

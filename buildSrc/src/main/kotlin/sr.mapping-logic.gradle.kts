@@ -1,11 +1,9 @@
-import net.raphimc.javadowngrader.gradle.task.DowngradeSourceSetTask
-
 plugins {
     java
     id("sr.formatting-logic")
     id("sr.core-dependencies")
     id("io.github.patrick.remapper")
-    id("net.raphimc.java-downgrader")
+    id("xyz.wagyourtail.jvmdowngrader")
 }
 
 plugins.apply(MappingPlugin::class.java)
@@ -21,21 +19,19 @@ java {
 }
 
 tasks {
-    remap {
-        archiveClassifier.set("remapped")
-        dependsOn(tasks.jar)
+    downgradeJar {
+        downgradeTo = JavaVersion.VERSION_17
+        archiveClassifier = "downgraded-17"
     }
-    build {
-        dependsOn(tasks.remap)
+    remap {
+        inputTask = tasks.downgradeJar
+        archiveClassifier.set("remapped")
+        dependsOn(tasks.downgradeJar)
     }
 }
 
-val java17Remap = tasks.register<DowngradeSourceSetTask>("java17Remap") {
-    targetVersion = 17
-    sourceSet = sourceSets.main
-}.get().dependsOn(tasks.classes)
 tasks.classes {
-    finalizedBy(java17Remap)
+    finalizedBy(tasks.downgradeJar)
 }
 
 @Suppress("UnstableApiUsage")

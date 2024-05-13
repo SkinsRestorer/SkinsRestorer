@@ -15,6 +15,8 @@ rootProject.name = "skinsrestorer-parent"
 
 dependencyResolutionManagement {
     @Suppress("UnstableApiUsage")
+    repositoriesMode = RepositoriesMode.PREFER_SETTINGS
+    @Suppress("UnstableApiUsage")
     repositories {
         maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") {
             name = "SpigotMC Repository"
@@ -51,6 +53,12 @@ dependencyResolutionManagement {
         }
         maven("https://repo.opencollab.dev/maven-releases/") {
             name = "OpenCollab Release Repository"
+        }
+        maven("https://maven.wagyourtail.xyz/releases") {
+            name = "PaperMC Repository"
+        }
+        maven("https://maven.wagyourtail.xyz/snapshots") {
+            name = "PaperMC Repository"
         }
         mavenCentral()
     }
