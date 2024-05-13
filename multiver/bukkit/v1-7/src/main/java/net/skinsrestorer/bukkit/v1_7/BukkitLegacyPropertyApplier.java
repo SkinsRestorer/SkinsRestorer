@@ -20,13 +20,14 @@ package net.skinsrestorer.bukkit.v1_7;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.util.com.mojang.authlib.GameProfile;
 import net.minecraft.util.com.mojang.authlib.properties.Property;
+import net.minecraft.util.com.mojang.authlib.properties.PropertyMap;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.bukkit.utils.SkinApplyBukkitAdapter;
 import net.skinsrestorer.shared.log.SRLogger;
+import net.skinsrestorer.shared.utils.AuthLibHelper;
 import org.bukkit.entity.Player;
 
 import javax.inject.Inject;
-import java.util.Collection;
 import java.util.Optional;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
@@ -36,9 +37,9 @@ public class BukkitLegacyPropertyApplier implements SkinApplyBukkitAdapter {
     @Override
     public void applyProperty(Player player, SkinProperty property) {
         try {
-            GameProfile profile = getGameProfile(player, GameProfile.class);
-            profile.getProperties().removeAll(SkinProperty.TEXTURES_NAME);
-            profile.getProperties().put(SkinProperty.TEXTURES_NAME, new Property(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
+            PropertyMap properties = getGameProfile(player, GameProfile.class).getProperties();
+            properties.removeAll(SkinProperty.TEXTURES_NAME);
+            properties.put(SkinProperty.TEXTURES_NAME, new Property(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
         } catch (ReflectiveOperationException e) {
             logger.severe("Failed to apply skin property to player " + player.getName(), e);
         }
@@ -47,12 +48,14 @@ public class BukkitLegacyPropertyApplier implements SkinApplyBukkitAdapter {
     @Override
     public Optional<SkinProperty> getSkinProperty(Player player) {
         try {
-            Collection<Property> properties = getGameProfile(player, GameProfile.class).getProperties().values();
-
-            return properties
+            return getGameProfile(player, GameProfile.class).getProperties().values()
                     .stream()
-                    .filter(property -> property.getName().equals(SkinProperty.TEXTURES_NAME))
-                    .map(property -> SkinProperty.of(property.getValue(), property.getSignature()))
+                    .map(property -> SkinProperty.tryParse(
+                            AuthLibHelper.getPropertyName(property),
+                            AuthLibHelper.getPropertyValue(property),
+                            AuthLibHelper.getPropertySignature(property))
+                    )
+                    .flatMap(Optional::stream)
                     .findFirst();
         } catch (ReflectiveOperationException e) {
             logger.severe("Failed to get skin property from player " + player.getName(), e);

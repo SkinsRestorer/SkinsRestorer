@@ -19,14 +19,14 @@ package net.skinsrestorer.bukkit.utils;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import com.mojang.authlib.properties.PropertyMap;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.log.SRLogger;
+import net.skinsrestorer.shared.utils.AuthLibHelper;
 import org.bukkit.entity.Player;
 
 import javax.inject.Inject;
-import java.lang.reflect.Method;
-import java.util.Collection;
 import java.util.Optional;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
@@ -36,9 +36,9 @@ public class BukkitPropertyApplier implements SkinApplyBukkitAdapter {
     @Override
     public void applyProperty(Player player, SkinProperty property) {
         try {
-            GameProfile profile = getGameProfile(player, GameProfile.class);
-            profile.getProperties().removeAll(SkinProperty.TEXTURES_NAME);
-            profile.getProperties().put(SkinProperty.TEXTURES_NAME, new Property(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
+            PropertyMap properties = getGameProfile(player, GameProfile.class).getProperties();
+            properties.removeAll(SkinProperty.TEXTURES_NAME);
+            properties.put(SkinProperty.TEXTURES_NAME, new Property(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
         } catch (ReflectiveOperationException e) {
             logger.severe("Failed to apply skin property to player " + player.getName(), e);
         }
@@ -47,47 +47,18 @@ public class BukkitPropertyApplier implements SkinApplyBukkitAdapter {
     @Override
     public Optional<SkinProperty> getSkinProperty(Player player) {
         try {
-            Collection<Property> properties = getGameProfile(player, GameProfile.class).getProperties().values();
-
-            return properties
+            return getGameProfile(player, GameProfile.class).getProperties().values()
                     .stream()
-                    .filter(property -> getPropertyName(property).equals(SkinProperty.TEXTURES_NAME))
-                    .map(this::convertToSRProperty)
+                    .map(property -> SkinProperty.tryParse(
+                            AuthLibHelper.getPropertyName(property),
+                            AuthLibHelper.getPropertyValue(property),
+                            AuthLibHelper.getPropertySignature(property))
+                    )
+                    .flatMap(Optional::stream)
                     .findFirst();
         } catch (ReflectiveOperationException e) {
             logger.severe("Failed to get skin property from player " + player.getName(), e);
             return Optional.empty();
-        }
-    }
-
-    private SkinProperty convertToSRProperty(Property property) {
-        try {
-            return SkinProperty.of(property.getValue(), property.getSignature());
-        } catch (NoSuchMethodError t) {
-            // New authlib
-            try {
-                Method valueMethod = property.getClass().getMethod("value");
-                Method signatureMethod = property.getClass().getMethod("signature");
-
-                return SkinProperty.of((String) valueMethod.invoke(property), (String) signatureMethod.invoke(property));
-            } catch (ReflectiveOperationException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
-    private String getPropertyName(Property property) {
-        try {
-            return property.getName();
-        } catch (NoSuchMethodError t) {
-            // New authlib
-            try {
-                Method nameMethod = property.getClass().getMethod("name");
-
-                return (String) nameMethod.invoke(property);
-            } catch (ReflectiveOperationException e) {
-                throw new RuntimeException(e);
-            }
         }
     }
 }
