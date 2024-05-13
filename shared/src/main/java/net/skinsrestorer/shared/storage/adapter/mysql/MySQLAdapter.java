@@ -18,7 +18,6 @@
 package net.skinsrestorer.shared.storage.adapter.mysql;
 
 import ch.jalu.configme.SettingsManager;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.api.property.SkinProperty;
@@ -438,7 +437,6 @@ public class MySQLAdapter implements StorageAdapter {
         }
     }
 
-    @SuppressFBWarnings(justification = "SQL injection is not possible here", value = {"SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING"})
     @Override
     public Map<String, String> getStoredGUISkins(int offset) {
         StringBuilder query = new StringBuilder("SELECT * FROM (");
