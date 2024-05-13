@@ -18,6 +18,10 @@ java {
     }
 }
 
+jvmdg {
+    defaultMavens = false
+}
+
 tasks {
     downgradeJar {
         downgradeTo = JavaVersion.VERSION_17

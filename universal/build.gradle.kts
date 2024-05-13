@@ -9,6 +9,10 @@ dependencies {
     implementation(project(":skinsrestorer-velocity", "shadow"))
 }
 
+jvmdg {
+    defaultMavens = false
+}
+
 tasks {
     jar {
         archiveFileName = "SkinsRestorer-java17.jar"
