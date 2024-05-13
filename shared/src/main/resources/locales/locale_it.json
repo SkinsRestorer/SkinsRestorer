@@ -22,8 +22,6 @@
   "skinsrestorer.skinsmenu_previous_page": "<yellow><bold>« <gray>Pagina Precedente</gray> <bold>«</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[</bold> <gray>Rimuovi Skin</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_select_skin": "<dark_green>Clicca per selezionare questa skin",
-  "skinsrestorer.sponge_metrics_consent": "Caro amministratore del server, per aiutarci a decidere se dobbiamo <b>continuare a supportare Sponge per SkinsRestorer</b>, considera l'abilitazione delle metriche <newline>eseguendo <dark_green>/srmetricsenable</dark_green> o clicca su questo messaggio.",
-  "skinsrestorer.sponge_metrics_hover": "<dark_green>Clicca per abilitare le metriche.",
   "skinsrestorer.skin_search_message": "<dark_green>Puoi trovare le skin corrispondenti a <green><search></green> qui: <newline><green>https://namemc. om/minecraft-skins/tag/<search> <newline><newline><dark_green>Se non si trovano skin, puoi sempre trovare alcuni skins su https://namemc. om/minecraft-skins/tag <newline>Puoi impostare la skin usando il link di skin<newline>/skin https://namemc.com/skin/",
   "skinsrestorer.permission_admincommand_purgeolddata": "Consente di eliminare i vecchi dati delle skin.",
   "skinsrestorer.permission_ownskin": "Consente l'accesso per impostare la tua skin."

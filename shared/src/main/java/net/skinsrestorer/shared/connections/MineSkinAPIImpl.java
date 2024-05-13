@@ -53,13 +53,15 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.regex.Pattern;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class MineSkinAPIImpl implements MineSkinAPI {
     private static final int MAX_RETRIES = 5;
     private static final String MINESKIN_USER_AGENT = "SkinsRestorer/MineSkinAPI";
     private static final URI MINESKIN_ENDPOINT = URI.create("https://api.mineskin.org/generate/url");
-    private static final String NAMEMC_SKIN_URL = "https://namemc.com/skin/";
+    private static final String NAMEMC_BASE_DOMAIN = "namemc.com";
+    private static final String NAMEMC_SKIN_PATH = "/skin/";
     private static final String NAMEMC_IMG_URL = "https://s.namemc.com/i/%s.png";
     private final ReentrantLock lock = new ReentrantLock();
     private final Gson gson = new Gson();
@@ -70,14 +72,17 @@ public class MineSkinAPIImpl implements MineSkinAPI {
 
     @Override
     public MineSkinResponse genSkin(String imageUrl, @Nullable SkinVariant skinVariant) throws DataRequestException, MineSkinException {
-        String resultUrl = imageUrl.startsWith(NAMEMC_SKIN_URL) ? NAMEMC_IMG_URL
-                .replace("%s", imageUrl.substring(NAMEMC_SKIN_URL.length())) : imageUrl; // Fix NameMC skins
+        if (imageUrl.contains(NAMEMC_BASE_DOMAIN)) { // Fix NameMC skins
+            if (imageUrl.contains(NAMEMC_SKIN_PATH)) {
+                imageUrl = NAMEMC_IMG_URL.replace("%s", imageUrl.substring(imageUrl.indexOf(NAMEMC_SKIN_PATH) + NAMEMC_SKIN_PATH.length()));
+            } // todo return error if a profile and not a skin link
+        }
 
         int retryAttempts = 0;
         do {
             lock.lock();
             try {
-                Optional<MineSkinResponse> optional = genSkinInternal(resultUrl, skinVariant);
+                Optional<MineSkinResponse> optional = genSkinInternal(imageUrl, skinVariant);
 
                 if (optional.isPresent()) {
                     return optional.get();
@@ -85,7 +90,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             } catch (IOException e) {
-                logger.debug(SRLogLevel.WARNING, "[ERROR] MineSkin Failed! IOException (connection/disk): (" + resultUrl + ")", e);
+                logger.debug(SRLogLevel.WARNING, "[ERROR] MineSkin Failed! IOException (connection/disk): (" + imageUrl + ")", e);
                 throw new DataRequestExceptionShared(e);
             } finally {
                 lock.unlock();
@@ -114,8 +119,8 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                 // try again
                 return switch (error) {
                     case "failed_to_create_id", "skin_change_failed" -> {
-                        logger.debug("Trying again in 5 seconds...");
-                        TimeUnit.SECONDS.sleep(5);
+                        logger.debug("Trying again in 6 seconds...");
+                        TimeUnit.SECONDS.sleep(6);
                         yield Optional.empty();
                     }
                     case "no_account_available" -> throw new MineSkinExceptionShared(Message.ERROR_MS_FULL);
@@ -159,7 +164,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                         TimeUnit.SECONDS.sleep(delay);
                     }
                 } else { // Should normally not happen
-                    TimeUnit.SECONDS.sleep(2);
+                    TimeUnit.SECONDS.sleep(6);
                 }
 
                 return Optional.empty(); // try again after nextRequest

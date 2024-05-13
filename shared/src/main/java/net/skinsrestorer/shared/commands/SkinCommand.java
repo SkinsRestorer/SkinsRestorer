@@ -82,6 +82,13 @@ public final class SkinCommand {
         commandManager.getHelpMessage("skin", sender).forEach(sender::sendMessage);
     }
 
+    @Subcommand("help")
+    @Description(Message.HELP_SKIN_HELP)
+    @CommandPermission(PermissionRegistry.SKIN_SET)
+    private void onSkinHelp(SRCommandSender sender) {
+        onDefault(sender);
+    }
+
     @RootCommand
     @CommandPermission(PermissionRegistry.SKIN_SET)
     @Description(Message.HELP_SKIN_SET)

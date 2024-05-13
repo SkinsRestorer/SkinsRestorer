@@ -81,8 +81,6 @@
   "skinsrestorer.skinsmenu_previous_page": "<yellow><bold>«<gray> 上一页</gray><bold> «</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[ <gray>删除皮肤</gray><bold> ]</bold>",
   "skinsrestorer.skinsmenu_select_skin": "<dark_green>点击选择该皮肤",
-  "skinsrestorer.sponge_metrics_consent": "亲爱的服务器管理员，为了帮助我们决定是否应该 <b> 继续支持 SkinsRestorer </b> <newline>请考虑通过执行 <dark_green>/srmetricsenable </dark _ green > 启用 metrics ，或者单击此消息。",
-  "skinsrestorer.sponge_metrics_hover": "<dark_green>单击以启用metrics。",
   "skinsrestorer.skin_search_message": "<dark_green>您可以在这里找到匹配 <green><search></green> 的皮肤: <newline><green>htps://namemc.com/minecraft-skins/tag/<search> <newline><newline><dark_green>如果找不到皮肤，您可以在 https://namemc.com/minecraft-skins/tag 找到其他皮肤。 <newline>您可以通过以下命令使用链接设置皮肤：<newline> /skin https://namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>错误<dark_gray>：<red>没有获取到皮肤数据！确定这个玩家有皮肤吗？",
   "skinsrestorer.info_no_brackets": "<bold>不要</bold>把文本放在括号<bold>< ></bold>和<bold>[ ]</bold>之间<newline>例子：<dark_green>/skin <jebb></dark_green> 只要 <dark_green>/skin jebb</dark_green>即可",

@@ -29,6 +29,7 @@ public enum Message {
     HELP_SKIN,
     HELP_SKINS,
     HELP_SR,
+    HELP_SKIN_HELP,
     HELP_SKIN_SET,
     HELP_SKIN_SET_OTHER,
     HELP_SKIN_SET_URL,

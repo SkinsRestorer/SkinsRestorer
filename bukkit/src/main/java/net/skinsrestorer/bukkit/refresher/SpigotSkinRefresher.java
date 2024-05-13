@@ -242,7 +242,8 @@ public final class SpigotSkinRefresher implements SkinRefresher {
                         flat
                 ));
             } catch (ReflectiveOperationException e) {
-                logger.warning("Failed to send custom packet via ViaVersion, falling back to default method.", e);
+                logger.warning("Failed to send custom packet via ViaVersion, falling back to default method.");
+                logger.debug(e);
                 sendRespawnPacketDirectly = true;
             }
 
