@@ -2,7 +2,7 @@ metadata.format.version = "1.1"
 
 [versions]
 
-runtask = "2.2.4"
+runtask = "2.3.0"
 runpaperversion = "1.20.4"
 runwaterfallversion = "1.19"
 runvelocityversion = "3.2.0-SNAPSHOT"
