@@ -16,16 +16,7 @@ brigadier = "com.mojang:brigadier:1.1.8"
 runvelocity = { id = "xyz.jpenilla.run-velocity", version.ref = "runtask" }
 runpaper = { id = "xyz.jpenilla.run-paper", version.ref = "runtask" }
 runwaterfall = { id = "xyz.jpenilla.run-waterfall", version.ref = "runtask" }
-shadow = { id = "com.github.johnrengelman.shadow", version = "8.1.1" }
-licenser = { id = "org.cadixdev.licenser", version = "0.6.1" }
-indra = { id = "net.kyori.indra", version.ref = "indra" }
-indra-git = { id = "net.kyori.indra.git", version.ref = "indra" }
-indra-publishing = { id = "net.kyori.indra.publishing", version.ref = "indra" }
 blossom = { id = "net.kyori.blossom", version = "2.1.0" }
-remapper = { id = "io.github.patrick.remapper", version = "1.4.1" }
-spotless = { id = "com.diffplug.spotless", version = "6.25.0" }
-spotbugs = { id = "com.github.spotbugs", version = "6.0.14" }
-lombok = { id = "io.freefair.lombok", version = "8.6" }
 
 [bundles]
 

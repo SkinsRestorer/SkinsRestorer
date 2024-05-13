@@ -23,7 +23,7 @@ dependencies {
     implementation("com.github.spotbugs.snom:spotbugs-gradle-plugin:6.0.12")
     implementation("net.kyori:indra-common:3.1.3")
     implementation("net.kyori:indra-git:3.1.3")
-    implementation("io.github.patrick.remapper:io.github.patrick.remapper.gradle.plugin:1.4.0")
+    implementation("io.github.patrick.remapper:io.github.patrick.remapper.gradle.plugin:1.4.2")
     implementation("io.freefair.gradle:lombok-plugin:8.6")
     implementation("xyz.wagyourtail.jvmdowngrader:xyz.wagyourtail.jvmdowngrader.gradle.plugin:0.2.2")
 }
