@@ -26,8 +26,12 @@ tasks {
         finalizedBy(downgradeJar)
     }
     downgradeJar {
-        downgradeTo = JavaVersion.VERSION_1_8
-        destinationDirectory = rootProject.projectDir.resolve("build/libs")
         archiveFileName = "SkinsRestorer.jar"
+        destinationDirectory = rootProject.projectDir.resolve("build/libs")
+
+        downgradeTo = JavaVersion.VERSION_1_8
+        configureDowngrade {
+            jvmArgs = listOf("-Djvmdg.quiet=true")
+        }
     }
 }
