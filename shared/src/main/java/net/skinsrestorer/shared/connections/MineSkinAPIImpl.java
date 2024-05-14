@@ -53,15 +53,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.regex.Pattern;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class MineSkinAPIImpl implements MineSkinAPI {
     private static final int MAX_RETRIES = 5;
     private static final String MINESKIN_USER_AGENT = "SkinsRestorer/MineSkinAPI";
     private static final URI MINESKIN_ENDPOINT = URI.create("https://api.mineskin.org/generate/url");
-    private static final String NAMEMC_BASE_DOMAIN = "namemc.com";
-    private static final String NAMEMC_SKIN_PATH = "/skin/";
     private static final String NAMEMC_IMG_URL = "https://s.namemc.com/i/%s.png";
     private final ReentrantLock lock = new ReentrantLock();
     private final Gson gson = new Gson();
@@ -70,13 +67,34 @@ public class MineSkinAPIImpl implements MineSkinAPI {
     private final SettingsManager settings;
     private final HttpClient httpClient;
 
+    private static String sanitizeImageURL(String imageUrl) {
+        URI uri = URI.create(imageUrl);
+        String host = uri.getHost();
+
+        if (host == null) {
+            return imageUrl;
+        }
+
+        boolean isNamemc = host.equals("namemc.com") || host.endsWith(".namemc.com");
+        if (isNamemc) {
+            String path = uri.getPath();
+            if (path == null) {
+                return imageUrl;
+            }
+
+            String skinPath = "/skin/";
+            if (path.startsWith(skinPath)) {
+                String uuid = path.substring(skinPath.length());
+                return String.format(NAMEMC_IMG_URL, uuid);
+            }
+        }
+
+        return imageUrl;
+    }
+
     @Override
     public MineSkinResponse genSkin(String imageUrl, @Nullable SkinVariant skinVariant) throws DataRequestException, MineSkinException {
-        if (imageUrl.contains(NAMEMC_BASE_DOMAIN)) { // Fix NameMC skins
-            if (imageUrl.contains(NAMEMC_SKIN_PATH)) {
-                imageUrl = NAMEMC_IMG_URL.replace("%s", imageUrl.substring(imageUrl.indexOf(NAMEMC_SKIN_PATH) + NAMEMC_SKIN_PATH.length()));
-            } // todo return error if a profile and not a skin link
-        }
+        imageUrl = sanitizeImageURL(imageUrl);
 
         int retryAttempts = 0;
         do {
