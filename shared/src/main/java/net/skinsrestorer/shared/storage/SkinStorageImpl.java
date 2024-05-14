@@ -197,17 +197,23 @@ public class SkinStorageImpl implements SkinStorage {
     }
 
     @Override
-    public Optional<InputDataResult> findSkinData(String input) {
+    public Optional<InputDataResult> findSkinData(String input, SkinVariant skinVariantHint) {
         try {
             if (ValidationUtil.validSkinUrl(input)) {
-                Optional<URLIndexData> urlSkinIndex = adapterReference.get().getURLSkinIndex(input);
+                SkinVariant skinVariant;
+                if (skinVariantHint != null) {
+                    skinVariant = skinVariantHint;
+                } else {
+                    Optional<URLIndexData> variant = adapterReference.get().getURLSkinIndex(input);
+                    if (variant.isEmpty()) {
+                        return Optional.empty();
+                    }
 
-                if (urlSkinIndex.isEmpty()) {
-                    return Optional.empty();
+                    skinVariant = variant.get().getSkinVariant();
                 }
 
-                return adapterReference.get().getURLSkinData(input, urlSkinIndex.get().getSkinVariant()).map(data ->
-                        InputDataResult.of(SkinIdentifier.ofURL(data.getUrl(), urlSkinIndex.get().getSkinVariant()),
+                return adapterReference.get().getURLSkinData(input, skinVariant).map(data ->
+                        InputDataResult.of(SkinIdentifier.ofURL(data.getUrl(), skinVariant),
                                 data.getProperty()));
             } else {
                 Optional<InputDataResult> result = HardcodedSkins.getHardcodedSkin(input);
@@ -244,8 +250,8 @@ public class SkinStorageImpl implements SkinStorage {
     }
 
     @Override
-    public Optional<InputDataResult> findOrCreateSkinData(String input) throws DataRequestException, MineSkinException {
-        Optional<InputDataResult> skinData = findSkinData(input);
+    public Optional<InputDataResult> findOrCreateSkinData(String input, SkinVariant skinVariantHint) throws DataRequestException, MineSkinException {
+        Optional<InputDataResult> skinData = findSkinData(input, skinVariantHint);
 
         if (skinData.isPresent()) {
             return skinData;

@@ -22,7 +22,6 @@ import ch.jalu.configme.properties.Property;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.skinsrestorer.api.connections.MineSkinAPI;
-import net.skinsrestorer.api.connections.model.MineSkinResponse;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.exception.MineSkinException;
 import net.skinsrestorer.api.property.*;
@@ -259,43 +258,29 @@ public final class SkinCommand {
                 return false;
             }
 
-            try {
-                sender.sendMessage(Message.MS_UPLOADING_SKIN);
+            sender.sendMessage(Message.MS_UPLOADING_SKIN);
+        }
 
-                MineSkinResponse response = mineSkinAPI.genSkin(skinInput, skinVariant);
-                skinStorage.setURLSkinByResponse(skinInput, response); // "generate" and save skin forever
-                playerStorage.setSkinIdOfPlayer(target.getUniqueId(), SkinIdentifier.ofURL(skinInput, response.getGeneratedVariant()));
-                skinApplier.applySkin(target.getAs(Object.class), response.getProperty());
+        try {
+            // Perform skin lookup, which causes a second url regex check, but we don't care
+            Optional<InputDataResult> optional = skinStorage.findOrCreateSkinData(skinInput, skinVariant);
 
-                setCoolDown(sender, CommandConfig.SKIN_CHANGE_COOLDOWN);
-
-                return true;
-            } catch (DataRequestException e) {
-                ComponentHelper.sendException(e, sender, locale, logger);
-            } catch (Exception e) {
-                logger.debug(SRLogLevel.SEVERE, String.format("Could not generate skin url: %s", skinInput), e);
-                sender.sendMessage(Message.ERROR_INVALID_URLSKIN);
+            if (optional.isEmpty()) {
+                sender.sendMessage(Message.NOT_PREMIUM); // TODO: Is this the right message?
+                return false;
             }
-        } else {
-            try {
-                // Perform skin lookup, which causes a second url regex check, but we don't care
-                Optional<InputDataResult> optional = skinStorage.findOrCreateSkinData(skinInput);
 
-                if (optional.isEmpty()) {
-                    sender.sendMessage(Message.NOT_PREMIUM); // TODO: Is this the right message?
-                    return false;
-                }
+            playerStorage.setSkinIdOfPlayer(target.getUniqueId(), optional.get().getIdentifier());
+            skinApplier.applySkin(target.getAs(Object.class), optional.get().getProperty());
 
-                playerStorage.setSkinIdOfPlayer(target.getUniqueId(), optional.get().getIdentifier());
+            setCoolDown(sender, CommandConfig.SKIN_CHANGE_COOLDOWN);
 
-                skinApplier.applySkin(target.getAs(Object.class), optional.get().getProperty());
-
-                setCoolDown(sender, CommandConfig.SKIN_CHANGE_COOLDOWN);
-
-                return true;
-            } catch (DataRequestException | MineSkinException e) {
-                ComponentHelper.sendException(e, sender, locale, logger);
-            }
+            return true;
+        } catch (DataRequestException e) {
+            ComponentHelper.sendException(e, sender, locale, logger);
+        } catch (MineSkinException e) {
+            logger.debug(SRLogLevel.SEVERE, String.format("Could not generate skin url: %s", skinInput), e);
+            sender.sendMessage(Message.ERROR_INVALID_URLSKIN);
         }
 
         playerStorage.setSkinIdOfPlayer(target.getUniqueId(), oldSkinId.orElse(null)); // TODO: Rethink this logic

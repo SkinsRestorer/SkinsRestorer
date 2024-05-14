@@ -24,7 +24,6 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.skinsrestorer.api.PropertyUtils;
 import net.skinsrestorer.api.SkinsRestorer;
 import net.skinsrestorer.api.connections.MineSkinAPI;
-import net.skinsrestorer.api.connections.model.MineSkinResponse;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.exception.MineSkinException;
 import net.skinsrestorer.api.model.MojangProfileResponse;
@@ -333,15 +332,27 @@ public final class SRCommand {
     @Subcommand("createcustom")
     @CommandPermission(PermissionRegistry.SR_CREATE_CUSTOM)
     @Description(Message.HELP_SR_CREATE_CUSTOM)
-    private void onCreateCustom(SRCommandSender sender, String skinName, String skinUrl, SkinVariant skinVariant) {
+    private void onCreateCustom(SRCommandSender sender, String skinName, String skinInput) {
+        createCustom(sender, skinName, skinInput, null);
+    }
+
+    @Subcommand("createcustom")
+    @CommandPermission(PermissionRegistry.SR_CREATE_CUSTOM)
+    @Description(Message.HELP_SR_CREATE_CUSTOM)
+    private void onCreateCustom(SRCommandSender sender, String skinName, String skinInput, SkinVariant skinVariant) {
+        createCustom(sender, skinName, skinInput, skinVariant);
+    }
+
+    private void createCustom(SRCommandSender sender, String skinName, String skinInput, SkinVariant skinVariant) {
         try {
-            if (ValidationUtil.validSkinUrl(skinUrl)) {
-                MineSkinResponse response = mineSkinAPI.genSkin(skinUrl, skinVariant);
-                skinStorage.setCustomSkinData(skinName, response.getProperty());
-                sender.sendMessage(Message.SUCCESS_ADMIN_CREATECUSTOM, Placeholder.unparsed("skin", skinName));
-            } else {
-                sender.sendMessage(Message.ERROR_INVALID_URLSKIN);
+            Optional<InputDataResult> response = skinStorage.findOrCreateSkinData(skinInput, skinVariant);
+            if (response.isEmpty()) {
+                sender.sendMessage(Message.NOT_PREMIUM); // TODO: Is this the right message?
+                return;
             }
+
+            skinStorage.setCustomSkinData(skinName, response.get().getProperty());
+            sender.sendMessage(Message.SUCCESS_ADMIN_CREATECUSTOM, Placeholder.unparsed("skin", skinName));
         } catch (DataRequestException | MineSkinException e) {
             ComponentHelper.sendException(e, sender, locale, logger);
         }

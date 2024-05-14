@@ -115,12 +115,26 @@ public interface SkinStorage {
     void setCustomSkinData(String skinName, SkinProperty textures);
 
     /**
+     * @see #findSkinData(String)
+     */
+    default Optional<InputDataResult> findSkinData(String input) {
+        return findSkinData(input, null);
+    }
+
+    /**
      * Searches a skin in the database by name/url.
      *
      * @param input Skin name/url
      * @return InputDataResult object or empty if not found
      */
-    Optional<InputDataResult> findSkinData(String input);
+    Optional<InputDataResult> findSkinData(String input, SkinVariant skinVariantHint);
+
+    /**
+     * @see #findOrCreateSkinData(String)
+     */
+    default Optional<InputDataResult> findOrCreateSkinData(String input) throws DataRequestException, MineSkinException {
+        return findOrCreateSkinData(input, null);
+    }
 
     /**
      * Searches a skin in the database by name/url. If not found, it will try to generate it based on the detected type.
@@ -129,7 +143,7 @@ public interface SkinStorage {
      * @return InputDataResult object or empty if not found
      * @throws DataRequestException If MojangAPI lookup errors (e.g. premium player not found)
      */
-    Optional<InputDataResult> findOrCreateSkinData(String input) throws DataRequestException, MineSkinException;
+    Optional<InputDataResult> findOrCreateSkinData(String input, SkinVariant skinVariantHint) throws DataRequestException, MineSkinException;
 
     /**
      * Searches a skin in the database by its skin identifier.
