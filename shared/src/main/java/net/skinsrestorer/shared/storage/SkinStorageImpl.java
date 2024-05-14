@@ -198,6 +198,8 @@ public class SkinStorageImpl implements SkinStorage {
 
     @Override
     public Optional<InputDataResult> findSkinData(String input, SkinVariant skinVariantHint) {
+        input = SRHelpers.sanitizeSkinInput(input);
+
         try {
             if (ValidationUtil.validSkinUrl(input)) {
                 SkinVariant skinVariant;
@@ -251,6 +253,8 @@ public class SkinStorageImpl implements SkinStorage {
 
     @Override
     public Optional<InputDataResult> findOrCreateSkinData(String input, SkinVariant skinVariantHint) throws DataRequestException, MineSkinException {
+        input = SRHelpers.sanitizeSkinInput(input);
+
         Optional<InputDataResult> skinData = findSkinData(input, skinVariantHint);
 
         if (skinData.isPresent()) {
@@ -259,7 +263,7 @@ public class SkinStorageImpl implements SkinStorage {
 
         // Create new skin data
         if (ValidationUtil.validSkinUrl(input)) {
-            MineSkinResponse response = mineSkinAPI.genSkin(input, null);
+            MineSkinResponse response = mineSkinAPI.genSkin(input, skinVariantHint);
 
             setURLSkinByResponse(input, response);
 

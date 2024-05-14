@@ -17,6 +17,9 @@
  */
 package net.skinsrestorer.shared.utils;
 
+import java.net.URL;
+import java.util.Optional;
+
 public class ValidationUtil {
     private ValidationUtil() {
     }
@@ -39,6 +42,7 @@ public class ValidationUtil {
     }
 
     public static boolean validSkinUrl(String str) {
-        return str.startsWith("http://") || str.startsWith("https://");
+        Optional<URL> uriOptional = SRHelpers.parseURL(str);
+        return uriOptional.isPresent() && (uriOptional.get().getProtocol().equals("http") || uriOptional.get().getProtocol().equals("https"));
     }
 }

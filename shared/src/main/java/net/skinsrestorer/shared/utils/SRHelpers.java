@@ -18,6 +18,7 @@
 package net.skinsrestorer.shared.utils;
 
 import java.io.IOException;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -25,14 +26,13 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
-import java.util.Locale;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Stream;
 
 public class SRHelpers {
+    private static final String NAMEMC_IMG_URL = "https://s.namemc.com/i/%s.png";
+
     private SRHelpers() {
     }
 
@@ -139,5 +139,77 @@ public class SRHelpers {
         }
 
         return str.substring(0, 1).toUpperCase(Locale.ROOT) + str.substring(1);
+    }
+
+    public static Optional<URL> parseURL(String str) {
+        try {
+            return Optional.of(new URL(str));
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
+    public static String sanitizeImageURL(String imageUrl) {
+        Optional<URL> uriOptional = parseURL(imageUrl);
+        if (uriOptional.isEmpty()) {
+            return imageUrl;
+        }
+
+        String host = uriOptional.get().getHost();
+
+        if (host == null) {
+            return imageUrl;
+        }
+
+        boolean isNamemc = host.equals("namemc.com") || host.endsWith(".namemc.com");
+        if (isNamemc) {
+            String path = uriOptional.get().getPath();
+            if (path == null) {
+                return imageUrl;
+            }
+
+            String skinPath = "/skin/";
+            if (path.startsWith(skinPath)) {
+                String uuid = path.substring(skinPath.length());
+                return String.format(NAMEMC_IMG_URL, uuid);
+            }
+        }
+
+        return imageUrl;
+    }
+
+    public static String sanitizeSkinInput(String skinInput) {
+        Optional<URL> uriOptional = parseURL(skinInput);
+        if (uriOptional.isEmpty()) {
+            return skinInput;
+        }
+
+        String host = uriOptional.get().getHost();
+        if (host == null) {
+            return skinInput;
+        }
+
+        boolean isNamemc = host.equals("namemc.com") || host.endsWith(".namemc.com");
+        if (isNamemc) {
+            String path = uriOptional.get().getPath();
+            if (path == null) {
+                return skinInput;
+            }
+
+            String profilePath = "/profile/";
+            if (path.startsWith(profilePath)) {
+                String usernamePart = path.substring(profilePath.length());
+                int dotIndex = usernamePart.indexOf('.');
+                if (dotIndex != -1) {
+                    usernamePart = usernamePart.substring(0, dotIndex);
+                }
+
+                if (ValidationUtil.validSkinUrl(usernamePart)) {
+                    return usernamePart;
+                }
+            }
+        }
+
+        return skinInput;
     }
 }
