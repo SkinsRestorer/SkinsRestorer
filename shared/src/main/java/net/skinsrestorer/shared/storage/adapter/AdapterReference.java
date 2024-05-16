@@ -20,6 +20,7 @@ package net.skinsrestorer.shared.storage.adapter;
 import lombok.Setter;
 
 import javax.inject.Provider;
+import java.util.Objects;
 
 @Setter
 public class AdapterReference implements Provider<StorageAdapter> {
@@ -27,6 +28,6 @@ public class AdapterReference implements Provider<StorageAdapter> {
 
     @Override
     public StorageAdapter get() {
-        return adapter;
+        return Objects.requireNonNull(adapter, "We're not connected to a storage backend!");
     }
 }
