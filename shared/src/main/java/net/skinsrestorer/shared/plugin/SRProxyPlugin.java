@@ -29,6 +29,7 @@ public class SRProxyPlugin {
     public void startupPlatform(SRProxyPlatformInit init) throws InitializeException {
         // Init storage
         plugin.loadStorage();
+        plugin.registerFloodgate();
 
         // Init API
         plugin.registerAPI();

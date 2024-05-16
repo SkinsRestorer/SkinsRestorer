@@ -405,16 +405,18 @@ public class SRPlugin {
             throw new IllegalStateException("No platform class available!");
         }
 
-        if (ReflectionUtil.classExists("org.geysermc.floodgate.api.FloodgateApi")) {
-            FloodgateUtil.registerListener(injector);
-        }
-
         runJavaCheck();
 
         initUpdateCheck(UpdateCheckInit.InitCause.STARTUP);
 
         if (serverPlugin == null || !serverPlugin.isProxyMode()) {
             adapter.runAsync(this::runServiceCheck);
+        }
+    }
+
+    public void registerFloodgate() {
+        if (ReflectionUtil.classExists("org.geysermc.floodgate.api.FloodgateApi")) {
+            FloodgateUtil.registerListener(injector);
         }
     }
 
