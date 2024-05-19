@@ -24,8 +24,7 @@
 
 This is the development repository for [SkinsRestorer](https://skinsrestorer.net/) (Minecraft plugin).
 
-Restoring offline mode skins & changing skins for Bukkit/Spigot/Paper, BungeeCord/Waterfall, Sponge, CatServer and Velocity
-servers.
+Restoring offline mode skins & changing skins for Bukkit/Spigot/Paper/Purpur/etc., BungeeCord/Waterfall and Velocity servers.
 
 ## :telescope: Compatibility
 
@@ -36,7 +35,7 @@ servers.
 
 Implementation:
 - Proxy: BungeeCord (Waterfall) & Velocity
-- Backend: Bukkit (Spigot, Paper, Purpur, etc.) & SpongeVanilla
+- Backend: Bukkit (Spigot, Paper, Purpur, etc.)
 
 ## :link: Links
 

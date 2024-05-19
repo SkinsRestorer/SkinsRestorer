@@ -94,7 +94,6 @@ public final class SpigotSkinRefresher implements SkinRefresher {
 
             this.removePlayerEnum = removePlayerEnum;
             this.addPlayerEnum = addPlayerEnum;
-
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException("Failed to initialize SpigotSkinRefresher", e);
         }
@@ -231,21 +230,17 @@ public final class SpigotSkinRefresher implements SkinRefresher {
             sendPacket(playerCon, removePlayer);
             sendPacket(playerCon, addPlayer);
 
-            boolean sendRespawnPacketDirectly;
-            try {
+            boolean sendRespawnPacketDirectly = viaProvider.test(() -> {
                 Object worldObject = ReflectionUtil.getFieldByType(entityPlayer, "World");
                 boolean flat = (boolean) ReflectionUtil.invokeObjectMethod(worldObject, "isFlatWorld");
-                sendRespawnPacketDirectly = viaProvider.test(new ViaPacketData(
+
+                return new ViaPacketData(
                         player,
                         SRHelpers.hashSha256String(String.valueOf(player.getWorld().getSeed())),
                         ((Integer) gamemodeId).shortValue(),
                         flat
-                ));
-            } catch (ReflectiveOperationException e) {
-                logger.warning("Failed to send custom packet via ViaVersion, falling back to default method.");
-                logger.debug(e);
-                sendRespawnPacketDirectly = true;
-            }
+                );
+            });
 
             if (sendRespawnPacketDirectly) {
                 sendPacket(playerCon, respawn);

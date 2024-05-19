@@ -27,7 +27,7 @@ dependencies {
     }
 
     implementation("org.bstats:bstats-bukkit:3.0.2")
-    implementation("com.github.cryptomorin:XSeries:9.10.0")
+    implementation("com.github.cryptomorin:XSeries:10.0.0")
 
     // MultiPaper support
     implementation("com.github.puregero:multilib:1.1.13")

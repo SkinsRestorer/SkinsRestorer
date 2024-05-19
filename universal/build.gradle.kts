@@ -1,5 +1,5 @@
 plugins {
-    id("sr.base-logic")
+    java
     id("xyz.wagyourtail.jvmdowngrader")
 }
 
@@ -20,12 +20,7 @@ tasks {
 
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         dependsOn(configurations.runtimeClasspath)
-        from({
-            configurations.runtimeClasspath.get()
-                .filter { it.name.endsWith("jar") }
-                .filter { it.toString().contains("build/libs") }
-                .map { zipTree(it) }
-        })
+        from({ configurations.runtimeClasspath.get().map { zipTree(it) } })
 
         finalizedBy(downgradeJar)
     }
