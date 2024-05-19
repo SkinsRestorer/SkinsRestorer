@@ -129,7 +129,14 @@ public class SRBukkitInit implements SRServerPlatformInit {
         if (adapter.isPluginEnabled("ViaBackwards")
                 && ViaWorkaround.isProtocolNewer()) {
             logger.debug("Activating ViaBackwards workaround.");
-            injector.register(ViaRefreshProvider.class, ViaWorkaround::sendCustomPacketVia);
+            injector.register(ViaRefreshProvider.class, d -> {
+                try {
+                    return ViaWorkaround.sendCustomPacketVia(d.get());
+                } catch (Exception e) {
+                    logger.severe("Error while refreshing skin via ViaBackwards", e);
+                    return false;
+                }
+            });
         } else {
             injector.register(ViaRefreshProvider.class, ViaRefreshProvider.NO_OP);
         }
