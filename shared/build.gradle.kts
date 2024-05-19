@@ -31,9 +31,9 @@ dependencies {
 
     testImplementation("org.bstats:bstats-base:3.0.2")
 
-    testImplementation("org.testcontainers:testcontainers:1.19.7")
-    testImplementation("org.testcontainers:mariadb:1.19.7")
-    testImplementation("org.testcontainers:junit-jupiter:1.19.7")
+    testImplementation("org.testcontainers:testcontainers:1.19.8")
+    testImplementation("org.testcontainers:mariadb:1.19.8")
+    testImplementation("org.testcontainers:junit-jupiter:1.19.8")
 
     testRuntimeOnly("org.slf4j:slf4j-simple:2.0.13")
 }
