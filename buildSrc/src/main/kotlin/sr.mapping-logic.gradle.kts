@@ -1,7 +1,6 @@
 plugins {
     java
     id("sr.formatting-logic")
-    id("sr.core-dependencies")
     id("io.github.patrick.remapper")
     id("xyz.wagyourtail.jvmdowngrader")
 }
