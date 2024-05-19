@@ -17,13 +17,14 @@
  */
 package net.skinsrestorer.bukkit.mappings;
 
+import net.skinsrestorer.bukkit.utils.ExceptionSupplier;
 import org.bukkit.entity.Player;
 
 import java.util.Set;
 import java.util.function.Predicate;
 
 public interface IMapping {
-    void accept(Player player, Predicate<ViaPacketData> viaFunction);
+    void accept(Player player, Predicate<ExceptionSupplier<ViaPacketData>> viaFunction);
 
     /**
      * Can be found at <a href="https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/browse/src/main/java/org/bukkit/craftbukkit/util/CraftMagicNumbers.java">SpigotMC</a>

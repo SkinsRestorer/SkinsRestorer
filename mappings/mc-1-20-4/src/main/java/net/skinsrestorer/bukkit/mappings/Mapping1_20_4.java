@@ -23,6 +23,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.skinsrestorer.bukkit.utils.ExceptionSupplier;
 import net.skinsrestorer.bukkit.utils.HandleReflection;
 import org.bukkit.entity.Player;
 
@@ -36,7 +37,7 @@ public class Mapping1_20_4 implements IMapping {
     }
 
     @Override
-    public void accept(Player player, Predicate<ViaPacketData> viaFunction) {
+    public void accept(Player player, Predicate<ExceptionSupplier<ViaPacketData>> viaFunction) {
         ServerPlayer entityPlayer = HandleReflection.getHandle(player, ServerPlayer.class);
 
         // Slowly getting from object to object till we get what is needed for
@@ -52,7 +53,7 @@ public class Mapping1_20_4 implements IMapping {
         sendPacket(entityPlayer, new ClientboundPlayerInfoRemovePacket(List.of(player.getUniqueId())));
         sendPacket(entityPlayer, ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(entityPlayer)));
 
-        if (viaFunction.test(new ViaPacketData(player, spawnInfo.seed(), spawnInfo.gameType().getId(), spawnInfo.isFlat()))) {
+        if (viaFunction.test(() -> new ViaPacketData(player, spawnInfo.seed(), spawnInfo.gameType().getId(), spawnInfo.isFlat()))) {
             sendPacket(entityPlayer, respawn);
         }
 

@@ -28,6 +28,7 @@ import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.level.biome.BiomeManager;
+import net.skinsrestorer.bukkit.utils.ExceptionSupplier;
 import net.skinsrestorer.bukkit.utils.HandleReflection;
 import org.bukkit.entity.Player;
 
@@ -41,7 +42,7 @@ public class Mapping1_20 implements IMapping {
     }
 
     @Override
-    public void accept(Player player, Predicate<ViaPacketData> viaFunction) {
+    public void accept(Player player, Predicate<ExceptionSupplier<ViaPacketData>> viaFunction) {
         ServerPlayer entityPlayer = HandleReflection.getHandle(player, ServerPlayer.class);
 
         // Slowly getting from object to object till we get what is needed for
@@ -65,7 +66,7 @@ public class Mapping1_20 implements IMapping {
         sendPacket(entityPlayer, new ClientboundPlayerInfoRemovePacket(List.of(player.getUniqueId())));
         sendPacket(entityPlayer, ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(entityPlayer)));
 
-        if (viaFunction.test(new ViaPacketData(player, respawn.getSeed(), respawn.getPlayerGameType().getId(), respawn.isFlat()))) {
+        if (viaFunction.test(() -> new ViaPacketData(player, respawn.getSeed(), respawn.getPlayerGameType().getId(), respawn.isFlat()))) {
             sendPacket(entityPlayer, respawn);
         }
 

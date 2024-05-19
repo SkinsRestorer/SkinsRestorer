@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package net.skinsrestorer.shared.utils;
+package net.skinsrestorer.bukkit.utils;
 
 public interface ExceptionSupplier<T> {
     T get() throws Exception;
