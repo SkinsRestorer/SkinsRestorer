@@ -20,6 +20,7 @@ package net.skinsrestorer.shared.commands;
 import ch.jalu.configme.SettingsManager;
 import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.skinsrestorer.api.PropertyUtils;
 import net.skinsrestorer.api.SkinsRestorer;
@@ -55,6 +56,8 @@ import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
+import net.skinsrestorer.shared.subjects.permissions.Permission;
+import net.skinsrestorer.shared.subjects.permissions.PermissionGroup;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
 import net.skinsrestorer.shared.utils.ComponentHelper;
 import net.skinsrestorer.shared.utils.SRConstants;
@@ -64,12 +67,11 @@ import net.skinsrestorer.shared.utils.ValidationUtil;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @SuppressWarnings("unused")
 @CommandNames({"sr", "skinsrestorer"})
@@ -118,6 +120,38 @@ public final class SRCommand {
         }
 
         sender.sendMessage(Message.SUCCESS_ADMIN_RELOAD);
+    }
+
+    @Private
+    @Subcommand("docs-commands")
+    @CommandPermission(PermissionRegistry.SR)
+    private void onDocsCommands(SRCommandSender sender) {
+        commandManager.getHelpMessageNodeStart(commandManager.getDispatcher().getRoot(),
+                        (s, t) -> Optional.of(ComponentHelper.parseMiniMessageToJsonString("| `/<command>` | <description> | `<permission>` |", t)),
+                        List.of(), sender)
+                .stream().map(ComponentHelper::convertToJsonString).forEach(sender::sendMessage);
+    }
+
+    @Private
+    @Subcommand("docs-permissions")
+    @CommandPermission(PermissionRegistry.SR)
+    private void onDocsPermissions(SRCommandSender sender) {
+        for (PermissionRegistry permission : PermissionRegistry.values()) {
+            sender.sendMessage(ComponentHelper.convertToJsonString(Component.text("| `%s` | %s |".formatted(
+                    permission.getPermission().getPermissionString(),
+                    ComponentHelper.convertToPlain(ComponentHelper.convertJsonToComponent(locale.getMessageRequired(sender, permission.getDescription())))
+            ))));
+        }
+
+        for (PermissionGroup group : PermissionGroup.VALUES) {
+            sender.sendMessage(ComponentHelper.convertToJsonString(Component.text("| `%s` / `%s` | %s | %s |".formatted(
+                    group.getBasePermission().getPermissionString(),
+                    group.getWildcard().getPermissionString(),
+                    ComponentHelper.convertToPlain(ComponentHelper.convertJsonToComponent(locale.getMessageRequired(sender, group.getDescription()))),
+                    Stream.concat(Arrays.stream(group.getParents()).map(PermissionGroup::getBasePermission), Arrays.stream(group.getPermissions()).map(PermissionRegistry::getPermission))
+                            .map(Permission::getPermissionString).map("`%s`"::formatted).collect(Collectors.joining(", "))
+            ))));
+        }
     }
 
     @Subcommand("status")

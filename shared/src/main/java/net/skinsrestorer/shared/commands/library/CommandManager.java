@@ -30,6 +30,7 @@ import com.mojang.brigadier.context.ParsedCommandNode;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
+import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -53,12 +54,14 @@ import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class CommandManager<T> {
     public static final String ARGUMENT_SEPARATOR = " ";
 
+    @Getter
     private final CommandDispatcher<T> dispatcher = new CommandDispatcher<>();
     private final Map<String, Predicate<SRCommandSender>> conditions = new HashMap<>();
     private final CommandPlatform<T> platform;
@@ -377,21 +380,23 @@ public class CommandManager<T> {
     }
 
     public List<ComponentString> getHelpMessage(String command, SRCommandSender source) {
-        return getHelpMessageNodeStart(dispatcher.getRoot().getChild(command), Component.text("/" + command), source)
+        return getHelpMessageNodeStart(dispatcher.getRoot().getChild(command), (s, t) -> locale.getMessageOptional(s, Message.COMMAND_HELP_FORMAT, t), List.of("/" + command), source)
                 .stream().map(ComponentHelper::convertToJsonString).collect(Collectors.toList());
     }
 
-    protected List<Component> getHelpMessageNodeStart(CommandNode<T> node, Component commandPrefix, SRCommandSender source) {
+    public List<Component> getHelpMessageNodeStart(CommandNode<T> node, BiFunction<SRCommandSender, TagResolver, Optional<ComponentString>> componentFactory, List<String> commandPrefix, SRCommandSender source) {
         List<Component> result = new ArrayList<>();
-        locale.getMessageOptional(source, Message.COMMAND_HELP_HEADER,
-                        Placeholder.unparsed("command", ComponentHelper.convertToPlain(commandPrefix)))
-                .map(ComponentHelper::convertJsonToComponent)
-                .ifPresent(result::add);
-        getAllUsage(node, source, result, commandPrefix, true);
+        if (!commandPrefix.isEmpty()) {
+            locale.getMessageOptional(source, Message.COMMAND_HELP_HEADER,
+                            Placeholder.unparsed("command", String.join(" ", commandPrefix)))
+                    .map(ComponentHelper::convertJsonToComponent)
+                    .ifPresent(result::add);
+        }
+        getAllUsage(node, source, result,componentFactory, commandPrefix, true);
         return result;
     }
 
-    private void getAllUsage(CommandNode<T> node, SRCommandSender source, List<Component> result, Component prefix, boolean first) {
+    private void getAllUsage(CommandNode<T> node, SRCommandSender source, List<Component> result, BiFunction<SRCommandSender, TagResolver, Optional<ComponentString>> componentFactory, List<String> commandElements, boolean first) {
         if (!node.canUse(convertUnsafeCommandSender(source))) {
             return;
         }
@@ -400,7 +405,7 @@ public class CommandManager<T> {
             return;
         }
 
-        String plainPrefix = ComponentHelper.convertToPlain(prefix);
+        String plainPrefix = String.join(" ", commandElements);
         boolean prefixEmpty = plainPrefix.isEmpty();
 
         // Sometimes our first is actually the only thing we *can* print, so let's print it
@@ -416,11 +421,12 @@ public class CommandManager<T> {
 
             CommandHelpData helpData = ((CommandInjectHelp<T>) node.getCommand()).getHelpData();
             if (!helpData.privateCommand()) {
-                locale.getMessageOptional(source, Message.COMMAND_HELP_FORMAT, TagResolver.resolver(
+                componentFactory.apply(source, TagResolver.resolver(
                                 Placeholder.component("command_click_to_suggest", ComponentHelper.convertJsonToComponent(
                                         locale.getMessageRequired(source, Message.COMMAND_CLICK_TO_SUGGEST))),
                                 Placeholder.parsed("suggestion", completedPrefix),
-                                Placeholder.component("command", prefix),
+                                Placeholder.parsed("command", plainPrefix),
+                                Placeholder.parsed("permission", ((PermissionPredicate<T>) node.getRequirement()).getPermission().getPermission().getPermissionString()),
                                 Placeholder.component("description", ComponentHelper.convertJsonToComponent(locale.getMessageRequired(source, helpData.commandDescription())))
                         ))
                         .map(ComponentHelper::convertJsonToComponent)
@@ -430,12 +436,12 @@ public class CommandManager<T> {
 
         if (node.getRedirect() != null) {
             String redirect = node.getRedirect() == dispatcher.getRoot() ? "..." : "-> " + node.getRedirect().getUsageText();
-            result.add(Component.text(prefixEmpty ? node.getUsageText() + ARGUMENT_SEPARATOR + redirect : prefix + ARGUMENT_SEPARATOR + redirect));
+            result.add(Component.text(prefixEmpty ? node.getUsageText() + ARGUMENT_SEPARATOR + redirect : plainPrefix + ARGUMENT_SEPARATOR + redirect));
         } else if (!node.getChildren().isEmpty()) {
             for (CommandNode<T> child : node.getChildren()) {
-                Component resultPrefix = prefixEmpty ? prefix : prefix.append(Component.text(ARGUMENT_SEPARATOR));
-
-                getAllUsage(child, source, result, resultPrefix.append(Component.text(child.getUsageText())), false);
+                var commandElementsCopy = new ArrayList<>(commandElements);
+                commandElementsCopy.add(child.getUsageText());
+                getAllUsage(child, source, result, componentFactory, commandElementsCopy, false);
             }
         }
     }
@@ -456,7 +462,8 @@ public class CommandManager<T> {
 
                 ParsedCommandNode<T> topNode = parsedNodes.get(parsedNodes.size() - 1);
                 for (Component component : getHelpMessageNodeStart(topNode.getNode(),
-                        Component.text("/" + mergeToUsageHelp(parsedNodes)),
+                        (s, t) -> locale.getMessageOptional(s, Message.COMMAND_HELP_FORMAT, t),
+                        List.of("/" + mergeToUsageHelp(parsedNodes)),
                         executor)) {
                     executor.sendMessage(ComponentHelper.convertToJsonString(component));
                 }

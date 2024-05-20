@@ -18,9 +18,9 @@
 package net.skinsrestorer.shared.utils;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
@@ -30,7 +30,6 @@ import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 
-import java.util.List;
 import java.util.Optional;
 
 public class ComponentHelper {
@@ -39,8 +38,8 @@ public class ComponentHelper {
     private static final MiniMessage MINI_MESSAGE_COMPONENT_SERIALIZER = MiniMessage.miniMessage();
     private static final PlainTextComponentSerializer PLAIN_COMPONENT_SERIALIZER = PlainTextComponentSerializer.plainText();
 
-    public static ComponentString parseMiniMessageToJsonString(String miniMessage) {
-        return new ComponentString(GSON_COMPONENT_SERIALIZER.serialize(MINI_MESSAGE_COMPONENT_SERIALIZER.deserialize(miniMessage)));
+    public static ComponentString parseMiniMessageToJsonString(String miniMessage, TagResolver... resolvers) {
+        return new ComponentString(GSON_COMPONENT_SERIALIZER.serialize(MINI_MESSAGE_COMPONENT_SERIALIZER.deserialize(miniMessage, TagResolver.resolver(resolvers))));
     }
 
     // Only used on platforms that don't support adventure
@@ -58,11 +57,6 @@ public class ComponentHelper {
 
     public static String convertToPlain(Component component) {
         return PLAIN_COMPONENT_SERIALIZER.serialize(component);
-    }
-
-    public static ComponentString joinNewline(List<ComponentString> components) {
-        return convertToJsonString(Component.join(JoinConfiguration.newlines(),
-                components.stream().map(ComponentHelper::convertJsonToComponent).toList()));
     }
 
     public static void sendException(Throwable t, SRCommandSender sender, SkinsRestorerLocale locale, SRLogger logger) {
