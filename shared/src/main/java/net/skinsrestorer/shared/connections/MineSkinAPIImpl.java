@@ -125,7 +125,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                 String errorCode = response.getErrorCode();
                 String error = response.getError();
                 if (errorCode.equals("invalid_api_key")) {
-                    logger.severe("[ERROR] MineSkin API key is not invalid! Reason: " + error);
+                    logger.severe("[ERROR] MineSkin API key is invalid! Reason: " + error);
                     switch (error) {
                         case "Invalid API Key" ->
                                 logger.severe(String.format("The API Key provided is not registered on MineSkin! Please empty \"%s\" in plugins/SkinsRestorer/config.yml and run /sr reload", APIConfig.MINESKIN_API_KEY.getPath()));
