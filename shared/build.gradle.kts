@@ -6,7 +6,7 @@ dependencies {
     implementation(projects.skinsrestorerBuildData)
     implementation(projects.skinsrestorerApi)
 
-    api("com.google.code.gson:gson:2.10.1")
+    api("com.google.code.gson:gson:2.11.0")
     implementation("org.mariadb.jdbc:mariadb-java-client:3.4.0") {
         exclude("com.github.waffle", "waffle-jna")
     }
