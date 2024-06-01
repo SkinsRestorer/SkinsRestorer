@@ -87,20 +87,18 @@ public class MojangAPIImpl implements MojangAPI {
             return Optional.empty();
         }
 
-        // Fall back to Mojang API
-        try {
-            return getUUIDMojang(playerName);
-        } catch (DataRequestException e) {
-            logger.debug(e);
-        }
-
         try {
             return getUUIDEclipse(playerName);
         } catch (DataRequestException e) {
             logger.debug(e);
         }
 
-
+        // Fall back to Mojang API
+        try {
+            return getUUIDMojang(playerName);
+        } catch (DataRequestException e) {
+            logger.debug(e);
+        }
 
         // Fall back to MineTools API
         try {
@@ -124,12 +122,16 @@ public class MojangAPIImpl implements MojangAPI {
 
     public Optional<UUID> getUUIDMojang(String playerName) throws DataRequestException {
         HttpResponse httpResponse = readURL(URI.create(UUID_MOJANG.replace("%playerName%", playerName)), MetricsCounter.Service.MOJANG);
-        if (httpResponse.statusCode() == 204 || httpResponse.statusCode() == 404 || httpResponse.body().isEmpty()) { //Not found
+
+        // Not found
+        if (httpResponse.statusCode() == 204 || httpResponse.statusCode() == 404 || httpResponse.body().isEmpty()) {
             return Optional.empty();
         }
 
-        if (httpResponse.statusCode() == 429) { //Not found
-            throw new DataRequestExceptionShared("Please wait a minute before requesting that skin again. (Rate Limited)"); //TODO return http code to api and translate internally
+        // Rate limited
+        if (httpResponse.statusCode() == 429) {
+            // TODO: Return http code to api and translate internally
+            throw new DataRequestExceptionShared("Please wait a minute before requesting that skin again. (Rate Limited)");
         }
 
         MojangUUIDResponse response = httpResponse.getBodyAs(MojangUUIDResponse.class);
