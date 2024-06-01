@@ -33,7 +33,7 @@ dependencies {
     implementation("com.github.puregero:multilib:1.1.13")
 
     // PAPI API hook
-    compileOnly("me.clip:placeholderapi:2.11.5") {
+    compileOnly("me.clip:placeholderapi:2.11.6") {
         isTransitive = false
     }
 
