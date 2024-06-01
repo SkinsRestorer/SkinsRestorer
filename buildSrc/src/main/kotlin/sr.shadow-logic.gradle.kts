@@ -115,7 +115,7 @@ tasks {
 fun ShadowJar.configureRelocations() {
     relocate("com.mojang.brigadier", "net.skinsrestorer.shadow.brigadier")
 
-    relocate("com.google.gson", "net.skinsrestorer.shadow.google.gson")
+    relocate("com.google", "net.skinsrestorer.shadow.google")
 
     relocate("com.cryptomorin.xseries", "net.skinsrestorer.shadow.xseries")
     relocate("org.bstats", "net.skinsrestorer.shadow.bstats")
