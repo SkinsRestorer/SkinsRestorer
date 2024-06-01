@@ -1,1 +1,16 @@
-{}
+{
+  "skinsrestorer.help_skin": "Επίλεξε τη δική σου εμφάνιση.",
+  "skinsrestorer.help_skins": "Ανοίγει το γραφικό περιβάλλον χρήστη για τις εμφανίσεις.",
+  "skinsrestorer.help_sr": "Εντολές διαχειριστή για τον SkinsRestorer.",
+  "skinsrestorer.help_skin_help": "Εμφανίζει την εντολή βοήθειας.",
+  "skinsrestorer.help_skin_set": "Αλλάζει την εμφάνιση σου.",
+  "skinsrestorer.help_skin_set_other": "Ορίζει την εμφάνιση του επιλεγμένου παίκτη.",
+  "skinsrestorer.help_skin_set_url": "Αλλάζει την εμφάνιση σου από URL.",
+  "skinsrestorer.help_skin_clear": "Επαναφέρει την εμφάνιση σου στην αρχική της μορφή.",
+  "skinsrestorer.help_skin_clear_other": "Επαναφέρει την εμφάνιση κάποιου άλλου παίκτη στην αρχική της μορφή.",
+  "skinsrestorer.help_skin_search": "Ψάξε για μια εμφάνιση που θέλεις.",
+  "skinsrestorer.help_skin_update": "Ενημερώνει την εμφάνιση σου.",
+  "skinsrestorer.help_skin_update_other": "Ενημερώνει την εμφάνιση κάποιου επιλεγμένου παίκτη.",
+  "skinsrestorer.help_sr_reload": "Επαναφορτώνει το αρχείο ρυθμίσεων.",
+  "skinsrestorer.help_sr_status": "Ελέγχει τις απαιτούμενες υπηρεσίες API πρόσθετου."
+}
