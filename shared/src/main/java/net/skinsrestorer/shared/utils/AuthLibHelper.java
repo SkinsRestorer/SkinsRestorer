@@ -17,26 +17,27 @@
  */
 package net.skinsrestorer.shared.utils;
 
+import java.lang.reflect.Field;
+
 public class AuthLibHelper {
     public static String getPropertyName(Object property) {
-        try {
-            return (String) property.getClass().getDeclaredField("name").get(property);
-        } catch (ReflectiveOperationException e) {
-            throw new RuntimeException(e);
-        }
+        return getStringField(property, "name");
     }
 
     public static String getPropertyValue(Object property) {
-        try {
-            return (String) property.getClass().getDeclaredField("value").get(property);
-        } catch (ReflectiveOperationException e) {
-            throw new RuntimeException(e);
-        }
+        return getStringField(property, "value");
     }
 
     public static String getPropertySignature(Object property) {
+        return getStringField(property, "signature");
+    }
+
+    private static String getStringField(Object object, String fieldName) {
         try {
-            return (String) property.getClass().getDeclaredField("signature").get(property);
+            Field field = object.getClass().getDeclaredField(fieldName);
+            field.setAccessible(true);
+
+            return (String) field.get(object);
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }
