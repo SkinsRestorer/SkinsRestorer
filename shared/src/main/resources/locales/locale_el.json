@@ -12,5 +12,20 @@
   "skinsrestorer.help_skin_update": "Ενημερώνει την εμφάνιση σου.",
   "skinsrestorer.help_skin_update_other": "Ενημερώνει την εμφάνιση κάποιου επιλεγμένου παίκτη.",
   "skinsrestorer.help_sr_reload": "Επαναφορτώνει το αρχείο ρυθμίσεων.",
-  "skinsrestorer.help_sr_status": "Ελέγχει τις απαιτούμενες υπηρεσίες API πρόσθετου."
+  "skinsrestorer.help_sr_status": "Ελέγχει τις απαιτούμενες υπηρεσίες API πρόσθετου.",
+  "skinsrestorer.help_sr_drop": "Αφαιρεί τον παίκτη ή τα δεδομένα της εμφάνισης του από τη βάση δεδομένων.",
+  "skinsrestorer.help_sr_info": "Εμφανίζει πληροφορίες σχετικά με έναν παίκτη ή μια εμφάνιση.",
+  "skinsrestorer.help_sr_apply_skin": "Επαναεφαρμόζει την εμφάνιση κάποιου άλλου παίκτη.",
+  "skinsrestorer.help_sr_create_custom": "Δημιούργησε μια προσαρμοσμένη εμφάνιση για όλους τους παιξτεσ του διακομιστή.",
+  "skinsrestorer.help_sr_set_skin_all": "Άλλαξε την εμφάνιση όλων τον παικτών σε μια συγκεκριμένη εμφάνιση.",
+  "skinsrestorer.help_sr_apply_skin_all": "Επαναεφαρμόζει την εμφάνιση όλων των παικτών.",
+  "skinsrestorer.help_sr_purge_old_data": "Καθαρίστε παλιά στοιχεία του δέρματος παλαιότερα από x μέρες.",
+  "skinsrestorer.help_sr_dump": "Ανεβάστε δεδομένα υποστήριξης στο bytebin.lucko.me.",
+  "skinsrestorer.success_skin_change": "Η εμφάνιση σου άλλαξε.",
+  "skinsrestorer.success_skin_change_other": "Άλλαξες την εμφάνιση του <name>.",
+  "skinsrestorer.success_skin_clear": "Η εμφάνιση σου επαναφέρθηκε στην αρχική της μορφή.",
+  "skinsrestorer.success_skin_clear_other": "Επαναφέρθηκε η εμφάνιση της εμφάνισης του <name> στην αρχική της μορφή.",
+  "skinsrestorer.success_updating_skin": "Η εμφάνιση σου ενημερώθηκε.",
+  "skinsrestorer.success_updating_skin_other": "Επαναφέρθηκε η εμφάνιση της εμφάνισης του <name> στην αρχική της μορφή.",
+  "skinsrestorer.success_admin_applyskin": "Η εμφάνιση σου ανανεώθηκε!"
 }
