@@ -18,15 +18,13 @@ tasks {
         dependsOn(configurations.runtimeClasspath)
         from({ configurations.runtimeClasspath.get().map { zipTree(it) } })
 
-        finalizedBy(downgradeJar)
+        finalizedBy(shadeDowngradedApi)
     }
-    downgradeJar {
+    shadeDowngradedApi {
         archiveFileName = "SkinsRestorer.jar"
         destinationDirectory = rootProject.projectDir.resolve("build/libs")
 
         downgradeTo = JavaVersion.VERSION_1_8
-        configureDowngrade {
-            jvmArgs = listOf("-Djvmdg.quiet=true")
-        }
+        shadePath = "net/skinsrestorer/jvmdowngrader"
     }
 }
