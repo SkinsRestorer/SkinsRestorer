@@ -12,7 +12,7 @@ dependencies {
     implementation(projects.multiver.bukkit.v17)
     implementation(projects.multiver.bukkit.folia)
 
-    implementation("net.kyori:adventure-platform-bukkit:4.3.2")
+    implementation("net.kyori:adventure-platform-bukkit:4.3.3")
 
     rootProject.subprojects.forEach {
         if (!it.name.startsWith("mc-")) return@forEach
