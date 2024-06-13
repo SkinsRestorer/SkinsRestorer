@@ -25,6 +25,6 @@ tasks {
         destinationDirectory = rootProject.projectDir.resolve("build/libs")
 
         downgradeTo = JavaVersion.VERSION_1_8
-        shadePath = "net/skinsrestorer/jvmdowngrader"
+        shadePath = { _ -> "net/skinsrestorer/shadow/jvmdowngrader" }
     }
 }

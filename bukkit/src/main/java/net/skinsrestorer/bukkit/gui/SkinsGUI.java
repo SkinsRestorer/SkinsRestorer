@@ -17,8 +17,8 @@
  */
 package net.skinsrestorer.bukkit.gui;
 
-import com.cryptomorin.xseries.SkullUtils;
 import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.XSkull;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -68,7 +68,9 @@ public class SkinsGUI implements GUIManager<Inventory> {
         skullMeta.setDisplayName(name);
         skullMeta.setLore(of(ComponentHelper.convertJsonToLegacy(locale.getMessageRequired(player, Message.SKINSMENU_SELECT_SKIN))));
 
-        SkullUtils.setSkullBase64(skullMeta, property, PropertyUtils.getSkinTextureUrlStripped(SkinProperty.of(property, "")));
+        XSkull.of(skullMeta)
+                .profile(XSkull.SkullInputType.TEXTURE_HASH, PropertyUtils.getSkinTextureUrlStripped(SkinProperty.of(property, "")))
+                .apply();
 
         itemStack.setItemMeta(skullMeta);
 
