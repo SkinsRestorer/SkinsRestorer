@@ -335,7 +335,7 @@ public class SRPlugin {
 
     public <P> void registerSkinApplier(SkinApplierAccess<P> skinApplier, Class<P> playerClass, PlatformWrapper<P> platformWrapper) {
         SharedSkinApplier<P> sharedSkinApplier = new SharedSkinApplier<>(playerClass, skinApplier, platformWrapper,
-                injector.getSingleton(PlayerStorageImpl.class), injector.getSingleton(SkinStorageImpl.class));
+                injector.getSingleton(PlayerStorageImpl.class), injector.getSingleton(SkinStorageImpl.class), injector);
         injector.register(SharedSkinApplier.class, sharedSkinApplier);
         injector.register(SkinApplier.class, sharedSkinApplier);
     }

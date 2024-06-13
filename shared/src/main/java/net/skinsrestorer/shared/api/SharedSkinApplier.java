@@ -17,6 +17,7 @@
  */
 package net.skinsrestorer.shared.api;
 
+import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.property.SkinApplier;
@@ -26,6 +27,7 @@ import net.skinsrestorer.api.storage.PlayerStorage;
 import net.skinsrestorer.api.storage.SkinStorage;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.utils.SRConstants;
+import net.skinsrestorer.shared.utils.SoundProvider;
 
 import java.util.Optional;
 
@@ -36,6 +38,7 @@ public class SharedSkinApplier<P> implements SkinApplier<P> {
     private final PlatformWrapper<P> wrapper;
     private final PlayerStorage playerStorage;
     private final SkinStorage skinStorage;
+    private final Injector injector;
 
     public boolean accepts(Class<?> playerClass) {
         return this.playerClass.isAssignableFrom(playerClass);
@@ -56,5 +59,9 @@ public class SharedSkinApplier<P> implements SkinApplier<P> {
     @Override
     public void applySkin(P player, SkinProperty property) {
         access.applySkin(player, property);
+
+        SRPlayer srPlayer = wrapper.convert(player);
+        Optional.ofNullable(injector.createIfHasDependencies(SoundProvider.class))
+                .ifPresent(soundProvider -> soundProvider.accept(srPlayer));
     }
 }

@@ -29,7 +29,8 @@ public class ServerConfig implements SettingsHolder {
             "Disabling this will stop SkinsRestorer from changing skins when a player loads a server resource pack.",
             "When a player loads a server resource pack, their skin is reset. By default, SkinsRestorer reapplies the skin when the player reports that the resource pack has been loaded or an error has occurred."
     })
-    public static final Property<Boolean> RESOURCE_PACK_FIX = newProperty("server.resourcePackFix", true); //TODO: Should this not be in LoginConfig?
+    // TODO: Should this not be in LoginConfig?
+    public static final Property<Boolean> RESOURCE_PACK_FIX = newProperty("server.resourcePackFix", true);
     @Comment({
             "Dismounts a mounted (on a horse, or sitting) player when their skin is updated, preventing players from becoming desynced.",
             "File override = ./plugins/SkinsRestorer/disableDismountPlayer.txt"
@@ -46,6 +47,16 @@ public class ServerConfig implements SettingsHolder {
             "File override = ./plugins/SkinsRestorer/enableDismountEntities.txt"
     })
     public static final Property<Boolean> DISMOUNT_PASSENGERS_ON_UPDATE = newProperty("server.dismountPassengersOnSkinUpdate", false);
+    @Comment({
+            "Play a sound when a player runs /skin to change their skin."
+    })
+    public static final Property<Boolean> SOUND_ENABLED = newProperty("server.sound.enabled", true);
+    @Comment({
+            "Sound to play when a player runs /skin to change their skin.",
+            "You can find the allowed format and values at",
+            "https://javadoc.io/static/com.github.cryptomorin/XSeries/11.0.0/com/cryptomorin/xseries/XSound.html#parse(java.lang.String)"
+    })
+    public static final Property<String> SOUND_VALUE = newProperty("server.sound.value", "ENTITY_PLAYER_TELEPORT, 0.7");
 
     @Override
     public void registerComments(CommentsConfiguration conf) {

@@ -22,10 +22,12 @@ import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.skinsrestorer.bukkit.logger.BukkitConsoleImpl;
 import net.skinsrestorer.bukkit.update.UpdateDownloaderGithub;
 import net.skinsrestorer.bukkit.utils.PluginJarProvider;
+import net.skinsrestorer.bukkit.utils.SoundUtil;
 import net.skinsrestorer.shared.log.JavaLoggerImpl;
 import net.skinsrestorer.shared.plugin.SRBootstrapper;
 import net.skinsrestorer.shared.plugin.SRServerPlugin;
 import net.skinsrestorer.shared.update.DownloaderClassProvider;
+import net.skinsrestorer.shared.utils.SoundProvider;
 import org.bukkit.Server;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -48,6 +50,7 @@ public class SRBukkitBootstrap extends JavaPlugin {
                     injector.register(BukkitAudiences.class, BukkitAudiences.create(this));
                     injector.register(PluginJarProvider.class, () -> pluginFile);
                     injector.register(DownloaderClassProvider.class, () -> UpdateDownloaderGithub.class);
+                    injector.registerProvider(SoundProvider.class, () -> injector.newInstance(SoundUtil.class));
                 },
                 new JavaLoggerImpl(new BukkitConsoleImpl(server.getConsoleSender()), server.getLogger()),
                 true,
