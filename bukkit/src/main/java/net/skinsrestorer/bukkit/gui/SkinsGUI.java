@@ -22,8 +22,7 @@ import com.cryptomorin.xseries.XSkull;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.skinsrestorer.api.PropertyUtils;
-import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.api.model.MojangProfileTexture;
 import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
 import net.skinsrestorer.shared.gui.GUIManager;
 import net.skinsrestorer.shared.gui.SharedGUI;
@@ -69,7 +68,7 @@ public class SkinsGUI implements GUIManager<Inventory> {
         skullMeta.setLore(of(ComponentHelper.convertJsonToLegacy(locale.getMessageRequired(player, Message.SKINSMENU_SELECT_SKIN))));
 
         XSkull.of(skullMeta)
-                .profile(XSkull.SkullInputType.TEXTURE_HASH, PropertyUtils.getSkinTextureUrlStripped(SkinProperty.of(property, "")))
+                .profile(XSkull.SkullInputType.TEXTURE_HASH, MojangProfileTexture.URL_STRIP_PATTERN.matcher(property).replaceAll(""))
                 .apply();
 
         itemStack.setItemMeta(skullMeta);
