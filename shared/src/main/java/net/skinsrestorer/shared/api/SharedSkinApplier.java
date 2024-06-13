@@ -61,7 +61,7 @@ public class SharedSkinApplier<P> implements SkinApplier<P> {
         access.applySkin(player, property);
 
         SRPlayer srPlayer = wrapper.convert(player);
-        Optional.ofNullable(injector.createIfHasDependencies(SoundProvider.class))
+        Optional.ofNullable(injector.getIfAvailable(SoundProvider.class))
                 .ifPresent(soundProvider -> soundProvider.accept(srPlayer));
     }
 }

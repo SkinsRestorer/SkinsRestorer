@@ -23,18 +23,16 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.config.ServerConfig;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.subjects.SRPlayer;
-import net.skinsrestorer.shared.utils.SoundProvider;
 import org.bukkit.entity.Player;
 
 import javax.inject.Inject;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class SoundUtil implements SoundProvider {
+public class SoundUtil {
     private final SettingsManager settings;
     private final SRLogger logger;
 
-    @Override
-    public void accept(SRPlayer player) {
+    public void playSound(SRPlayer player) {
         logger.info("Playing sound for player: " + player.getName());
         if (!settings.getProperty(ServerConfig.SOUND_ENABLED)) {
             return;

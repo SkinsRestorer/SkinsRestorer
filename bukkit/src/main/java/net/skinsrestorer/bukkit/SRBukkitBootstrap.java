@@ -50,7 +50,7 @@ public class SRBukkitBootstrap extends JavaPlugin {
                     injector.register(BukkitAudiences.class, BukkitAudiences.create(this));
                     injector.register(PluginJarProvider.class, () -> pluginFile);
                     injector.register(DownloaderClassProvider.class, () -> UpdateDownloaderGithub.class);
-                    injector.registerProvider(SoundProvider.class, () -> injector.newInstance(SoundUtil.class));
+                    injector.register(SoundProvider.class, player -> injector.getSingleton(SoundUtil.class).playSound(player));
                 },
                 new JavaLoggerImpl(new BukkitConsoleImpl(server.getConsoleSender()), server.getLogger()),
                 true,
