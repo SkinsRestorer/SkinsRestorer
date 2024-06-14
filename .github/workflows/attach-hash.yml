@@ -17,7 +17,7 @@ jobs:
         latest: true
         fileName: 'SkinsRestorer.jar'
     - run: |
-        sha256sum SkinsRestorer.jar > verification-hash.txt
+        sha256sum SkinsRestorer.jar | awk '{print $1}' > verification-hash.txt
     - name: Release
       uses: softprops/action-gh-release@v2
       with:
