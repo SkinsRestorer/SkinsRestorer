@@ -30,7 +30,7 @@ dependencies {
     implementation("com.github.cryptomorin:XSeries:11.0.0")
 
     // MultiPaper support
-    implementation("com.github.puregero:multilib:1.1.13")
+    implementation("com.github.puregero:multilib:1.2.0")
 
     // PAPI API hook
     compileOnly("me.clip:placeholderapi:2.11.6") {
