@@ -2,7 +2,7 @@ name: Attach release hash
 
 on:
   release:
-    types: [created]
+    types: [published]
 
 permissions:
   contents: write
@@ -14,7 +14,6 @@ jobs:
     steps:
     - uses: robinraju/release-downloader@v1.10
       with:
-        latest: true
         fileName: 'SkinsRestorer.jar'
     - run: |
         sha256sum SkinsRestorer.jar > verification-hash.txt
