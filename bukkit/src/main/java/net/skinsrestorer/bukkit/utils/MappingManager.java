@@ -37,7 +37,8 @@ public class MappingManager {
             new Mapping1_20(),
             new Mapping1_20_2(),
             new Mapping1_20_4(),
-            new Mapping1_20_5()
+            new Mapping1_20_5(),
+            new Mapping1_21()
     );
 
     public static Optional<IMapping> getMapping(Server server) {
