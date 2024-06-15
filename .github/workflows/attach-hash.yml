@@ -1,0 +1,24 @@
+name: Attach release hash
+run-name: ${{ github.actor }} is publishing release ${{ github.ref_name }}
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: robinraju/release-downloader@v1.10
+      with:
+        latest: true
+        fileName: 'SkinsRestorer.jar'
+    - run: |
+        sha256sum SkinsRestorer.jar | awk '{print $1}' > verification-hash.txt
+    - name: Release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: verification-hash.txt
