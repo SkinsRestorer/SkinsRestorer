@@ -17,13 +17,13 @@
  */
 package net.skinsrestorer.bukkit.refresher;
 
+import com.viaversion.viabackwards.protocol.v1_16to1_15_2.Protocol1_16To1_15_2;
 import com.viaversion.viaversion.api.Via;
 import com.viaversion.viaversion.api.connection.UserConnection;
 import com.viaversion.viaversion.api.protocol.packet.PacketWrapper;
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import com.viaversion.viaversion.api.type.Types;
 import com.viaversion.viaversion.protocols.v1_14_4to1_15.packet.ClientboundPackets1_15;
-import com.viaversion.viaversion.protocols.v1_15_2to1_16.Protocol1_15_2To1_16;
 import net.skinsrestorer.bukkit.mappings.ViaPacketData;
 
 public final class ViaWorkaround {
@@ -38,9 +38,7 @@ public final class ViaWorkaround {
     @SuppressWarnings("deprecation")
     public static boolean sendCustomPacketVia(ViaPacketData packetData) {
         UserConnection connection = Via.getManager().getConnectionManager().getConnectedClient(packetData.player().getUniqueId());
-        if (connection == null
-                || connection.getProtocolInfo() == null
-                || connection.getProtocolInfo().getProtocolVersion() >= ProtocolVersion.v1_16.getVersion()) {
+        if (connection == null || connection.getProtocolInfo().protocolVersion().newerThanOrEqualTo(ProtocolVersion.v1_16)) {
             return true;
         }
 
@@ -54,7 +52,7 @@ public final class ViaWorkaround {
         packet.write(Types.UNSIGNED_BYTE, (short) packetData.gamemodeId());
         packet.write(Types.STRING, packetData.isFlat() ? "flat" : "default");
         try {
-            packet.send(Protocol1_15_2To1_16.class);
+            packet.send(Protocol1_16To1_15_2.class);
             return false;
         } catch (Exception e) {
             throw new RuntimeException(e);

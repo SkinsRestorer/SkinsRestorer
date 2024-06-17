@@ -212,12 +212,12 @@ public class SRBukkitInit implements SRServerPlatformInit {
             return;
         }
 
-        // ViaVersion 4.0.0+ class
-        if (ReflectionUtil.classExists("com.viaversion.viaversion.api.Via")) {
+        // ViaVersion 5.0.0+ class
+        if (ReflectionUtil.classExists("com.viaversion.viabackwards.protocol.v1_16to1_15_2.Protocol1_16To1_15_2")) {
             return;
         }
 
-        adapter.runRepeatAsync(() -> logger.severe("Outdated ViaVersion found! Please update to at least ViaVersion 4.0.0 for SkinsRestorer to work again!"),
+        adapter.runRepeatAsync(() -> logger.severe("Outdated ViaVersion found! Please update to at least ViaVersion 5.0.0 for SkinsRestorer to work again!"),
                 2, 60, TimeUnit.SECONDS);
     }
 
