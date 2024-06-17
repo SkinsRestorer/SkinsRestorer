@@ -33,7 +33,6 @@ public class SoundUtil {
     private final SRLogger logger;
 
     public void playSound(SRPlayer player) {
-        logger.info("Playing sound for player: " + player.getName());
         if (!settings.getProperty(ServerConfig.SOUND_ENABLED)) {
             return;
         }
@@ -46,6 +45,7 @@ public class SoundUtil {
             return;
         }
 
+        logger.debug("Playing sound for player: " + player.getName());
         record.soundPlayer().forPlayers(p).play();
     }
 }

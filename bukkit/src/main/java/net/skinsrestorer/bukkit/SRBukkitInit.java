@@ -105,10 +105,10 @@ public class SRBukkitInit implements SRServerPlatformInit {
         }
 
         if (isPaper()) {
-            boolean viaVersionExists = adapter.isPluginEnabled("ViaVersion");
+            boolean viaBackwardsExists = adapter.isPluginEnabled("ViaBackwards");
             boolean protocolSupportExists = adapter.isPluginEnabled("ProtocolSupport");
-            if (viaVersionExists || protocolSupportExists) {
-                logger.debug(SRLogLevel.WARNING, "Unsupported plugin (ViaVersion or ProtocolSupport) detected, forcing SpigotSkinRefresher");
+            if (viaBackwardsExists || protocolSupportExists) {
+                logger.debug(SRLogLevel.WARNING, "Unsupported plugin (ViaBackwards or ProtocolSupport) detected, forcing SpigotSkinRefresher");
                 return selectSpigotRefresher();
             }
 
@@ -125,9 +125,7 @@ public class SRBukkitInit implements SRServerPlatformInit {
     }
 
     private SkinRefresher selectSpigotRefresher() {
-        // Wait to run task in order for ViaVersion to determine server protocol
-        if (adapter.isPluginEnabled("ViaBackwards")
-                && ViaWorkaround.shouldApplyWorkaround()) {
+        if (adapter.isPluginEnabled("ViaBackwards") && ViaWorkaround.shouldApplyWorkaround()) {
             logger.debug("Activating ViaBackwards workaround.");
             injector.register(ViaRefreshProvider.class, d -> {
                 try {
@@ -208,16 +206,16 @@ public class SRBukkitInit implements SRServerPlatformInit {
     }
 
     private void checkViaVersion() {
-        if (!adapter.isPluginEnabled("ViaVersion")) {
+        if (!adapter.isPluginEnabled("ViaBackwards")) {
             return;
         }
 
-        // ViaVersion 5.0.0+ class
+        // ViaBackwards 5.0.0+ class
         if (ReflectionUtil.classExists("com.viaversion.viabackwards.protocol.v1_16to1_15_2.Protocol1_16To1_15_2")) {
             return;
         }
 
-        adapter.runRepeatAsync(() -> logger.severe("Outdated ViaVersion found! Please update to at least ViaVersion 5.0.0 for SkinsRestorer to work again!"),
+        adapter.runRepeatAsync(() -> logger.severe("Outdated ViaBackwards found! Please update to at least ViaBackwards 5.0.0 for SkinsRestorer to work again!"),
                 2, 60, TimeUnit.SECONDS);
     }
 
