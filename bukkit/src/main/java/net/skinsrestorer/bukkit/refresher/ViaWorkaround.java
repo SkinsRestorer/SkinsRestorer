@@ -17,21 +17,22 @@
  */
 package net.skinsrestorer.bukkit.refresher;
 
-import com.viaversion.viabackwards.protocol.protocol1_15_2to1_16.Protocol1_15_2To1_16;
 import com.viaversion.viaversion.api.Via;
 import com.viaversion.viaversion.api.connection.UserConnection;
 import com.viaversion.viaversion.api.protocol.packet.PacketWrapper;
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
-import com.viaversion.viaversion.api.type.Type;
-import com.viaversion.viaversion.protocols.protocol1_15to1_14_4.ClientboundPackets1_15;
+import com.viaversion.viaversion.api.type.Types;
+import com.viaversion.viaversion.protocols.v1_14_4to1_15.packet.ClientboundPackets1_15;
+import com.viaversion.viaversion.protocols.v1_15_2to1_16.Protocol1_15_2To1_16;
 import net.skinsrestorer.bukkit.mappings.ViaPacketData;
 
 public final class ViaWorkaround {
     private ViaWorkaround() {
     }
 
-    public static boolean isProtocolNewer() {
-        return Via.getManager().getProtocolManager().getServerProtocolVersion().lowestSupportedVersion() >= ProtocolVersion.v1_16.getVersion();
+    public static boolean shouldApplyWorkaround() {
+        return Via.getManager().getProtocolManager().getServerProtocolVersion()
+                .lowestSupportedProtocolVersion().newerThanOrEqualTo(ProtocolVersion.v1_16);
     }
 
     @SuppressWarnings("deprecation")
@@ -43,15 +44,15 @@ public final class ViaWorkaround {
             return true;
         }
 
-        // ViaBackwards double-sends isProtocolNewer respawn packet when its dimension ID matches the current world's.
-        // In order to get around this, we send isProtocolNewer packet directly into Via's connection, bypassing the 1.16 conversion step
+        // ViaBackwards double-sends the respawn packet when its dimension ID matches the current world's.
+        // In order to get around this, we send the packet directly into Via's connection, bypassing the 1.16 conversion step
         // and therefore bypassing their workaround.
         PacketWrapper packet = PacketWrapper.create(ClientboundPackets1_15.RESPAWN, connection);
 
-        packet.write(Type.INT, packetData.player().getWorld().getEnvironment().getId());
-        packet.write(Type.LONG, packetData.seed());
-        packet.write(Type.UNSIGNED_BYTE, (short) packetData.gamemodeId());
-        packet.write(Type.STRING, packetData.isFlat() ? "flat" : "default");
+        packet.write(Types.INT, packetData.player().getWorld().getEnvironment().getId());
+        packet.write(Types.LONG, packetData.seed());
+        packet.write(Types.UNSIGNED_BYTE, (short) packetData.gamemodeId());
+        packet.write(Types.STRING, packetData.isFlat() ? "flat" : "default");
         try {
             packet.send(Protocol1_15_2To1_16.class);
             return false;

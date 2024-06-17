@@ -127,7 +127,7 @@ public class SRBukkitInit implements SRServerPlatformInit {
     private SkinRefresher selectSpigotRefresher() {
         // Wait to run task in order for ViaVersion to determine server protocol
         if (adapter.isPluginEnabled("ViaBackwards")
-                && ViaWorkaround.isProtocolNewer()) {
+                && ViaWorkaround.shouldApplyWorkaround()) {
             logger.debug("Activating ViaBackwards workaround.");
             injector.register(ViaRefreshProvider.class, d -> {
                 try {
