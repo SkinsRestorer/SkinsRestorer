@@ -34,6 +34,7 @@ public enum PermissionGroup {
             PermissionRegistry.SKIN_SET,
             PermissionRegistry.SKIN_SET_URL,
             PermissionRegistry.SKIN_CLEAR,
+            PermissionRegistry.SKIN_RANDOM,
             PermissionRegistry.SKIN_UPDATE,
             PermissionRegistry.SKIN_SEARCH,
             PermissionRegistry.SKINS
@@ -46,6 +47,7 @@ public enum PermissionGroup {
             PermissionRegistry.SR,
             PermissionRegistry.SKIN_SET_OTHER,
             PermissionRegistry.SKIN_CLEAR_OTHER,
+            PermissionRegistry.SKIN_RANDOM,
             PermissionRegistry.SKIN_UPDATE_OTHER,
             PermissionRegistry.SR_STATUS,
             PermissionRegistry.SR_DROP,

@@ -31,6 +31,8 @@ import net.skinsrestorer.shared.api.SharedSkinApplier;
 import net.skinsrestorer.shared.commands.library.CommandManager;
 import net.skinsrestorer.shared.commands.library.annotations.*;
 import net.skinsrestorer.shared.config.CommandConfig;
+import net.skinsrestorer.shared.connections.RecommendationsState;
+import net.skinsrestorer.shared.connections.responses.RecommenationResponse;
 import net.skinsrestorer.shared.log.SRLogLevel;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
@@ -48,6 +50,7 @@ import net.skinsrestorer.shared.utils.ValidationUtil;
 import javax.inject.Inject;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("unused")
@@ -68,6 +71,7 @@ public final class SkinCommand {
     private final SharedSkinApplier<Object> skinApplier;
     private final MineSkinAPI mineSkinAPI;
     private final CommandManager<SRCommandSender> commandManager;
+    private final RecommendationsState recommendationsState;
 
     @RootCommand
     private void onDefault(SRCommandSender sender) {
@@ -125,6 +129,39 @@ public final class SkinCommand {
             logger.severe("Error while clearing skin", e);
             sender.sendMessage(Message.ERROR_UPDATING_SKIN); // TODO: Better error message
         }
+    }
+
+    @Subcommand("random")
+    @CommandPermission(PermissionRegistry.SKIN_RANDOM)
+    @Description(Message.HELP_SKIN_RANDOM)
+    @CommandConditions("cooldown")
+    private void onSkinRandom(SRPlayer player) {
+        onSkinRandomOther(player, player);
+    }
+
+    @Subcommand("random")
+    @CommandPermission(PermissionRegistry.SKIN_RANDOM_OTHER)
+    @Description(Message.HELP_SKIN_RANDOM_OTHER)
+    @CommandConditions("cooldown")
+    private void onSkinRandomOther(SRCommandSender sender, SRPlayer target) {
+        RecommenationResponse.SkinInfo[] recommendations = recommendationsState.getRecommendations();
+
+        if (recommendations.length == 0) {
+            System.out.println("No recommendations available");
+            return;
+        }
+
+        RecommenationResponse.SkinInfo randomSkin = recommendations[ThreadLocalRandom.current().nextInt(recommendations.length)];
+        SkinIdentifier skinIdentifier = SkinIdentifier.ofCustom("sr-recommendation-" + randomSkin.getSkinId());
+        SkinProperty skinProperty = SkinProperty.of(randomSkin.getValue(), randomSkin.getSignature());
+        if (skinStorage.getSkinDataByIdentifier(skinIdentifier).isEmpty()) {
+            skinStorage.setCustomSkinData(skinIdentifier.getIdentifier(), skinProperty);
+        }
+
+        playerStorage.setSkinIdOfPlayer(target.getUniqueId(), skinIdentifier);
+
+        skinApplier.applySkin(target.getAs(Object.class), skinProperty);
+        System.out.println("Skin applied");
     }
 
     @Subcommand("search")

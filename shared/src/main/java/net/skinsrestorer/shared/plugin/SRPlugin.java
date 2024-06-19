@@ -44,6 +44,7 @@ import net.skinsrestorer.shared.commands.library.CommandManager;
 import net.skinsrestorer.shared.config.*;
 import net.skinsrestorer.shared.connections.MineSkinAPIImpl;
 import net.skinsrestorer.shared.connections.MojangAPIImpl;
+import net.skinsrestorer.shared.connections.RecommendationsState;
 import net.skinsrestorer.shared.connections.ServiceCheckerService;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.floodgate.FloodgateUtil;
@@ -404,6 +405,8 @@ public class SRPlugin {
         } else {
             throw new IllegalStateException("No platform class available!");
         }
+
+        injector.getSingleton(RecommendationsState.class).scheduleRecommendations();
 
         runJavaCheck();
 
