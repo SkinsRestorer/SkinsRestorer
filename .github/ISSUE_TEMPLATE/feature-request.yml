@@ -23,7 +23,12 @@ body:
   - type: textarea
     attributes:
       label: Explain what you need this for
-      description: What do you need this feature for?
+      description: What do you want to use this feature for?
       placeholder: "I want to use this to do x on my server"
     validations:
       required: true
+  - type: textarea
+    attributes:
+      label: Additional context
+      description: Links to other relevant places. Like internet articles or links to Discord messages.
+      placeholder: "e.g. https://discord.com/channels/xxx/xxx/xxx"
