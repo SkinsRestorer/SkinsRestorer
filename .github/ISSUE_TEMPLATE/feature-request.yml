@@ -20,3 +20,10 @@ body:
       placeholder: "I want x feature added to SkinsRestorer"
     validations:
       required: true
+  - type: textarea
+    attributes:
+      label: Explain what you need this for
+      description: What do you need this feature for?
+      placeholder: "I want to use this to do x on my server"
+    validations:
+      required: true
