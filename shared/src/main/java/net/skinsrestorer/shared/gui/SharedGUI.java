@@ -35,6 +35,7 @@ import java.util.function.Consumer;
 public class SharedGUI {
     public static final int HEAD_COUNT_PER_PAGE = 36;
     private final SkinStorageImpl skinStorage;
+    public static final String SR_PROPERTY_INTERNAL_NAME = "skinsrestorer.skull-internal-name";
 
     public <T> T createGUI(GUIManager<T> manager, Consumer<ClickEventInfo> callback, SRForeign player, int page, @Nullable Map<String, String> skinList) {
         if (page > 999) {
@@ -60,7 +61,7 @@ public class SharedGUI {
             SRServerPlayer player = event.player();
             switch (event.material()) {
                 case HEAD -> {
-                    commandManager.executeCommand(player, "skin set " + event.displayName());
+                    commandManager.executeCommand(player, "skin set " + event.skinName());
                     player.closeInventory();
                 }
                 case RED_PANE -> {
@@ -82,11 +83,10 @@ public class SharedGUI {
             SRServerPlayer player = event.player();
             switch (event.material()) {
                 case HEAD -> {
-                    String skinName = event.displayName();
                     adapter.runAsync(() -> event.player().sendToMessageChannel(out -> {
                         out.writeUTF("setSkin");
                         out.writeUTF(player.getName());
-                        out.writeUTF(skinName);
+                        out.writeUTF(event.skinName());
                     }));
                     player.closeInventory();
                 }
@@ -97,10 +97,8 @@ public class SharedGUI {
                     }));
                     player.closeInventory();
                 }
-                case GREEN_PANE -> adapter.runAsync(() ->
-                        event.player().requestSkinsFromProxy(event.currentPage() + 1));
-                case YELLOW_PANE -> adapter.runAsync(() ->
-                        event.player().requestSkinsFromProxy(event.currentPage() - 1));
+                case GREEN_PANE -> adapter.runAsync(() -> event.player().requestSkinsFromProxy(event.currentPage() + 1));
+                case YELLOW_PANE -> adapter.runAsync(() -> event.player().requestSkinsFromProxy(event.currentPage() - 1));
             }
         }
     }

@@ -19,8 +19,7 @@ package net.skinsrestorer.shared.listeners.event;
 
 import net.skinsrestorer.shared.subjects.SRServerPlayer;
 
-public record ClickEventInfo(net.skinsrestorer.shared.listeners.event.ClickEventInfo.MaterialType material,
-                             String displayName, SRServerPlayer player, int currentPage) {
+public record ClickEventInfo(MaterialType material, String skinName, SRServerPlayer player, int currentPage) {
     public enum MaterialType {
         HEAD,
         YELLOW_PANE,

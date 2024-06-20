@@ -19,6 +19,9 @@ package net.skinsrestorer.bukkit.gui;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.XSkull;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
+import com.mojang.authlib.properties.PropertyMap;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -67,13 +70,20 @@ public class SkinsGUI implements GUIManager<Inventory> {
         skullMeta.setDisplayName(name);
         skullMeta.setLore(of(ComponentHelper.convertJsonToLegacy(locale.getMessageRequired(player, Message.SKINSMENU_SELECT_SKIN))));
 
-        XSkull.of(skullMeta)
-                .profile(XSkull.SkullInputType.TEXTURE_HASH, MojangProfileTexture.URL_STRIP_PATTERN.matcher(property).replaceAll(""))
-                .apply();
+        GameProfile setProfile = XSkull.getProfileOrDefault(XSkull.SkullInputType.TEXTURE_HASH,
+                MojangProfileTexture.URL_STRIP_PATTERN.matcher(property).replaceAll(""));
+        injectCustomInfo(setProfile, name);
+        XSkull.setProfile(skullMeta, setProfile);
 
         itemStack.setItemMeta(skullMeta);
 
         return itemStack;
+    }
+
+    private static void injectCustomInfo(GameProfile profile, String skinName) {
+        PropertyMap properties = profile.getProperties();
+        properties.removeAll(SharedGUI.SR_PROPERTY_INTERNAL_NAME);
+        properties.put(SharedGUI.SR_PROPERTY_INTERNAL_NAME, new Property(SharedGUI.SR_PROPERTY_INTERNAL_NAME, skinName, null));
     }
 
     private ItemStack createGlass(GlassType type, SRForeign player) {

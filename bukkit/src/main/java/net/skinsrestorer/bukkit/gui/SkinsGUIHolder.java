@@ -18,18 +18,23 @@
 package net.skinsrestorer.bukkit.gui;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.XSkull;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
+import net.skinsrestorer.shared.gui.SharedGUI;
 import net.skinsrestorer.shared.listeners.event.ClickEventInfo;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
 @RequiredArgsConstructor
@@ -53,13 +58,30 @@ public class SkinsGUIHolder implements InventoryHolder {
             return;
         }
 
-        ItemMeta itemMeta = currentItem.getItemMeta();
+        String skinName;
+        if (currentItem.getItemMeta() instanceof SkullMeta skullMeta) {
+            GameProfile gameProfile = XSkull.getProfile(skullMeta);
 
-        if (itemMeta == null) {
-            return;
+            if (gameProfile == null) {
+                return;
+            }
+
+            Optional<String> skinNameProperty = gameProfile.getProperties().values().stream()
+                    .filter(p -> p.getName().equals(SharedGUI.SR_PROPERTY_INTERNAL_NAME))
+                    .map(Property::getValue)
+                    .findFirst();
+
+            if (skinNameProperty.isEmpty()) {
+                return;
+            }
+
+            skinName = skinNameProperty.get();
+        } else {
+            skinName = null;
         }
 
-        callback.accept(new ClickEventInfo(getMaterialType(XMaterial.matchXMaterial(currentItem)), itemMeta.getDisplayName(), wrapper.player(player), page));
+
+        callback.accept(new ClickEventInfo(getMaterialType(XMaterial.matchXMaterial(currentItem)), skinName, wrapper.player(player), page));
     }
 
     private ClickEventInfo.MaterialType getMaterialType(XMaterial material) {
