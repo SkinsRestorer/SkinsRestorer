@@ -345,7 +345,7 @@ public final class SRCommand {
                                 .format(new Date(TimeUnit.SECONDS.toMillis(playerSkinData.get().getTimestamp())))),
                         Placeholder.parsed("expires", new SimpleDateFormat(SRConstants.DATE_FORMAT, sender.getLocale())
                                 .format(new Date(TimeUnit.SECONDS.toMillis(playerSkinData.get().getTimestamp()
-                                        + TimeUnit.MINUTES.toSeconds(settings.getProperty(StorageConfig.SKIN_EXPIRES_AFTER)))))));
+                                        + TimeUnit.MINUTES.toSeconds(Math.max(settings.getProperty(StorageConfig.SKIN_EXPIRES_AFTER),5)))))));
                 sendGenericSkinInfoMessage(sender, skinData.getProperty());
             }).orElseGet(() -> sender -> sender.sendMessage(Message.NO_SKIN_DATA));
         }

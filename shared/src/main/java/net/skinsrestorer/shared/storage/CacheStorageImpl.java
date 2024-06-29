@@ -93,7 +93,7 @@ public class CacheStorageImpl implements CacheStorage {
     }
 
     private boolean isValidUUIDTimestamp(long epochSecond) {
-        int expiresAfter = settings.getProperty(StorageConfig.UUID_EXPIRES_AFTER);
-        return expiresAfter <= 0 || SRHelpers.getEpochSecond() - epochSecond <= expiresAfter;
+        int expiresAfter = Math.max(settings.getProperty(StorageConfig.UUID_EXPIRES_AFTER), 5);
+        return SRHelpers.getEpochSecond() - epochSecond <= expiresAfter;
     }
 }
