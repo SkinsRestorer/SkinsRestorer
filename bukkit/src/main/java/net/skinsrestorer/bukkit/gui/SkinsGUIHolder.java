@@ -18,7 +18,7 @@
 package net.skinsrestorer.bukkit.gui;
 
 import com.cryptomorin.xseries.XMaterial;
-import com.cryptomorin.xseries.XSkull;
+import com.cryptomorin.xseries.profiles.builder.XSkull;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import lombok.Getter;
@@ -60,12 +60,7 @@ public class SkinsGUIHolder implements InventoryHolder {
 
         String skinName;
         if (currentItem.getItemMeta() instanceof SkullMeta skullMeta) {
-            GameProfile gameProfile = XSkull.getProfile(skullMeta);
-
-            if (gameProfile == null) {
-                return;
-            }
-
+            GameProfile gameProfile = XSkull.of(skullMeta).getProfile();
             Optional<String> skinNameProperty = gameProfile.getProperties().values().stream()
                     .filter(p -> p.getName().equals(SharedGUI.SR_PROPERTY_INTERNAL_NAME))
                     .map(Property::getValue)
@@ -79,7 +74,6 @@ public class SkinsGUIHolder implements InventoryHolder {
         } else {
             skinName = null;
         }
-
 
         callback.accept(new ClickEventInfo(getMaterialType(XMaterial.matchXMaterial(currentItem)), skinName, wrapper.player(player), page));
     }
