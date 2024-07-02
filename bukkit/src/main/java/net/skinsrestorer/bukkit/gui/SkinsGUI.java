@@ -18,7 +18,9 @@
 package net.skinsrestorer.bukkit.gui;
 
 import com.cryptomorin.xseries.XMaterial;
-import com.cryptomorin.xseries.XSkull;
+import com.cryptomorin.xseries.profiles.builder.XSkull;
+import com.cryptomorin.xseries.profiles.objects.ProfileInputType;
+import com.cryptomorin.xseries.profiles.objects.Profileable;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
@@ -39,7 +41,6 @@ import org.bukkit.Server;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
 
 import javax.inject.Inject;
 import java.util.Map;
@@ -55,13 +56,15 @@ public class SkinsGUI implements GUIManager<Inventory> {
     private final WrapperBukkit wrapper;
 
     private ItemStack createSkull(SRForeign player, String name, String property) {
-        ItemStack itemStack = XMaterial.PLAYER_HEAD.parseItem();
+        ItemStack itemStack = XSkull.createItem()
+                .profile(Profileable.of(ProfileInputType.TEXTURE_HASH, MojangProfileTexture.URL_STRIP_PATTERN.matcher(property).replaceAll("")))
+                .apply();
 
         if (itemStack == null) {
             throw new IllegalStateException("Could not create skull for " + name + "!");
         }
 
-        SkullMeta skullMeta = (SkullMeta) itemStack.getItemMeta();
+        ItemMeta skullMeta = itemStack.getItemMeta();
 
         if (skullMeta == null) {
             throw new IllegalStateException("Could not create skull for " + name + "!");
@@ -70,10 +73,7 @@ public class SkinsGUI implements GUIManager<Inventory> {
         skullMeta.setDisplayName(name);
         skullMeta.setLore(of(ComponentHelper.convertJsonToLegacy(locale.getMessageRequired(player, Message.SKINSMENU_SELECT_SKIN))));
 
-        GameProfile setProfile = XSkull.getProfileOrDefault(XSkull.SkullInputType.TEXTURE_HASH,
-                MojangProfileTexture.URL_STRIP_PATTERN.matcher(property).replaceAll(""));
-        injectCustomInfo(setProfile, name);
-        XSkull.setProfile(skullMeta, setProfile);
+        injectCustomInfo(XSkull.of(itemStack).getProfile(), name);
 
         itemStack.setItemMeta(skullMeta);
 
