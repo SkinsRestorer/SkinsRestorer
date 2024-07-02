@@ -152,6 +152,12 @@ public final class SkinCommand {
         }
 
         setSkin(sender, target, SkinStorageImpl.RECOMMENDATION_PREFIX + SRHelpers.getRandomEntry(recommendations).getSkinId(), null);
+
+        if (senderEqual(sender, target)) {
+            sender.sendMessage(Message.SUCCESS_SKIN_CHANGE);
+        } else {
+            sender.sendMessage(Message.SUCCESS_SKIN_CHANGE_OTHER, Placeholder.unparsed("name", target.getName()));
+        }
     }
 
     @Subcommand("search")
