@@ -20,13 +20,13 @@ package net.skinsrestorer.bukkit.gui;
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.profiles.builder.XSkull;
 import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
 import net.skinsrestorer.shared.gui.SharedGUI;
 import net.skinsrestorer.shared.listeners.event.ClickEventInfo;
+import net.skinsrestorer.shared.utils.AuthLibHelper;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
@@ -62,8 +62,8 @@ public class SkinsGUIHolder implements InventoryHolder {
         if (currentItem.getItemMeta() instanceof SkullMeta skullMeta) {
             GameProfile gameProfile = XSkull.of(skullMeta).getProfile();
             Optional<String> skinNameProperty = gameProfile.getProperties().values().stream()
-                    .filter(p -> p.getName().equals(SharedGUI.SR_PROPERTY_INTERNAL_NAME))
-                    .map(Property::getValue)
+                    .filter(p -> AuthLibHelper.getPropertyName(p).equals(SharedGUI.SR_PROPERTY_INTERNAL_NAME))
+                    .map(AuthLibHelper::getPropertyValue)
                     .findFirst();
 
             if (skinNameProperty.isEmpty()) {
