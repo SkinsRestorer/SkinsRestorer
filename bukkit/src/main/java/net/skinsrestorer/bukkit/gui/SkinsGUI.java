@@ -27,7 +27,6 @@ import com.mojang.authlib.properties.PropertyMap;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.skinsrestorer.api.model.MojangProfileTexture;
 import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
 import net.skinsrestorer.shared.gui.GUIManager;
 import net.skinsrestorer.shared.gui.SharedGUI;
@@ -44,6 +43,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import javax.inject.Inject;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import static net.skinsrestorer.shared.utils.FluentList.of;
@@ -57,7 +57,7 @@ public class SkinsGUI implements GUIManager<Inventory> {
 
     private ItemStack createSkull(SRForeign player, String name, String property) {
         ItemStack itemStack = XSkull.createItem()
-                .profile(Profileable.of(ProfileInputType.TEXTURE_HASH, MojangProfileTexture.URL_STRIP_PATTERN.matcher(property).replaceAll("")))
+                .profile(Profileable.of(Objects.requireNonNull(ProfileInputType.typeOf(property)), property))
                 .apply();
 
         if (itemStack == null) {
