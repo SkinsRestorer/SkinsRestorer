@@ -29,6 +29,8 @@ import net.skinsrestorer.api.storage.SkinStorage;
 import net.skinsrestorer.shared.config.StorageConfig;
 import net.skinsrestorer.shared.connections.MineSkinAPIImpl;
 import net.skinsrestorer.shared.connections.MojangAPIImpl;
+import net.skinsrestorer.shared.connections.RecommendationsState;
+import net.skinsrestorer.shared.connections.responses.RecommenationResponse;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.storage.adapter.AdapterReference;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
@@ -46,12 +48,14 @@ import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SkinStorageImpl implements SkinStorage {
+    public static final String RECOMMENDATION_PREFIX = "sr-recommendation-";
     private final SRLogger logger;
     private final CacheStorageImpl cacheStorage;
     private final MojangAPIImpl mojangAPI;
     private final MineSkinAPIImpl mineSkinAPI;
     private final SettingsManager settings;
     private final AdapterReference adapterReference;
+    private final RecommendationsState recommendationsState;
 
     public void preloadDefaultSkins() {
         if (!settings.getProperty(StorageConfig.DEFAULT_SKINS_ENABLED)) {
@@ -262,7 +266,19 @@ public class SkinStorageImpl implements SkinStorage {
         }
 
         // Create new skin data
-        if (ValidationUtil.validSkinUrl(input)) {
+        if (input.startsWith(RECOMMENDATION_PREFIX)) {
+            String skinId = input.substring(RECOMMENDATION_PREFIX.length());
+            RecommenationResponse.SkinInfo skinInfo = recommendationsState.getRecommendations().get(skinId);
+
+            if (skinInfo == null) {
+                return Optional.empty();
+            }
+
+            SkinProperty skinProperty = SkinProperty.of(skinInfo.getValue(), skinInfo.getSignature());
+            setCustomSkinData(input, skinProperty);
+
+            return Optional.of(InputDataResult.of(SkinIdentifier.ofCustom(input), skinProperty));
+        } if (ValidationUtil.validSkinUrl(input)) {
             MineSkinResponse response = mineSkinAPI.genSkin(input, skinVariantHint);
 
             setURLSkinByResponse(input, response);

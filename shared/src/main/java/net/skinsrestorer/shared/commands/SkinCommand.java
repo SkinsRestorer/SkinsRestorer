@@ -38,6 +38,7 @@ import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.storage.CooldownStorage;
+import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.messages.Message;
@@ -45,12 +46,13 @@ import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
 import net.skinsrestorer.shared.utils.ComponentHelper;
 import net.skinsrestorer.shared.utils.SRConstants;
+import net.skinsrestorer.shared.utils.SRHelpers;
 import net.skinsrestorer.shared.utils.ValidationUtil;
 
 import javax.inject.Inject;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("unused")
@@ -144,24 +146,12 @@ public final class SkinCommand {
     @Description(Message.HELP_SKIN_RANDOM_OTHER)
     @CommandConditions("cooldown")
     private void onSkinRandomOther(SRCommandSender sender, SRPlayer target) {
-        RecommenationResponse.SkinInfo[] recommendations = recommendationsState.getRecommendations();
-
-        if (recommendations.length == 0) {
-            System.out.println("No recommendations available");
+        Collection<RecommenationResponse.SkinInfo> recommendations = recommendationsState.getRecommendations().values();
+        if (recommendations.isEmpty()) {
             return;
         }
 
-        RecommenationResponse.SkinInfo randomSkin = recommendations[ThreadLocalRandom.current().nextInt(recommendations.length)];
-        SkinIdentifier skinIdentifier = SkinIdentifier.ofCustom("sr-recommendation-" + randomSkin.getSkinId());
-        SkinProperty skinProperty = SkinProperty.of(randomSkin.getValue(), randomSkin.getSignature());
-        if (skinStorage.getSkinDataByIdentifier(skinIdentifier).isEmpty()) {
-            skinStorage.setCustomSkinData(skinIdentifier.getIdentifier(), skinProperty);
-        }
-
-        playerStorage.setSkinIdOfPlayer(target.getUniqueId(), skinIdentifier);
-
-        skinApplier.applySkin(target.getAs(Object.class), skinProperty);
-        System.out.println("Skin applied");
+        setSkin(sender, target, SkinStorageImpl.RECOMMENDATION_PREFIX + SRHelpers.getRandomEntry(recommendations).getSkinId(), null);
     }
 
     @Subcommand("search")

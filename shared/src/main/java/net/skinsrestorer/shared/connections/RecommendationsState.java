@@ -31,8 +31,11 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class RecommendationsState {
@@ -41,7 +44,7 @@ public class RecommendationsState {
     private final SRLogger logger;
     private final RecommendationsService recommendationsService;
     @Getter
-    private RecommenationResponse.SkinInfo[] recommendations = new RecommenationResponse.SkinInfo[0];
+    private Map<String, RecommenationResponse.SkinInfo> recommendations = Map.of();
     private final Gson gson = new GsonBuilder().create();
 
     public void scheduleRecommendations() {
@@ -50,8 +53,8 @@ public class RecommendationsState {
         boolean fileExists = Files.exists(path);
         if (fileExists) {
             try {
-                RecommenationResponse responseObject = gson.fromJson(Files.newBufferedReader(path), RecommenationResponse.class);
-                this.recommendations = responseObject.getSkins();
+                RecommenationResponse recommenationResponse = gson.fromJson(Files.newBufferedReader(path), RecommenationResponse.class);
+                this.recommendations = mapToId(recommenationResponse.getSkins());
             } catch (IOException e) {
                 logger.warning("Failed to load recommendations from file: " + e.getMessage());
             }
@@ -61,7 +64,7 @@ public class RecommendationsState {
         adapter.runRepeatAsync(() -> {
             try {
                 recommendationsService.getRecommendations().ifPresent(recommenationResponse -> {
-                    this.recommendations = recommenationResponse.getSkins();
+                    this.recommendations = mapToId(recommenationResponse.getSkins());
 
                     try {
                         Files.write(path, gson.toJson(recommenationResponse).getBytes());
@@ -73,5 +76,9 @@ public class RecommendationsState {
                 logger.warning("Failed to get recommended skins: " + e.getMessage());
             }
         }, offsetSeconds, (int) (TimeUnit.HOURS.toSeconds(6) + offsetSeconds), TimeUnit.SECONDS);
+    }
+
+    private static Map<String, RecommenationResponse.SkinInfo> mapToId(RecommenationResponse.SkinInfo[] recommendations) {
+        return Stream.of(recommendations).collect(Collectors.toMap(RecommenationResponse.SkinInfo::getSkinId, skinInfo -> skinInfo));
     }
 }

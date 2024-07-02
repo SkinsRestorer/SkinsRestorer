@@ -93,7 +93,7 @@ public class SRHelpers {
         return list.get(random.nextInt(list.size()));
     }
 
-    public static <E> E getRandomEntry(Set<E> list) {
+    public static <E> E getRandomEntry(Collection<E> list) {
         Random random = ThreadLocalRandom.current();
         int index = random.nextInt(list.size());
         int i = 0;
