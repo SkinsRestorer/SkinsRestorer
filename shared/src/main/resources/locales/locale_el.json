@@ -8,6 +8,8 @@
   "skinsrestorer.help_skin_set_url": "Αλλάζει την εμφάνιση σου από URL.",
   "skinsrestorer.help_skin_clear": "Επαναφέρει την εμφάνιση σου στην αρχική της μορφή.",
   "skinsrestorer.help_skin_clear_other": "Επαναφέρει την εμφάνιση κάποιου άλλου παίκτη στην αρχική της μορφή.",
+  "skinsrestorer.help_skin_random": "Δίνει μια τυχαία εμφάνιση.",
+  "skinsrestorer.help_skin_random_other": "Ορίζει την εμφάνιση κάποιου άλλου παίκτη σε τυχαία.",
   "skinsrestorer.help_skin_search": "Ψάξε για μια εμφάνιση που θέλεις.",
   "skinsrestorer.help_skin_update": "Ενημερώνει την εμφάνιση σου.",
   "skinsrestorer.help_skin_update_other": "Ενημερώνει την εμφάνιση κάποιου επιλεγμένου παίκτη.",
@@ -21,11 +23,14 @@
   "skinsrestorer.help_sr_apply_skin_all": "Επαναεφαρμόζει την εμφάνιση όλων των παικτών.",
   "skinsrestorer.help_sr_purge_old_data": "Καθαρίστε παλιά στοιχεία του δέρματος παλαιότερα από x μέρες.",
   "skinsrestorer.help_sr_dump": "Ανεβάστε δεδομένα υποστήριξης στο bytebin.lucko.me.",
+  "skinsrestorer.success_generic": "<dark_green><message>",
   "skinsrestorer.success_skin_change": "Η εμφάνιση σου άλλαξε.",
   "skinsrestorer.success_skin_change_other": "Άλλαξες την εμφάνιση του <name>.",
   "skinsrestorer.success_skin_clear": "Η εμφάνιση σου επαναφέρθηκε στην αρχική της μορφή.",
   "skinsrestorer.success_skin_clear_other": "Επαναφέρθηκε η εμφάνιση της εμφάνισης του <name> στην αρχική της μορφή.",
   "skinsrestorer.success_updating_skin": "Η εμφάνιση σου ενημερώθηκε.",
   "skinsrestorer.success_updating_skin_other": "Επαναφέρθηκε η εμφάνιση της εμφάνισης του <name> στην αρχική της μορφή.",
-  "skinsrestorer.success_admin_applyskin": "Η εμφάνιση σου ανανεώθηκε!"
+  "skinsrestorer.success_admin_applyskin": "Η εμφάνιση σου ανανεώθηκε!",
+  "skinsrestorer.success_admin_createcustom": "Η εμφάνιση <skin> δημιουργήθηκε!",
+  "skinsrestorer.success_admin_drop": " Τα δεδομένα <type>  διαγράφτηκαν για τον <target>."
 }
