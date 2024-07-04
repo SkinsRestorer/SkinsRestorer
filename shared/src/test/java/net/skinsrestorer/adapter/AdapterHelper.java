@@ -34,18 +34,17 @@ public class AdapterHelper {
     private static final String DEFAULT_NAME = "Pistonmaster";
     private static final UUID DEFAULT_UUID = UUID.nameUUIDFromBytes(DEFAULT_NAME.getBytes(StandardCharsets.UTF_8));
 
-    public static void testAdapter(StorageAdapter adapter, boolean checkCustom) {
+    public static void testAdapter(StorageAdapter adapter) {
         adapter.setCachedUUID("test", MojangCacheData.of(UUID.randomUUID(), -1));
         adapter.setPlayerData(UUID.randomUUID(), PlayerData.of(UUID.randomUUID(), null));
         adapter.setPlayerSkinData(DEFAULT_UUID, PlayerSkinData.of(DEFAULT_UUID, DEFAULT_NAME, SkinProperty.of("test", "test"), -1));
-        adapter.setCustomSkinData("test-skin", CustomSkinData.of("test-skin", SkinProperty.of("test", "test")));
         adapter.setURLSkinData("test", URLSkinData.of("https://test.com", "test", SkinProperty.of("test", "test"), SkinVariant.CLASSIC));
+        adapter.setCustomSkinData("test-skin", CustomSkinData.of("test-skin", SkinProperty.of("test", "test")));
+        adapter.setCustomSkinData("test-skin2", CustomSkinData.of("test-skin2", SkinProperty.of("test", "test")));
 
-        if (checkCustom) {
-            // Check if offset works as well, we actually have two skins in the storage for GUI
-            Assert.assertEquals(1, adapter.getCustomGUISkins(1).size());
-        } else {
-            Assert.assertEquals(1, adapter.getCustomGUISkins(0).size());
-        }
+        Assert.assertEquals(2, adapter.getCustomGUISkins(0).size());
+
+        // Check if offset works as well, we actually have two skins in the storage for GUI
+        Assert.assertEquals(1, adapter.getCustomGUISkins(1).size());
     }
 }

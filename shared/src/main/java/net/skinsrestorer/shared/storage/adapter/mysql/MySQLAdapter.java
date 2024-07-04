@@ -456,7 +456,7 @@ public class MySQLAdapter implements StorageAdapter {
         StringBuilder query = new StringBuilder("SELECT 'custom' as type, `name`, `value`, `signature`")
                 .append(" FROM ")
                 .append(resolveCustomSkinTable())
-                .append(" WHERE NOT LIKE '" + SkinStorageImpl.RECOMMENDATION_PREFIX + "%'");
+                .append(" WHERE `name` NOT LIKE '" + SkinStorageImpl.RECOMMENDATION_PREFIX + "%'");
 
         if (settings.getProperty(GUIConfig.CUSTOM_GUI_ONLY)) {
             List<String> customSkins = settings.getProperty(GUIConfig.CUSTOM_GUI_SKINS);
