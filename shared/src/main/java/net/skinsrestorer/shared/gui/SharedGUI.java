@@ -33,6 +33,7 @@ import java.util.function.Consumer;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SharedGUI {
     public static final int HEAD_COUNT_PER_PAGE = 36;
+    public static final int HEAD_COUNT_PER_PAGE_PLUS_ONE = HEAD_COUNT_PER_PAGE + 1;
     private final SkinStorageImpl skinStorage;
     public static final String SR_PROPERTY_INTERNAL_NAME = "skinsrestorer.skull-internal-name";
 

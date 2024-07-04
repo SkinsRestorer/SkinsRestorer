@@ -449,7 +449,7 @@ public class MySQLAdapter implements StorageAdapter {
 
     @Override
     public List<GUISkinEntry> getCustomGUISkins(int offset) {
-        return getCustomGUISkinsList(offset, SharedGUI.HEAD_COUNT_PER_PAGE);
+        return getCustomGUISkinsList(offset, SharedGUI.HEAD_COUNT_PER_PAGE_PLUS_ONE);
     }
 
     private List<GUISkinEntry> getCustomGUISkinsList(int offset, int limit) {

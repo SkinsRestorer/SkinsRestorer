@@ -498,7 +498,7 @@ public class FileAdapter implements StorageAdapter {
     @Override
     public List<GUISkinEntry> getCustomGUISkins(int offset) {
         List<GUISkinEntry> list = new ArrayList<>();
-        Map<String, GUIFileData> files = getCustomGUISkinFiles(offset, SharedGUI.HEAD_COUNT_PER_PAGE);
+        Map<String, GUIFileData> files = getCustomGUISkinFiles(offset, SharedGUI.HEAD_COUNT_PER_PAGE_PLUS_ONE);
 
         for (Map.Entry<String, GUIFileData> entry : files.entrySet()) {
             GUIFileData data = entry.getValue();

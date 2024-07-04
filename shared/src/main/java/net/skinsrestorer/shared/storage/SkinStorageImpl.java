@@ -211,19 +211,20 @@ public class SkinStorageImpl implements SkinStorage {
             skinPage = Collections.emptyList();
         }
 
-        System.out.println("totalCustomSkins: " + totalCustomSkins);
-        System.out.println("skinPage: " + skinPage);
         int pageCustomSkins = skinPage.size();
-        if (!settings.getProperty(GUIConfig.CUSTOM_GUI_ONLY) && pageCustomSkins < SharedGUI.HEAD_COUNT_PER_PAGE) {
-            int remainingSlots = SharedGUI.HEAD_COUNT_PER_PAGE - pageCustomSkins;
+        if (settings.getProperty(GUIConfig.CUSTOM_GUI_ENABLED)
+                && !settings.getProperty(GUIConfig.CUSTOM_GUI_ONLY)
+                && pageCustomSkins < SharedGUI.HEAD_COUNT_PER_PAGE_PLUS_ONE) {
+            int remainingSlots = SharedGUI.HEAD_COUNT_PER_PAGE_PLUS_ONE - pageCustomSkins;
             int remainingOffset = Math.max(0, offset - totalCustomSkins);
             for (RecommenationResponse.SkinInfo info : recommendationsState.getRecommendationsOffset(remainingOffset, remainingSlots)) {
                 skinPage.add(new GUISkinEntry(RECOMMENDATION_PREFIX + info.getSkinId(), info.getSkinName(), info.getValue()));
             }
         }
 
-        // TODO: Implement better hasNext
-        return new PageInfo(skinPage.size() >= SharedGUI.HEAD_COUNT_PER_PAGE, skinPage);
+        boolean hasNextPage = skinPage.size() >= SharedGUI.HEAD_COUNT_PER_PAGE_PLUS_ONE;
+        List<GUISkinEntry> finalSkinPage = skinPage.subList(0, Math.min(SharedGUI.HEAD_COUNT_PER_PAGE, skinPage.size()));
+        return new PageInfo(hasNextPage, finalSkinPage);
     }
 
     @Override
