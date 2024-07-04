@@ -295,7 +295,7 @@ public class SkinStorageImpl implements SkinStorage {
         // Create new skin data
         if (input.startsWith(RECOMMENDATION_PREFIX)) {
             String skinId = input.substring(RECOMMENDATION_PREFIX.length());
-            RecommenationResponse.SkinInfo skinInfo = recommendationsState.getRecommendations().get(skinId);
+            RecommenationResponse.SkinInfo skinInfo = recommendationsState.getRecommendation(skinId);
 
             if (skinInfo == null) {
                 return Optional.empty();

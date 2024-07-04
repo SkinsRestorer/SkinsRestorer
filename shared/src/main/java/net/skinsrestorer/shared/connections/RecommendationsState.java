@@ -19,18 +19,20 @@ package net.skinsrestorer.shared.connections;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.shared.connections.responses.RecommenationResponse;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.plugin.SRPlugin;
+import net.skinsrestorer.shared.utils.SRHelpers;
 
 import javax.inject.Inject;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
@@ -43,8 +45,8 @@ public class RecommendationsState {
     private final SRPlatformAdapter<?, ?> adapter;
     private final SRLogger logger;
     private final RecommendationsService recommendationsService;
-    @Getter
-    private Map<String, RecommenationResponse.SkinInfo> recommendations = Map.of();
+    private Map<String, RecommenationResponse.SkinInfo> recommendationsMap = Map.of();
+    private List<RecommenationResponse.SkinInfo> recommendationsList = List.of();
     private final Gson gson = new GsonBuilder().create();
 
     public void scheduleRecommendations() {
@@ -54,7 +56,7 @@ public class RecommendationsState {
         if (fileExists) {
             try {
                 RecommenationResponse recommenationResponse = gson.fromJson(Files.newBufferedReader(path), RecommenationResponse.class);
-                this.recommendations = mapToId(recommenationResponse.getSkins());
+                setDataFromResponse(recommenationResponse.getSkins());
             } catch (IOException e) {
                 logger.warning("Failed to load recommendations from file: " + e.getMessage());
             }
@@ -64,7 +66,7 @@ public class RecommendationsState {
         adapter.runRepeatAsync(() -> {
             try {
                 recommendationsService.getRecommendations().ifPresent(recommenationResponse -> {
-                    this.recommendations = mapToId(recommenationResponse.getSkins());
+                    setDataFromResponse(recommenationResponse.getSkins());
 
                     try {
                         Files.write(path, gson.toJson(recommenationResponse).getBytes());
@@ -78,11 +80,22 @@ public class RecommendationsState {
         }, offsetSeconds, (int) (TimeUnit.HOURS.toSeconds(6) + offsetSeconds), TimeUnit.SECONDS);
     }
 
-    private static Map<String, RecommenationResponse.SkinInfo> mapToId(RecommenationResponse.SkinInfo[] recommendations) {
-        return Stream.of(recommendations).collect(Collectors.toMap(RecommenationResponse.SkinInfo::getSkinId, skinInfo -> skinInfo));
+    private void setDataFromResponse(RecommenationResponse.SkinInfo[] recommendations) {
+        recommendationsMap = Stream.of(recommendations).collect(Collectors.toMap(RecommenationResponse.SkinInfo::getSkinId, skinInfo -> skinInfo));
+        recommendationsList = Stream.of(recommendations)
+                .sorted(Comparator.comparingInt(skinInfo -> ThreadLocalRandom.current().nextInt()))
+                .collect(Collectors.toList());
     }
 
     public RecommenationResponse.SkinInfo[] getRecommendationsOffset(int offset, int limit) {
-        return recommendations.values().stream().skip(offset).limit(limit).toArray(RecommenationResponse.SkinInfo[]::new);
+        return recommendationsList.stream().skip(offset).limit(limit).toArray(RecommenationResponse.SkinInfo[]::new);
+    }
+
+    public RecommenationResponse.SkinInfo getRandomRecommendation() {
+        return SRHelpers.getRandomEntry(recommendationsList);
+    }
+
+    public RecommenationResponse.SkinInfo getRecommendation(String skinId) {
+        return recommendationsMap.get(skinId);
     }
 }

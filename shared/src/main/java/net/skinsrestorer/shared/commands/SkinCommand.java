@@ -32,7 +32,6 @@ import net.skinsrestorer.shared.commands.library.CommandManager;
 import net.skinsrestorer.shared.commands.library.annotations.*;
 import net.skinsrestorer.shared.config.CommandConfig;
 import net.skinsrestorer.shared.connections.RecommendationsState;
-import net.skinsrestorer.shared.connections.responses.RecommenationResponse;
 import net.skinsrestorer.shared.log.SRLogLevel;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
@@ -46,11 +45,9 @@ import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
 import net.skinsrestorer.shared.utils.ComponentHelper;
 import net.skinsrestorer.shared.utils.SRConstants;
-import net.skinsrestorer.shared.utils.SRHelpers;
 import net.skinsrestorer.shared.utils.ValidationUtil;
 
 import javax.inject.Inject;
-import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -146,12 +143,7 @@ public final class SkinCommand {
     @Description(Message.HELP_SKIN_RANDOM_OTHER)
     @CommandConditions("cooldown")
     private void onSkinRandomOther(SRCommandSender sender, SRPlayer target) {
-        Collection<RecommenationResponse.SkinInfo> recommendations = recommendationsState.getRecommendations().values();
-        if (recommendations.isEmpty()) {
-            return;
-        }
-
-        setSkin(sender, target, SkinStorageImpl.RECOMMENDATION_PREFIX + SRHelpers.getRandomEntry(recommendations).getSkinId(), null);
+        setSkin(sender, target, SkinStorageImpl.RECOMMENDATION_PREFIX + recommendationsState.getRandomRecommendation().getSkinId(), null);
 
         if (senderEqual(sender, target)) {
             sender.sendMessage(Message.SUCCESS_SKIN_CHANGE);
