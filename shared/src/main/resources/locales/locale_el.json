@@ -32,5 +32,14 @@
   "skinsrestorer.success_updating_skin_other": "Επαναφέρθηκε η εμφάνιση της εμφάνισης του <name> στην αρχική της μορφή.",
   "skinsrestorer.success_admin_applyskin": "Η εμφάνιση σου ανανεώθηκε!",
   "skinsrestorer.success_admin_createcustom": "Η εμφάνιση <skin> δημιουργήθηκε!",
-  "skinsrestorer.success_admin_drop": " Τα δεδομένα <type>  διαγράφτηκαν για τον <target>."
+  "skinsrestorer.success_admin_drop": " Τα δεδομένα <type>  διαγράφτηκαν για τον <target>.",
+  "skinsrestorer.success_admin_reload": "Οι ρυθμίσεις και η γλώσσα επαναφορτώθηκαν!",
+  "skinsrestorer.error_generic": "<dark_red>Σφάλμα<dark_gray>: <red><message>",
+  "skinsrestorer.error_generic_skin": "Παρουσιάστηκε ένα σφάλμα κατά την διεκδίκηση δεδομένων εμφάνισης, παρακαλώ προσπαθήστε ξανά αργότερα!",
+  "skinsrestorer.error_skin_disabled": "Αυτή η εμφάνιση έχει απενεργοποιηθεί από έναν διαχειριστή.",
+  "skinsrestorer.error_skinurl_disallowed": "Αυτή η διεύθυνση URL έχει απαγορευτεί από τον διαχειριστή.",
+  "skinsrestorer.error_updating_skin": "Ένα σφάλμα προέκυψε κατά την ενημέρωση της εμφάνισής σας. Παρακαλώ προσπαθήστε ξανά αργότερα!",
+  "skinsrestorer.error_updating_url": "Δεν μπορείτε να ενημερώσετε προσαρμοσμένα URL εμφανίσεων! Κάντε ξανά αίτηση με το /skin url",
+  "skinsrestorer.error_updating_customskin": "Η εμφάνιση δεν μπορεί να ενημερωθεί επειδή είναι προσαρμοσμένη.",
+  "skinsrestorer.error_invalid_urlskin": "Μη έγκυρη διεύθυνση URL ή μορφή εμφάνισης, <newline><red>Δοκίμασε να ανεβάσεις την εμφάνιση σου στο imgur και κάνεις δεξί κλικ στην επιλογή 'αντιγραφή διεύθυνσης εικόνας' <newline><red><red> Για περαιτέρω βοήθεια επισκεφθείτε το: <red><underlined>skinsrestorer.net/skinurl"
 }
