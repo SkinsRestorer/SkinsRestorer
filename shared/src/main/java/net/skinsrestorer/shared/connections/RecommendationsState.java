@@ -81,4 +81,8 @@ public class RecommendationsState {
     private static Map<String, RecommenationResponse.SkinInfo> mapToId(RecommenationResponse.SkinInfo[] recommendations) {
         return Stream.of(recommendations).collect(Collectors.toMap(RecommenationResponse.SkinInfo::getSkinId, skinInfo -> skinInfo));
     }
+
+    public RecommenationResponse.SkinInfo[] getRecommendationsOffset(int offset, int limit) {
+        return recommendations.values().stream().skip(offset).limit(limit).toArray(RecommenationResponse.SkinInfo[]::new);
+    }
 }

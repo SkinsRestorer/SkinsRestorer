@@ -17,11 +17,7 @@
  */
 package net.skinsrestorer.shared.gui;
 
-import net.skinsrestorer.shared.listeners.event.ClickEventInfo;
-import net.skinsrestorer.shared.subjects.SRForeign;
+import java.util.List;
 
-import java.util.function.Consumer;
-
-public interface GUIManager<T> {
-    T createGUI(Consumer<ClickEventInfo> callback, SRForeign player, int page, PageInfo pageInfo);
+public record PageInfo(boolean hasNext, List<GUISkinEntry> skinList) {
 }

@@ -28,7 +28,6 @@ import net.skinsrestorer.shared.subjects.SRServerPlayer;
 import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
-import java.util.Map;
 import java.util.function.Consumer;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
@@ -37,18 +36,18 @@ public class SharedGUI {
     private final SkinStorageImpl skinStorage;
     public static final String SR_PROPERTY_INTERNAL_NAME = "skinsrestorer.skull-internal-name";
 
-    public <T> T createGUI(GUIManager<T> manager, Consumer<ClickEventInfo> callback, SRForeign player, int page, @Nullable Map<String, String> skinList) {
+    public <T> T createGUI(GUIManager<T> manager, Consumer<ClickEventInfo> callback, SRForeign player, int page, @Nullable PageInfo pageInfo) {
         if (page > 999) {
             page = 999;
         }
 
-        if (skinList == null) {
+        if (pageInfo == null) {
             int skinOffset = HEAD_COUNT_PER_PAGE * page;
 
-            skinList = skinStorage.getGUISkins(skinOffset);
+            pageInfo = skinStorage.getGUISkins(skinOffset);
         }
 
-        return manager.createGUI(callback, player, page, skinList);
+        return manager.createGUI(callback, player, page, pageInfo);
     }
 
     @RequiredArgsConstructor(onConstructor_ = @Inject)

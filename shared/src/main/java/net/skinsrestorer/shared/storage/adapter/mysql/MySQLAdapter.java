@@ -25,9 +25,11 @@ import net.skinsrestorer.api.property.SkinType;
 import net.skinsrestorer.api.property.SkinVariant;
 import net.skinsrestorer.shared.config.DatabaseConfig;
 import net.skinsrestorer.shared.config.GUIConfig;
+import net.skinsrestorer.shared.gui.GUISkinEntry;
 import net.skinsrestorer.shared.gui.SharedGUI;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
+import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.storage.model.cache.MojangCacheData;
 import net.skinsrestorer.shared.storage.model.player.LegacyPlayerData;
@@ -40,7 +42,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class MySQLAdapter implements StorageAdapter {
@@ -438,48 +443,50 @@ public class MySQLAdapter implements StorageAdapter {
     }
 
     @Override
-    public Map<String, String> getStoredGUISkins(int offset) {
-        StringBuilder query = new StringBuilder("SELECT * FROM (");
-        query.append("SELECT 'player' as type, `last_known_name` as name, `value`, `signature`")
+    public int getTotalCustomSkins() {
+        return getCustomGUISkinsList(0, Integer.MAX_VALUE).size();
+    }
+
+    @Override
+    public List<GUISkinEntry> getCustomGUISkins(int offset) {
+        return getCustomGUISkinsList(offset, SharedGUI.HEAD_COUNT_PER_PAGE);
+    }
+
+    private List<GUISkinEntry> getCustomGUISkinsList(int offset, int limit) {
+        StringBuilder query = new StringBuilder("SELECT 'custom' as type, `name`, `value`, `signature`")
                 .append(" FROM ")
-                .append(resolvePlayerSkinTable());
+                .append(resolveCustomSkinTable())
+                .append(" WHERE NOT LIKE '" + SkinStorageImpl.RECOMMENDATION_PREFIX + "%'");
 
-        if (settings.getProperty(GUIConfig.CUSTOM_GUI_ENABLED)) {
-            query.append(" UNION ALL ");
-
-            query.append("SELECT 'custom' as type, `name`, `value`, `signature`")
-                    .append(" FROM ")
-                    .append(resolveCustomSkinTable());
-
-            if (settings.getProperty(GUIConfig.CUSTOM_GUI_ONLY)) {
-                List<String> customSkins = settings.getProperty(GUIConfig.CUSTOM_GUI_SKINS);
-                if (!customSkins.isEmpty()) {
-                    query.append(" WHERE `name` IN (");
-                    List<String> sanitizedSkins = new ArrayList<>();
-                    for (String customSkin : customSkins) {
-                        sanitizedSkins.add("'" + CustomSkinData.sanitizeCustomSkinName(customSkin) + "'");
-                    }
-
-                    query.append(String.join(", ", sanitizedSkins));
-                    query.append(")");
+        if (settings.getProperty(GUIConfig.CUSTOM_GUI_ONLY)) {
+            List<String> customSkins = settings.getProperty(GUIConfig.CUSTOM_GUI_SKINS);
+            if (!customSkins.isEmpty()) {
+                query.append(" AND `name` IN (");
+                List<String> sanitizedSkins = new ArrayList<>();
+                for (String customSkin : customSkins) {
+                    sanitizedSkins.add("'" + CustomSkinData.sanitizeCustomSkinName(customSkin) + "'");
                 }
+
+                query.append(String.join(", ", sanitizedSkins));
+                query.append(")");
             }
         }
 
-        query.append(") AS skins LIMIT ").append(offset).append(", ").append(SharedGUI.HEAD_COUNT_PER_PAGE);
+        query.append(" LIMIT ").append(offset).append(", ").append(limit);
 
-        Map<String, String> skins = new LinkedHashMap<>();
+        List<GUISkinEntry> skins = new ArrayList<>();
         try (ResultSet crs = mysql.query(query.toString())) {
             while (crs.next()) {
                 String name = crs.getString("name");
                 String value = crs.getString("value");
                 String signature = crs.getString("signature");
 
-                skins.put(name, SkinProperty.of(value, signature).getValue());
+                skins.add(new GUISkinEntry(name, name, SkinProperty.of(value, signature).getValue()));
             }
         } catch (SQLException e) {
             logger.warning("Failed to get stored skins", e);
         }
+
         return skins;
     }
 

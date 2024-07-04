@@ -17,48 +17,54 @@
  */
 package net.skinsrestorer.shared.utils;
 
+import net.skinsrestorer.shared.gui.GUISkinEntry;
+import net.skinsrestorer.shared.gui.PageInfo;
+
 import java.io.*;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 public class MessageProtocolUtil {
-    public static Map<String, String> convertToMap(byte[] byteArr) {
+    public static PageInfo convertToPageInfo(byte[] byteArr) {
         try {
             DataInputStream ois = new DataInputStream(new GZIPInputStream(new ByteArrayInputStream(byteArr)));
 
+            boolean hasNext = ois.readBoolean();
             int size = ois.readInt();
-            Map<String, String> map = new LinkedHashMap<>(size);
+            List<GUISkinEntry> skinList = new ArrayList<>(size);
 
             for (int i = 0; i < size; i++) {
-                String key = ois.readUTF();
-                String value = ois.readUTF();
-                map.put(key, value);
+                String skinId = ois.readUTF();
+                String skinName = ois.readUTF();
+                String textureHash = ois.readUTF();
+
+                skinList.add(new GUISkinEntry(skinId, skinName, textureHash));
             }
 
-            return map;
+            return new PageInfo(hasNext, skinList);
         } catch (IOException e) {
-            e.printStackTrace();
-            return Collections.emptyMap();
+            throw new RuntimeException(e);
         }
     }
 
-    public static byte[] convertToByteArray(Map<String, String> map) {
+    public static byte[] convertToByteArray(PageInfo pageInfo) {
         ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
 
         try (GZIPOutputStream gzipOut = new GZIPOutputStream(byteOut)) {
             DataOutputStream dataOut = new DataOutputStream(gzipOut);
-            dataOut.writeInt(map.size());
-            for (Map.Entry<String, String> entry : map.entrySet()) {
-                dataOut.writeUTF(entry.getKey());
-                dataOut.writeUTF(entry.getValue());
+            dataOut.writeBoolean(pageInfo.hasNext());
+            dataOut.writeInt(pageInfo.skinList().size());
+            for (GUISkinEntry entry : pageInfo.skinList()) {
+                dataOut.writeUTF(entry.skinId());
+                dataOut.writeUTF(entry.skinName());
+                dataOut.writeUTF(entry.textureHash());
             }
 
             dataOut.flush();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
 
         return byteOut.toByteArray();

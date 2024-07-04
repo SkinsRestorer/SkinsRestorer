@@ -35,6 +35,7 @@ import net.skinsrestorer.bukkit.utils.SkinApplyBukkitAdapter;
 import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
 import net.skinsrestorer.shared.commands.library.SRRegisterPayload;
 import net.skinsrestorer.shared.config.AdvancedConfig;
+import net.skinsrestorer.shared.gui.PageInfo;
 import net.skinsrestorer.shared.gui.SharedGUI;
 import net.skinsrestorer.shared.info.ClassInfo;
 import net.skinsrestorer.shared.info.Platform;
@@ -61,7 +62,10 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -155,13 +159,13 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin, CommandSende
     }
 
     @Override
-    public void openProxyGUI(SRPlayer player, int page, Map<String, String> skinList) {
-        openGUI(player, SharedGUI.ProxyGUIActions.class, page, skinList);
+    public void openProxyGUI(SRPlayer player, int page, PageInfo pageInfo) {
+        openGUI(player, SharedGUI.ProxyGUIActions.class, page, pageInfo);
     }
 
-    private void openGUI(SRPlayer player, Class<? extends Consumer<ClickEventInfo>> consumer, int page, @Nullable Map<String, String> skinList) {
+    private void openGUI(SRPlayer player, Class<? extends Consumer<ClickEventInfo>> consumer, int page, @Nullable PageInfo pageInfo) {
         Inventory inventory = injector.getSingleton(SharedGUI.class)
-                .createGUI(injector.getSingleton(SkinsGUI.class), injector.getSingleton(consumer), player, page, skinList);
+                .createGUI(injector.getSingleton(SkinsGUI.class), injector.getSingleton(consumer), player, page, pageInfo);
 
         runSyncToPlayer(player, () -> player.getAs(Player.class).openInventory(inventory));
     }

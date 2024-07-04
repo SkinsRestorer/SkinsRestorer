@@ -26,11 +26,15 @@ import net.skinsrestorer.api.exception.MineSkinException;
 import net.skinsrestorer.api.model.MojangProfileResponse;
 import net.skinsrestorer.api.property.*;
 import net.skinsrestorer.api.storage.SkinStorage;
+import net.skinsrestorer.shared.config.GUIConfig;
 import net.skinsrestorer.shared.config.StorageConfig;
 import net.skinsrestorer.shared.connections.MineSkinAPIImpl;
 import net.skinsrestorer.shared.connections.MojangAPIImpl;
 import net.skinsrestorer.shared.connections.RecommendationsState;
 import net.skinsrestorer.shared.connections.responses.RecommenationResponse;
+import net.skinsrestorer.shared.gui.GUISkinEntry;
+import net.skinsrestorer.shared.gui.PageInfo;
+import net.skinsrestorer.shared.gui.SharedGUI;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.storage.adapter.AdapterReference;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
@@ -196,8 +200,30 @@ public class SkinStorageImpl implements SkinStorage {
         adapterReference.get().setCustomSkinData(skinName, CustomSkinData.of(skinName, textures));
     }
 
-    public Map<String, String> getGUISkins(int offset) {
-        return adapterReference.get().getStoredGUISkins(offset);
+    public PageInfo getGUISkins(int offset) {
+        int totalCustomSkins;
+        List<GUISkinEntry> skinPage;
+        if (settings.getProperty(GUIConfig.CUSTOM_GUI_ENABLED)) {
+            totalCustomSkins = adapterReference.get().getTotalCustomSkins();
+            skinPage = adapterReference.get().getCustomGUISkins(offset);
+        } else {
+            totalCustomSkins = 0;
+            skinPage = Collections.emptyList();
+        }
+
+        System.out.println("totalCustomSkins: " + totalCustomSkins);
+        System.out.println("skinPage: " + skinPage);
+        int pageCustomSkins = skinPage.size();
+        if (!settings.getProperty(GUIConfig.CUSTOM_GUI_ONLY) && pageCustomSkins < SharedGUI.HEAD_COUNT_PER_PAGE) {
+            int remainingSlots = SharedGUI.HEAD_COUNT_PER_PAGE - pageCustomSkins;
+            int remainingOffset = Math.max(0, offset - totalCustomSkins);
+            for (RecommenationResponse.SkinInfo info : recommendationsState.getRecommendationsOffset(remainingOffset, remainingSlots)) {
+                skinPage.add(new GUISkinEntry(RECOMMENDATION_PREFIX + info.getSkinId(), info.getSkinName(), info.getValue()));
+            }
+        }
+
+        // TODO: Implement better hasNext
+        return new PageInfo(skinPage.size() >= SharedGUI.HEAD_COUNT_PER_PAGE, skinPage);
     }
 
     @Override
@@ -278,7 +304,7 @@ public class SkinStorageImpl implements SkinStorage {
             setCustomSkinData(input, skinProperty);
 
             return Optional.of(InputDataResult.of(SkinIdentifier.ofCustom(input), skinProperty));
-        } if (ValidationUtil.validSkinUrl(input)) {
+        } else if (ValidationUtil.validSkinUrl(input)) {
             MineSkinResponse response = mineSkinAPI.genSkin(input, skinVariantHint);
 
             setURLSkinByResponse(input, response);

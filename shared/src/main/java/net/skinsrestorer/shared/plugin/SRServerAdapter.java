@@ -17,9 +17,9 @@
  */
 package net.skinsrestorer.shared.plugin;
 
+import net.skinsrestorer.shared.gui.PageInfo;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 
-import java.util.Map;
 import java.util.Optional;
 
 public interface SRServerAdapter<P, C> extends SRPlatformAdapter<P, C> {
@@ -31,7 +31,7 @@ public interface SRServerAdapter<P, C> extends SRPlatformAdapter<P, C> {
 
     void openServerGUI(SRPlayer player, int page);
 
-    void openProxyGUI(SRPlayer player, int page, Map<String, String> skinList);
+    void openProxyGUI(SRPlayer player, int page, PageInfo pageInfo);
 
     Optional<SRPlayer> getPlayer(String name);
 }

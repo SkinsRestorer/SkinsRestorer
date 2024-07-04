@@ -20,6 +20,7 @@ package net.skinsrestorer.shared.listeners;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
+import net.skinsrestorer.shared.gui.PageInfo;
 import net.skinsrestorer.shared.listeners.event.SRServerMessageEvent;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
@@ -31,7 +32,6 @@ import javax.inject.Inject;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.util.Map;
 import java.util.Optional;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
@@ -50,7 +50,7 @@ public final class SRServerMessageAdapter {
         try {
             String subChannel = in.readUTF();
 
-            if (subChannel.equalsIgnoreCase("returnSkinsV3")) {
+            if (subChannel.equalsIgnoreCase("returnSkinsV4")) {
                 Optional<SRPlayer> player = plugin.getPlayer(in.readUTF());
                 if (player.isEmpty()) {
                     return;
@@ -58,13 +58,13 @@ public final class SRServerMessageAdapter {
 
                 int page = in.readInt();
 
-                short len = in.readShort();
+                int len = in.readInt();
                 byte[] msgBytes = new byte[len];
                 in.readFully(msgBytes);
 
-                Map<String, String> skinList = MessageProtocolUtil.convertToMap(msgBytes);
+                PageInfo pageInfo = MessageProtocolUtil.convertToPageInfo(msgBytes);
 
-                plugin.openProxyGUI(player.get(), page, skinList);
+                plugin.openProxyGUI(player.get(), page, pageInfo);
             } else if (subChannel.equalsIgnoreCase("SkinUpdateV2")) {
                 skinApplier.applySkin(event.getPlayer().getAs(Object.class),
                         SkinProperty.of(in.readUTF(), in.readUTF()));

@@ -18,23 +18,23 @@
 package net.skinsrestorer.shared.subjects;
 
 import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.shared.gui.PageInfo;
 import net.skinsrestorer.shared.utils.DataStreamConsumer;
 import net.skinsrestorer.shared.utils.MessageProtocolUtil;
 
-import java.util.Map;
 import java.util.Optional;
 
 public interface SRProxyPlayer extends SRPlayer {
     Optional<String> getCurrentServer();
 
-    default void sendPage(int page, Map<String, String> skins) {
+    default void sendPage(int page, PageInfo pageInfo) {
         sendToMessageChannel(out -> {
-            out.writeUTF("returnSkinsV3");
+            out.writeUTF("returnSkinsV4");
             out.writeUTF(getName());
             out.writeInt(page);
 
-            byte[] ba = MessageProtocolUtil.convertToByteArray(skins);
-            out.writeShort(ba.length);
+            byte[] ba = MessageProtocolUtil.convertToByteArray(pageInfo);
+            out.writeInt(ba.length);
             out.write(ba);
         });
     }

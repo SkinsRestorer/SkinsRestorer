@@ -24,9 +24,11 @@ import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.property.SkinType;
 import net.skinsrestorer.api.property.SkinVariant;
 import net.skinsrestorer.shared.config.GUIConfig;
+import net.skinsrestorer.shared.gui.GUISkinEntry;
 import net.skinsrestorer.shared.gui.SharedGUI;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
+import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.storage.adapter.file.model.cache.MojangCacheFile;
 import net.skinsrestorer.shared.storage.adapter.file.model.player.LegacyPlayerFile;
@@ -40,12 +42,10 @@ import net.skinsrestorer.shared.utils.SRHelpers;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.attribute.UserDefinedFileAttributeView;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
@@ -53,7 +53,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 public class FileAdapter implements StorageAdapter {
-    private static final String LAST_KNOW_NAME_ATTRIBUTE = "sr_last_known_name";
     private static final Pattern UUID_REGEX = Pattern.compile("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$");
     private final Path skinsFolder;
     private final Path playersFolder;
@@ -290,9 +289,6 @@ public class FileAdapter implements StorageAdapter {
             PlayerSkinFile file = PlayerSkinFile.fromPlayerSkinData(skinData);
 
             Files.writeString(skinFile, gson.toJson(file));
-
-            UserDefinedFileAttributeView view = Files.getFileAttributeView(skinFile, UserDefinedFileAttributeView.class);
-            view.write(LAST_KNOW_NAME_ATTRIBUTE, StandardCharsets.UTF_8.encode(skinData.getLastKnownName()));
         } catch (IOException e) {
             logger.warning("Failed to save player skin data for " + uuid, e);
         }
@@ -495,10 +491,14 @@ public class FileAdapter implements StorageAdapter {
     }
 
     @Override
-    public Map<String, String> getStoredGUISkins(int offset) {
-        Map<String, String> list = new LinkedHashMap<>();
+    public int getTotalCustomSkins() {
+        return getCustomGUISkinFiles(0, Integer.MAX_VALUE).size();
+    }
 
-        Map<String, GUIFileData> files = getGUIFilesSorted(offset);
+    @Override
+    public List<GUISkinEntry> getCustomGUISkins(int offset) {
+        List<GUISkinEntry> list = new ArrayList<>();
+        Map<String, GUIFileData> files = getCustomGUISkinFiles(offset, SharedGUI.HEAD_COUNT_PER_PAGE);
 
         for (Map.Entry<String, GUIFileData> entry : files.entrySet()) {
             GUIFileData data = entry.getValue();
@@ -506,17 +506,14 @@ public class FileAdapter implements StorageAdapter {
             try {
                 Optional<SkinProperty> skinProperty;
                 SkinType skinType = data.skinType();
-                if (skinType == SkinType.PLAYER) {
-                    skinProperty = getPlayerSkinData(UUID.fromString(fileName))
-                            .map(PlayerSkinData::getProperty);
-                } else if (skinType == SkinType.CUSTOM) {
+                if (skinType == SkinType.CUSTOM) {
                     skinProperty = getCustomSkinData(fileName)
                             .map(CustomSkinData::getProperty);
                 } else {
                     throw new IllegalStateException("Unknown skin type: " + skinType);
                 }
 
-                skinProperty.ifPresent(property -> list.put(entry.getKey(), property.getValue()));
+                skinProperty.ifPresent(property -> list.add(new GUISkinEntry(entry.getKey(), entry.getKey(), property.getValue())));
             } catch (StorageException e) {
                 logger.warning("Failed to load skin data for " + fileName, e);
             }
@@ -525,8 +522,7 @@ public class FileAdapter implements StorageAdapter {
         return list;
     }
 
-    private Map<String, GUIFileData> getGUIFilesSorted(int offset) {
-        boolean customEnabled = settings.getProperty(GUIConfig.CUSTOM_GUI_ENABLED);
+    private Map<String, GUIFileData> getCustomGUISkinFiles(int offset, int limit) {
         boolean customOnly = settings.getProperty(GUIConfig.CUSTOM_GUI_ONLY);
         List<String> customSkins = settings.getProperty(GUIConfig.CUSTOM_GUI_SKINS)
                 .stream()
@@ -551,26 +547,13 @@ public class FileAdapter implements StorageAdapter {
                 String extension = fileName.substring(lastDotIndex + 1);
                 String name = fileName.substring(0, lastDotIndex);
 
-                boolean isPlayerSkin = extension.equals("playerskin");
-                boolean isCustomSkin = extension.equals("customskin");
-
                 // Only allow player skins and custom skins
-                if (!isPlayerSkin && !isCustomSkin) {
-                    continue;
-                }
-
-                // No player skins if custom skins only
-                if (isPlayerSkin && customEnabled && customOnly) {
-                    continue;
-                }
-
-                // Do not allow custom skins if not enabled
-                if (isCustomSkin && !customEnabled) {
+                if (name.startsWith(SkinStorageImpl.RECOMMENDATION_PREFIX) || !extension.equals("customskin")) {
                     continue;
                 }
 
                 // Only allow specific custom skins if enabled
-                if (customEnabled && customOnly && !customSkins.contains(name.toLowerCase(Locale.ROOT))) {
+                if (customOnly && !customSkins.contains(name.toLowerCase(Locale.ROOT))) {
                     continue;
                 }
 
@@ -580,16 +563,11 @@ public class FileAdapter implements StorageAdapter {
                     continue;
                 }
 
-                GUIFileData data = new GUIFileData(name, path, isPlayerSkin ? SkinType.PLAYER : SkinType.CUSTOM);
-                if (isPlayerSkin) {
-                    getLastKnownName(path)
-                            .ifPresent(lastKnownName -> files.put(lastKnownName, data));
-                } else {
-                    files.put(name, data);
-                }
+                GUIFileData data = new GUIFileData(name, path, SkinType.CUSTOM);
+                files.put(name, data);
 
                 // We got max skins now, stop
-                if (skinIndex++ >= offset + SharedGUI.HEAD_COUNT_PER_PAGE) {
+                if (skinIndex++ >= offset + limit) {
                     break;
                 }
             }
@@ -598,23 +576,6 @@ public class FileAdapter implements StorageAdapter {
         }
 
         return files;
-    }
-
-    private Optional<String> getLastKnownName(Path path) {
-        try {
-            UserDefinedFileAttributeView view = Files.getFileAttributeView(path, UserDefinedFileAttributeView.class);
-            if (!view.list().contains(LAST_KNOW_NAME_ATTRIBUTE)) {
-                return Optional.empty();
-            }
-
-            ByteBuffer buffer = ByteBuffer.allocate(view.size(LAST_KNOW_NAME_ATTRIBUTE));
-            view.read(LAST_KNOW_NAME_ATTRIBUTE, buffer);
-            buffer.flip();
-            return Optional.of(StandardCharsets.UTF_8.decode(buffer).toString());
-        } catch (IOException e) {
-            logger.warning("Failed to load last known name for " + path.getFileName(), e);
-            return Optional.empty();
-        }
     }
 
     @Override

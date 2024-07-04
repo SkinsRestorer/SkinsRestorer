@@ -43,9 +43,9 @@ public class AdapterHelper {
 
         if (checkCustom) {
             // Check if offset works as well, we actually have two skins in the storage for GUI
-            Assert.assertEquals(1, adapter.getStoredGUISkins(1).size());
+            Assert.assertEquals(1, adapter.getCustomGUISkins(1).size());
         } else {
-            Assert.assertEquals(1, adapter.getStoredGUISkins(0).size());
+            Assert.assertEquals(1, adapter.getCustomGUISkins(0).size());
         }
     }
 }

@@ -29,6 +29,8 @@ import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
 import net.skinsrestorer.shared.gui.GUIManager;
+import net.skinsrestorer.shared.gui.GUISkinEntry;
+import net.skinsrestorer.shared.gui.PageInfo;
 import net.skinsrestorer.shared.gui.SharedGUI;
 import net.skinsrestorer.shared.listeners.event.ClickEventInfo;
 import net.skinsrestorer.shared.log.SRLogger;
@@ -42,7 +44,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import javax.inject.Inject;
-import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -55,25 +56,25 @@ public class SkinsGUI implements GUIManager<Inventory> {
     private final Server server;
     private final WrapperBukkit wrapper;
 
-    private ItemStack createSkull(SRForeign player, String name, String property) {
+    private ItemStack createSkull(SRForeign player, GUISkinEntry entry) {
         ItemStack itemStack = XSkull.createItem()
-                .profile(Profileable.of(Objects.requireNonNull(ProfileInputType.typeOf(property)), property))
+                .profile(Profileable.of(Objects.requireNonNull(ProfileInputType.typeOf(entry.textureHash())), entry.textureHash()))
                 .apply();
 
         if (itemStack == null) {
-            throw new IllegalStateException("Could not create skull for " + name + "!");
+            throw new IllegalStateException("Could not create skull for " + entry.skinId() + "!");
         }
 
         ItemMeta skullMeta = itemStack.getItemMeta();
 
         if (skullMeta == null) {
-            throw new IllegalStateException("Could not create skull for " + name + "!");
+            throw new IllegalStateException("Could not create skull for " + entry.skinId() + "!");
         }
 
-        skullMeta.setDisplayName(name);
+        skullMeta.setDisplayName(entry.skinName());
         skullMeta.setLore(of(ComponentHelper.convertJsonToLegacy(locale.getMessageRequired(player, Message.SKINSMENU_SELECT_SKIN))));
 
-        injectCustomInfo(XSkull.of(itemStack).getProfile(), name);
+        injectCustomInfo(XSkull.of(itemStack).getProfile(), entry.skinId());
 
         itemStack.setItemMeta(skullMeta);
 
@@ -107,7 +108,7 @@ public class SkinsGUI implements GUIManager<Inventory> {
         return itemStack;
     }
 
-    public Inventory createGUI(Consumer<ClickEventInfo> callback, SRForeign player, int page, Map<String, String> skinsList) {
+    public Inventory createGUI(Consumer<ClickEventInfo> callback, SRForeign player, int page, PageInfo pageInfo) {
         SkinsGUIHolder instance = new SkinsGUIHolder(page, callback, wrapper);
         Inventory inventory = server.createInventory(instance, 9 * 6, ComponentHelper.convertJsonToLegacy(
                 locale.getMessageRequired(player, Message.SKINSMENU_TITLE_NEW,
@@ -120,13 +121,13 @@ public class SkinsGUI implements GUIManager<Inventory> {
         ItemStack next = createGlass(GlassType.NEXT, player);
 
         int skinCount = 0;
-        for (Map.Entry<String, String> entry : skinsList.entrySet()) {
+        for (GUISkinEntry entry : pageInfo.skinList()) {
             if (skinCount >= SharedGUI.HEAD_COUNT_PER_PAGE) {
                 logger.warning("SkinsGUI: Skin count is more than 36, skipping...");
                 break;
             }
 
-            inventory.addItem(createSkull(player, entry.getKey(), entry.getValue()));
+            inventory.addItem(createSkull(player, entry));
             skinCount++;
         }
 
@@ -159,7 +160,7 @@ public class SkinsGUI implements GUIManager<Inventory> {
         inventory.setItem(50, delete);
 
         // If the page is full, adding Next Page button.
-        if (page < 999 && inventory.firstEmpty() > 50) {
+        if (page < 999 && pageInfo.hasNext()) {
             inventory.setItem(51, next);
             inventory.setItem(52, next);
             inventory.setItem(53, next);

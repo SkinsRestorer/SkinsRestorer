@@ -20,12 +20,13 @@ package net.skinsrestorer.shared.storage.adapter;
 import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.api.property.SkinType;
 import net.skinsrestorer.api.property.SkinVariant;
+import net.skinsrestorer.shared.gui.GUISkinEntry;
 import net.skinsrestorer.shared.storage.model.cache.MojangCacheData;
 import net.skinsrestorer.shared.storage.model.player.LegacyPlayerData;
 import net.skinsrestorer.shared.storage.model.player.PlayerData;
 import net.skinsrestorer.shared.storage.model.skin.*;
 
-import java.util.Map;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -68,7 +69,9 @@ public interface StorageAdapter {
 
     void removeLegacyPlayerData(String playerName);
 
-    Map<String, String> getStoredGUISkins(int offset);
+    int getTotalCustomSkins();
+
+    List<GUISkinEntry> getCustomGUISkins(int offset);
 
     void purgeStoredOldSkins(long targetPurgeTimestamp) throws StorageException;
 
