@@ -443,15 +443,36 @@ public class MySQLAdapter implements StorageAdapter {
 
     @Override
     public int getTotalCustomSkins() {
-        return getCustomGUISkinsList(0, Integer.MAX_VALUE).size();
+        try (ResultSet crs = mysql.query("SELECT COUNT(*) FROM (" + getCustomSkinQuery(0, Integer.MAX_VALUE) + ")")) {
+            if (crs.next()) {
+                return crs.getInt(1);
+            }
+        } catch (SQLException e) {
+            logger.warning("Failed to get total custom skins", e);
+        }
+
+        return 0;
     }
 
     @Override
     public List<GUISkinEntry> getCustomGUISkins(int offset, int limit) {
-        return getCustomGUISkinsList(offset, limit);
+        List<GUISkinEntry> skins = new ArrayList<>();
+        try (ResultSet crs = mysql.query(getCustomSkinQuery(offset, limit))) {
+            while (crs.next()) {
+                String name = crs.getString("name");
+                String value = crs.getString("value");
+                String signature = crs.getString("signature");
+
+                skins.add(new GUISkinEntry(name, name, SkinProperty.of(value, signature).getValue()));
+            }
+        } catch (SQLException e) {
+            logger.warning("Failed to get stored skins", e);
+        }
+
+        return skins;
     }
 
-    private List<GUISkinEntry> getCustomGUISkinsList(int offset, int limit) {
+    private String getCustomSkinQuery(int offset, int limit) {
         StringBuilder query = new StringBuilder("SELECT 'custom' as type, `name`, `value`, `signature`")
                 .append(" FROM ")
                 .append(resolveCustomSkinTable())
@@ -473,20 +494,7 @@ public class MySQLAdapter implements StorageAdapter {
 
         query.append(" LIMIT ").append(offset).append(", ").append(limit);
 
-        List<GUISkinEntry> skins = new ArrayList<>();
-        try (ResultSet crs = mysql.query(query.toString())) {
-            while (crs.next()) {
-                String name = crs.getString("name");
-                String value = crs.getString("value");
-                String signature = crs.getString("signature");
-
-                skins.add(new GUISkinEntry(name, name, SkinProperty.of(value, signature).getValue()));
-            }
-        } catch (SQLException e) {
-            logger.warning("Failed to get stored skins", e);
-        }
-
-        return skins;
+        return query.toString();
     }
 
     @Override

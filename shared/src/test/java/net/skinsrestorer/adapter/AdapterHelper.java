@@ -42,6 +42,7 @@ public class AdapterHelper {
         adapter.setCustomSkinData("test-skin", CustomSkinData.of("test-skin", SkinProperty.of("test", "test")));
         adapter.setCustomSkinData("test-skin2", CustomSkinData.of("test-skin2", SkinProperty.of("test", "test")));
 
+        Assert.assertEquals(2, adapter.getTotalCustomSkins());
         Assert.assertEquals(2, adapter.getCustomGUISkins(0, Integer.MAX_VALUE).size());
 
         // Check if offset works as well, we actually have two skins in the storage for GUI
