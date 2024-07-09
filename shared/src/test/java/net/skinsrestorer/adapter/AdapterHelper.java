@@ -17,8 +17,8 @@
  */
 package net.skinsrestorer.adapter;
 
-import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.property.SkinVariant;
+import net.skinsrestorer.shared.storage.HardcodedSkins;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.storage.model.cache.MojangCacheData;
 import net.skinsrestorer.shared.storage.model.player.PlayerData;
@@ -37,10 +37,14 @@ public class AdapterHelper {
     public static void testAdapter(StorageAdapter adapter) {
         adapter.setCachedUUID("test", MojangCacheData.of(UUID.randomUUID(), -1));
         adapter.setPlayerData(UUID.randomUUID(), PlayerData.of(UUID.randomUUID(), null));
-        adapter.setPlayerSkinData(DEFAULT_UUID, PlayerSkinData.of(DEFAULT_UUID, DEFAULT_NAME, SkinProperty.of("test", "test"), -1));
-        adapter.setURLSkinData("test", URLSkinData.of("https://test.com", "test", SkinProperty.of("test", "test"), SkinVariant.CLASSIC));
-        adapter.setCustomSkinData("test-skin", CustomSkinData.of("test-skin", SkinProperty.of("test", "test")));
-        adapter.setCustomSkinData("test-skin2", CustomSkinData.of("test-skin2", SkinProperty.of("test", "test")));
+        adapter.setPlayerSkinData(DEFAULT_UUID, PlayerSkinData.of(DEFAULT_UUID, DEFAULT_NAME,
+                HardcodedSkins.getHardcodedSkin("steve").orElseThrow().getProperty(), -1));
+        adapter.setURLSkinData("test", URLSkinData.of("https://test.com", "test",
+                HardcodedSkins.getHardcodedSkin("steve").orElseThrow().getProperty(), SkinVariant.CLASSIC));
+        adapter.setCustomSkinData("test-skin", CustomSkinData.of("test-skin",
+                HardcodedSkins.getHardcodedSkin("steve").orElseThrow().getProperty()));
+        adapter.setCustomSkinData("test-skin2", CustomSkinData.of("test-skin2",
+                HardcodedSkins.getHardcodedSkin("alex").orElseThrow().getProperty()));
 
         Assert.assertEquals(2, adapter.getTotalCustomSkins());
         Assert.assertEquals(2, adapter.getCustomGUISkins(0, Integer.MAX_VALUE).size());
