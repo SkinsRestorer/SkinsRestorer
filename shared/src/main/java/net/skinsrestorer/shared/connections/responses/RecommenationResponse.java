@@ -19,6 +19,7 @@ package net.skinsrestorer.shared.connections.responses;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Getter;
+import net.skinsrestorer.api.property.SkinProperty;
 
 @Getter
 @SuppressWarnings("unused")
@@ -33,5 +34,9 @@ public class RecommenationResponse {
         private String skinId;
         private String value;
         private String signature;
+
+        public SkinProperty getSkinProperty() {
+            return SkinProperty.of(value, signature);
+        }
     }
 }

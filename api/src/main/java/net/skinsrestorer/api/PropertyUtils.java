@@ -66,8 +66,16 @@ public class PropertyUtils {
      * @return textures.minecraft.net id
      * @see #getSkinTextureUrl(SkinProperty)
      */
+    public static String getSkinTextureHash(@NotNull SkinProperty property) {
+        return getSkinProfileData(property).getTextures().getSKIN().getTextureHash();
+    }
+
+    /**
+     * @deprecated Use {@link #getSkinTextureHash(SkinProperty)} instead.
+     */
+    @Deprecated(forRemoval = true)
     public static String getSkinTextureUrlStripped(@NotNull SkinProperty property) {
-        return getSkinProfileData(property).getTextures().getSKIN().getStrippedUrl();
+        return getSkinTextureHash(property);
     }
 
     /**

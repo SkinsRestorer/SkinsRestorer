@@ -232,7 +232,7 @@ public class SkinStorageImpl implements SkinStorage {
 
             for (int i = 0; i < Math.min(remainingSlots, recommendations.length); i++) {
                 RecommenationResponse.SkinInfo info = recommendations[i];
-                skinPage.add(new GUISkinEntry(RECOMMENDATION_PREFIX + info.getSkinId(), info.getSkinName(), info.getValue()));
+                skinPage.add(new GUISkinEntry(RECOMMENDATION_PREFIX + info.getSkinId(), info.getSkinName(), PropertyUtils.getSkinTextureHash(info.getSkinProperty())));
             }
         }
 
@@ -318,7 +318,7 @@ public class SkinStorageImpl implements SkinStorage {
                 return Optional.empty();
             }
 
-            SkinProperty skinProperty = SkinProperty.of(skinInfo.getValue(), skinInfo.getSignature());
+            SkinProperty skinProperty = skinInfo.getSkinProperty();
             setCustomSkinData(input, skinProperty);
 
             return Optional.of(InputDataResult.of(SkinIdentifier.ofCustom(input), skinProperty));

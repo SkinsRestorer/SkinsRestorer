@@ -128,7 +128,7 @@ public class SRPlaceholderAPIExpansion extends PlaceholderExpansion {
                 Optional<SkinProperty> skin = getCurrentProperties(offlinePlayer);
 
                 if (skin.isPresent()) {
-                    return extractUrlStripped(skin.get());
+                    return extractTextureHash(skin.get());
                 }
 
                 if (params.startsWith("texture_id_")) {
@@ -156,8 +156,8 @@ public class SRPlaceholderAPIExpansion extends PlaceholderExpansion {
         return PropertyUtils.getSkinTextureUrl(property);
     }
 
-    private String extractUrlStripped(SkinProperty property) {
-        return PropertyUtils.getSkinTextureUrlStripped(property);
+    private String extractTextureHash(SkinProperty property) {
+        return PropertyUtils.getSkinTextureHash(property);
     }
 
     private Optional<SkinProperty> getCurrentProperties(OfflinePlayer offlinePlayer) throws DataRequestException {
