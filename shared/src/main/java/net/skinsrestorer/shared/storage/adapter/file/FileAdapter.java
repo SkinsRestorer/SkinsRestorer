@@ -20,6 +20,7 @@ package net.skinsrestorer.shared.storage.adapter.file;
 import ch.jalu.configme.SettingsManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import net.skinsrestorer.api.PropertyUtils;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.property.SkinType;
 import net.skinsrestorer.api.property.SkinVariant;
@@ -503,16 +504,8 @@ public class FileAdapter implements StorageAdapter {
             GUIFileData data = entry.getValue();
             String fileName = data.fileName();
             try {
-                Optional<SkinProperty> skinProperty;
-                SkinType skinType = data.skinType();
-                if (skinType == SkinType.CUSTOM) {
-                    skinProperty = getCustomSkinData(fileName)
-                            .map(CustomSkinData::getProperty);
-                } else {
-                    throw new IllegalStateException("Unknown skin type: " + skinType);
-                }
-
-                skinProperty.ifPresent(property -> list.add(new GUISkinEntry(entry.getKey(), entry.getKey(), property.getValue())));
+                SkinProperty property = getCustomSkinData(fileName).orElseThrow().getProperty();
+                list.add(new GUISkinEntry(entry.getKey(), entry.getKey(), PropertyUtils.getSkinTextureHash(property.getValue())));
             } catch (StorageException e) {
                 logger.warning("Failed to load skin data for " + fileName, e);
             }

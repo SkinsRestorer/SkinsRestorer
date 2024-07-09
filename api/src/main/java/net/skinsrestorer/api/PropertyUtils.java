@@ -38,20 +38,28 @@ public class PropertyUtils {
      * This is useful for skull plugins like Dynmap or DiscordSRV
      * for example <a href="https://mc-heads.net/avatar/cb50beab76e56472637c304a54b330780e278decb017707bf7604e484e4d6c9f/100.png">https://mc-heads.net/avatar/%texture_id%/%size%.png</a>
      *
-     * @param property Profile property
+     * @param base64 Profile value
      * @return full textures.minecraft.net url
      */
-    public static String getSkinTextureUrl(@NotNull SkinProperty property) {
-        return getSkinProfileData(property).getTextures().getSKIN().getUrl();
+    public static String getSkinTextureUrl(@NotNull String base64) {
+        return getSkinProfileData(base64).getTextures().getSKIN().getUrl();
     }
 
-    public static SkinVariant getSkinVariant(@NotNull SkinProperty property) {
-        MojangProfileTextureMeta meta = getSkinProfileData(property).getTextures().getSKIN().getMetadata();
+    public static String getSkinTextureUrl(@NotNull SkinProperty property) {
+        return getSkinTextureUrl(property.getValue());
+    }
+
+    public static SkinVariant getSkinVariant(@NotNull String base64) {
+        MojangProfileTextureMeta meta = getSkinProfileData(base64).getTextures().getSKIN().getMetadata();
         if (meta == null) {
             return SkinVariant.CLASSIC;
         }
 
         return meta.getModel().equalsIgnoreCase("slim") ? SkinVariant.SLIM : SkinVariant.CLASSIC;
+    }
+
+    public static SkinVariant getSkinVariant(@NotNull SkinProperty property) {
+        return getSkinVariant(property.getValue());
     }
 
     /**
@@ -62,12 +70,16 @@ public class PropertyUtils {
      * </a>
      * Would return: cb50beab76e56472637c304a54b330780e278decb017707bf7604e484e4d6c9f
      *
-     * @param property Profile property
+     * @param base64 Profile value
      * @return textures.minecraft.net id
-     * @see #getSkinTextureUrl(SkinProperty)
+     * @see #getSkinTextureUrl(String)
      */
+    public static String getSkinTextureHash(@NotNull String base64) {
+        return getSkinProfileData(base64).getTextures().getSKIN().getTextureHash();
+    }
+
     public static String getSkinTextureHash(@NotNull SkinProperty property) {
-        return getSkinProfileData(property).getTextures().getSKIN().getTextureHash();
+        return getSkinTextureHash(property.getValue());
     }
 
     /**
@@ -85,12 +97,16 @@ public class PropertyUtils {
      * APIs like MineSkin use multiple shared accounts to generate these properties.
      * Or it could be the property of another player that the player set their skin to.
      *
-     * @param property Profile property
+     * @param base64 Profile value
      * @return Decoded profile data as java object
      */
-    public static MojangProfileResponse getSkinProfileData(@NotNull SkinProperty property) {
-        String decodedString = new String(Base64.getDecoder().decode(property.getValue()), StandardCharsets.UTF_8);
+    public static MojangProfileResponse getSkinProfileData(@NotNull String base64) {
+        String decodedString = new String(Base64.getDecoder().decode(base64), StandardCharsets.UTF_8);
 
         return GSON.fromJson(decodedString, MojangProfileResponse.class);
+    }
+
+    public static MojangProfileResponse getSkinProfileData(@NotNull SkinProperty property) {
+        return getSkinProfileData(property.getValue());
     }
 }

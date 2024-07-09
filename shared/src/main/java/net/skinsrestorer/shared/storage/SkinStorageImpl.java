@@ -232,7 +232,7 @@ public class SkinStorageImpl implements SkinStorage {
 
             for (int i = 0; i < Math.min(remainingSlots, recommendations.length); i++) {
                 RecommenationResponse.SkinInfo info = recommendations[i];
-                skinPage.add(new GUISkinEntry(RECOMMENDATION_PREFIX + info.getSkinId(), info.getSkinName(), PropertyUtils.getSkinTextureHash(info.getSkinProperty())));
+                skinPage.add(new GUISkinEntry(RECOMMENDATION_PREFIX + info.getSkinId(), info.getSkinName(), PropertyUtils.getSkinTextureHash(info.getValue())));
             }
         }
 

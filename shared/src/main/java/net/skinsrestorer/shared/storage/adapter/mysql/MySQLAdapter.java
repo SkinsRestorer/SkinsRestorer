@@ -19,6 +19,7 @@ package net.skinsrestorer.shared.storage.adapter.mysql;
 
 import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.PropertyUtils;
 import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.property.SkinType;
@@ -461,9 +462,8 @@ public class MySQLAdapter implements StorageAdapter {
             while (crs.next()) {
                 String name = crs.getString("name");
                 String value = crs.getString("value");
-                String signature = crs.getString("signature");
 
-                skins.add(new GUISkinEntry(name, name, SkinProperty.of(value, signature).getValue()));
+                skins.add(new GUISkinEntry(name, name, PropertyUtils.getSkinTextureHash(value)));
             }
         } catch (SQLException e) {
             logger.warning("Failed to get stored skins", e);
@@ -473,7 +473,7 @@ public class MySQLAdapter implements StorageAdapter {
     }
 
     private String getCustomSkinQuery(int offset, int limit) {
-        StringBuilder query = new StringBuilder("SELECT `name`, `value`, `signature`")
+        StringBuilder query = new StringBuilder("SELECT `name`, `value`")
                 .append(" FROM ")
                 .append(resolveCustomSkinTable())
                 .append(" WHERE `name` NOT LIKE '" + SkinStorageImpl.RECOMMENDATION_PREFIX + "%'");
