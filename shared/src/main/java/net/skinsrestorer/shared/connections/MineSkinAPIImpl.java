@@ -185,7 +185,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                         new HttpClient.RequestBody(gson.toJson(new MineSkinUrlRequest(
                                 skinVariant,
                                 null,
-                                null,
+                                settings.getProperty(APIConfig.MINESKIN_SECRET_SKINS) ? 1 : 0,
                                 url
                         )), HttpClient.HttpType.JSON),
                         HttpClient.HttpType.JSON,
