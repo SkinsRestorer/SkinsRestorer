@@ -21,11 +21,8 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.commands.library.CommandManager;
 import net.skinsrestorer.shared.listeners.event.ClickEventInfo;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
-import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
-import net.skinsrestorer.shared.subjects.SRForeign;
 import net.skinsrestorer.shared.subjects.SRServerPlayer;
-import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
 import java.util.function.Consumer;
@@ -34,22 +31,7 @@ import java.util.function.Consumer;
 public class SharedGUI {
     public static final int HEAD_COUNT_PER_PAGE = 36;
     public static final int HEAD_COUNT_PER_PAGE_PLUS_ONE = HEAD_COUNT_PER_PAGE + 1;
-    private final SkinStorageImpl skinStorage;
     public static final String SR_PROPERTY_INTERNAL_NAME = "skinsrestorer.skull-internal-name";
-
-    public <T> T createGUI(GUIManager<T> manager, Consumer<ClickEventInfo> callback, SRForeign player, int page, @Nullable PageInfo pageInfo) {
-        if (page > 999) {
-            page = 999;
-        }
-
-        if (pageInfo == null) {
-            int skinOffset = HEAD_COUNT_PER_PAGE * page;
-
-            pageInfo = skinStorage.getGUISkins(skinOffset);
-        }
-
-        return manager.createGUI(callback, player, page, pageInfo);
-    }
 
     @RequiredArgsConstructor(onConstructor_ = @Inject)
     public static class ServerGUIActions implements Consumer<ClickEventInfo> {

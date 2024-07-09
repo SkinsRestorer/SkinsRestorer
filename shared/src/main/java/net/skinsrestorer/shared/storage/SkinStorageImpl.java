@@ -47,7 +47,10 @@ import net.skinsrestorer.shared.utils.ValidationUtil;
 import javax.inject.Inject;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
@@ -200,31 +203,46 @@ public class SkinStorageImpl implements SkinStorage {
         adapterReference.get().setCustomSkinData(skinName, CustomSkinData.of(skinName, textures));
     }
 
-    public PageInfo getGUISkins(int offset) {
-        int totalCustomSkins;
-        List<GUISkinEntry> skinPage;
-        if (settings.getProperty(GUIConfig.CUSTOM_GUI_ENABLED)) {
-            totalCustomSkins = adapterReference.get().getTotalCustomSkins();
-            skinPage = adapterReference.get().getCustomGUISkins(offset);
-        } else {
-            totalCustomSkins = 0;
-            skinPage = Collections.emptyList();
+    public PageInfo getGUIPage(int page) {
+        if (page < 0) {
+            page = 0;
         }
 
-        int pageCustomSkins = skinPage.size();
+        int offset = page * SharedGUI.HEAD_COUNT_PER_PAGE;
+        List<GUISkinEntry> skinPage = new ArrayList<>(SharedGUI.HEAD_COUNT_PER_PAGE);
+
+        boolean hasNext = page < Integer.MAX_VALUE;
+        int totalCustomSkins = 0;
+        if (settings.getProperty(GUIConfig.CUSTOM_GUI_ENABLED)) {
+            totalCustomSkins = adapterReference.get().getTotalCustomSkins();
+            List<GUISkinEntry> customSkins = adapterReference.get().getCustomGUISkins(offset, SharedGUI.HEAD_COUNT_PER_PAGE_PLUS_ONE);
+            hasNext = hasNext && customSkins.size() >= SharedGUI.HEAD_COUNT_PER_PAGE_PLUS_ONE;
+
+            skinPage.addAll(customSkins.subList(0, Math.min(SharedGUI.HEAD_COUNT_PER_PAGE, customSkins.size())));
+        }
+
+        int remainingSlots = SharedGUI.HEAD_COUNT_PER_PAGE - skinPage.size();
         if (settings.getProperty(GUIConfig.CUSTOM_GUI_ENABLED)
                 && !settings.getProperty(GUIConfig.CUSTOM_GUI_ONLY)
-                && pageCustomSkins < SharedGUI.HEAD_COUNT_PER_PAGE_PLUS_ONE) {
-            int remainingSlots = SharedGUI.HEAD_COUNT_PER_PAGE_PLUS_ONE - pageCustomSkins;
+                && remainingSlots > 0) {
             int remainingOffset = Math.max(0, offset - totalCustomSkins);
-            for (RecommenationResponse.SkinInfo info : recommendationsState.getRecommendationsOffset(remainingOffset, remainingSlots)) {
+            int remainingSlotsPlusOne = remainingSlots + 1;
+
+            RecommenationResponse.SkinInfo[] recommendations = recommendationsState.getRecommendationsOffset(remainingOffset, remainingSlotsPlusOne);
+            hasNext = hasNext && recommendations.length >= remainingSlotsPlusOne;
+
+            for (int i = 0; i < Math.min(remainingSlots, recommendations.length); i++) {
+                RecommenationResponse.SkinInfo info = recommendations[i];
                 skinPage.add(new GUISkinEntry(RECOMMENDATION_PREFIX + info.getSkinId(), info.getSkinName(), info.getValue()));
             }
         }
 
-        boolean hasNextPage = skinPage.size() >= SharedGUI.HEAD_COUNT_PER_PAGE_PLUS_ONE;
-        List<GUISkinEntry> finalSkinPage = skinPage.subList(0, Math.min(SharedGUI.HEAD_COUNT_PER_PAGE, skinPage.size()));
-        return new PageInfo(hasNextPage, finalSkinPage);
+        return new PageInfo(
+                page,
+                page > 0,
+                hasNext,
+                skinPage
+        );
     }
 
     @Override

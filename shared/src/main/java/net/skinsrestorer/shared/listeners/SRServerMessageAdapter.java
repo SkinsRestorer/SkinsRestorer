@@ -24,7 +24,6 @@ import net.skinsrestorer.shared.gui.PageInfo;
 import net.skinsrestorer.shared.listeners.event.SRServerMessageEvent;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
-import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.utils.MessageProtocolUtil;
 import net.skinsrestorer.shared.utils.SRConstants;
 
@@ -32,7 +31,6 @@ import javax.inject.Inject;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.util.Optional;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class SRServerMessageAdapter {
@@ -51,20 +49,13 @@ public final class SRServerMessageAdapter {
             String subChannel = in.readUTF();
 
             if (subChannel.equalsIgnoreCase("returnSkinsV4")) {
-                Optional<SRPlayer> player = plugin.getPlayer(in.readUTF());
-                if (player.isEmpty()) {
-                    return;
-                }
-
-                int page = in.readInt();
-
                 int len = in.readInt();
                 byte[] msgBytes = new byte[len];
                 in.readFully(msgBytes);
 
                 PageInfo pageInfo = MessageProtocolUtil.convertToPageInfo(msgBytes);
 
-                plugin.openProxyGUI(player.get(), page, pageInfo);
+                plugin.openProxyGUI(event.getPlayer(), pageInfo);
             } else if (subChannel.equalsIgnoreCase("SkinUpdateV2")) {
                 skinApplier.applySkin(event.getPlayer().getAs(Object.class),
                         SkinProperty.of(in.readUTF(), in.readUTF()));

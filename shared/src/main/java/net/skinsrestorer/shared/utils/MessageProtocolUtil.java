@@ -31,6 +31,8 @@ public class MessageProtocolUtil {
         try {
             DataInputStream ois = new DataInputStream(new GZIPInputStream(new ByteArrayInputStream(byteArr)));
 
+            int page = ois.readInt();
+            boolean hasPrevious = ois.readBoolean();
             boolean hasNext = ois.readBoolean();
             int size = ois.readInt();
             List<GUISkinEntry> skinList = new ArrayList<>(size);
@@ -43,7 +45,7 @@ public class MessageProtocolUtil {
                 skinList.add(new GUISkinEntry(skinId, skinName, textureHash));
             }
 
-            return new PageInfo(hasNext, skinList);
+            return new PageInfo(page, hasPrevious, hasNext, skinList);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -54,6 +56,9 @@ public class MessageProtocolUtil {
 
         try (GZIPOutputStream gzipOut = new GZIPOutputStream(byteOut)) {
             DataOutputStream dataOut = new DataOutputStream(gzipOut);
+
+            dataOut.writeInt(pageInfo.page());
+            dataOut.writeBoolean(pageInfo.hasPrevious());
             dataOut.writeBoolean(pageInfo.hasNext());
             dataOut.writeInt(pageInfo.skinList().size());
             for (GUISkinEntry entry : pageInfo.skinList()) {

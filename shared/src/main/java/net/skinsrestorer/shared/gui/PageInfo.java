@@ -19,5 +19,5 @@ package net.skinsrestorer.shared.gui;
 
 import java.util.List;
 
-public record PageInfo(boolean hasNext, List<GUISkinEntry> skinList) {
+public record PageInfo(int page, boolean hasPrevious, boolean hasNext, List<GUISkinEntry> skinList) {
 }

@@ -71,7 +71,7 @@ public interface StorageAdapter {
 
     int getTotalCustomSkins();
 
-    List<GUISkinEntry> getCustomGUISkins(int offset);
+    List<GUISkinEntry> getCustomGUISkins(int offset, int limit);
 
     void purgeStoredOldSkins(long targetPurgeTimestamp) throws StorageException;
 

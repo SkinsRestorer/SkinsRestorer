@@ -26,7 +26,6 @@ import net.skinsrestorer.api.property.SkinVariant;
 import net.skinsrestorer.shared.config.DatabaseConfig;
 import net.skinsrestorer.shared.config.GUIConfig;
 import net.skinsrestorer.shared.gui.GUISkinEntry;
-import net.skinsrestorer.shared.gui.SharedGUI;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
@@ -448,8 +447,8 @@ public class MySQLAdapter implements StorageAdapter {
     }
 
     @Override
-    public List<GUISkinEntry> getCustomGUISkins(int offset) {
-        return getCustomGUISkinsList(offset, SharedGUI.HEAD_COUNT_PER_PAGE_PLUS_ONE);
+    public List<GUISkinEntry> getCustomGUISkins(int offset, int limit) {
+        return getCustomGUISkinsList(offset, limit);
     }
 
     private List<GUISkinEntry> getCustomGUISkinsList(int offset, int limit) {

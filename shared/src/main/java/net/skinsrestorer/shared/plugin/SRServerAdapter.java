@@ -31,7 +31,7 @@ public interface SRServerAdapter<P, C> extends SRPlatformAdapter<P, C> {
 
     void openServerGUI(SRPlayer player, int page);
 
-    void openProxyGUI(SRPlayer player, int page, PageInfo pageInfo);
+    void openProxyGUI(SRPlayer player, PageInfo pageInfo);
 
     Optional<SRPlayer> getPlayer(String name);
 }

@@ -65,10 +65,7 @@ public final class SRProxyMessageAdapter {
 
             SRProxyPlayer player = optional.get();
             switch (subChannel) {
-                case "getSkins" -> {
-                    int page = Math.min(in.readInt(), 999);
-                    player.sendPage(page, skinStorage.getGUISkins(page * 36));
-                }
+                case "getSkins" -> player.sendPage(skinStorage.getGUIPage(in.readInt()));
                 case "clearSkin" -> commandManager.executeCommand(player, "skin clear");
                 case "setSkin" -> {
                     String skin = in.readUTF();

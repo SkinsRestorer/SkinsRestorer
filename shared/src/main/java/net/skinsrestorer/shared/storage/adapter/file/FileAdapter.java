@@ -25,7 +25,6 @@ import net.skinsrestorer.api.property.SkinType;
 import net.skinsrestorer.api.property.SkinVariant;
 import net.skinsrestorer.shared.config.GUIConfig;
 import net.skinsrestorer.shared.gui.GUISkinEntry;
-import net.skinsrestorer.shared.gui.SharedGUI;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
@@ -496,9 +495,9 @@ public class FileAdapter implements StorageAdapter {
     }
 
     @Override
-    public List<GUISkinEntry> getCustomGUISkins(int offset) {
+    public List<GUISkinEntry> getCustomGUISkins(int offset, int limit) {
         List<GUISkinEntry> list = new ArrayList<>();
-        Map<String, GUIFileData> files = getCustomGUISkinFiles(offset, SharedGUI.HEAD_COUNT_PER_PAGE_PLUS_ONE);
+        Map<String, GUIFileData> files = getCustomGUISkinFiles(offset, limit);
 
         for (Map.Entry<String, GUIFileData> entry : files.entrySet()) {
             GUIFileData data = entry.getValue();

@@ -108,11 +108,11 @@ public class SkinsGUI implements GUIManager<Inventory> {
         return itemStack;
     }
 
-    public Inventory createGUI(Consumer<ClickEventInfo> callback, SRForeign player, int page, PageInfo pageInfo) {
-        SkinsGUIHolder instance = new SkinsGUIHolder(page, callback, wrapper);
+    public Inventory createGUI(Consumer<ClickEventInfo> callback, SRForeign player, PageInfo pageInfo) {
+        SkinsGUIHolder instance = new SkinsGUIHolder(pageInfo.page(), callback, wrapper);
         Inventory inventory = server.createInventory(instance, 9 * 6, ComponentHelper.convertJsonToLegacy(
                 locale.getMessageRequired(player, Message.SKINSMENU_TITLE_NEW,
-                        Placeholder.parsed("page_number", String.valueOf(page + 1)))));
+                        Placeholder.parsed("page_number", String.valueOf(pageInfo.page() + 1)))));
         instance.setInventory(inventory);
 
         ItemStack none = createGlass(GlassType.NONE, player);
@@ -122,13 +122,12 @@ public class SkinsGUI implements GUIManager<Inventory> {
 
         int skinCount = 0;
         for (GUISkinEntry entry : pageInfo.skinList()) {
-            if (skinCount >= SharedGUI.HEAD_COUNT_PER_PAGE) {
+            if (skinCount++ >= SharedGUI.HEAD_COUNT_PER_PAGE) {
                 logger.warning("SkinsGUI: Skin count is more than 36, skipping...");
                 break;
             }
 
             inventory.addItem(createSkull(player, entry));
-            skinCount++;
         }
 
         // White Glass line
@@ -143,7 +142,7 @@ public class SkinsGUI implements GUIManager<Inventory> {
         inventory.setItem(44, none);
 
         // If page is above starting page (0), add previous button
-        if (page > 0) {
+        if (pageInfo.hasPrevious()) {
             inventory.setItem(45, prev);
             inventory.setItem(46, prev);
             inventory.setItem(47, prev);
@@ -160,7 +159,7 @@ public class SkinsGUI implements GUIManager<Inventory> {
         inventory.setItem(50, delete);
 
         // If the page is full, adding Next Page button.
-        if (page < 999 && pageInfo.hasNext()) {
+        if (pageInfo.hasNext()) {
             inventory.setItem(51, next);
             inventory.setItem(52, next);
             inventory.setItem(53, next);

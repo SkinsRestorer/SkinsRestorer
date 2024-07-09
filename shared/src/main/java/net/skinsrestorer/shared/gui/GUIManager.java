@@ -23,5 +23,5 @@ import net.skinsrestorer.shared.subjects.SRForeign;
 import java.util.function.Consumer;
 
 public interface GUIManager<T> {
-    T createGUI(Consumer<ClickEventInfo> callback, SRForeign player, int page, PageInfo pageInfo);
+    T createGUI(Consumer<ClickEventInfo> callback, SRForeign player, PageInfo pageInfo);
 }

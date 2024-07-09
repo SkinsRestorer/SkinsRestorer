@@ -43,6 +43,7 @@ import net.skinsrestorer.shared.info.PluginInfo;
 import net.skinsrestorer.shared.listeners.event.ClickEventInfo;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
+import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.utils.ProviderSelector;
@@ -55,7 +56,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
 import java.io.InputStream;
@@ -155,17 +155,17 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin, CommandSende
 
     @Override
     public void openServerGUI(SRPlayer player, int page) {
-        openGUI(player, SharedGUI.ServerGUIActions.class, page, null);
+        openGUI(player, SharedGUI.ServerGUIActions.class, injector.getSingleton(SkinStorageImpl.class).getGUIPage(page));
     }
 
     @Override
-    public void openProxyGUI(SRPlayer player, int page, PageInfo pageInfo) {
-        openGUI(player, SharedGUI.ProxyGUIActions.class, page, pageInfo);
+    public void openProxyGUI(SRPlayer player, PageInfo pageInfo) {
+        openGUI(player, SharedGUI.ProxyGUIActions.class, pageInfo);
     }
 
-    private void openGUI(SRPlayer player, Class<? extends Consumer<ClickEventInfo>> consumer, int page, @Nullable PageInfo pageInfo) {
-        Inventory inventory = injector.getSingleton(SharedGUI.class)
-                .createGUI(injector.getSingleton(SkinsGUI.class), injector.getSingleton(consumer), player, page, pageInfo);
+    private void openGUI(SRPlayer player, Class<? extends Consumer<ClickEventInfo>> consumer, PageInfo pageInfo) {
+        Inventory inventory = injector.getSingleton(SkinsGUI.class)
+                .createGUI(injector.getSingleton(consumer), player, pageInfo);
 
         runSyncToPlayer(player, () -> player.getAs(Player.class).openInventory(inventory));
     }
