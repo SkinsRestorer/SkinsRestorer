@@ -211,12 +211,12 @@ public class SkinStorageImpl implements SkinStorage {
         int offset = page * SharedGUI.HEAD_COUNT_PER_PAGE;
         List<GUISkinEntry> skinPage = new ArrayList<>(SharedGUI.HEAD_COUNT_PER_PAGE);
 
-        boolean hasNext = page < Integer.MAX_VALUE;
+        boolean hasNext = false;
         int totalCustomSkins = 0;
         if (settings.getProperty(GUIConfig.CUSTOM_GUI_ENABLED)) {
             totalCustomSkins = adapterReference.get().getTotalCustomSkins();
             List<GUISkinEntry> customSkins = adapterReference.get().getCustomGUISkins(offset, SharedGUI.HEAD_COUNT_PER_PAGE_PLUS_ONE);
-            hasNext = hasNext && customSkins.size() >= SharedGUI.HEAD_COUNT_PER_PAGE_PLUS_ONE;
+            hasNext = customSkins.size() >= SharedGUI.HEAD_COUNT_PER_PAGE_PLUS_ONE;
 
             skinPage.addAll(customSkins.subList(0, Math.min(SharedGUI.HEAD_COUNT_PER_PAGE, customSkins.size())));
         }
@@ -228,7 +228,7 @@ public class SkinStorageImpl implements SkinStorage {
             int remainingSlotsPlusOne = remainingSlots + 1;
 
             RecommenationResponse.SkinInfo[] recommendations = recommendationsState.getRecommendationsOffset(remainingOffset, remainingSlotsPlusOne);
-            hasNext = hasNext && recommendations.length >= remainingSlotsPlusOne;
+            hasNext = recommendations.length >= remainingSlotsPlusOne;
 
             for (int i = 0; i < Math.min(remainingSlots, recommendations.length); i++) {
                 RecommenationResponse.SkinInfo info = recommendations[i];
@@ -239,7 +239,7 @@ public class SkinStorageImpl implements SkinStorage {
         return new PageInfo(
                 page,
                 page > 0,
-                hasNext,
+                page < Integer.MAX_VALUE && hasNext,
                 skinPage
         );
     }
