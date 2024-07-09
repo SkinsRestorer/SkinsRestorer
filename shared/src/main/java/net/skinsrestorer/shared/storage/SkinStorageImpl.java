@@ -222,8 +222,7 @@ public class SkinStorageImpl implements SkinStorage {
         }
 
         int remainingSlots = SharedGUI.HEAD_COUNT_PER_PAGE - skinPage.size();
-        if (settings.getProperty(GUIConfig.CUSTOM_GUI_ENABLED)
-                && !settings.getProperty(GUIConfig.CUSTOM_GUI_ONLY)
+        if ((!settings.getProperty(GUIConfig.CUSTOM_GUI_ENABLED) || !settings.getProperty(GUIConfig.CUSTOM_GUI_ONLY))
                 && remainingSlots > 0) {
             int remainingOffset = Math.max(0, offset - totalCustomSkins);
             int remainingSlotsPlusOne = remainingSlots + 1;
