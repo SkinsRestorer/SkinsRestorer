@@ -443,7 +443,7 @@ public class MySQLAdapter implements StorageAdapter {
 
     @Override
     public int getTotalCustomSkins() {
-        try (ResultSet crs = mysql.query("SELECT COUNT(*) FROM (" + getCustomSkinQuery(0, Integer.MAX_VALUE) + ")")) {
+        try (ResultSet crs = mysql.query("SELECT COUNT(*) FROM (" + getCustomSkinQuery(0, Integer.MAX_VALUE) + ") AS subquery")) {
             if (crs.next()) {
                 return crs.getInt(1);
             }
@@ -473,7 +473,7 @@ public class MySQLAdapter implements StorageAdapter {
     }
 
     private String getCustomSkinQuery(int offset, int limit) {
-        StringBuilder query = new StringBuilder("SELECT 'custom' as type, `name`, `value`, `signature`")
+        StringBuilder query = new StringBuilder("SELECT `name`, `value`, `signature`")
                 .append(" FROM ")
                 .append(resolveCustomSkinTable())
                 .append(" WHERE `name` NOT LIKE '" + SkinStorageImpl.RECOMMENDATION_PREFIX + "%'");
