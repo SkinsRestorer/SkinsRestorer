@@ -392,7 +392,7 @@ public class CommandManager<T> {
                     .map(ComponentHelper::convertJsonToComponent)
                     .ifPresent(result::add);
         }
-        getAllUsage(node, source, result,componentFactory, commandPrefix, true);
+        getAllUsage(node, source, result, componentFactory, commandPrefix, true);
         return result;
     }
 

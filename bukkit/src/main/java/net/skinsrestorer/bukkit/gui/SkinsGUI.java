@@ -56,6 +56,12 @@ public class SkinsGUI implements GUIManager<Inventory> {
     private final Server server;
     private final WrapperBukkit wrapper;
 
+    private static void injectCustomInfo(GameProfile profile, String skinName) {
+        PropertyMap properties = profile.getProperties();
+        properties.removeAll(SharedGUI.SR_PROPERTY_INTERNAL_NAME);
+        properties.put(SharedGUI.SR_PROPERTY_INTERNAL_NAME, new Property(SharedGUI.SR_PROPERTY_INTERNAL_NAME, skinName, null));
+    }
+
     private ItemStack createSkull(SRForeign player, GUISkinEntry entry) {
         ItemStack itemStack = XSkull.createItem()
                 .profile(Profileable.of(Objects.requireNonNull(ProfileInputType.typeOf(entry.textureHash())), entry.textureHash()))
@@ -79,12 +85,6 @@ public class SkinsGUI implements GUIManager<Inventory> {
         itemStack.setItemMeta(skullMeta);
 
         return itemStack;
-    }
-
-    private static void injectCustomInfo(GameProfile profile, String skinName) {
-        PropertyMap properties = profile.getProperties();
-        properties.removeAll(SharedGUI.SR_PROPERTY_INTERNAL_NAME);
-        properties.put(SharedGUI.SR_PROPERTY_INTERNAL_NAME, new Property(SharedGUI.SR_PROPERTY_INTERNAL_NAME, skinName, null));
     }
 
     private ItemStack createGlass(GlassType type, SRForeign player) {

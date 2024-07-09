@@ -45,9 +45,9 @@ public class RecommendationsState {
     private final SRPlatformAdapter<?, ?> adapter;
     private final SRLogger logger;
     private final RecommendationsService recommendationsService;
+    private final Gson gson = new GsonBuilder().create();
     private Map<String, RecommenationResponse.SkinInfo> recommendationsMap = Map.of();
     private List<RecommenationResponse.SkinInfo> recommendationsList = List.of();
-    private final Gson gson = new GsonBuilder().create();
 
     public void scheduleRecommendations() {
         Path path = plugin.getDataFolder().resolve("recommendations.json");

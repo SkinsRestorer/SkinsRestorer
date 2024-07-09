@@ -23,4 +23,4 @@ import org.jetbrains.annotations.Nullable;
 import java.util.UUID;
 
 public record EclipseUUIDResponse(EclipseCacheData cacheData, boolean exists, @Nullable UUID uuid) {
-  }
+}

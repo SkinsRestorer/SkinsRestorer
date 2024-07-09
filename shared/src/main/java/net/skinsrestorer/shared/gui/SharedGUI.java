@@ -79,8 +79,10 @@ public class SharedGUI {
                     }));
                     player.closeInventory();
                 }
-                case GREEN_PANE -> adapter.runAsync(() -> event.player().requestSkinsFromProxy(event.currentPage() + 1));
-                case YELLOW_PANE -> adapter.runAsync(() -> event.player().requestSkinsFromProxy(event.currentPage() - 1));
+                case GREEN_PANE ->
+                        adapter.runAsync(() -> event.player().requestSkinsFromProxy(event.currentPage() + 1));
+                case YELLOW_PANE ->
+                        adapter.runAsync(() -> event.player().requestSkinsFromProxy(event.currentPage() - 1));
             }
         }
     }
