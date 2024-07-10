@@ -27,17 +27,20 @@ import static ch.jalu.configme.properties.PropertyInitializer.newListProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 
 public class GUIConfig implements SettingsHolder {
-    public static final Property<Boolean> CUSTOM_GUI_ENABLED = newProperty("customGUI.enabled", true);
-    public static final Property<Boolean> CUSTOM_GUI_ONLY = newProperty("customGUI.showOnlyCustomGUI", false);
-    public static final Property<List<String>> CUSTOM_GUI_SKINS = newListProperty("customGUI.list", "xknat", "pistonmaster");
+    public static final Property<Boolean> CUSTOM_GUI_ENABLED = newProperty("gui.custom.enabled", true);
+    public static final Property<Integer> CUSTOM_GUI_INDEX = newProperty("gui.custom.index", 0);
+    public static final Property<Boolean> CUSTOM_GUI_ONLY_LIST = newProperty("gui.custom.onlyShowList", false);
+    public static final Property<List<String>> CUSTOM_GUI_LIST = newListProperty("gui.custom.list", "xknat", "pistonmaster");
+    public static final Property<Boolean> RECOMMENDATIONS_GUI_ENABLED = newProperty("gui.recommendations.enabled", true);
+    public static final Property<Integer> RECOMMENDATIONS_GUI_INDEX = newProperty("gui.recommendations.index", 1);
+    public static final Property<Boolean> RECOMMENDATIONS_GUI_ONLY_LIST = newProperty("gui.recommendations.onlyShowList", false);
+    public static final Property<List<String>> RECOMMENDATIONS_GUI_LIST = newListProperty("gui.recommendations.list", "vampire", "space-suit");
 
     @Override
     public void registerComments(CommentsConfiguration conf) {
-        conf.setComment("customGUI",
+        conf.setComment("gui",
                 "\n",
-                "Custom skins for the /skins GUI.",
-                "This setting will allow custom skins to be shown in the GUI.",
-                "customGUI.showOnlyCustomGUI will allow only custom skins from customGUI.list to show up in the GUI."
+                "Control what skins appear in the /skins GUI"
         );
     }
 }

@@ -515,8 +515,8 @@ public class FileAdapter implements StorageAdapter {
     }
 
     private Map<String, GUIFileData> getCustomGUISkinFiles(int offset, int limit) {
-        boolean customOnly = settings.getProperty(GUIConfig.CUSTOM_GUI_ONLY);
-        List<String> customSkins = settings.getProperty(GUIConfig.CUSTOM_GUI_SKINS)
+        boolean customOnly = settings.getProperty(GUIConfig.CUSTOM_GUI_ONLY_LIST);
+        List<String> customSkins = settings.getProperty(GUIConfig.CUSTOM_GUI_LIST)
                 .stream()
                 .map(s -> s.toLowerCase(Locale.ROOT))
                 .distinct() // No duplicates

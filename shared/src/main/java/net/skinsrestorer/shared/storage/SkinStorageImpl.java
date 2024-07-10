@@ -26,6 +26,7 @@ import net.skinsrestorer.api.exception.MineSkinException;
 import net.skinsrestorer.api.model.MojangProfileResponse;
 import net.skinsrestorer.api.property.*;
 import net.skinsrestorer.api.storage.SkinStorage;
+import net.skinsrestorer.shared.config.GUIConfig;
 import net.skinsrestorer.shared.config.StorageConfig;
 import net.skinsrestorer.shared.connections.MineSkinAPIImpl;
 import net.skinsrestorer.shared.connections.MojangAPIImpl;
@@ -202,6 +203,16 @@ public class SkinStorageImpl implements SkinStorage {
     public PageInfo getGUIPage(int page) {
         return GUIUtils.getGUIPage(page, new GUIUtils.GUIDataSource() {
             @Override
+            public boolean isEnabled() {
+                return settings.getProperty(GUIConfig.CUSTOM_GUI_ENABLED);
+            }
+
+            @Override
+            public int getIndex() {
+                return settings.getProperty(GUIConfig.CUSTOM_GUI_INDEX);
+            }
+
+            @Override
             public int getTotalSkins() {
                 return adapterReference.get().getTotalCustomSkins();
             }
@@ -211,6 +222,16 @@ public class SkinStorageImpl implements SkinStorage {
                 return adapterReference.get().getCustomGUISkins(offset, limit);
             }
         }, new GUIUtils.GUIDataSource() {
+            @Override
+            public boolean isEnabled() {
+                return settings.getProperty(GUIConfig.RECOMMENDATIONS_GUI_ENABLED);
+            }
+
+            @Override
+            public int getIndex() {
+                return settings.getProperty(GUIConfig.RECOMMENDATIONS_GUI_INDEX);
+            }
+
             @Override
             public int getTotalSkins() {
                 return recommendationsState.getRecommendationsCount();

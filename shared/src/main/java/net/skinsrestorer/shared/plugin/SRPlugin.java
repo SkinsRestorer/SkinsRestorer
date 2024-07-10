@@ -242,10 +242,6 @@ public class SRPlugin {
             }
         }
 
-        if (!settings.getProperty(GUIConfig.CUSTOM_GUI_ENABLED)) {
-            settings.setProperty(GUIConfig.CUSTOM_GUI_ONLY, false);
-        }
-
         if (!settings.getProperty(ServerConfig.DISMOUNT_PLAYER_ON_UPDATE)) {
             settings.setProperty(ServerConfig.REMOUNT_PLAYER_ON_UPDATE, false);
         }

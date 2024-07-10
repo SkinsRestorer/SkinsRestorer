@@ -22,6 +22,8 @@ import net.skinsrestorer.shared.gui.PageInfo;
 import net.skinsrestorer.shared.gui.SharedGUI;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 public class GUIUtils {
@@ -30,12 +32,16 @@ public class GUIUtils {
             page = 0;
         }
 
+        List<GUIDataSource> enabledSources = Arrays.stream(sources)
+                .filter(GUIDataSource::isEnabled)
+                .sorted(Comparator.comparingInt(GUIDataSource::getIndex))
+                .toList();
         int offset = page * SharedGUI.HEAD_COUNT_PER_PAGE;
         List<GUISkinEntry> skinPage = new ArrayList<>(SharedGUI.HEAD_COUNT_PER_PAGE);
 
         boolean hasNextPage = false;
         int currentIndex = 0;
-        for (GUIDataSource source : sources) {
+        for (GUIDataSource source : enabledSources) {
             int sourceTotal = source.getTotalSkins();
             if (currentIndex + sourceTotal <= offset) {
                 currentIndex += sourceTotal;
@@ -67,6 +73,10 @@ public class GUIUtils {
     }
 
     public interface GUIDataSource {
+        boolean isEnabled();
+
+        int getIndex();
+
         int getTotalSkins();
 
         List<GUISkinEntry> getGUISkins(int offset, int limit);

@@ -23,6 +23,7 @@ import com.google.gson.GsonBuilder;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.shared.config.APIConfig;
+import net.skinsrestorer.shared.config.GUIConfig;
 import net.skinsrestorer.shared.connections.responses.RecommenationResponse;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
@@ -96,11 +97,21 @@ public class RecommendationsState {
     }
 
     public int getRecommendationsCount() {
-        return recommendationsList.size();
+        return getRecommendationsOffset(0, Integer.MAX_VALUE).length;
     }
 
     public RecommenationResponse.SkinInfo[] getRecommendationsOffset(int offset, int limit) {
-        return recommendationsList.stream().skip(offset).limit(limit).toArray(RecommenationResponse.SkinInfo[]::new);
+        return recommendationsList.stream()
+                .filter(skinInfo -> {
+                    if (!settingsManager.getProperty(GUIConfig.RECOMMENDATIONS_GUI_ONLY_LIST)) {
+                        return true;
+                    }
+
+                    return settingsManager.getProperty(GUIConfig.RECOMMENDATIONS_GUI_LIST).contains(skinInfo.getSkinId());
+                })
+                .skip(offset)
+                .limit(limit)
+                .toArray(RecommenationResponse.SkinInfo[]::new);
     }
 
     public RecommenationResponse.SkinInfo getRandomRecommendation() {

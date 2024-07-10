@@ -478,8 +478,8 @@ public class MySQLAdapter implements StorageAdapter {
                 .append(resolveCustomSkinTable())
                 .append(" WHERE `name` NOT LIKE '" + SkinStorageImpl.RECOMMENDATION_PREFIX + "%'");
 
-        if (settings.getProperty(GUIConfig.CUSTOM_GUI_ONLY)) {
-            List<String> customSkins = settings.getProperty(GUIConfig.CUSTOM_GUI_SKINS);
+        if (settings.getProperty(GUIConfig.CUSTOM_GUI_ONLY_LIST)) {
+            List<String> customSkins = settings.getProperty(GUIConfig.CUSTOM_GUI_LIST);
             if (!customSkins.isEmpty()) {
                 query.append(" AND `name` IN (");
                 List<String> sanitizedSkins = new ArrayList<>();
