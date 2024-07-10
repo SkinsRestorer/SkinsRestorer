@@ -17,10 +17,12 @@
  */
 package net.skinsrestorer.shared.connections;
 
+import ch.jalu.configme.SettingsManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.DataRequestException;
+import net.skinsrestorer.shared.config.APIConfig;
 import net.skinsrestorer.shared.connections.responses.RecommenationResponse;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
@@ -45,11 +47,17 @@ public class RecommendationsState {
     private final SRPlatformAdapter<?, ?> adapter;
     private final SRLogger logger;
     private final RecommendationsService recommendationsService;
+    private final SettingsManager settingsManager;
     private final Gson gson = new GsonBuilder().create();
     private Map<String, RecommenationResponse.SkinInfo> recommendationsMap = Map.of();
     private List<RecommenationResponse.SkinInfo> recommendationsList = List.of();
 
     public void scheduleRecommendations() {
+        if (!settingsManager.getProperty(APIConfig.FETCH_RECOMMENDED_SKINS)) {
+            logger.info("Fetching recommended skins is disabled.");
+            return;
+        }
+
         Path path = plugin.getDataFolder().resolve("recommendations.json");
 
         boolean fileExists = Files.exists(path);
