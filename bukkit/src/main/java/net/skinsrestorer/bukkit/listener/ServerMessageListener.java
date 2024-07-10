@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
 import net.skinsrestorer.shared.listeners.SRServerMessageAdapter;
 import net.skinsrestorer.shared.listeners.event.SRServerMessageEvent;
-import net.skinsrestorer.shared.subjects.SRPlayer;
+import net.skinsrestorer.shared.subjects.SRServerPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +41,7 @@ public class ServerMessageListener implements PluginMessageListener {
     private SRServerMessageEvent wrap(String channel, Player player, byte[] message) {
         return new SRServerMessageEvent() {
             @Override
-            public SRPlayer getPlayer() {
+            public SRServerPlayer getPlayer() {
                 return wrapper.player(player);
             }
 
