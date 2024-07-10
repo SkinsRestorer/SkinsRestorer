@@ -95,6 +95,10 @@ public class RecommendationsState {
                 .collect(Collectors.toList());
     }
 
+    public int getRecommendationsCount() {
+        return recommendationsList.size();
+    }
+
     public RecommenationResponse.SkinInfo[] getRecommendationsOffset(int offset, int limit) {
         return recommendationsList.stream().skip(offset).limit(limit).toArray(RecommenationResponse.SkinInfo[]::new);
     }

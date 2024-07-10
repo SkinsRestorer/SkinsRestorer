@@ -26,7 +26,6 @@ import net.skinsrestorer.api.exception.MineSkinException;
 import net.skinsrestorer.api.model.MojangProfileResponse;
 import net.skinsrestorer.api.property.*;
 import net.skinsrestorer.api.storage.SkinStorage;
-import net.skinsrestorer.shared.config.GUIConfig;
 import net.skinsrestorer.shared.config.StorageConfig;
 import net.skinsrestorer.shared.connections.MineSkinAPIImpl;
 import net.skinsrestorer.shared.connections.MojangAPIImpl;
@@ -34,12 +33,12 @@ import net.skinsrestorer.shared.connections.RecommendationsState;
 import net.skinsrestorer.shared.connections.responses.RecommenationResponse;
 import net.skinsrestorer.shared.gui.GUISkinEntry;
 import net.skinsrestorer.shared.gui.PageInfo;
-import net.skinsrestorer.shared.gui.SharedGUI;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.storage.adapter.AdapterReference;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.storage.model.cache.MojangCacheData;
 import net.skinsrestorer.shared.storage.model.skin.*;
+import net.skinsrestorer.shared.utils.GUIUtils;
 import net.skinsrestorer.shared.utils.SRHelpers;
 import net.skinsrestorer.shared.utils.UUIDUtils;
 import net.skinsrestorer.shared.utils.ValidationUtil;
@@ -47,10 +46,7 @@ import net.skinsrestorer.shared.utils.ValidationUtil;
 import javax.inject.Inject;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
@@ -204,44 +200,33 @@ public class SkinStorageImpl implements SkinStorage {
     }
 
     public PageInfo getGUIPage(int page) {
-        if (page < 0) {
-            page = 0;
-        }
-
-        int offset = page * SharedGUI.HEAD_COUNT_PER_PAGE;
-        List<GUISkinEntry> skinPage = new ArrayList<>(SharedGUI.HEAD_COUNT_PER_PAGE);
-
-        boolean hasNext = false;
-        int totalCustomSkins = 0;
-        if (settings.getProperty(GUIConfig.CUSTOM_GUI_ENABLED)) {
-            totalCustomSkins = adapterReference.get().getTotalCustomSkins();
-            List<GUISkinEntry> customSkins = adapterReference.get().getCustomGUISkins(offset, SharedGUI.HEAD_COUNT_PER_PAGE_PLUS_ONE);
-            hasNext = customSkins.size() >= SharedGUI.HEAD_COUNT_PER_PAGE_PLUS_ONE;
-
-            skinPage.addAll(customSkins.subList(0, Math.min(SharedGUI.HEAD_COUNT_PER_PAGE, customSkins.size())));
-        }
-
-        int remainingSlots = SharedGUI.HEAD_COUNT_PER_PAGE - skinPage.size();
-        if ((!settings.getProperty(GUIConfig.CUSTOM_GUI_ENABLED) || !settings.getProperty(GUIConfig.CUSTOM_GUI_ONLY))
-                && remainingSlots > 0) {
-            int remainingOffset = Math.max(0, offset - totalCustomSkins);
-            int remainingSlotsPlusOne = remainingSlots + 1;
-
-            RecommenationResponse.SkinInfo[] recommendations = recommendationsState.getRecommendationsOffset(remainingOffset, remainingSlotsPlusOne);
-            hasNext = recommendations.length >= remainingSlotsPlusOne;
-
-            for (int i = 0; i < Math.min(remainingSlots, recommendations.length); i++) {
-                RecommenationResponse.SkinInfo info = recommendations[i];
-                skinPage.add(new GUISkinEntry(RECOMMENDATION_PREFIX + info.getSkinId(), info.getSkinName(), PropertyUtils.getSkinTextureHash(info.getValue())));
+        return GUIUtils.getGUIPage(page, new GUIUtils.GUIDataSource() {
+            @Override
+            public int getTotalSkins() {
+                return adapterReference.get().getTotalCustomSkins();
             }
-        }
 
-        return new PageInfo(
-                page,
-                page > 0,
-                page < Integer.MAX_VALUE && hasNext,
-                skinPage
-        );
+            @Override
+            public List<GUISkinEntry> getGUISkins(int offset, int limit) {
+                return adapterReference.get().getCustomGUISkins(offset, limit);
+            }
+        }, new GUIUtils.GUIDataSource() {
+            @Override
+            public int getTotalSkins() {
+                return recommendationsState.getRecommendationsCount();
+            }
+
+            @Override
+            public List<GUISkinEntry> getGUISkins(int offset, int limit) {
+                return Arrays.stream(recommendationsState.getRecommendationsOffset(offset, limit))
+                        .map(r -> new GUISkinEntry(
+                                RECOMMENDATION_PREFIX + r.getSkinId(),
+                                r.getSkinName(),
+                                PropertyUtils.getSkinTextureHash(r.getValue())
+                        ))
+                        .toList();
+            }
+        });
     }
 
     @Override
