@@ -19,16 +19,20 @@ package net.skinsrestorer.velocity.listener;
 
 import com.velocitypowered.api.event.EventHandler;
 import com.velocitypowered.api.event.connection.PluginMessageEvent;
+import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ServerConnection;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.listeners.SRProxyMessageAdapter;
 import net.skinsrestorer.shared.listeners.event.SRProxyMessageEvent;
+import net.skinsrestorer.shared.subjects.SRProxyPlayer;
+import net.skinsrestorer.velocity.wrapper.WrapperVelocity;
 
 import javax.inject.Inject;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class ProxyMessageListener implements EventHandler<PluginMessageEvent> {
     private final SRProxyMessageAdapter adapter;
+    private final WrapperVelocity wrapper;
 
     @Override
     public void execute(PluginMessageEvent event) {
@@ -37,6 +41,11 @@ public class ProxyMessageListener implements EventHandler<PluginMessageEvent> {
 
     private SRProxyMessageEvent wrap(PluginMessageEvent event) {
         return new SRProxyMessageEvent() {
+            @Override
+            public SRProxyPlayer getPlayer() {
+                return wrapper.player((Player) event.getTarget());
+            }
+
             @Override
             public boolean isCancelled() {
                 return !event.getResult().isAllowed();
@@ -53,8 +62,13 @@ public class ProxyMessageListener implements EventHandler<PluginMessageEvent> {
             }
 
             @Override
-            public boolean isServerConnection() {
+            public boolean isSenderServerConnection() {
                 return event.getSource() instanceof ServerConnection;
+            }
+
+            @Override
+            public boolean isReceiverProxyPlayer() {
+                return event.getTarget() instanceof Player;
             }
 
             @Override

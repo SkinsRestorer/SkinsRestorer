@@ -66,17 +66,14 @@ public class SharedGUI {
             switch (event.material()) {
                 case HEAD -> {
                     adapter.runAsync(() -> event.player().sendToMessageChannel(out -> {
-                        out.writeUTF("setSkin");
-                        out.writeUTF(player.getName());
+                        out.writeUTF("setSkinV2");
                         out.writeUTF(event.skinName());
                     }));
                     player.closeInventory();
                 }
                 case RED_PANE -> {
-                    adapter.runAsync(() -> event.player().sendToMessageChannel(out -> {
-                        out.writeUTF("clearSkin");
-                        out.writeUTF(player.getName());
-                    }));
+                    adapter.runAsync(() -> event.player().sendToMessageChannel(out ->
+                            out.writeUTF("clearSkinV2")));
                     player.closeInventory();
                 }
                 case GREEN_PANE ->

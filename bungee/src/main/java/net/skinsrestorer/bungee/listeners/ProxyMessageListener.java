@@ -19,17 +19,21 @@ package net.skinsrestorer.bungee.listeners;
 
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.ServerConnection;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
+import net.skinsrestorer.bungee.wrapper.WrapperBungee;
 import net.skinsrestorer.shared.listeners.SRProxyMessageAdapter;
 import net.skinsrestorer.shared.listeners.event.SRProxyMessageEvent;
+import net.skinsrestorer.shared.subjects.SRProxyPlayer;
 
 import javax.inject.Inject;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class ProxyMessageListener implements Listener {
     private final SRProxyMessageAdapter adapter;
+    private final WrapperBungee wrapper;
 
     @EventHandler
     public void onPluginMessage(PluginMessageEvent event) {
@@ -38,6 +42,11 @@ public class ProxyMessageListener implements Listener {
 
     private SRProxyMessageEvent wrap(PluginMessageEvent event) {
         return new SRProxyMessageEvent() {
+            @Override
+            public SRProxyPlayer getPlayer() {
+                return wrapper.player((ProxiedPlayer) event.getReceiver());
+            }
+
             @Override
             public boolean isCancelled() {
                 return event.isCancelled();
@@ -54,8 +63,13 @@ public class ProxyMessageListener implements Listener {
             }
 
             @Override
-            public boolean isServerConnection() {
+            public boolean isSenderServerConnection() {
                 return event.getSender() instanceof ServerConnection;
+            }
+
+            @Override
+            public boolean isReceiverProxyPlayer() {
+                return event.getReceiver() instanceof ProxiedPlayer;
             }
 
             @Override

@@ -24,14 +24,12 @@ import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRProxyAdapter;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
-import net.skinsrestorer.shared.subjects.SRProxyPlayer;
 import net.skinsrestorer.shared.utils.SRConstants;
 
 import javax.inject.Inject;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.util.Optional;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class SRProxyMessageAdapter {
@@ -49,7 +47,7 @@ public final class SRProxyMessageAdapter {
             return;
         }
 
-        if (!event.isServerConnection()) {
+        if (!event.isSenderServerConnection() || !event.isReceiverProxyPlayer()) {
             event.setCancelled(true);
             return;
         }
@@ -57,19 +55,12 @@ public final class SRProxyMessageAdapter {
         DataInputStream in = new DataInputStream(new ByteArrayInputStream(event.getData()));
         try {
             String subChannel = in.readUTF();
-            Optional<SRProxyPlayer> optional = plugin.getPlayer(in.readUTF());
-
-            if (optional.isEmpty()) {
-                return;
-            }
-
-            SRProxyPlayer player = optional.get();
             switch (subChannel) {
-                case "getSkins" -> player.sendPage(skinStorage.getGUIPage(in.readInt()));
-                case "clearSkin" -> commandManager.executeCommand(player, "skin clear");
-                case "setSkin" -> {
+                case "getSkinsV2" -> event.getPlayer().sendPage(skinStorage.getGUIPage(in.readInt()));
+                case "clearSkinV2" -> commandManager.executeCommand(event.getPlayer(), "skin clear");
+                case "setSkinV2" -> {
                     String skin = in.readUTF();
-                    commandManager.executeCommand(player, String.format("skin set %s", skin));
+                    commandManager.executeCommand(event.getPlayer(), String.format("skin set %s", skin));
                 }
             }
         } catch (IOException e) {

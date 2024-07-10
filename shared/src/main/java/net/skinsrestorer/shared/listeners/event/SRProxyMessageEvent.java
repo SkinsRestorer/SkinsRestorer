@@ -17,14 +17,20 @@
  */
 package net.skinsrestorer.shared.listeners.event;
 
+import net.skinsrestorer.shared.subjects.SRProxyPlayer;
+
 public interface SRProxyMessageEvent {
+    SRProxyPlayer getPlayer();
+
     boolean isCancelled();
 
     void setCancelled(boolean cancelled);
 
     byte[] getData();
 
-    boolean isServerConnection();
+    boolean isSenderServerConnection();
+
+    boolean isReceiverProxyPlayer();
 
     String getChannel();
 }
