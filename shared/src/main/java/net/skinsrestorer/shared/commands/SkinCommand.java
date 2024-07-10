@@ -99,7 +99,7 @@ public final class SkinCommand {
         onSkinSetOther(player, skinName, player, null);
     }
 
-    @Subcommand("clear")
+    @Subcommand({"clear", "reset"})
     @CommandPermission(PermissionRegistry.SKIN_CLEAR)
     @Description(Message.HELP_SKIN_CLEAR)
     @CommandConditions("cooldown")
@@ -107,7 +107,7 @@ public final class SkinCommand {
         onSkinClearOther(player, player);
     }
 
-    @Subcommand("clear")
+    @Subcommand({"clear", "reset"})
     @CommandPermission(PermissionRegistry.SKIN_CLEAR_OTHER)
     @Description(Message.HELP_SKIN_CLEAR_OTHER)
     @CommandConditions("cooldown")
