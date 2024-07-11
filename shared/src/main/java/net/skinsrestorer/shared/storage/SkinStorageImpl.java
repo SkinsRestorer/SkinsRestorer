@@ -393,7 +393,7 @@ public class SkinStorageImpl implements SkinStorage {
         }
 
         long now = SRHelpers.getEpochSecond();
-        long expiryDate = timestamp + TimeUnit.MINUTES.toSeconds(settings.getProperty(StorageConfig.SKIN_EXPIRES_AFTER));
+        long expiryDate = timestamp + TimeUnit.MINUTES.toSeconds(Math.max(settings.getProperty(StorageConfig.SKIN_EXPIRES_AFTER),5));
 
         return expiryDate <= now;
     }
