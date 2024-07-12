@@ -42,10 +42,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class MySQLAdapter implements StorageAdapter {
@@ -479,19 +477,76 @@ public class MySQLAdapter implements StorageAdapter {
                 .append(" WHERE `name` NOT LIKE '" + SkinStorageImpl.RECOMMENDATION_PREFIX + "%'");
 
         if (settings.getProperty(GUIConfig.CUSTOM_GUI_ONLY_LIST)) {
-            List<String> customSkins = settings.getProperty(GUIConfig.CUSTOM_GUI_LIST);
-            if (!customSkins.isEmpty()) {
+            List<String> onlyListSkins = settings.getProperty(GUIConfig.CUSTOM_GUI_LIST);
+            if (!onlyListSkins.isEmpty()) {
                 query.append(" AND `name` IN (");
-                List<String> sanitizedSkins = new ArrayList<>();
-                for (String customSkin : customSkins) {
-                    sanitizedSkins.add("'" + CustomSkinData.sanitizeCustomSkinName(customSkin) + "'");
-                }
-
-                query.append(String.join(", ", sanitizedSkins));
+                query.append(onlyListSkins.stream()
+                        .map(CustomSkinData::sanitizeCustomSkinName)
+                        .map(s -> "'" + s + "'")
+                        .collect(Collectors.joining(", ")));
                 query.append(")");
             }
         }
 
+        query.append(" ORDER BY `name` ASC");
+        query.append(" LIMIT ").append(offset).append(", ").append(limit);
+
+        return query.toString();
+    }
+
+    @Override
+    public int getTotalPlayerSkins() {
+        try (ResultSet crs = mysql.query("SELECT COUNT(*) FROM (" + getPlayerSkinQuery(0, Integer.MAX_VALUE) + ") AS subquery")) {
+            if (crs.next()) {
+                return crs.getInt(1);
+            }
+        } catch (SQLException e) {
+            logger.warning("Failed to get total custom skins", e);
+        }
+
+        return 0;
+    }
+
+    @Override
+    public List<GUISkinEntry> getPlayerGUISkins(int offset, int limit) {
+        List<GUISkinEntry> skins = new ArrayList<>();
+        try (ResultSet crs = mysql.query(getPlayerSkinQuery(offset, limit))) {
+            while (crs.next()) {
+                String uuid = crs.getString("uuid");
+                String lastKnownName = crs.getString("last_known_name");
+                String value = crs.getString("value");
+
+                skins.add(new GUISkinEntry(
+                        uuid,
+                        lastKnownName,
+                        PropertyUtils.getSkinTextureHash(value))
+                );
+            }
+        } catch (SQLException e) {
+            logger.warning("Failed to get stored skins", e);
+        }
+
+        return skins;
+    }
+
+    private String getPlayerSkinQuery(int offset, int limit) {
+        StringBuilder query = new StringBuilder("SELECT `uuid`, `last_known_name`, `value`")
+                .append(" FROM ")
+                .append(resolvePlayerSkinTable());
+
+        if (settings.getProperty(GUIConfig.PLAYERS_GUI_ONLY_LIST)) {
+            List<String> onlyListSkins = settings.getProperty(GUIConfig.PLAYERS_GUI_LIST);
+            if (!onlyListSkins.isEmpty()) {
+                query.append(" WHERE `uuid` IN (");
+                query.append(onlyListSkins.stream()
+                        .map(s -> s.toLowerCase(Locale.ROOT))
+                        .map(s -> "'" + s + "'")
+                        .collect(Collectors.joining(", ")));
+                query.append(")");
+            }
+        }
+
+        query.append(" ORDER BY `uuid` ASC");
         query.append(" LIMIT ").append(offset).append(", ").append(limit);
 
         return query.toString();

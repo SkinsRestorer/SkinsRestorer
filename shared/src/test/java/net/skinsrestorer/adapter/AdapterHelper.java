@@ -51,5 +51,11 @@ public class AdapterHelper {
 
         // Check if offset works as well, we actually have two skins in the storage for GUI
         Assert.assertEquals(1, adapter.getCustomGUISkins(1, Integer.MAX_VALUE).size());
+
+        Assert.assertEquals(1, adapter.getTotalPlayerSkins());
+        Assert.assertEquals(1, adapter.getPlayerGUISkins(0, Integer.MAX_VALUE).size());
+
+        // Check if offset works as well, we actually have one skins in the storage for GUI
+        Assert.assertEquals(0, adapter.getPlayerGUISkins(1, Integer.MAX_VALUE).size());
     }
 }

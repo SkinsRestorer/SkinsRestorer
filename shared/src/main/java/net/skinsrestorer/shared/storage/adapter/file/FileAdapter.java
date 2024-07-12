@@ -22,7 +22,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.skinsrestorer.api.PropertyUtils;
 import net.skinsrestorer.api.property.SkinProperty;
-import net.skinsrestorer.api.property.SkinType;
 import net.skinsrestorer.api.property.SkinVariant;
 import net.skinsrestorer.shared.config.GUIConfig;
 import net.skinsrestorer.shared.gui.GUISkinEntry;
@@ -50,6 +49,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class FileAdapter implements StorageAdapter {
@@ -498,14 +498,17 @@ public class FileAdapter implements StorageAdapter {
     @Override
     public List<GUISkinEntry> getCustomGUISkins(int offset, int limit) {
         List<GUISkinEntry> list = new ArrayList<>();
-        Map<String, GUIFileData> files = getCustomGUISkinFiles(offset, limit);
+        List<GUIFileData> files = getCustomGUISkinFiles(offset, limit);
 
-        for (Map.Entry<String, GUIFileData> entry : files.entrySet()) {
-            GUIFileData data = entry.getValue();
+        for (GUIFileData data : files) {
             String fileName = data.fileName();
             try {
-                SkinProperty property = getCustomSkinData(fileName).orElseThrow().getProperty();
-                list.add(new GUISkinEntry(entry.getKey(), entry.getKey(), PropertyUtils.getSkinTextureHash(property.getValue())));
+                CustomSkinData customSkinData = getCustomSkinData(fileName).orElseThrow();
+                list.add(new GUISkinEntry(
+                        fileName,
+                        fileName,
+                        PropertyUtils.getSkinTextureHash(customSkinData.getProperty()))
+                );
             } catch (StorageException e) {
                 logger.warning("Failed to load skin data for " + fileName, e);
             }
@@ -514,22 +517,20 @@ public class FileAdapter implements StorageAdapter {
         return list;
     }
 
-    private Map<String, GUIFileData> getCustomGUISkinFiles(int offset, int limit) {
-        boolean customOnly = settings.getProperty(GUIConfig.CUSTOM_GUI_ONLY_LIST);
-        List<String> customSkins = settings.getProperty(GUIConfig.CUSTOM_GUI_LIST)
+    private List<GUIFileData> getCustomGUISkinFiles(int offset, int limit) {
+        boolean onlyList = settings.getProperty(GUIConfig.CUSTOM_GUI_ONLY_LIST);
+        Set<String> onlyListSkins = settings.getProperty(GUIConfig.CUSTOM_GUI_LIST)
                 .stream()
-                .map(s -> s.toLowerCase(Locale.ROOT))
-                .distinct() // No duplicates
-                .toList();
+                .map(CustomSkinData::sanitizeCustomSkinName)
+                .collect(Collectors.toSet());
 
-        Map<String, GUIFileData> files = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        List<GUIFileData> files = new ArrayList<>();
         try (Stream<Path> stream = Files.walk(skinsFolder, 1)) {
             int skinIndex = 0;
-            for (Path path : (Iterable<Path>) stream::iterator) {
-                if (Files.isDirectory(path)) {
-                    continue;
-                }
-
+            for (Path path : (Iterable<Path>) stream
+                    .filter(Files::isRegularFile)
+                    .sorted(Comparator.comparing(Path::getFileName))
+                    ::iterator) {
                 String fileName = path.getFileName().toString();
                 int lastDotIndex = fileName.lastIndexOf(".");
                 if (lastDotIndex == -1) {
@@ -539,13 +540,12 @@ public class FileAdapter implements StorageAdapter {
                 String extension = fileName.substring(lastDotIndex + 1);
                 String name = fileName.substring(0, lastDotIndex);
 
-                // Only allow player skins and custom skins
                 if (name.startsWith(SkinStorageImpl.RECOMMENDATION_PREFIX) || !extension.equals("customskin")) {
                     continue;
                 }
 
-                // Only allow specific custom skins if enabled
-                if (customOnly && !customSkins.contains(name.toLowerCase(Locale.ROOT))) {
+                // Only allow specific skins if enabled
+                if (onlyList && !onlyListSkins.contains(name.toLowerCase(Locale.ROOT))) {
                     continue;
                 }
 
@@ -555,8 +555,86 @@ public class FileAdapter implements StorageAdapter {
                     continue;
                 }
 
-                GUIFileData data = new GUIFileData(name, path, SkinType.CUSTOM);
-                files.put(name, data);
+                files.add(new GUIFileData(name, path));
+
+                // We got max skins now, stop
+                if (skinIndex++ >= offset + limit) {
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            logger.warning("Failed to load GUI files", e);
+        }
+
+        return files;
+    }
+
+    @Override
+    public int getTotalPlayerSkins() {
+        return getPlayerGUISkinFiles(0, Integer.MAX_VALUE).size();
+    }
+
+    @Override
+    public List<GUISkinEntry> getPlayerGUISkins(int offset, int limit) {
+        List<GUISkinEntry> list = new ArrayList<>();
+        List<GUIFileData> files = getPlayerGUISkinFiles(offset, limit);
+
+        for (GUIFileData data : files) {
+            String fileName = data.fileName();
+            try {
+                PlayerSkinData playerSkinData = getPlayerSkinData(UUID.fromString(fileName)).orElseThrow();
+                list.add(new GUISkinEntry(
+                        fileName,
+                        playerSkinData.getLastKnownName(),
+                        PropertyUtils.getSkinTextureHash(playerSkinData.getProperty()))
+                );
+            } catch (StorageException e) {
+                logger.warning("Failed to load skin data for " + fileName, e);
+            }
+        }
+
+        return list;
+    }
+
+    private List<GUIFileData> getPlayerGUISkinFiles(int offset, int limit) {
+        boolean onlyList = settings.getProperty(GUIConfig.PLAYERS_GUI_ONLY_LIST);
+        Set<String> onlyListSkins = settings.getProperty(GUIConfig.PLAYERS_GUI_LIST)
+                .stream()
+                .map(s -> s.toLowerCase(Locale.ROOT))
+                .collect(Collectors.toSet());
+
+        List<GUIFileData> files = new ArrayList<>();
+        try (Stream<Path> stream = Files.walk(skinsFolder, 1)) {
+            int skinIndex = 0;
+            for (Path path : (Iterable<Path>) stream
+                    .filter(Files::isRegularFile)
+                    .sorted(Comparator.comparing(Path::getFileName))
+                    ::iterator) {
+                String fileName = path.getFileName().toString();
+                int lastDotIndex = fileName.lastIndexOf(".");
+                if (lastDotIndex == -1) {
+                    continue;
+                }
+
+                String extension = fileName.substring(lastDotIndex + 1);
+                String name = fileName.substring(0, lastDotIndex);
+
+                if (!extension.equals("playerskin")) {
+                    continue;
+                }
+
+                // Only allow specific skins if enabled
+                if (onlyList && !onlyListSkins.contains(name.toLowerCase(Locale.ROOT))) {
+                    continue;
+                }
+
+                // We offset only valid skin files
+                if (skinIndex < offset) {
+                    skinIndex++;
+                    continue;
+                }
+
+                files.add(new GUIFileData(name, path));
 
                 // We got max skins now, stop
                 if (skinIndex++ >= offset + limit) {
@@ -670,6 +748,6 @@ public class FileAdapter implements StorageAdapter {
         return skinName.toLowerCase();
     }
 
-    private record GUIFileData(String fileName, Path path, SkinType skinType) {
+    private record GUIFileData(String fileName, Path path) {
     }
 }

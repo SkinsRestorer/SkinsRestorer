@@ -73,6 +73,10 @@ public interface StorageAdapter {
 
     List<GUISkinEntry> getCustomGUISkins(int offset, int limit);
 
+    int getTotalPlayerSkins();
+
+    List<GUISkinEntry> getPlayerGUISkins(int offset, int limit);
+
     void purgeStoredOldSkins(long targetPurgeTimestamp) throws StorageException;
 
     Optional<MojangCacheData> getCachedUUID(String playerName) throws StorageException;

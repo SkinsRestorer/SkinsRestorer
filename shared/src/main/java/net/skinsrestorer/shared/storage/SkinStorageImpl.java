@@ -224,6 +224,26 @@ public class SkinStorageImpl implements SkinStorage {
         }, new GUIUtils.GUIDataSource() {
             @Override
             public boolean isEnabled() {
+                return settings.getProperty(GUIConfig.PLAYERS_GUI_ENABLED);
+            }
+
+            @Override
+            public int getIndex() {
+                return settings.getProperty(GUIConfig.PLAYERS_GUI_INDEX);
+            }
+
+            @Override
+            public int getTotalSkins() {
+                return adapterReference.get().getTotalPlayerSkins();
+            }
+
+            @Override
+            public List<GUISkinEntry> getGUISkins(int offset, int limit) {
+                return adapterReference.get().getPlayerGUISkins(offset, limit);
+            }
+        }, new GUIUtils.GUIDataSource() {
+            @Override
+            public boolean isEnabled() {
                 return settings.getProperty(GUIConfig.RECOMMENDATIONS_GUI_ENABLED);
             }
 

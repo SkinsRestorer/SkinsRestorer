@@ -31,8 +31,12 @@ public class GUIConfig implements SettingsHolder {
     public static final Property<Integer> CUSTOM_GUI_INDEX = newProperty("gui.custom.index", 0);
     public static final Property<Boolean> CUSTOM_GUI_ONLY_LIST = newProperty("gui.custom.onlyShowList", false);
     public static final Property<List<String>> CUSTOM_GUI_LIST = newListProperty("gui.custom.list", "xknat", "pistonmaster");
+    public static final Property<Boolean> PLAYERS_GUI_ENABLED = newProperty("gui.players.enabled", false);
+    public static final Property<Integer> PLAYERS_GUI_INDEX = newProperty("gui.players.index", 1);
+    public static final Property<Boolean> PLAYERS_GUI_ONLY_LIST = newProperty("gui.players.onlyShowList", false);
+    public static final Property<List<String>> PLAYERS_GUI_LIST = newListProperty("gui.players.list", "7dcfc130-344a-4719-9fbe-3176bc2075c6", "b1ae0778-4817-436c-96a3-a72c67cda060");
     public static final Property<Boolean> RECOMMENDATIONS_GUI_ENABLED = newProperty("gui.recommendations.enabled", true);
-    public static final Property<Integer> RECOMMENDATIONS_GUI_INDEX = newProperty("gui.recommendations.index", 1);
+    public static final Property<Integer> RECOMMENDATIONS_GUI_INDEX = newProperty("gui.recommendations.index", 2);
     public static final Property<Boolean> RECOMMENDATIONS_GUI_ONLY_LIST = newProperty("gui.recommendations.onlyShowList", false);
     public static final Property<List<String>> RECOMMENDATIONS_GUI_LIST = newListProperty("gui.recommendations.list", "vampire", "space-suit");
 
