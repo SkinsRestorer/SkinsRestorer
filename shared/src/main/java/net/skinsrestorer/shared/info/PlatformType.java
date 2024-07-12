@@ -17,7 +17,14 @@
  */
 package net.skinsrestorer.shared.info;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@RequiredArgsConstructor
 public enum PlatformType {
-    SERVER,
-    PROXY
+    SERVER("Server"),
+    PROXY("Proxy");
+
+    private final String friendlyName;
 }

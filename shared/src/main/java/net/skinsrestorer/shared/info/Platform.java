@@ -19,18 +19,18 @@ package net.skinsrestorer.shared.info;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.utils.SRHelpers;
 
 @Getter
 @RequiredArgsConstructor
 public enum Platform {
-    BUKKIT(PlatformType.SERVER),
-    BUNGEE_CORD(PlatformType.PROXY),
-    VELOCITY(PlatformType.PROXY);
+    BUKKIT("Bukkit", PlatformType.SERVER),
+    BUNGEE_CORD("BungeeCord", PlatformType.PROXY),
+    VELOCITY("Velocity", PlatformType.PROXY);
 
+    private final String friendlyName;
     private final PlatformType platformType;
 
     public String getPlatformDescription() {
-        return String.format("%s %s", SRHelpers.lowerCaseCapitalize(name()), SRHelpers.lowerCaseCapitalize(platformType.name()));
+        return String.format("%s %s", friendlyName, platformType.getFriendlyName());
     }
 }

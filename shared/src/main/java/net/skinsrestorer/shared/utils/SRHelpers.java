@@ -26,7 +26,10 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Stream;
 
@@ -123,22 +126,6 @@ public class SRHelpers {
         }
 
         return Integer.parseInt(majorVersion);
-    }
-
-    public static String lowerCaseCapitalize(String str) {
-        if (str == null || str.isEmpty()) {
-            return str;
-        }
-
-        return capitalize(str.toLowerCase(Locale.ROOT));
-    }
-
-    public static String capitalize(String str) {
-        if (str == null || str.isEmpty()) {
-            return str;
-        }
-
-        return str.substring(0, 1).toUpperCase(Locale.ROOT) + str.substring(1);
     }
 
     public static Optional<URL> parseURL(String str) {
