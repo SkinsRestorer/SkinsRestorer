@@ -115,7 +115,6 @@ public class SRServerPlugin {
             if (Files.exists(plugin.getDataFolder().resolve("enableSkinStorageAPI.txt"))) {
                 plugin.loadStorage();
                 plugin.registerAPI();
-                init.postAPIInitHook();
 
                 // Load Floodgate hook
                 plugin.registerFloodgate();
@@ -127,7 +126,6 @@ public class SRServerPlugin {
 
             // Init API
             plugin.registerAPI();
-            init.postAPIInitHook();
 
             // Load Floodgate hook
             plugin.registerFloodgate();
@@ -138,5 +136,7 @@ public class SRServerPlugin {
             // Init listener
             init.initLoginProfileListener();
         }
+
+        init.placeholderSetupHook();
     }
 }

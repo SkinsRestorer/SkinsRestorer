@@ -21,7 +21,7 @@ import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import net.skinsrestorer.api.PropertyUtils;
-import net.skinsrestorer.api.SkinsRestorer;
+import net.skinsrestorer.api.SkinsRestorerProvider;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.api.property.SkinProperty;
@@ -41,7 +41,6 @@ public class SRPlaceholderAPIExpansion extends PlaceholderExpansion {
     private static final SkinProperty STEVE_PROPERTY = HardcodedSkins.getHardcodedSkin("steve").orElseThrow().getProperty();
     private static final SkinProperty ALEX_PROPERTY = HardcodedSkins.getHardcodedSkin("alex").orElseThrow().getProperty();
     private static final String ERROR_MESSAGE = "Error";
-    private final SkinsRestorer api;
     private final SRLogger logger;
     private final PluginDescriptionFile description;
     private final Injector injector;
@@ -75,7 +74,9 @@ public class SRPlaceholderAPIExpansion extends PlaceholderExpansion {
                 return ERROR_MESSAGE;
             }
 
-            Optional<SkinIdentifier> skin = api.getPlayerStorage().getSkinIdOfPlayer(offlinePlayer.getUniqueId());
+            Optional<SkinIdentifier> skin = SkinsRestorerProvider.get()
+                    .getPlayerStorage()
+                    .getSkinIdOfPlayer(offlinePlayer.getUniqueId());
 
             if (skin.isPresent()) {
                 return skin.get().getIdentifier();
@@ -165,7 +166,9 @@ public class SRPlaceholderAPIExpansion extends PlaceholderExpansion {
         if (offlinePlayer instanceof Player player) {
             return injector.getSingleton(SkinApplyBukkitAdapter.class).getSkinProperty(player);
         } else {
-            return api.getPlayerStorage().getSkinForPlayer(offlinePlayer.getUniqueId(), offlinePlayer.getName());
+            return SkinsRestorerProvider.get()
+                    .getPlayerStorage()
+                    .getSkinForPlayer(offlinePlayer.getUniqueId(), offlinePlayer.getName());
         }
     }
 }

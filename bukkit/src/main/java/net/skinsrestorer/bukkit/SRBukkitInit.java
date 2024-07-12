@@ -20,7 +20,6 @@ package net.skinsrestorer.bukkit;
 import ch.jalu.configme.SettingsManager;
 import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.SkinsRestorerProvider;
 import net.skinsrestorer.api.semver.SemanticVersion;
 import net.skinsrestorer.bukkit.command.SRBukkitCommand;
 import net.skinsrestorer.bukkit.command.SRHelpTopic;
@@ -297,10 +296,9 @@ public class SRBukkitInit implements SRServerPlatformInit {
     }
 
     @Override
-    public void postAPIInitHook() {
+    public void placeholderSetupHook() {
         if (adapter.isPluginEnabled("PlaceholderAPI")) {
             new SRPlaceholderAPIExpansion(
-                    SkinsRestorerProvider.get(),
                     logger,
                     adapter.getPluginInstance().getDescription(),
                     injector
