@@ -160,7 +160,7 @@ public final class SkinCommand {
         sender.sendMessage(Message.SKIN_SEARCH_MESSAGE, Placeholder.unparsed("search", searchString));
     }
 
-    @Subcommand("update")
+    @Subcommand({"update", "refresh"})
     @CommandPermission(PermissionRegistry.SKIN_UPDATE)
     @Description(Message.HELP_SKIN_UPDATE)
     @CommandConditions("cooldown")
@@ -168,7 +168,7 @@ public final class SkinCommand {
         onSkinUpdateOther(player, player);
     }
 
-    @Subcommand("update")
+    @Subcommand({"update", "refresh"})
     @CommandPermission(PermissionRegistry.SKIN_UPDATE_OTHER)
     @Description(Message.HELP_SKIN_UPDATE_OTHER)
     @CommandConditions("cooldown")
@@ -200,7 +200,7 @@ public final class SkinCommand {
         }
     }
 
-    @Subcommand("set")
+    @Subcommand({"set", "select"})
     @CommandPermission(PermissionRegistry.SKIN_SET)
     @Description(Message.HELP_SKIN_SET)
     @CommandConditions("cooldown")
@@ -208,7 +208,7 @@ public final class SkinCommand {
         onSkinSetOther(player, skinName, player);
     }
 
-    @Subcommand("set")
+    @Subcommand({"set", "select"})
     @CommandPermission(PermissionRegistry.SKIN_SET_OTHER)
     @Description(Message.HELP_SKIN_SET_OTHER)
     @CommandConditions("cooldown")
@@ -216,7 +216,7 @@ public final class SkinCommand {
         onSkinSetOther(sender, skinName, target, null);
     }
 
-    @Subcommand("set")
+    @Subcommand({"set", "select"})
     @CommandPermission(PermissionRegistry.SKIN_SET_OTHER)
     @Description(Message.HELP_SKIN_SET_OTHER)
     @CommandConditions("cooldown")
