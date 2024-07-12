@@ -27,6 +27,7 @@ import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.bukkit.utils.SkinApplyBukkitAdapter;
 import net.skinsrestorer.shared.log.SRLogger;
+import net.skinsrestorer.shared.storage.HardcodedSkins;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -37,8 +38,8 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 public class SRPlaceholderAPIExpansion extends PlaceholderExpansion {
-    private static final String STEVE_URL = "https://textures.minecraft.net/texture/6d3b06c38504ffc0229b9492147c69fcf59fd2ed7885f78502152f77b4d50de1";
-    private static final String ALEX_URL = "https://textures.minecraft.net/texture/fb9ab3483f8106ecc9e76bd47c71312b0f16a58784d606864f3b3e9cb1fd7b6c";
+    private static final SkinProperty STEVE_PROPERTY = HardcodedSkins.getHardcodedSkin("steve").orElseThrow().getProperty();
+    private static final SkinProperty ALEX_PROPERTY = HardcodedSkins.getHardcodedSkin("alex").orElseThrow().getProperty();
     private static final String ERROR_MESSAGE = "Error";
     private final SkinsRestorer api;
     private final SRLogger logger;
@@ -100,7 +101,7 @@ public class SRPlaceholderAPIExpansion extends PlaceholderExpansion {
                 Optional<SkinProperty> skin = getCurrentProperties(offlinePlayer);
 
                 if (skin.isPresent()) {
-                    return extractUrl(skin.get());
+                    return extractTextureUrl(skin.get());
                 }
 
                 if (params.startsWith("texture_url_")) {
@@ -109,9 +110,9 @@ public class SRPlaceholderAPIExpansion extends PlaceholderExpansion {
                     if (subString.equalsIgnoreCase("or_empty")) {
                         return "";
                     } else if (subString.equalsIgnoreCase("or_steve")) {
-                        return STEVE_URL;
+                        return extractTextureUrl(STEVE_PROPERTY);
                     } else if (subString.equalsIgnoreCase("or_alex")) {
-                        return ALEX_URL;
+                        return extractTextureUrl(ALEX_PROPERTY);
                     }
                 }
             } catch (DataRequestException e) {
@@ -137,9 +138,9 @@ public class SRPlaceholderAPIExpansion extends PlaceholderExpansion {
                     if (subString.equalsIgnoreCase("or_empty")) {
                         return "";
                     } else if (subString.equalsIgnoreCase("or_steve")) {
-                        return STEVE_URL;
+                        return extractTextureHash(STEVE_PROPERTY);
                     } else if (subString.equalsIgnoreCase("or_alex")) {
-                        return ALEX_URL;
+                        return extractTextureHash(ALEX_PROPERTY);
                     }
                 }
             } catch (DataRequestException e) {
@@ -152,7 +153,7 @@ public class SRPlaceholderAPIExpansion extends PlaceholderExpansion {
         return null;
     }
 
-    private String extractUrl(SkinProperty property) {
+    private String extractTextureUrl(SkinProperty property) {
         return PropertyUtils.getSkinTextureUrl(property);
     }
 
