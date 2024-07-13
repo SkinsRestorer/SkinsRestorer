@@ -274,6 +274,10 @@ public class MySQLAdapter implements StorageAdapter {
                 skinIdentifierString,
                 skinType,
                 skinVariant);
+
+        mysql.execute("DELETE FROM " + resolvePlayerHistoryTable() + " WHERE uuid=? AND timestamp NOT IN (" +
+                (data.getHistory().isEmpty() ? "NULL" : data.getHistory().stream().map(HistoryData::getTimestamp).map(String::valueOf).collect(Collectors.joining(", ")))
+                + ")", uuid);
         for (HistoryData historyData : data.getHistory()) {
             SkinIdentifier historyIdentifier = historyData.getSkinIdentifier();
             String historySkinIdentifier = historyIdentifier.getIdentifier();
