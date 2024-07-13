@@ -144,13 +144,7 @@ public final class SkinCommand {
     @Description(Message.HELP_SKIN_RANDOM_OTHER)
     @CommandConditions("cooldown")
     private void onSkinRandomOther(SRCommandSender sender, SRPlayer target) {
-        setSkin(sender, target, SkinStorageImpl.RECOMMENDATION_PREFIX + recommendationsState.getRandomRecommendation().getSkinId(), null);
-
-        if (senderEqual(sender, target)) {
-            sender.sendMessage(Message.SUCCESS_SKIN_CHANGE);
-        } else {
-            sender.sendMessage(Message.SUCCESS_SKIN_CHANGE_OTHER, Placeholder.unparsed("name", target.getName()));
-        }
+        onSkinSetOther(sender, SkinStorageImpl.RECOMMENDATION_PREFIX + recommendationsState.getRandomRecommendation().getSkinId(), target);
     }
 
     @Subcommand("search")
