@@ -23,8 +23,6 @@
   "skinsrestorer.help_sr_apply_skin_all": "Tái áp dụng skin cho toàn bộ người chơi.",
   "skinsrestorer.help_sr_purge_old_data": "Xóa dữ liệu cũ của skin từ x ngày trước.",
   "skinsrestorer.help_sr_dump": "Tải dữ liệu hỗ trợ tới bytebin.lucko.me.",
-  "skinsrestorer.success_skin_change": "Skin của bạn đã được thay đổi.",
-  "skinsrestorer.success_skin_change_other": "Bạn đã thay đổi skin của <name>.",
   "skinsrestorer.success_skin_clear": "Skin của bạn đã được xóa.",
   "skinsrestorer.success_skin_clear_other": "Đã xóa skin cho người chơi <name>.",
   "skinsrestorer.success_updating_skin": "Skin của bạn đã được cập nhật.",
