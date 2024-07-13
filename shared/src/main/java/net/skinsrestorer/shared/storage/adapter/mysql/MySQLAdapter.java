@@ -71,9 +71,9 @@ public class MySQLAdapter implements StorageAdapter {
         mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolvePlayerHistoryTable() + "` ("
                 + "`uuid` VARCHAR(36) NOT NULL,"
                 + "`timestamp` BIGINT(20) NOT NULL,"
-                + "`skin_identifier` VARCHAR(2083),"
+                + "`skin_identifier` VARCHAR(2083) NOT NULL,"
                 + "`skin_variant` VARCHAR(20),"
-                + "`skin_type` VARCHAR(20),"
+                + "`skin_type` VARCHAR(20) NOT NULL,"
                 + "PRIMARY KEY (`uuid`, `timestamp`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
 
         mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolvePlayerSkinTable() + "` ("
@@ -274,6 +274,22 @@ public class MySQLAdapter implements StorageAdapter {
                 skinIdentifierString,
                 skinType,
                 skinVariant);
+        for (HistoryData historyData : data.getHistory()) {
+            SkinIdentifier historyIdentifier = historyData.getSkinIdentifier();
+            String historySkinIdentifier = historyIdentifier.getIdentifier();
+            String historySkinType = historyIdentifier.getSkinType().name();
+            String historySkinVariant = historyIdentifier.getSkinVariant() != null ? historyIdentifier.getSkinVariant().name() : null;
+
+            mysql.execute("INSERT INTO " + resolvePlayerHistoryTable() + " (uuid, timestamp, skin_identifier, skin_type, skin_variant) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE skin_identifier=?, skin_type=?, skin_variant=?",
+                    uuid.toString(),
+                    historyData.getTimestamp(),
+                    historySkinIdentifier,
+                    historySkinType,
+                    historySkinVariant,
+                    historySkinIdentifier,
+                    historySkinType,
+                    historySkinVariant);
+        }
     }
 
     @Override
