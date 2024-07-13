@@ -20,8 +20,6 @@
   "skinsrestorer.help_sr_purge_old_data": "Vyčistite staré údaje o skine spred viac ako x dní.",
   "skinsrestorer.help_sr_dump": "Nahraj údaje pre podporu na bytebin.lucko.me.",
   "skinsrestorer.success_generic": "<dark_green><message>",
-  "skinsrestorer.success_skin_change": "Tvoj skin bol zmenený.",
-  "skinsrestorer.success_skin_change_other": "Zmenil si skin hráča <name>.",
   "skinsrestorer.success_skin_clear": "Tvoj skin bol zrušený.",
   "skinsrestorer.success_skin_clear_other": "Skin pre hráča <name> bol zrušený.",
   "skinsrestorer.success_updating_skin": "Tvoj skin bol aktualizovaný.",
