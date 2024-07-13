@@ -38,22 +38,18 @@ import net.skinsrestorer.shared.storage.model.player.LegacyPlayerData;
 import net.skinsrestorer.shared.storage.model.player.PlayerData;
 import net.skinsrestorer.shared.storage.model.skin.*;
 import net.skinsrestorer.shared.utils.SRHelpers;
+import net.skinsrestorer.shared.utils.UUIDUtils;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.*;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class FileAdapter implements StorageAdapter {
-    private static final Pattern UUID_REGEX = Pattern.compile("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$");
     private final Path skinsFolder;
     private final Path playersFolder;
     private final Path cacheFolder;
@@ -77,28 +73,6 @@ public class FileAdapter implements StorageAdapter {
             throw new IllegalStateException(e);
         }
         init();
-    }
-
-    private static String hashSHA256(String input) {
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(input.getBytes(StandardCharsets.UTF_8));
-            return bytesToHex(hash);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static String bytesToHex(byte[] hash) {
-        StringBuilder hexString = new StringBuilder(2 * hash.length);
-        for (byte b : hash) {
-            String hex = Integer.toHexString(0xff & b);
-            if (hex.length() == 1) {
-                hexString.append('0');
-            }
-            hexString.append(hex);
-        }
-        return hexString.toString();
     }
 
     @Override
@@ -132,7 +106,7 @@ public class FileAdapter implements StorageAdapter {
                 String fileName = path.getFileName().toString();
                 String playerName = fileName.substring(0, fileName.length() - ".player".length());
 
-                if (UUID_REGEX.matcher(playerName).matches()) {
+                if (UUIDUtils.tryParseUniqueId(playerName).isPresent()) {
                     return; // If we find a UUID, we assume the migration has already been done.
                 }
 
@@ -713,11 +687,11 @@ public class FileAdapter implements StorageAdapter {
     }
 
     private Path resolveURLSkinFile(String url, SkinVariant skinVariant) {
-        return skinsFolder.resolve(hashSHA256(url) + "_" + skinVariant.name() + ".urlskin");
+        return skinsFolder.resolve(SRHelpers.hashSHA256ToHex(url) + "_" + skinVariant.name() + ".urlskin");
     }
 
     private Path resolveURLSkinIndexFile(String url) {
-        return skinsFolder.resolve(hashSHA256(url) + ".urlindex");
+        return skinsFolder.resolve(SRHelpers.hashSHA256ToHex(url) + ".urlindex");
     }
 
     private Path resolvePlayerSkinFile(UUID uuid) {

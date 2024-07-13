@@ -179,7 +179,7 @@ public final class SpigotSkinRefresher implements SkinRefresher {
                         // Minecraft 1.15 changes
                         // PacketPlayOutRespawn now needs the world seed
 
-                        long seedEncrypted = SRHelpers.hashSha256String(String.valueOf(player.getWorld().getSeed()));
+                        long seedEncrypted = SRHelpers.hashSha256ToLong(String.valueOf(player.getWorld().getSeed()));
                         try {
                             respawn = ReflectionUtil.invokeConstructor(playOutRespawnClass, dimensionManager, seedEncrypted, worldType, enumGamemode);
                         } catch (ReflectiveOperationException ignored5) {
@@ -236,7 +236,7 @@ public final class SpigotSkinRefresher implements SkinRefresher {
 
                 return new ViaPacketData(
                         player,
-                        SRHelpers.hashSha256String(String.valueOf(player.getWorld().getSeed())),
+                        SRHelpers.hashSha256ToLong(String.valueOf(player.getWorld().getSeed())),
                         ((Integer) gamemodeId).shortValue(),
                         flat
                 );

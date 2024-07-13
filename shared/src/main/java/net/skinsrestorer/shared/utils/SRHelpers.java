@@ -46,7 +46,17 @@ public class SRHelpers {
         return throwable;
     }
 
-    public static long hashSha256String(String str) {
+    public static String hashSHA256ToHex(String input) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(input.getBytes(StandardCharsets.UTF_8));
+            return bytesToHex(hash);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static long hashSha256ToLong(String str) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             md.update(str.getBytes(StandardCharsets.UTF_8));
@@ -55,6 +65,18 @@ public class SRHelpers {
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException("Failed to get SHA-256 hash algorithm", e);
         }
+    }
+
+    private static String bytesToHex(byte[] hash) {
+        StringBuilder hexString = new StringBuilder(2 * hash.length);
+        for (byte b : hash) {
+            String hex = Integer.toHexString(0xff & b);
+            if (hex.length() == 1) {
+                hexString.append('0');
+            }
+            hexString.append(hex);
+        }
+        return hexString.toString();
     }
 
     public static byte[] md5(byte[] input) {
