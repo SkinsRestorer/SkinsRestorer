@@ -25,7 +25,6 @@ import net.skinsrestorer.api.connections.MineSkinAPI;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.exception.MineSkinException;
 import net.skinsrestorer.api.property.*;
-import net.skinsrestorer.api.storage.PlayerStorage;
 import net.skinsrestorer.api.storage.SkinStorage;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
 import net.skinsrestorer.shared.commands.library.CommandManager;
@@ -37,7 +36,9 @@ import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.storage.CooldownStorage;
+import net.skinsrestorer.shared.storage.PlayerStorageImpl;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
+import net.skinsrestorer.shared.storage.model.player.HistoryData;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.messages.Message;
@@ -45,6 +46,7 @@ import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
 import net.skinsrestorer.shared.utils.ComponentHelper;
 import net.skinsrestorer.shared.utils.SRConstants;
+import net.skinsrestorer.shared.utils.SRHelpers;
 import net.skinsrestorer.shared.utils.ValidationUtil;
 
 import javax.inject.Inject;
@@ -65,7 +67,7 @@ public final class SkinCommand {
     private final SettingsManager settings;
     private final CooldownStorage cooldownStorage;
     private final SkinStorage skinStorage;
-    private final PlayerStorage playerStorage;
+    private final PlayerStorageImpl playerStorage;
     private final SkinsRestorerLocale locale;
     private final SRLogger logger;
     private final SharedSkinApplier<Object> skinApplier;
@@ -216,8 +218,7 @@ public final class SkinCommand {
     @Description(Message.HELP_SKIN_SET_OTHER)
     @CommandConditions("cooldown")
     private void onSkinSetOther(SRCommandSender sender, String skinName, SRPlayer target, SkinVariant skinVariant) {
-        if (!setSkin(sender, target, skinName, skinVariant)) {
-            setCoolDown(sender, CommandConfig.SKIN_ERROR_COOLDOWN);
+        if (!setSkin(sender, target, skinName, skinVariant, true)) {
             return;
         }
 
@@ -257,6 +258,56 @@ public final class SkinCommand {
         onSkinSetOther(player, url, player, skinVariant);
     }
 
+    @Subcommand({"undo", "revert"})
+    @CommandPermission(PermissionRegistry.SKIN_UNDO)
+    @Description(Message.HELP_SKIN_UNDO)
+    @CommandConditions("cooldown")
+    private void onSkinUndo(SRPlayer player) {
+        onSkinUndoOther(player, player);
+    }
+
+    @Subcommand({"undo", "revert"})
+    @CommandPermission(PermissionRegistry.SKIN_UNDO_OTHER)
+    @Description(Message.HELP_SKIN_UNDO_OTHER)
+    @CommandConditions("cooldown")
+    private void onSkinUndoOther(SRCommandSender sender, SRPlayer target) {
+        Optional<HistoryData> historyData = playerStorage.getTopOfHistory(target.getUniqueId(), 0);
+        if (historyData.isEmpty()) {
+            sender.sendMessage(Message.ERROR_NO_UNDO);
+            return;
+        }
+
+        Optional<SkinIdentifier> currentSkin = playerStorage.getSkinIdOfPlayer(target.getUniqueId());
+        if (currentSkin.isPresent() && currentSkin.get().equals(historyData.get().getSkinIdentifier())) {
+            // We need a different history entry to undo
+            Optional<HistoryData> historyData2 = playerStorage.getTopOfHistory(target.getUniqueId(), 1);
+            if (historyData2.isEmpty()) {
+                sender.sendMessage(Message.ERROR_NO_UNDO);
+                return;
+            }
+
+            // Remove the current skin from history
+            playerStorage.removeFromHistory(target.getUniqueId(), historyData.get());
+
+            historyData = historyData2;
+        }
+
+        if (!setSkin(sender, target, historyData.get().getSkinIdentifier().getIdentifier(), historyData.get().getSkinIdentifier().getSkinVariant(), false)) {
+            return;
+        }
+
+        if (senderEqual(sender, target)) {
+            sender.sendMessage(Message.SUCCESS_SKIN_UNDO,
+                    Placeholder.unparsed("skin", historyData.get().getSkinIdentifier().getIdentifier()),
+                    Placeholder.parsed("timestamp", SRHelpers.formatEpochSeconds(historyData.get().getTimestamp(), sender.getLocale())));
+        } else {
+            sender.sendMessage(Message.SUCCESS_SKIN_UNDO_OTHER,
+                    Placeholder.unparsed("name", target.getName()),
+                    Placeholder.unparsed("skin", historyData.get().getSkinIdentifier().getIdentifier()),
+                    Placeholder.parsed("timestamp", SRHelpers.formatEpochSeconds(historyData.get().getTimestamp(), sender.getLocale())));
+        }
+    }
+
     @Subcommand({"menu", "gui"})
     @CommandPermission(PermissionRegistry.SKINS)
     @Private
@@ -264,7 +315,8 @@ public final class SkinCommand {
         commandManager.executeCommand(player, "skins");
     }
 
-    private boolean setSkin(SRCommandSender sender, SRPlayer target, String skinInput, SkinVariant skinVariant) {
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    private boolean setSkin(SRCommandSender sender, SRPlayer target, String skinInput, SkinVariant skinVariant, boolean insertHistory) {
         if (!canSetSkin(sender, skinInput)) {
             return false;
         }
@@ -283,6 +335,11 @@ public final class SkinCommand {
 
             setCoolDown(sender, CommandConfig.SKIN_CHANGE_COOLDOWN);
 
+            // If someone else sets your skin, it shouldn't be in your /skin undo
+            if (insertHistory && senderEqual(sender, target)) {
+                playerStorage.pushToHistory(target.getUniqueId(), HistoryData.of(SRHelpers.getEpochSecond(), optional.get().getIdentifier()));
+            }
+
             return true;
         } catch (DataRequestException e) {
             ComponentHelper.sendException(e, sender, locale, logger);
@@ -291,6 +348,7 @@ public final class SkinCommand {
             sender.sendMessage(Message.ERROR_INVALID_URLSKIN);
         }
 
+        setCoolDown(sender, CommandConfig.SKIN_ERROR_COOLDOWN);
         return false;
     }
 

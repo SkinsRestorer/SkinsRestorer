@@ -35,6 +35,8 @@ public enum PermissionRegistry {
     SKIN_SEARCH("skinsrestorer.command.search", Message.PERMISSION_COMMAND_SEARCH),
     SKIN_UPDATE("skinsrestorer.command.update", Message.PERMISSION_COMMAND_UPDATE),
     SKIN_UPDATE_OTHER("skinsrestorer.command.update.other", Message.PERMISSION_COMMAND_UPDATE_OTHER),
+    SKIN_UNDO("skinsrestorer.command.undo", Message.PERMISSION_COMMAND_UNDO),
+    SKIN_UNDO_OTHER("skinsrestorer.command.undo.other", Message.PERMISSION_COMMAND_UNDO_OTHER),
     SR_RELOAD("skinsrestorer.admincommand.reload", Message.PERMISSION_ADMINCOMMAND_RELOAD),
     SR_STATUS("skinsrestorer.admincommand.status", Message.PERMISSION_ADMINCOMMAND_STATUS),
     SR_DROP("skinsrestorer.admincommand.drop", Message.PERMISSION_ADMINCOMMAND_DROP),
