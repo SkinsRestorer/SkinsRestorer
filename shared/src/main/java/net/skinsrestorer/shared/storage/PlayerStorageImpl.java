@@ -30,6 +30,7 @@ import net.skinsrestorer.shared.floodgate.FloodgateUtil;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.storage.adapter.AdapterReference;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
+import net.skinsrestorer.shared.storage.model.player.HistoryData;
 import net.skinsrestorer.shared.storage.model.player.PlayerData;
 import net.skinsrestorer.shared.utils.SRHelpers;
 
@@ -37,6 +38,7 @@ import javax.inject.Inject;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class PlayerStorageImpl implements PlayerStorage {
@@ -64,14 +66,16 @@ public class PlayerStorageImpl implements PlayerStorage {
     @Override
     public void setSkinIdOfPlayer(UUID uuid, SkinIdentifier identifier) {
         try {
+            HistoryData historyData = HistoryData.of(SRHelpers.getEpochSecond(), identifier);
             Optional<PlayerData> optional = adapterReference.get().getPlayerData(uuid);
 
             if (optional.isPresent()) {
                 PlayerData playerData = optional.get();
                 playerData.setSkinIdentifier(identifier);
+                playerData.setHistory(Stream.concat(playerData.getHistory().stream(), Stream.of(historyData)).toList());
                 adapterReference.get().setPlayerData(uuid, playerData);
             } else {
-                adapterReference.get().setPlayerData(uuid, PlayerData.of(uuid, identifier));
+                adapterReference.get().setPlayerData(uuid, PlayerData.of(uuid, identifier, List.of(historyData)));
             }
         } catch (StorageAdapter.StorageException e) {
             logger.severe("Failed to set skin data of player " + uuid, e);

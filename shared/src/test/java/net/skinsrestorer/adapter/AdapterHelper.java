@@ -28,6 +28,7 @@ import net.skinsrestorer.shared.storage.model.skin.URLSkinData;
 import org.junit.Assert;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.UUID;
 
 public class AdapterHelper {
@@ -36,7 +37,7 @@ public class AdapterHelper {
 
     public static void testAdapter(StorageAdapter adapter) {
         adapter.setCachedUUID("test", MojangCacheData.of(UUID.randomUUID(), -1));
-        adapter.setPlayerData(UUID.randomUUID(), PlayerData.of(UUID.randomUUID(), null));
+        adapter.setPlayerData(UUID.randomUUID(), PlayerData.of(UUID.randomUUID(), null, Collections.emptyList()));
         adapter.setPlayerSkinData(DEFAULT_UUID, PlayerSkinData.of(DEFAULT_UUID, DEFAULT_NAME,
                 HardcodedSkins.getHardcodedSkin("steve").orElseThrow().getProperty(), -1));
         adapter.setURLSkinData("test", URLSkinData.of("https://test.com", "test",

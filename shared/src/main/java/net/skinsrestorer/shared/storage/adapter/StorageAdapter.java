@@ -26,6 +26,7 @@ import net.skinsrestorer.shared.storage.model.player.LegacyPlayerData;
 import net.skinsrestorer.shared.storage.model.player.PlayerData;
 import net.skinsrestorer.shared.storage.model.skin.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -91,8 +92,8 @@ public interface StorageAdapter {
 
         // Handle migrated or new custom skins
         Optional<CustomSkinData> customSkinData = getCustomSkinData(legacyPlayerData.get().getSkinName());
-        setPlayerData(uuid, customSkinData.map(skinData -> PlayerData.of(uuid, SkinIdentifier.ofCustom(skinData.getSkinName())))
-                .orElseGet(() -> PlayerData.of(uuid, SkinIdentifier.of(legacyPlayerData.get().getSkinName(), null, SkinType.LEGACY))));
+        setPlayerData(uuid, customSkinData.map(skinData -> PlayerData.of(uuid, SkinIdentifier.ofCustom(skinData.getSkinName()), Collections.emptyList()))
+                .orElseGet(() -> PlayerData.of(uuid, SkinIdentifier.of(legacyPlayerData.get().getSkinName(), null, SkinType.LEGACY), Collections.emptyList())));
 
         removeLegacyPlayerData(playerName);
     }
