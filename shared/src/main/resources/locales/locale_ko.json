@@ -24,8 +24,6 @@
   "skinsrestorer.help_sr_purge_old_data": "x일 지난 예전 스킨 데이터를 정리해요.",
   "skinsrestorer.help_sr_dump": "bytebin.lucko.me로 지원 데이터를 업로드해요.",
   "skinsrestorer.success_generic": "<dark_green><message>",
-  "skinsrestorer.success_skin_change": "스킨을 변경했어요.",
-  "skinsrestorer.success_skin_change_other": "<name>님의 스킨을 설정했어요.",
   "skinsrestorer.success_skin_clear": "스킨을 재설정했어요.",
   "skinsrestorer.success_skin_clear_other": "<name>님의 스킨이 재설정됐어요.",
   "skinsrestorer.success_updating_skin": "스킨을 갱신했어요.",
