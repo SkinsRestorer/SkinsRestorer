@@ -24,6 +24,7 @@ import net.skinsrestorer.api.property.MojangSkinDataResult;
 import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.storage.PlayerStorage;
+import net.skinsrestorer.shared.config.CommandConfig;
 import net.skinsrestorer.shared.config.LoginConfig;
 import net.skinsrestorer.shared.config.StorageConfig;
 import net.skinsrestorer.shared.floodgate.FloodgateUtil;
@@ -100,12 +101,20 @@ public class PlayerStorageImpl implements PlayerStorage {
     }
 
     public void pushToHistory(UUID uuid, HistoryData historyData) {
+        int maxHistoryLength = settings.getProperty(CommandConfig.MAX_HISTORY_LENGTH);
+        if (maxHistoryLength <= 0) {
+            return;
+        }
+
         try {
             Optional<PlayerData> optional = adapterReference.get().getPlayerData(uuid);
 
             if (optional.isPresent()) {
                 PlayerData playerData = optional.get();
-                playerData.setHistory(Stream.concat(playerData.getHistory().stream(), Stream.of(historyData)).toList());
+                playerData.setHistory(Stream.concat(playerData.getHistory().stream(), Stream.of(historyData))
+                        .sorted(Comparator.comparing(HistoryData::getTimestamp))
+                        .skip(Math.max(0, playerData.getHistory().size() + 1 - maxHistoryLength))
+                        .toList());
 
                 adapterReference.get().setPlayerData(uuid, playerData);
             } else {

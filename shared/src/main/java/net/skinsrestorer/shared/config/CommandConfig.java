@@ -67,6 +67,12 @@ public class CommandConfig implements SettingsHolder {
     })
     public static final Property<Boolean> PER_SKIN_PERMISSIONS = newProperty("commands.perSkinPermissions", false);
     @Comment({
+            "How many commands to store in the player's command history.",
+            "This is used for the /skin undo command.",
+            "Use 0 to disable storing command history."
+    })
+    public static final Property<Integer> MAX_HISTORY_LENGTH = newProperty("commands.maxHistoryLength", 20);
+    @Comment({
             "Removes < > and [ ] encasing from command arguments.",
             "Example: /skin set <skin> will become /skin set skin if this is enabled.",
             "This is useful to prevent players from incorrectly using the command, as those brackets are not supposed to be there.",
