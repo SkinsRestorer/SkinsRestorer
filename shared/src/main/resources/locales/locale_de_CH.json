@@ -20,8 +20,6 @@
   "skinsrestorer.help_sr_purge_old_data": "Lösche alte Skin-Daten von vor über x Tage lang.",
   "skinsrestorer.help_sr_dump": "Lade Support Daten zu bytebin.lucko.me hoch.",
   "skinsrestorer.success_generic": "<dark_green><message>",
-  "skinsrestorer.success_skin_change": "Dein Skin wurde geändert.",
-  "skinsrestorer.success_skin_change_other": "Du hast den Skin von <name> geändert.",
   "skinsrestorer.success_skin_clear": "Dein Skin wurde entfernt.",
   "skinsrestorer.success_skin_clear_other": "Skin für Spieler <name> entfernt.",
   "skinsrestorer.success_updating_skin": "Dein Skin wurde aktualisiert.",
