@@ -222,9 +222,12 @@ public final class SkinCommand {
         }
 
         if (senderEqual(sender, target)) {
-            sender.sendMessage(Message.SUCCESS_SKIN_CHANGE);
+            sender.sendMessage(Message.SUCCESS_SKIN_CHANGE,
+                    Placeholder.unparsed("skin", skinName));
         } else {
-            sender.sendMessage(Message.SUCCESS_SKIN_CHANGE_OTHER, Placeholder.unparsed("name", target.getName()));
+            sender.sendMessage(Message.SUCCESS_SKIN_CHANGE_OTHER,
+                    Placeholder.unparsed("name", target.getName()),
+                    Placeholder.unparsed("skin", skinName));
         }
     }
 
