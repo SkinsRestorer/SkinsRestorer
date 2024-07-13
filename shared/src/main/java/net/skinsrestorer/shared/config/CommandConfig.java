@@ -21,6 +21,7 @@ import ch.jalu.configme.Comment;
 import ch.jalu.configme.SettingsHolder;
 import ch.jalu.configme.configurationdata.CommentsConfiguration;
 import ch.jalu.configme.properties.Property;
+import net.skinsrestorer.shared.gui.SharedGUI;
 
 import java.util.List;
 
@@ -71,7 +72,7 @@ public class CommandConfig implements SettingsHolder {
             "This is used for the /skin undo command.",
             "Use 0 to disable storing command history."
     })
-    public static final Property<Integer> MAX_HISTORY_LENGTH = newProperty("commands.maxHistoryLength", 20);
+    public static final Property<Integer> MAX_HISTORY_LENGTH = newProperty("commands.maxHistoryLength", SharedGUI.HEAD_COUNT_PER_PAGE);
     @Comment({
             "Removes < > and [ ] encasing from command arguments.",
             "Example: /skin set <skin> will become /skin set skin if this is enabled.",
