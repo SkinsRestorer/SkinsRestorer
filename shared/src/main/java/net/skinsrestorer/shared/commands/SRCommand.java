@@ -59,10 +59,7 @@ import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.Permission;
 import net.skinsrestorer.shared.subjects.permissions.PermissionGroup;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
-import net.skinsrestorer.shared.utils.ComponentHelper;
-import net.skinsrestorer.shared.utils.SRConstants;
-import net.skinsrestorer.shared.utils.UUIDUtils;
-import net.skinsrestorer.shared.utils.ValidationUtil;
+import net.skinsrestorer.shared.utils.*;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -341,11 +338,9 @@ public final class SRCommand {
             return playerSkinData.<Consumer<SRCommandSender>>map(skinData -> sender -> {
                 sender.sendMessage(Message.ADMINCOMMAND_INFO_PLAYER_SKIN,
                         Placeholder.parsed("skin", input),
-                        Placeholder.parsed("timestamp", new SimpleDateFormat(SRConstants.DATE_FORMAT, sender.getLocale())
-                                .format(new Date(TimeUnit.SECONDS.toMillis(playerSkinData.get().getTimestamp())))),
-                        Placeholder.parsed("expires", new SimpleDateFormat(SRConstants.DATE_FORMAT, sender.getLocale())
-                                .format(new Date(TimeUnit.SECONDS.toMillis(playerSkinData.get().getTimestamp()
-                                        + TimeUnit.MINUTES.toSeconds(settings.getProperty(StorageConfig.SKIN_EXPIRES_AFTER)))))));
+                        Placeholder.parsed("timestamp", SRHelpers.formatEpochSeconds(playerSkinData.get().getTimestamp(), sender.getLocale())),
+                        Placeholder.parsed("expires", SRHelpers.formatEpochSeconds(playerSkinData.get().getTimestamp()
+                                + TimeUnit.MINUTES.toSeconds(settings.getProperty(StorageConfig.SKIN_EXPIRES_AFTER)), sender.getLocale())));
                 sendGenericSkinInfoMessage(sender, skinData.getProperty());
             }).orElseGet(() -> sender -> sender.sendMessage(Message.NO_SKIN_DATA));
         }

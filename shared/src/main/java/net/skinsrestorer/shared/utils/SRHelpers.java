@@ -26,11 +26,10 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 public class SRHelpers {
@@ -194,5 +193,10 @@ public class SRHelpers {
         }
 
         return skinInput;
+    }
+
+    public static String formatEpochSeconds(long epochSeconds, Locale locale) {
+        return new SimpleDateFormat(SRConstants.DATE_FORMAT, locale)
+                .format(new Date(TimeUnit.SECONDS.toMillis(epochSeconds)));
     }
 }
