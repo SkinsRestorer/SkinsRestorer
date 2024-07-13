@@ -179,10 +179,6 @@ public class SRHelpers {
         boolean isNamemc = host.equals("namemc.com") || host.endsWith(".namemc.com");
         if (isNamemc) {
             String path = uriOptional.get().getPath();
-            if (path == null) {
-                return skinInput;
-            }
-
             String profilePath = "/profile/";
             if (path.startsWith(profilePath)) {
                 String usernamePart = path.substring(profilePath.length());

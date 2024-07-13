@@ -34,7 +34,8 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Comparator;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
@@ -91,9 +92,8 @@ public class RecommendationsState {
 
     private void setDataFromResponse(RecommenationResponse.SkinInfo[] recommendations) {
         recommendationsMap = Stream.of(recommendations).collect(Collectors.toMap(RecommenationResponse.SkinInfo::getSkinId, skinInfo -> skinInfo));
-        recommendationsList = Stream.of(recommendations)
-                .sorted(Comparator.comparingInt(skinInfo -> ThreadLocalRandom.current().nextInt()))
-                .collect(Collectors.toList());
+        recommendationsList = Arrays.asList(recommendations);
+        Collections.shuffle(recommendationsList);
     }
 
     public int getRecommendationsCount() {
