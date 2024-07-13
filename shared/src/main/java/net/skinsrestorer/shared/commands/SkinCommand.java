@@ -48,6 +48,7 @@ import net.skinsrestorer.shared.utils.SRConstants;
 import net.skinsrestorer.shared.utils.ValidationUtil;
 
 import javax.inject.Inject;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -221,15 +222,6 @@ public final class SkinCommand {
     @Description(Message.HELP_SKIN_SET_OTHER)
     @CommandConditions("cooldown")
     private void onSkinSetOther(SRCommandSender sender, String skinName, SRPlayer target, SkinVariant skinVariant) {
-        if (!canSetSkin(sender, skinName)) {
-            return;
-        }
-
-        if (isDisabledSkin(skinName) && !sender.hasPermission(PermissionRegistry.BYPASS_DISABLED)) {
-            sender.sendMessage(Message.ERROR_SKIN_DISABLED);
-            return;
-        }
-
         if (!setSkin(sender, target, skinName, skinVariant)) {
             setCoolDown(sender, CommandConfig.SKIN_ERROR_COOLDOWN);
             return;
@@ -276,14 +268,8 @@ public final class SkinCommand {
     }
 
     private boolean setSkin(SRCommandSender sender, SRPlayer target, String skinInput, SkinVariant skinVariant) {
-        Optional<SkinIdentifier> oldSkinId = playerStorage.getSkinIdOfPlayer(target.getUniqueId());
-        if (ValidationUtil.validSkinUrl(skinInput)) {
-            if (!allowedSkinUrl(skinInput)) {
-                sender.sendMessage(Message.ERROR_SKINURL_DISALLOWED);
-                return false;
-            }
-
-            sender.sendMessage(Message.MS_UPLOADING_SKIN);
+        if (!canSetSkin(sender, skinInput)) {
+            return false;
         }
 
         try {
@@ -308,9 +294,39 @@ public final class SkinCommand {
             sender.sendMessage(Message.ERROR_INVALID_URLSKIN);
         }
 
-        playerStorage.setSkinIdOfPlayer(target.getUniqueId(), oldSkinId.orElse(null)); // TODO: Rethink this logic
-
         return false;
+    }
+
+    private boolean canSetSkin(SRCommandSender sender, String skinInput) {
+        if (settings.getProperty(CommandConfig.PER_SKIN_PERMISSIONS)
+                && !sender.hasPermission(PermissionRegistry.forSkin(skinInput.toLowerCase(Locale.ROOT)))
+                && (!sender.hasPermission(PermissionRegistry.OWN_SKIN)
+                || !(sender instanceof SRPlayer player)
+                || !skinInput.equalsIgnoreCase(player.getName()))) {
+            sender.sendMessage(Message.PLAYER_HAS_NO_PERMISSION_SKIN);
+            return false;
+        }
+
+        if (isDisabledSkin(skinInput) && !sender.hasPermission(PermissionRegistry.BYPASS_DISABLED)) {
+            sender.sendMessage(Message.ERROR_SKIN_DISABLED);
+            return false;
+        }
+
+        if (ValidationUtil.validSkinUrl(skinInput)) {
+            if (!sender.hasPermission(PermissionRegistry.SKIN_SET_URL)) {
+                sender.sendMessage(Message.PLAYER_HAS_NO_PERMISSION_URL);
+                return false;
+            }
+
+            if (!allowedSkinUrl(skinInput)) {
+                sender.sendMessage(Message.ERROR_SKINURL_DISALLOWED);
+                return false;
+            }
+
+            sender.sendMessage(Message.MS_UPLOADING_SKIN);
+        }
+
+        return true;
     }
 
     private void setCoolDown(SRCommandSender sender, Property<Integer> time) {
@@ -326,37 +342,10 @@ public final class SkinCommand {
     }
 
     private boolean allowedSkinUrl(String url) {
-        if (!settings.getProperty(CommandConfig.RESTRICT_SKIN_URLS_ENABLED)) {
-            return true;
-        }
-
-        for (String possiblyAllowedUrl : settings.getProperty(CommandConfig.RESTRICT_SKIN_URLS_LIST)) {
-            if (url.startsWith(possiblyAllowedUrl)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private boolean canSetSkin(SRCommandSender sender, String skinName) {
-        if (settings.getProperty(CommandConfig.PER_SKIN_PERMISSIONS) && !sender.hasPermission(PermissionRegistry.forSkin(skinName))) {
-            if (sender.hasPermission(PermissionRegistry.OWN_SKIN) && sender instanceof SRPlayer player) {
-                if (skinName.equalsIgnoreCase(player.getName())) {
-                    return true;
-                }
-            }
-
-            sender.sendMessage(Message.PLAYER_HAS_NO_PERMISSION_SKIN);
-            return false;
-        }
-
-        if (ValidationUtil.validSkinUrl(skinName) && !sender.hasPermission(PermissionRegistry.SKIN_SET_URL)) {
-            sender.sendMessage(Message.PLAYER_HAS_NO_PERMISSION_URL);
-            return false;
-        }
-
-        return true;
+        return !settings.getProperty(CommandConfig.RESTRICT_SKIN_URLS_ENABLED)
+                || settings.getProperty(CommandConfig.RESTRICT_SKIN_URLS_LIST)
+                .stream()
+                .anyMatch(url::startsWith);
     }
 
     private boolean senderEqual(SRCommandSender sender, SRCommandSender other) {

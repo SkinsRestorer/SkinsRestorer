@@ -125,7 +125,7 @@ public class ConfigMigratorService implements MigrationService {
     }
 
     private boolean migrateNewGUILayout(PropertyReader reader,
-                                     ConfigurationData configData) {
+                                        ConfigurationData configData) {
         boolean migrated = false;
         migrated |= moveProperty(newProperty("customGUI.enabled", true), GUIConfig.CUSTOM_GUI_ENABLED, reader, configData);
         migrated |= moveProperty(newProperty("customGUI.showOnlyCustomGUI", false), GUIConfig.CUSTOM_GUI_ONLY_LIST, reader, configData);

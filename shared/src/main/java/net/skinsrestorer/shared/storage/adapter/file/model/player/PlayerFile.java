@@ -23,8 +23,11 @@ import lombok.NoArgsConstructor;
 import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.api.property.SkinType;
 import net.skinsrestorer.api.property.SkinVariant;
+import net.skinsrestorer.shared.storage.model.player.HistoryData;
 import net.skinsrestorer.shared.storage.model.player.PlayerData;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -33,6 +36,7 @@ public class PlayerFile {
     private static final int CURRENT_DATA_VERSION = 1;
     private UUID uniqueId;
     private IdentifierFile skinIdentifier;
+    private List<HistoryFile> history;
     private int dataVersion;
 
     public static PlayerFile fromPlayerData(PlayerData playerData) {
@@ -40,11 +44,16 @@ public class PlayerFile {
         playerFile.uniqueId = playerData.getUniqueId();
         playerFile.skinIdentifier = IdentifierFile.of(playerData.getSkinIdentifier());
         playerFile.dataVersion = CURRENT_DATA_VERSION;
+        playerFile.history = playerData.getHistory().stream().map(HistoryFile::of).toList();
         return playerFile;
     }
 
     public PlayerData toPlayerData() {
-        return PlayerData.of(uniqueId, skinIdentifier == null ? null : skinIdentifier.toIdentifier());
+        return PlayerData.of(
+                uniqueId,
+                skinIdentifier == null ? null : skinIdentifier.toIdentifier(),
+                history == null ? Collections.emptyList() : history.stream().map(HistoryFile::toHistoryData).toList()
+        );
     }
 
     @Getter
@@ -65,6 +74,26 @@ public class PlayerFile {
 
         public SkinIdentifier toIdentifier() {
             return SkinIdentifier.of(identifier, skinVariant, type);
+        }
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor(staticName = "of")
+    public static class HistoryFile {
+        private long timestamp;
+        private IdentifierFile skinIdentifier;
+
+        public static HistoryFile of(HistoryData historyData) {
+            if (historyData == null) {
+                return null;
+            }
+
+            return new HistoryFile(historyData.getTimestamp(), IdentifierFile.of(historyData.getSkinIdentifier()));
+        }
+
+        public HistoryData toHistoryData() {
+            return HistoryData.of(timestamp, skinIdentifier.toIdentifier());
         }
     }
 }
