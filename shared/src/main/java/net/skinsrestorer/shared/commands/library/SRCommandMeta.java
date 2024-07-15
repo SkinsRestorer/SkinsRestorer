@@ -18,9 +18,10 @@
 package net.skinsrestorer.shared.commands.library;
 
 import net.skinsrestorer.shared.subjects.SRCommandSender;
+import net.skinsrestorer.shared.subjects.messages.Message;
 
 import java.util.function.Predicate;
 
 public record SRCommandMeta(String rootName, String[] aliases, Predicate<SRCommandSender> permission,
-                            CommandHelpData rootHelp) {
+                            Message commandDescription) {
 }

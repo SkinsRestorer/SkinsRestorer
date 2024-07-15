@@ -31,6 +31,11 @@ public class WrapperCommandSender extends AbstractSRCommandSender {
     private final @NonNull CommandSource sender;
 
     @Override
+    public <S> S getAs(Class<S> senderClass) {
+        return senderClass.cast(sender);
+    }
+
+    @Override
     public void sendMessage(ComponentString messageJson) {
         sender.sendMessage(VelocityComponentHelper.deserialize(messageJson));
     }

@@ -17,5 +17,5 @@
  */
 package net.skinsrestorer.shared.commands.library;
 
-public record SRRegisterPayload<T>(SRCommandMeta meta, CommandExecutor<T> executor) {
+public record SRRegisterPayload<T>(SRCommandMeta meta, SRCommandManager manager) {
 }

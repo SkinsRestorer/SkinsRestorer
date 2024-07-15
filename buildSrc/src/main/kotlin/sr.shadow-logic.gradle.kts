@@ -113,8 +113,6 @@ tasks {
 }
 
 fun ShadowJar.configureRelocations() {
-    relocate("com.mojang.brigadier", "net.skinsrestorer.shadow.brigadier")
-
     // Google inject should NOT be relocated
     relocate("com.google.gson", "net.skinsrestorer.shadow.gson")
     relocate("com.google.errorprone", "net.skinsrestorer.shadow.errorprone")

@@ -15,26 +15,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package net.skinsrestorer.shared.commands.library;
+package net.skinsrestorer.shared.commands.library.annotations;
 
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import lombok.RequiredArgsConstructor;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import java.util.List;
-
-@RequiredArgsConstructor
-public class ConditionCommand implements CommandWrapper {
-    private final List<ConditionRegistration> conditions;
-    private final CommandWrapper delegate;
-
-    @Override
-    public int run(ContextWrapper context) throws CommandSyntaxException {
-        for (ConditionRegistration condition : conditions) {
-            if (!condition.condition().test(context.getSource())) {
-                return 0;
-            }
-        }
-
-        return delegate.run(context);
-    }
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface SRCooldownGroup {
+    String value();
 }

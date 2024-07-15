@@ -18,12 +18,10 @@
 package net.skinsrestorer.shared.listeners;
 
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.commands.library.CommandManager;
+import net.skinsrestorer.shared.commands.library.SRCommandManager;
 import net.skinsrestorer.shared.listeners.event.SRProxyMessageEvent;
 import net.skinsrestorer.shared.log.SRLogger;
-import net.skinsrestorer.shared.plugin.SRProxyAdapter;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
-import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.utils.SRConstants;
 
 import javax.inject.Inject;
@@ -34,8 +32,7 @@ import java.io.IOException;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class SRProxyMessageAdapter {
     private final SkinStorageImpl skinStorage;
-    private final SRProxyAdapter<?, ?> plugin;
-    private final CommandManager<SRCommandSender> commandManager;
+    private final SRCommandManager commandManager;
     private final SRLogger logger;
 
     public void handlePluginMessage(SRProxyMessageEvent event) {
@@ -57,10 +54,10 @@ public final class SRProxyMessageAdapter {
             String subChannel = in.readUTF();
             switch (subChannel) {
                 case "getSkinsV2" -> event.getPlayer().sendPage(skinStorage.getGUIPage(in.readInt()));
-                case "clearSkinV2" -> commandManager.executeCommand(event.getPlayer(), "skin clear");
+                case "clearSkinV2" -> commandManager.execute(event.getPlayer(), "skin clear");
                 case "setSkinV2" -> {
                     String skin = in.readUTF();
-                    commandManager.executeCommand(event.getPlayer(), String.format("skin set %s", skin));
+                    commandManager.execute(event.getPlayer(), String.format("skin set %s", skin));
                 }
             }
         } catch (IOException e) {

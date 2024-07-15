@@ -34,6 +34,11 @@ public class WrapperCommandSender extends AbstractSRCommandSender {
     private final @NonNull CommandSender sender;
 
     @Override
+    public <S> S getAs(Class<S> senderClass) {
+        return senderClass.cast(sender);
+    }
+
+    @Override
     public void sendMessage(ComponentString messageJson) {
         Component message = BukkitComponentHelper.deserialize(messageJson);
 

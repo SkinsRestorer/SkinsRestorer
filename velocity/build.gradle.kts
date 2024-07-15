@@ -16,6 +16,7 @@ dependencies {
     annotationProcessor("com.velocitypowered:velocity-api:3.1.1")
 
     implementation("org.bstats:bstats-velocity:3.0.2")
+    implementation("org.incendo:cloud-velocity:2.0.0-beta.9")
 }
 
 tasks {

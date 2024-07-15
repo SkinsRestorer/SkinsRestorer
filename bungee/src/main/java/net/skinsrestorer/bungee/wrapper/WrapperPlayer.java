@@ -43,11 +43,6 @@ public class WrapperPlayer extends WrapperCommandSender implements SRProxyPlayer
     }
 
     @Override
-    public <P> P getAs(Class<P> playerClass) {
-        return playerClass.cast(player);
-    }
-
-    @Override
     public Optional<String> getCurrentServer() {
         return Optional.ofNullable(player.getServer()).map(server -> server.getInfo().getName());
     }

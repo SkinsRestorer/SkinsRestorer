@@ -18,10 +18,9 @@
 package net.skinsrestorer.shared.gui;
 
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.commands.library.CommandManager;
+import net.skinsrestorer.shared.commands.library.SRCommandManager;
 import net.skinsrestorer.shared.listeners.event.ClickEventInfo;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
-import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRServerPlayer;
 
 import javax.inject.Inject;
@@ -35,18 +34,18 @@ public class SharedGUI {
     @RequiredArgsConstructor(onConstructor_ = @Inject)
     public static class ServerGUIActions implements Consumer<ClickEventInfo> {
         private final SRServerAdapter<?, ?> adapter;
-        private final CommandManager<SRCommandSender> commandManager;
+        private final SRCommandManager commandManager;
 
         @Override
         public void accept(ClickEventInfo event) {
             SRServerPlayer player = event.player();
             switch (event.material()) {
                 case HEAD -> {
-                    commandManager.executeCommand(player, "skin set " + event.skinName());
+                    commandManager.execute(player, "skin set " + event.skinName());
                     player.closeInventory();
                 }
                 case RED_PANE -> {
-                    commandManager.executeCommand(player, "skin clear");
+                    commandManager.execute(player, "skin clear");
                     player.closeInventory();
                 }
                 case GREEN_PANE -> adapter.runAsync(() -> adapter.openServerGUI(player, event.currentPage() + 1));

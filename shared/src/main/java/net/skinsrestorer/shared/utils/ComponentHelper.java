@@ -17,6 +17,7 @@
  */
 package net.skinsrestorer.shared.utils;
 
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -29,6 +30,7 @@ import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
@@ -57,6 +59,15 @@ public class ComponentHelper {
 
     public static String convertToPlain(Component component) {
         return PLAIN_COMPONENT_SERIALIZER.serialize(component);
+    }
+
+    public static Audience commandSenderToAudience(SRCommandSender sender) {
+        return new Audience() {
+            @Override
+            public void sendMessage(@NotNull Component message) {
+                sender.sendMessage(convertToJsonString(message));
+            }
+        };
     }
 
     public static void sendException(Throwable t, SRCommandSender sender, SkinsRestorerLocale locale, SRLogger logger) {

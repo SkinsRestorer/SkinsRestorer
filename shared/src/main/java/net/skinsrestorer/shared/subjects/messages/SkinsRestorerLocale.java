@@ -36,6 +36,8 @@ import java.util.Optional;
 
 public class SkinsRestorerLocale {
     private final MiniMessage miniMessage = MiniMessage.miniMessage();
+    @Getter
+    private final SRForeign englishForeign = () -> Locale.ENGLISH;
     @Inject
     private LocaleManager localeManager;
     @Inject

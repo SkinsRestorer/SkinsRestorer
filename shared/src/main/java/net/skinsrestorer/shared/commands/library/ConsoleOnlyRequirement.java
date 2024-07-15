@@ -17,16 +17,24 @@
  */
 package net.skinsrestorer.shared.commands.library;
 
+import io.leangen.geantyref.TypeToken;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
-import org.incendo.cloud.CommandManager;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.key.CloudKey;
+import org.incendo.cloud.processors.requirements.Requirement;
+import org.incendo.cloud.processors.requirements.Requirements;
 
-import java.util.Collection;
+public class ConsoleOnlyRequirement implements Requirement<SRCommandSender, ConsoleOnlyRequirement> {
+    public static final CloudKey<Requirements<SRCommandSender, ConsoleOnlyRequirement>> REQUIREMENT_KEY = CloudKey.of(
+            "requirements",
+            new TypeToken<>() {
+            }
+    );
 
-public interface CommandPlatform<T> {
-    CommandManager<SRCommandSender> createCommandManager();
-
-    void runAsync(Runnable runnable);
-
-    Collection<SRPlayer> getOnlinePlayers();
+    @Override
+    public boolean evaluateRequirement(@NonNull CommandContext<SRCommandSender> commandContext) {
+        return !(commandContext.sender() instanceof SRPlayer);
+    }
 }

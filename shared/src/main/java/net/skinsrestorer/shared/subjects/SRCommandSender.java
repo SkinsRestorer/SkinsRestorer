@@ -24,6 +24,8 @@ import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
 import net.skinsrestorer.shared.utils.ComponentString;
 
 public interface SRCommandSender extends SRForeign {
+    <S> S getAs(Class<S> senderClass);
+
     void sendMessage(ComponentString messageJson);
 
     void sendMessage(Message key, TagResolver... resolvers);

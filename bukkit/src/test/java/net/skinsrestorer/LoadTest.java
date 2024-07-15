@@ -32,7 +32,6 @@ import org.bukkit.Server;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.SimpleCommandMap;
-import org.bukkit.help.HelpMap;
 import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -88,14 +87,16 @@ public class LoadTest {
         when(server.getBukkitVersion()).thenReturn("1.19.2-R0.1-SNAPSHOT");
         when(server.getVersion()).thenReturn("1.19.2-R0.1-SNAPSHOT");
         when(server.getName()).thenReturn("TestServer");
-        when(server.getCommandMap()).thenReturn(mock(SimpleCommandMap.class));
-        when(server.getHelpMap()).thenReturn(mock(HelpMap.class));
+        when(server.getCommandMap()).thenReturn(new SimpleCommandMap(server));
         when(server.getPluginManager()).thenReturn(mock(SimplePluginManager.class));
         when(server.getUpdateFolderFile()).thenReturn(tempDir.toFile());
 
         Bukkit.setServer(server);
 
         JavaPluginMock plugin = mock(JavaPluginMock.class);
+        when(plugin.getServer()).thenReturn(server);
+        when(plugin.getName()).thenReturn("SkinsRestorer");
+
         try (BukkitAudiences adventure = mock(BukkitAudiences.class)) {
             SRBootstrapper.startPlugin(
                     runnable -> {

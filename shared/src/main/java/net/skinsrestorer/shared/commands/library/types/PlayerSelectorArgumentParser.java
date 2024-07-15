@@ -17,61 +17,32 @@
  */
 package net.skinsrestorer.shared.commands.library.types;
 
-import com.mojang.brigadier.LiteralMessage;
-import com.mojang.brigadier.StringReader;
-import com.mojang.brigadier.arguments.ArgumentType;
-import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
-import com.mojang.brigadier.suggestion.Suggestions;
-import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.commands.library.CommandPlatform;
 import net.skinsrestorer.shared.commands.library.PlayerSelector;
+import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.context.CommandInput;
+import org.incendo.cloud.parser.ArgumentParseResult;
+import org.incendo.cloud.parser.ArgumentParser;
+import org.incendo.cloud.suggestion.BlockingSuggestionProvider;
+import org.incendo.cloud.suggestion.Suggestion;
 
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 @RequiredArgsConstructor
-public class PlayerSelectorArgumentType implements ArgumentType<PlayerSelector> {
+public class PlayerSelectorArgumentParser implements ArgumentParser<SRCommandSender, PlayerSelector>, BlockingSuggestionProvider<SRCommandSender> {
     private final CommandPlatform<?> platform;
 
     @Override
-    public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-        final Collection<String> usableNames = Stream.concat(
-                Stream.of("@a", "@e", "@r", "@s", "@p"),
-                platform.getOnlinePlayers().stream()
-                        .filter(player -> !(context.getSource() instanceof SRPlayer sourcePlayer) || sourcePlayer.canSee(player))
-                        .map(SRPlayer::getName)
-        ).toList();
+    public @NonNull ArgumentParseResult<PlayerSelector> parse(@NonNull CommandContext<@NonNull SRCommandSender> commandContext, @NonNull CommandInput commandInput) {
+        final int start = commandInput.cursor();
+        final String string = commandInput.readString();
 
-        int lastComma = builder.getRemaining().lastIndexOf(',');
-        String lastInput = lastComma == -1 ? builder.getRemaining() : builder.getRemaining().substring(lastComma + 1);
-        String otherInput = lastComma == -1 ? "" : builder.getRemaining().substring(0, lastComma + 1);
-        for (String name : usableNames) {
-            if (!name.toLowerCase(Locale.ROOT).startsWith(lastInput.toLowerCase(Locale.ROOT))) {
-                continue;
-            }
-
-            builder.suggest(otherInput + name);
-        }
-
-        return builder.buildFuture();
-    }
-
-    @Override
-    public Collection<String> getExamples() {
-        return List.of("Pistonmaster", "Pistonmaster,xknat", "@a", "@e", "@r", "@s", "@p");
-    }
-
-    @Override
-    public PlayerSelector parse(StringReader reader) throws CommandSyntaxException {
-        final int start = reader.getCursor();
-        final String string = reader.readString();
-
-        int current = reader.getCursor();
+        int current = commandInput.cursor();
         final Collection<SRPlayer> players = platform.getOnlinePlayers();
         final List<PlayerSelector.Resolvable> toResolve = new ArrayList<>();
 
@@ -120,15 +91,39 @@ public class PlayerSelectorArgumentType implements ArgumentType<PlayerSelector> 
                 continue;
             }
 
-            reader.setCursor(current - requestedPlayer.length());
-            throw new SimpleCommandExceptionType(new LiteralMessage("Unknown target")).createWithContext(reader);
+            commandInput.cursor(current - requestedPlayer.length());
+            return ArgumentParseResult.failure(new Throwable("Unknown player: " + requestedPlayer));
         }
 
         if (!toResolve.isEmpty()) {
-            return new PlayerSelector(toResolve);
+            return ArgumentParseResult.success(new PlayerSelector(toResolve));
         }
 
-        reader.setCursor(start);
-        throw new SimpleCommandExceptionType(new LiteralMessage("No targets specified")).createWithContext(reader);
+        commandInput.cursor(start);
+        return ArgumentParseResult.failure(new Throwable("No targets supplied"));
+    }
+
+    @Override
+    public @NonNull Iterable<? extends @NonNull Suggestion> suggestions(@NonNull CommandContext<SRCommandSender> context, @NonNull CommandInput input) {
+        final Collection<String> usableNames = Stream.concat(
+                Stream.of("@a", "@e", "@r", "@s", "@p"),
+                platform.getOnlinePlayers().stream()
+                        .filter(player -> !(context.sender() instanceof SRPlayer sourcePlayer) || sourcePlayer.canSee(player))
+                        .map(SRPlayer::getName)
+        ).toList();
+
+        List<Suggestion> suggestions = new ArrayList<>();
+        int lastComma = input.remainingInput().lastIndexOf(',');
+        String lastInput = lastComma == -1 ? input.remainingInput() : input.remainingInput().substring(lastComma + 1);
+        String otherInput = lastComma == -1 ? "" : input.remainingInput().substring(0, lastComma + 1);
+        for (String name : usableNames) {
+            if (!name.toLowerCase(Locale.ROOT).startsWith(lastInput.toLowerCase(Locale.ROOT))) {
+                continue;
+            }
+
+            suggestions.add(Suggestion.suggestion(otherInput + name));
+        }
+
+        return suggestions;
     }
 }

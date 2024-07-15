@@ -18,24 +18,26 @@
 package net.skinsrestorer.shared.commands;
 
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.commands.library.annotations.*;
+import net.skinsrestorer.shared.commands.library.annotations.CommandDescription;
+import net.skinsrestorer.shared.commands.library.annotations.CommandPermission;
+import net.skinsrestorer.shared.commands.library.annotations.RootDescription;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
+import org.incendo.cloud.annotations.Command;
 
 import javax.inject.Inject;
 
 @SuppressWarnings({"unused"})
-@CommandNames("skins")
-@Description(Message.HELP_SKINS)
-@CommandPermission(value = PermissionRegistry.SKINS)
-@CommandConditions("cooldown")
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class ServerGUICommand {
     private final SRServerAdapter<?, ?> plugin;
 
-    @RootCommand
+    @Command("skins")
+    @RootDescription(Message.HELP_SKINS)
+    @CommandDescription(Message.HELP_SKINS)
+    @CommandPermission(value = PermissionRegistry.SKINS)
     private void onDefault(SRPlayer srPlayer) {
         srPlayer.sendMessage(Message.SKINSMENU_OPEN);
 
