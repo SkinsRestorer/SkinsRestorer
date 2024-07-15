@@ -8,7 +8,6 @@ runwaterfallversion = "1.19"
 runvelocityversion = "3.2.0-SNAPSHOT"
 
 [libraries]
-brigadier = "com.mojang:brigadier:1.1.8"
 
 [plugins]
 

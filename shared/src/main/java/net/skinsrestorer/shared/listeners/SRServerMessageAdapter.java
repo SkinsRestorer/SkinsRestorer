@@ -34,7 +34,7 @@ import java.io.IOException;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class SRServerMessageAdapter {
-    private final SRServerAdapter<?, ?> plugin;
+    private final SRServerAdapter plugin;
     private final SharedSkinApplier<Object> skinApplier;
     private final SRLogger logger;
 

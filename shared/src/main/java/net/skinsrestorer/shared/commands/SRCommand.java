@@ -88,7 +88,7 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class SRCommand {
     private final SRPlugin plugin;
-    private final SRPlatformAdapter<?, ?> adapter;
+    private final SRPlatformAdapter adapter;
     private final ServiceCheckerService serviceCheckerService;
     private final PlayerStorage playerStorage;
     private final CacheStorage cacheStorage;

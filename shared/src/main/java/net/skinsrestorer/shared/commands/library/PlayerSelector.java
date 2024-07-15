@@ -17,6 +17,7 @@
  */
 package net.skinsrestorer.shared.commands.library;
 
+import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.utils.SRHelpers;
@@ -59,7 +60,7 @@ public record PlayerSelector(Collection<Resolvable> toResolve) {
         }
     }
 
-    public record Selector(CommandPlatform<?> platform, SelectorType type) implements Resolvable {
+    public record Selector(SRPlatformAdapter platform, SelectorType type) implements Resolvable {
         @Override
         public Collection<SRPlayer> resolve(SRCommandSender commandSender) {
             return switch (type) {

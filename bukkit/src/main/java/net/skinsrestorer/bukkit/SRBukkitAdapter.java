@@ -67,7 +67,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin, CommandSender> {
+public class SRBukkitAdapter implements SRServerAdapter {
     private final Injector injector;
     private final Server server;
     @Getter
@@ -200,8 +200,8 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin, CommandSende
     }
 
     @Override
-    public void extendLifeTime(JavaPlugin plugin, Object object) {
-        server.getPluginManager().registerEvents(new ForceAliveListener(object), plugin);
+    public void extendLifeTime(Object plugin, Object object) {
+        server.getPluginManager().registerEvents(new ForceAliveListener(object), (JavaPlugin) plugin);
     }
 
     @Override

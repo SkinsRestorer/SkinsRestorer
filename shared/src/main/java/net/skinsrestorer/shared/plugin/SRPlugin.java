@@ -79,7 +79,7 @@ public class SRPlugin {
     private static final String USER_AGENT = "SkinsRestorer/%s (%s)";
     @Getter
     private static final boolean unitTest = System.getProperty("sr.unit.test") != null;
-    private final SRPlatformAdapter<?, ?> adapter;
+    private final SRPlatformAdapter adapter;
     private final SRLogger logger;
     @Getter
     private final Path dataFolder;

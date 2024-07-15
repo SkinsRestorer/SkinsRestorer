@@ -40,7 +40,7 @@ import java.util.Optional;
 public class MessageLoader {
     private final SRPlugin plugin;
     private final LocaleManager manager;
-    private final SRPlatformAdapter<?, ?> adapter;
+    private final SRPlatformAdapter adapter;
     private final SRLogger logger;
 
     public void loadMessages() throws IOException {

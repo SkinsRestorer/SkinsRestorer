@@ -77,7 +77,7 @@ public final class SkinCommand {
     public static final String COOLDOWN_GROUP_ID = "skin";
     public static final CooldownGroup COOLDOWN_GROUP = CooldownGroup.named(COOLDOWN_GROUP_ID);
 
-    private final SRPlatformAdapter<?, ?> adapter;
+    private final SRPlatformAdapter adapter;
     private final SRPlugin plugin;
     private final SettingsManager settings;
     private final SkinStorage skinStorage;

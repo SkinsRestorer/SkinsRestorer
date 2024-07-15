@@ -49,7 +49,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class SRBungeeAdapter implements SRProxyAdapter<Plugin, CommandSender> {
+public class SRBungeeAdapter implements SRProxyAdapter {
     private final Injector injector;
     private final ProxyServer proxy;
     @Getter
@@ -96,8 +96,8 @@ public class SRBungeeAdapter implements SRProxyAdapter<Plugin, CommandSender> {
     }
 
     @Override
-    public void extendLifeTime(Plugin plugin, Object object) {
-        proxy.getPluginManager().registerListener(plugin, new ForceAliveListener(object));
+    public void extendLifeTime(Object plugin, Object object) {
+        proxy.getPluginManager().registerListener((Plugin) plugin, new ForceAliveListener(object));
     }
 
     @Override

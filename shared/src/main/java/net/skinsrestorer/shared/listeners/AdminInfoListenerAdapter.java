@@ -33,7 +33,7 @@ import javax.inject.Inject;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class AdminInfoListenerAdapter {
     private final SRPlugin plugin;
-    private final SRPlatformAdapter<?, ?> adapter;
+    private final SRPlatformAdapter adapter;
     private final UpdateCheckInit updateCheckInit;
 
     public void handleConnect(SRServerConnectedEvent event) {

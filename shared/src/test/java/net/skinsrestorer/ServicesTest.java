@@ -36,7 +36,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith({MockitoExtension.class, SRExtension.class})
 public class ServicesTest {
     @Mock
-    private SRPlatformAdapter<?, ?> srPlatformAdapter;
+    private SRPlatformAdapter srPlatformAdapter;
     @Mock
     private SettingsManager settings;
     @Mock

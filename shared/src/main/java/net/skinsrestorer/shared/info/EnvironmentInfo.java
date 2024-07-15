@@ -20,7 +20,7 @@ package net.skinsrestorer.shared.info;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 
 public record EnvironmentInfo(boolean hybrid, Platform platform, PlatformType platformType, ClassInfo classInfo) {
-    public static EnvironmentInfo determineEnvironment(SRPlatformAdapter<?, ?> adapter) {
+    public static EnvironmentInfo determineEnvironment(SRPlatformAdapter adapter) {
         ClassInfo info = ClassInfo.get();
 
         Platform platform = adapter.getPlatform();

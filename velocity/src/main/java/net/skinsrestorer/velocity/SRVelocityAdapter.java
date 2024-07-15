@@ -21,7 +21,6 @@ import ch.jalu.injector.Injector;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
-import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.util.GameProfile;
@@ -49,7 +48,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public record SRVelocityAdapter(Injector injector, SRVelocityBootstrap pluginInstance,
-                                ProxyServer proxy) implements SRProxyAdapter<PluginContainer, CommandSource> {
+                                ProxyServer proxy) implements SRProxyAdapter {
     @Inject
     public SRVelocityAdapter {
     }
@@ -96,7 +95,7 @@ public record SRVelocityAdapter(Injector injector, SRVelocityBootstrap pluginIns
     }
 
     @Override
-    public void extendLifeTime(PluginContainer plugin, Object object) {
+    public void extendLifeTime(Object plugin, Object object) {
         proxy.getEventManager().register(plugin, ProxyShutdownEvent.class, PostOrder.LAST, new ForceAliveListener(object));
     }
 

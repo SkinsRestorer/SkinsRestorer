@@ -46,7 +46,7 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class RecommendationsState {
     private final SRPlugin plugin;
-    private final SRPlatformAdapter<?, ?> adapter;
+    private final SRPlatformAdapter adapter;
     private final SRLogger logger;
     private final RecommendationsService recommendationsService;
     private final SettingsManager settingsManager;

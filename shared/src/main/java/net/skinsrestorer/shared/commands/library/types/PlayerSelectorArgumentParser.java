@@ -18,8 +18,8 @@
 package net.skinsrestorer.shared.commands.library.types;
 
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.commands.library.CommandPlatform;
 import net.skinsrestorer.shared.commands.library.PlayerSelector;
+import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -35,7 +35,7 @@ import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 public class PlayerSelectorArgumentParser implements ArgumentParser<SRCommandSender, PlayerSelector>, BlockingSuggestionProvider<SRCommandSender> {
-    private final CommandPlatform<?> platform;
+    private final SRPlatformAdapter platform;
 
     @Override
     public @NonNull ArgumentParseResult<PlayerSelector> parse(@NonNull CommandContext<@NonNull SRCommandSender> commandContext, @NonNull CommandInput commandInput) {

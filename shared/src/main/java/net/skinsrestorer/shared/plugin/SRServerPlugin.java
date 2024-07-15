@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SRServerPlugin {
     private final SRPlugin plugin;
-    private final SRServerAdapter<?, ?> serverAdapter;
+    private final SRServerAdapter serverAdapter;
     private final SRLogger logger;
     @Getter
     @Setter

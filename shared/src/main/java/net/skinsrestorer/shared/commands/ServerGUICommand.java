@@ -32,7 +32,7 @@ import javax.inject.Inject;
 @SuppressWarnings({"unused"})
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class ServerGUICommand {
-    private final SRServerAdapter<?, ?> plugin;
+    private final SRServerAdapter plugin;
 
     @Command("skins")
     @RootDescription(Message.HELP_SKINS)

@@ -41,13 +41,6 @@ public class AdvancedConfig implements SettingsHolder {
     public static final Property<Boolean> ENABLE_PAPER_JOIN_LISTENER = newProperty("advanced.enablePaperJoinListener", true);
     @Comment({
             "<!! Warning !!>",
-            "This enables the PaperMC async tab event integration that allows async command tab completions.",
-            "It is recommended over the bukkit command system as tab completions will not lag the server using it.",
-            "Only disable this if you're overriding a SkinsRestorer command like /skin with a different plugin."
-    })
-    public static final Property<Boolean> ENABLE_PAPER_ASYNC_TAB_LISTENER = newProperty("advanced.enablePaperAsyncTabListener", true);
-    @Comment({
-            "<!! Warning !!>",
             "When enabled if a skin gets applied on the proxy, the new texture will be forwarded to the backend as well.",
             "This is optional sometimes as the backend may pick up the new one of the proxy.",
             "It is recommended though to **KEEP THIS ON** because it keeps the backend data in sync.",
