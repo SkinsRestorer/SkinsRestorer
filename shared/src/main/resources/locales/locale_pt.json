@@ -15,8 +15,6 @@
   "skinsrestorer.help_sr_drop": "Remova os dados do jogador ou da skin do banco de dados.",
   "skinsrestorer.help_sr_apply_skin": "Aplica novamente a skin ao jogador selecionado.",
   "skinsrestorer.help_sr_create_custom": "Crie uma skin personalizada para o servidor.",
-  "skinsrestorer.help_sr_set_skin_all": "Define a skin de cada jogador como uma única skin.",
-  "skinsrestorer.help_sr_apply_skin_all": "Aplica novamente a skin a todos os jogadores.",
   "skinsrestorer.help_sr_purge_old_data": "Limpe dados da skin com mais de x dias atrás.",
   "skinsrestorer.help_sr_dump": "Enviar dados de suporte para bytebin.lucko.me.",
   "skinsrestorer.success_generic": "<dark_green><message>",

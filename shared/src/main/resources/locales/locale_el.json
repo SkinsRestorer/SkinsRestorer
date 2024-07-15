@@ -19,8 +19,6 @@
   "skinsrestorer.help_sr_info": "Εμφανίζει πληροφορίες σχετικά με έναν παίκτη ή μια εμφάνιση.",
   "skinsrestorer.help_sr_apply_skin": "Επαναεφαρμόζει την εμφάνιση κάποιου άλλου παίκτη.",
   "skinsrestorer.help_sr_create_custom": "Δημιούργησε μια προσαρμοσμένη εμφάνιση για όλους τους παιξτεσ του διακομιστή.",
-  "skinsrestorer.help_sr_set_skin_all": "Άλλαξε την εμφάνιση όλων τον παικτών σε μια συγκεκριμένη εμφάνιση.",
-  "skinsrestorer.help_sr_apply_skin_all": "Επαναεφαρμόζει την εμφάνιση όλων των παικτών.",
   "skinsrestorer.help_sr_purge_old_data": "Καθαρίστε παλιά στοιχεία του δέρματος παλαιότερα από x μέρες.",
   "skinsrestorer.help_sr_dump": "Ανεβάστε δεδομένα υποστήριξης στο bytebin.lucko.me.",
   "skinsrestorer.success_generic": "<dark_green><message>",
