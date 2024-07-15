@@ -44,10 +44,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import javax.inject.Inject;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
-
-import static net.skinsrestorer.shared.utils.FluentList.of;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SkinsGUI implements GUIManager<Inventory> {
@@ -78,7 +77,7 @@ public class SkinsGUI implements GUIManager<Inventory> {
         }
 
         skullMeta.setDisplayName(entry.skinName());
-        skullMeta.setLore(of(ComponentHelper.convertJsonToLegacy(locale.getMessageRequired(player, Message.SKINSMENU_SELECT_SKIN))));
+        skullMeta.setLore(List.of(ComponentHelper.convertJsonToLegacy(locale.getMessageRequired(player, Message.SKINSMENU_SELECT_SKIN))));
 
         injectCustomInfo(XSkull.of(itemStack).getProfile(), entry.skinId());
 

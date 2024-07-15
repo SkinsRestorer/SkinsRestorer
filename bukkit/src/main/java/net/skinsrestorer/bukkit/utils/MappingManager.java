@@ -18,7 +18,6 @@
 package net.skinsrestorer.bukkit.utils;
 
 import net.skinsrestorer.bukkit.mappings.*;
-import net.skinsrestorer.shared.utils.FluentList;
 import org.bukkit.Server;
 
 import java.lang.reflect.Method;
@@ -26,7 +25,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class MappingManager {
-    private static final List<IMapping> MAPPINGS = FluentList.of(
+    private static final List<IMapping> MAPPINGS = List.of(
             new Mapping1_18(),
             new Mapping1_18_2(),
             new Mapping1_19(),

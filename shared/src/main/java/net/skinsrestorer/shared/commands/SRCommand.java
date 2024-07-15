@@ -34,6 +34,7 @@ import net.skinsrestorer.api.storage.CacheStorage;
 import net.skinsrestorer.api.storage.PlayerStorage;
 import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.shared.commands.library.CommandManager;
+import net.skinsrestorer.shared.commands.library.PlayerSelector;
 import net.skinsrestorer.shared.commands.library.annotations.*;
 import net.skinsrestorer.shared.config.DevConfig;
 import net.skinsrestorer.shared.config.StorageConfig;
@@ -349,12 +350,14 @@ public final class SRCommand {
     @Subcommand("applyskin")
     @CommandPermission(PermissionRegistry.SR_APPLY_SKIN)
     @Description(Message.HELP_SR_APPLY_SKIN)
-    private void onApplySkin(SRCommandSender sender, SRPlayer target) {
-        try {
-            skinApplier.applySkin(target.getAs(Object.class));
-            sender.sendMessage(Message.SUCCESS_ADMIN_APPLYSKIN);
-        } catch (DataRequestException e) {
-            ComponentHelper.sendException(e, sender, locale, logger);
+    private void onApplySkin(SRCommandSender sender, PlayerSelector selector) {
+        for (SRPlayer target : selector.resolve(sender)) {
+            try {
+                skinApplier.applySkin(target.getAs(Object.class));
+                sender.sendMessage(Message.SUCCESS_ADMIN_APPLYSKIN, Placeholder.unparsed("player", target.getName()));
+            } catch (DataRequestException e) {
+                ComponentHelper.sendException(e, sender, locale, logger);
+            }
         }
     }
 
@@ -385,42 +388,6 @@ public final class SRCommand {
         } catch (DataRequestException | MineSkinException e) {
             ComponentHelper.sendException(e, sender, locale, logger);
         }
-    }
-
-    @Subcommand("setskinall")
-    @CommandPermission(PermissionRegistry.SR_CREATE_CUSTOM)
-    @Description(Message.HELP_SR_SET_SKIN_ALL)
-    @CommandConditions("console-only")
-    private void onSetSkinAll(SRCommandSender sender, String skinName, SkinVariant skinVariant) {
-        Optional<InputDataResult> optional = skinStorage.findSkinData(skinName);
-
-        if (optional.isEmpty()) {
-            sender.sendMessage(Message.ADMINCOMMAND_SETSKINALL_NOT_FOUND);
-            return;
-        }
-
-        for (SRPlayer player : adapter.getOnlinePlayers()) {
-            playerStorage.setSkinIdOfPlayer(player.getUniqueId(), optional.get().getIdentifier());
-            skinApplier.applySkin(player.getAs(Object.class), optional.get().getProperty());
-        }
-
-        sender.sendMessage(Message.ADMINCOMMAND_SETSKINALL_SUCCESS, Placeholder.unparsed("skin", skinName));
-    }
-
-    @Subcommand("applyskinall")
-    @CommandPermission(PermissionRegistry.SR_APPLY_SKIN_ALL)
-    @Description(Message.HELP_SR_APPLY_SKIN_ALL)
-    @CommandConditions("console-only")
-    private void onApplySkinAll(SRCommandSender sender) {
-        for (SRPlayer player : adapter.getOnlinePlayers()) {
-            try {
-                skinApplier.applySkin(player.getAs(Object.class));
-            } catch (DataRequestException ignored) {
-                sender.sendMessage(Message.ADMINCOMMAND_APPLYSKINALL_PLAYER_ERROR, Placeholder.unparsed("player", player.getName()));
-            }
-        }
-
-        sender.sendMessage(Message.ADMINCOMMAND_APPLYSKINALL_SUCCESS);
     }
 
     @Subcommand("purgeolddata")

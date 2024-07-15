@@ -36,6 +36,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.skinsrestorer.shared.commands.library.annotations.*;
 import net.skinsrestorer.shared.commands.library.types.EnumArgumentType;
+import net.skinsrestorer.shared.commands.library.types.PlayerSelectorArgumentType;
 import net.skinsrestorer.shared.commands.library.types.SRPlayerArgumentType;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
@@ -45,7 +46,6 @@ import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
 import net.skinsrestorer.shared.utils.ComponentHelper;
 import net.skinsrestorer.shared.utils.ComponentString;
-import net.skinsrestorer.shared.utils.FluentList;
 
 import java.lang.annotation.Annotation;
 import java.lang.invoke.MethodHandle;
@@ -288,7 +288,7 @@ public class CommandManager<T> {
 
                     @Override
                     public Collection<String> getExamples() {
-                        return FluentList.of("example", "example2");
+                        return List.of("example", "example2");
                     }
                 };
             } else if (parameter.getType() == int.class) {
@@ -297,6 +297,8 @@ public class CommandManager<T> {
                 argumentType = new EnumArgumentType(parameter.getType());
             } else if (parameter.getType().isAssignableFrom(SRPlayer.class)) {
                 argumentType = new SRPlayerArgumentType(platform);
+            } else if (parameter.getType().isAssignableFrom(PlayerSelector.class)) {
+                argumentType = new PlayerSelectorArgumentType(platform);
             } else {
                 throw new IllegalStateException("Unsupported parameter type: " + parameter.getType().getName());
             }

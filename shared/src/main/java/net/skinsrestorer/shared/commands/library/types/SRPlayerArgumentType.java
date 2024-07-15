@@ -28,9 +28,9 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.commands.library.CommandPlatform;
 import net.skinsrestorer.shared.subjects.SRPlayer;
-import net.skinsrestorer.shared.utils.FluentList;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -55,7 +55,7 @@ public class SRPlayerArgumentType implements ArgumentType<SRPlayer> {
 
     @Override
     public Collection<String> getExamples() {
-        return FluentList.of("Pistonmaster", "xknat");
+        return List.of("Pistonmaster", "xknat");
     }
 
     @Override

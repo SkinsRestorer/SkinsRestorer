@@ -28,6 +28,7 @@ import net.skinsrestorer.api.property.*;
 import net.skinsrestorer.api.storage.SkinStorage;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
 import net.skinsrestorer.shared.commands.library.CommandManager;
+import net.skinsrestorer.shared.commands.library.PlayerSelector;
 import net.skinsrestorer.shared.commands.library.annotations.*;
 import net.skinsrestorer.shared.config.CommandConfig;
 import net.skinsrestorer.shared.connections.RecommendationsState;
@@ -99,7 +100,15 @@ public final class SkinCommand {
     @Description(Message.HELP_SKIN_SET)
     @CommandConditions("cooldown")
     private void onSkinSetShort(SRPlayer player, String skinName) {
-        onSkinSetOther(player, skinName, player, null);
+        onSkinSetOther(player, skinName, PlayerSelector.singleton(player), null);
+    }
+
+    @RootCommand
+    @CommandPermission(PermissionRegistry.SKIN_SET_OTHER)
+    @Description(Message.HELP_SKIN_SET_OTHER)
+    @CommandConditions("cooldown")
+    private void onSkinSetShortOther(SRPlayer player, String skinName, PlayerSelector selector) {
+        onSkinSetOther(player, skinName, selector, null);
     }
 
     @Subcommand({"clear", "reset"})
@@ -107,29 +116,31 @@ public final class SkinCommand {
     @Description(Message.HELP_SKIN_CLEAR)
     @CommandConditions("cooldown")
     private void onSkinClear(SRPlayer player) {
-        onSkinClearOther(player, player);
+        onSkinClearOther(player, PlayerSelector.singleton(player));
     }
 
     @Subcommand({"clear", "reset"})
     @CommandPermission(PermissionRegistry.SKIN_CLEAR_OTHER)
     @Description(Message.HELP_SKIN_CLEAR_OTHER)
     @CommandConditions("cooldown")
-    private void onSkinClearOther(SRCommandSender sender, SRPlayer target) {
-        // Remove the targets defined skin from database
-        playerStorage.removeSkinIdOfPlayer(target.getUniqueId());
+    private void onSkinClearOther(SRCommandSender sender, PlayerSelector selector) {
+        for (SRPlayer target : selector.resolve(sender)) {
+            // Remove the targets defined skin from database
+            playerStorage.removeSkinIdOfPlayer(target.getUniqueId());
 
-        try {
-            Optional<SkinProperty> property = playerStorage.getSkinForPlayer(target.getUniqueId(), target.getName());
-            skinApplier.applySkin(target.getAs(Object.class), property.orElse(SRConstants.EMPTY_SKIN));
+            try {
+                Optional<SkinProperty> property = playerStorage.getSkinForPlayer(target.getUniqueId(), target.getName());
+                skinApplier.applySkin(target.getAs(Object.class), property.orElse(SRConstants.EMPTY_SKIN));
 
-            if (senderEqual(sender, target)) {
-                sender.sendMessage(Message.SUCCESS_SKIN_CLEAR);
-            } else {
-                sender.sendMessage(Message.SUCCESS_SKIN_CLEAR_OTHER, Placeholder.unparsed("name", target.getName()));
+                if (senderEqual(sender, target)) {
+                    sender.sendMessage(Message.SUCCESS_SKIN_CLEAR);
+                } else {
+                    sender.sendMessage(Message.SUCCESS_SKIN_CLEAR_OTHER, Placeholder.unparsed("name", target.getName()));
+                }
+            } catch (DataRequestException e) {
+                logger.severe("Error while clearing skin", e);
+                sender.sendMessage(Message.ERROR_UPDATING_SKIN); // TODO: Better error message
             }
-        } catch (DataRequestException e) {
-            logger.severe("Error while clearing skin", e);
-            sender.sendMessage(Message.ERROR_UPDATING_SKIN); // TODO: Better error message
         }
     }
 
@@ -138,15 +149,15 @@ public final class SkinCommand {
     @Description(Message.HELP_SKIN_RANDOM)
     @CommandConditions("cooldown")
     private void onSkinRandom(SRPlayer player) {
-        onSkinRandomOther(player, player);
+        onSkinRandomOther(player, PlayerSelector.singleton(player));
     }
 
     @Subcommand("random")
     @CommandPermission(PermissionRegistry.SKIN_RANDOM_OTHER)
     @Description(Message.HELP_SKIN_RANDOM_OTHER)
     @CommandConditions("cooldown")
-    private void onSkinRandomOther(SRCommandSender sender, SRPlayer target) {
-        onSkinSetOther(sender, SkinStorageImpl.RECOMMENDATION_PREFIX + recommendationsState.getRandomRecommendation().getSkinId(), target);
+    private void onSkinRandomOther(SRCommandSender sender, PlayerSelector selector) {
+        onSkinSetOther(sender, SkinStorageImpl.RECOMMENDATION_PREFIX + recommendationsState.getRandomRecommendation().getSkinId(), selector);
     }
 
     @Subcommand("search")
@@ -162,38 +173,40 @@ public final class SkinCommand {
     @Description(Message.HELP_SKIN_UPDATE)
     @CommandConditions("cooldown")
     private void onSkinUpdate(SRPlayer player) {
-        onSkinUpdateOther(player, player);
+        onSkinUpdateOther(player, PlayerSelector.singleton(player));
     }
 
     @Subcommand({"update", "refresh"})
     @CommandPermission(PermissionRegistry.SKIN_UPDATE_OTHER)
     @Description(Message.HELP_SKIN_UPDATE_OTHER)
     @CommandConditions("cooldown")
-    private void onSkinUpdateOther(SRCommandSender sender, SRPlayer target) {
-        try {
-            Optional<SkinIdentifier> currentSkin = playerStorage.getSkinIdForPlayer(target.getUniqueId(), target.getName());
-            if (currentSkin.isPresent() && currentSkin.get().getSkinType() == SkinType.PLAYER) {
-                if (skinStorage.updatePlayerSkinData(UUID.fromString(currentSkin.get().getIdentifier())).isEmpty()) {
-                    sender.sendMessage(Message.ERROR_UPDATING_SKIN);
-                    return;
+    private void onSkinUpdateOther(SRCommandSender sender, PlayerSelector selector) {
+        for (SRPlayer target : selector.resolve(sender)) {
+            try {
+                Optional<SkinIdentifier> currentSkin = playerStorage.getSkinIdForPlayer(target.getUniqueId(), target.getName());
+                if (currentSkin.isPresent() && currentSkin.get().getSkinType() == SkinType.PLAYER) {
+                    if (skinStorage.updatePlayerSkinData(UUID.fromString(currentSkin.get().getIdentifier())).isEmpty()) {
+                        sender.sendMessage(Message.ERROR_UPDATING_SKIN);
+                        return;
+                    }
                 }
+
+                Optional<SkinProperty> newSkin = currentSkin.isEmpty() ?
+                        Optional.empty() : playerStorage.getSkinForPlayer(target.getUniqueId(), target.getName());
+
+                skinApplier.applySkin(target.getAs(Object.class), newSkin.orElse(SRConstants.EMPTY_SKIN));
+
+                if (senderEqual(sender, target)) {
+                    sender.sendMessage(Message.SUCCESS_UPDATING_SKIN);
+                } else {
+                    sender.sendMessage(Message.SUCCESS_UPDATING_SKIN_OTHER, Placeholder.unparsed("name", target.getName()));
+                }
+
+                setCoolDown(sender, CommandConfig.SKIN_CHANGE_COOLDOWN);
+            } catch (DataRequestException e) {
+                ComponentHelper.sendException(e, sender, locale, logger);
+                setCoolDown(sender, CommandConfig.SKIN_ERROR_COOLDOWN);
             }
-
-            Optional<SkinProperty> newSkin = currentSkin.isEmpty() ?
-                    Optional.empty() : playerStorage.getSkinForPlayer(target.getUniqueId(), target.getName());
-
-            skinApplier.applySkin(target.getAs(Object.class), newSkin.orElse(SRConstants.EMPTY_SKIN));
-
-            if (senderEqual(sender, target)) {
-                sender.sendMessage(Message.SUCCESS_UPDATING_SKIN);
-            } else {
-                sender.sendMessage(Message.SUCCESS_UPDATING_SKIN_OTHER, Placeholder.unparsed("name", target.getName()));
-            }
-
-            setCoolDown(sender, CommandConfig.SKIN_CHANGE_COOLDOWN);
-        } catch (DataRequestException e) {
-            ComponentHelper.sendException(e, sender, locale, logger);
-            setCoolDown(sender, CommandConfig.SKIN_ERROR_COOLDOWN);
         }
     }
 
@@ -202,33 +215,35 @@ public final class SkinCommand {
     @Description(Message.HELP_SKIN_SET)
     @CommandConditions("cooldown")
     private void onSkinSet(SRPlayer player, String skinName) {
-        onSkinSetOther(player, skinName, player);
+        onSkinSetOther(player, skinName, PlayerSelector.singleton(player));
     }
 
     @Subcommand({"set", "select"})
     @CommandPermission(PermissionRegistry.SKIN_SET_OTHER)
     @Description(Message.HELP_SKIN_SET_OTHER)
     @CommandConditions("cooldown")
-    private void onSkinSetOther(SRCommandSender sender, String skinName, SRPlayer target) {
-        onSkinSetOther(sender, skinName, target, null);
+    private void onSkinSetOther(SRCommandSender sender, String skinName, PlayerSelector selector) {
+        onSkinSetOther(sender, skinName, selector, null);
     }
 
     @Subcommand({"set", "select"})
     @CommandPermission(PermissionRegistry.SKIN_SET_OTHER)
     @Description(Message.HELP_SKIN_SET_OTHER)
     @CommandConditions("cooldown")
-    private void onSkinSetOther(SRCommandSender sender, String skinName, SRPlayer target, SkinVariant skinVariant) {
-        if (!setSkin(sender, target, skinName, skinVariant, true)) {
-            return;
-        }
+    private void onSkinSetOther(SRCommandSender sender, String skinName, PlayerSelector selector, SkinVariant skinVariant) {
+        for (SRPlayer target : selector.resolve(sender)) {
+            if (!setSkin(sender, target, skinName, skinVariant, true)) {
+                return;
+            }
 
-        if (senderEqual(sender, target)) {
-            sender.sendMessage(Message.SUCCESS_SKIN_CHANGE,
-                    Placeholder.unparsed("skin", skinName));
-        } else {
-            sender.sendMessage(Message.SUCCESS_SKIN_CHANGE_OTHER,
-                    Placeholder.unparsed("name", target.getName()),
-                    Placeholder.unparsed("skin", skinName));
+            if (senderEqual(sender, target)) {
+                sender.sendMessage(Message.SUCCESS_SKIN_CHANGE,
+                        Placeholder.unparsed("skin", skinName));
+            } else {
+                sender.sendMessage(Message.SUCCESS_SKIN_CHANGE_OTHER,
+                        Placeholder.unparsed("name", target.getName()),
+                        Placeholder.unparsed("skin", skinName));
+            }
         }
     }
 
@@ -242,7 +257,7 @@ public final class SkinCommand {
             return;
         }
 
-        onSkinSetOther(player, url, player, null);
+        onSkinSetOther(player, url, PlayerSelector.singleton(player), null);
     }
 
     @Subcommand("url")
@@ -255,7 +270,7 @@ public final class SkinCommand {
             return;
         }
 
-        onSkinSetOther(player, url, player, skinVariant);
+        onSkinSetOther(player, url, PlayerSelector.singleton(player), skinVariant);
     }
 
     @Subcommand({"undo", "revert"})
@@ -263,48 +278,50 @@ public final class SkinCommand {
     @Description(Message.HELP_SKIN_UNDO)
     @CommandConditions("cooldown")
     private void onSkinUndo(SRPlayer player) {
-        onSkinUndoOther(player, player);
+        onSkinUndoOther(player, PlayerSelector.singleton(player));
     }
 
     @Subcommand({"undo", "revert"})
     @CommandPermission(PermissionRegistry.SKIN_UNDO_OTHER)
     @Description(Message.HELP_SKIN_UNDO_OTHER)
     @CommandConditions("cooldown")
-    private void onSkinUndoOther(SRCommandSender sender, SRPlayer target) {
-        Optional<HistoryData> historyData = playerStorage.getTopOfHistory(target.getUniqueId(), 0);
-        if (historyData.isEmpty()) {
-            sender.sendMessage(Message.ERROR_NO_UNDO);
-            return;
-        }
-
-        Optional<SkinIdentifier> currentSkin = playerStorage.getSkinIdOfPlayer(target.getUniqueId());
-        if (currentSkin.isPresent() && currentSkin.get().equals(historyData.get().getSkinIdentifier())) {
-            // We need a different history entry to undo
-            Optional<HistoryData> historyData2 = playerStorage.getTopOfHistory(target.getUniqueId(), 1);
-            if (historyData2.isEmpty()) {
+    private void onSkinUndoOther(SRCommandSender sender, PlayerSelector selector) {
+        for (SRPlayer target : selector.resolve(sender)) {
+            Optional<HistoryData> historyData = playerStorage.getTopOfHistory(target.getUniqueId(), 0);
+            if (historyData.isEmpty()) {
                 sender.sendMessage(Message.ERROR_NO_UNDO);
                 return;
             }
 
-            // Remove the current skin from history
-            playerStorage.removeFromHistory(target.getUniqueId(), historyData.get());
+            Optional<SkinIdentifier> currentSkin = playerStorage.getSkinIdOfPlayer(target.getUniqueId());
+            if (currentSkin.isPresent() && currentSkin.get().equals(historyData.get().getSkinIdentifier())) {
+                // We need a different history entry to undo
+                Optional<HistoryData> historyData2 = playerStorage.getTopOfHistory(target.getUniqueId(), 1);
+                if (historyData2.isEmpty()) {
+                    sender.sendMessage(Message.ERROR_NO_UNDO);
+                    return;
+                }
 
-            historyData = historyData2;
-        }
+                // Remove the current skin from history
+                playerStorage.removeFromHistory(target.getUniqueId(), historyData.get());
 
-        if (!setSkin(sender, target, historyData.get().getSkinIdentifier().getIdentifier(), historyData.get().getSkinIdentifier().getSkinVariant(), false)) {
-            return;
-        }
+                historyData = historyData2;
+            }
 
-        if (senderEqual(sender, target)) {
-            sender.sendMessage(Message.SUCCESS_SKIN_UNDO,
-                    Placeholder.unparsed("skin", historyData.get().getSkinIdentifier().getIdentifier()),
-                    Placeholder.parsed("timestamp", SRHelpers.formatEpochSeconds(historyData.get().getTimestamp(), sender.getLocale())));
-        } else {
-            sender.sendMessage(Message.SUCCESS_SKIN_UNDO_OTHER,
-                    Placeholder.unparsed("name", target.getName()),
-                    Placeholder.unparsed("skin", historyData.get().getSkinIdentifier().getIdentifier()),
-                    Placeholder.parsed("timestamp", SRHelpers.formatEpochSeconds(historyData.get().getTimestamp(), sender.getLocale())));
+            if (!setSkin(sender, target, historyData.get().getSkinIdentifier().getIdentifier(), historyData.get().getSkinIdentifier().getSkinVariant(), false)) {
+                return;
+            }
+
+            if (senderEqual(sender, target)) {
+                sender.sendMessage(Message.SUCCESS_SKIN_UNDO,
+                        Placeholder.unparsed("skin", historyData.get().getSkinIdentifier().getIdentifier()),
+                        Placeholder.parsed("timestamp", SRHelpers.formatEpochSeconds(historyData.get().getTimestamp(), sender.getLocale())));
+            } else {
+                sender.sendMessage(Message.SUCCESS_SKIN_UNDO_OTHER,
+                        Placeholder.unparsed("name", target.getName()),
+                        Placeholder.unparsed("skin", historyData.get().getSkinIdentifier().getIdentifier()),
+                        Placeholder.parsed("timestamp", SRHelpers.formatEpochSeconds(historyData.get().getTimestamp(), sender.getLocale())));
+            }
         }
     }
 

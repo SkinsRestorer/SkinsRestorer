@@ -43,7 +43,6 @@ public enum PermissionRegistry {
     SR_INFO("skinsrestorer.admincommand.info", Message.PERMISSION_ADMINCOMMAND_INFO),
     SR_APPLY_SKIN("skinsrestorer.admincommand.applyskin", Message.PERMISSION_ADMINCOMMAND_APPLYSKIN),
     SR_CREATE_CUSTOM("skinsrestorer.admincommand.createcustom", Message.PERMISSION_ADMINCOMMAND_CREATECUSTOM),
-    SR_APPLY_SKIN_ALL("skinsrestorer.admincommand.applyskinall", Message.PERMISSION_ADMINCOMMAND_APPLYSKINALL),
     SR_PURGE_OLD_DATA("skinsrestorer.admincommand.purgeolddata", Message.PERMISSION_ADMINCOMMAND_PURGEOLDDATA),
     SR_DUMP("skinsrestorer.admincommand.dump", Message.PERMISSION_ADMINCOMMAND_DUMP),
 

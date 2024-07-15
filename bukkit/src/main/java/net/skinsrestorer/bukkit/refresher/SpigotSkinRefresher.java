@@ -23,7 +23,6 @@ import net.skinsrestorer.bukkit.utils.BukkitReflection;
 import net.skinsrestorer.bukkit.utils.HandleReflection;
 import net.skinsrestorer.bukkit.utils.OPRefreshUtil;
 import net.skinsrestorer.shared.log.SRLogger;
-import net.skinsrestorer.shared.utils.FluentList;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.SRHelpers;
 import org.bukkit.Location;
@@ -114,8 +113,8 @@ public final class SpigotSkinRefresher implements SkinRefresher {
             Object removePlayer;
             Object addPlayer;
             try {
-                removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfoClass, removePlayerEnum, FluentList.of(entityPlayer));
-                addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfoClass, addPlayerEnum, FluentList.of(entityPlayer));
+                removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfoClass, removePlayerEnum, List.of(entityPlayer));
+                addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfoClass, addPlayerEnum, List.of(entityPlayer));
             } catch (ReflectiveOperationException e) {
                 try {
                     int ping = ReflectionUtil.getObject(entityPlayer, "ping");
