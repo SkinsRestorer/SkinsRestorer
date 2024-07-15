@@ -52,7 +52,7 @@
   "skinsrestorer.error_ms_unknown": "Неизвестная ошибка MineSkin!",
   "skinsrestorer.not_connected_to_server": "<red>Вы не подключены ни к одному серверу.",
   "skinsrestorer.divider": "<dark_aqua>----------------------------------------------",
-  "skinsrestorer.admincommand_status_checking": "<gray>Проверка необходимых сервисов для корректной работы SR...",
+  "skinsrestorer.admincommand_status_checking": "<gray>Запуск проверки службы...",
   "skinsrestorer.admincommand_status_uuid_api": "<gray>Рабочие API UUID: <count>/<total>",
   "skinsrestorer.admincommand_status_profile_api": "<gray>API рабочего профиля: <count>/<total>",
   "skinsrestorer.admincommand_status_working": "<green>Плагин сейчас в рабочем состоянии.",
