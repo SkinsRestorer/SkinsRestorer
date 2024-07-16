@@ -85,15 +85,6 @@ public class SRCommandManager {
             .bypassCooldown(context -> !(context.sender() instanceof SRPlayer) || context.sender().hasPermission(PermissionRegistry.BYPASS_COOLDOWN))
             .build());
 
-    @SuppressWarnings("unchecked")
-    private static Optional<CloudBrigadierManager<SRCommandSender, ?>> extractBrigadier(CommandManager<SRCommandSender> commandManager) {
-        if (commandManager instanceof BrigadierManagerHolder<?, ?> holder && holder.hasBrigadierManager()) {
-            return Optional.of((CloudBrigadierManager<SRCommandSender, ?>) holder.brigadierManager());
-        }
-
-        return Optional.empty();
-    }
-
     @Inject
     public SRCommandManager(SRPlatformAdapter platform, SkinsRestorerLocale locale, SettingsManager settingsManager) {
         this.commandManager = platform.createCommandManager();
@@ -173,6 +164,15 @@ public class SRCommandManager {
                 ConsoleOnly.class,
                 annotation -> new ConsoleOnlyRequirement()
         );
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Optional<CloudBrigadierManager<SRCommandSender, ?>> extractBrigadier(CommandManager<SRCommandSender> commandManager) {
+        if (commandManager instanceof BrigadierManagerHolder<?, ?> holder && holder.hasBrigadierManager()) {
+            return Optional.of((CloudBrigadierManager<SRCommandSender, ?>) holder.brigadierManager());
+        }
+
+        return Optional.empty();
     }
 
     public void registerCommand(Object command) {

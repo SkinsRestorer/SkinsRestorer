@@ -54,7 +54,8 @@ public final class SRProxyMessageAdapter {
         try {
             String subChannel = in.readUTF();
             switch (subChannel) {
-                case "getSkinsV3" -> event.getPlayer().sendPageToServer(skinStorage.getGUIPage(event.getPlayer(), in.readInt(), PageType.fromKey(in.readUTF()).orElseThrow()));
+                case "getSkinsV3" ->
+                        event.getPlayer().sendPageToServer(skinStorage.getGUIPage(event.getPlayer(), in.readInt(), PageType.fromKey(in.readUTF()).orElseThrow()));
                 case "clearSkinV2" -> commandManager.execute(event.getPlayer(), "skin clear");
                 case "setSkinV2" -> {
                     String skin = in.readUTF();

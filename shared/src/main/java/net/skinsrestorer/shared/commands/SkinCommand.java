@@ -92,6 +92,12 @@ public final class SkinCommand {
     @Command("")
     @CommandPermission(PermissionRegistry.SKIN)
     public void rootCommand(SRCommandSender sender) {
+        if (settings.getProperty(CommandConfig.CUSTOM_HELP_ENABLED)) {
+            settings.getProperty(CommandConfig.CUSTOM_HELP_MESSAGE)
+                    .forEach(l -> sender.sendMessage(ComponentHelper.parseMiniMessageToJsonString(l)));
+            return;
+        }
+
         MinecraftHelp.<SRCommandSender>builder()
                 .commandManager(commandManager.getCommandManager())
                 .audienceProvider(ComponentHelper::commandSenderToAudience)
