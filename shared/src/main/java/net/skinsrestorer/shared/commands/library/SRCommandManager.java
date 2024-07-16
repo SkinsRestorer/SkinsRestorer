@@ -38,6 +38,7 @@ import org.incendo.cloud.Command;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.annotations.AnnotationParser;
 import org.incendo.cloud.brigadier.BrigadierManagerHolder;
+import org.incendo.cloud.brigadier.CloudBrigadierManager;
 import org.incendo.cloud.description.Description;
 import org.incendo.cloud.exception.InvalidCommandSenderException;
 import org.incendo.cloud.key.CloudKey;
@@ -84,25 +85,36 @@ public class SRCommandManager {
             .bypassCooldown(context -> !(context.sender() instanceof SRPlayer) || context.sender().hasPermission(PermissionRegistry.BYPASS_COOLDOWN))
             .build());
 
+    @SuppressWarnings("unchecked")
+    private static Optional<CloudBrigadierManager<SRCommandSender, ?>> extractBrigadier(CommandManager<SRCommandSender> commandManager) {
+        if (commandManager instanceof BrigadierManagerHolder<?, ?> holder && holder.hasBrigadierManager()) {
+            return Optional.of((CloudBrigadierManager<SRCommandSender, ?>) holder.brigadierManager());
+        }
+
+        return Optional.empty();
+    }
+
     @Inject
     public SRCommandManager(SRPlatformAdapter platform, SkinsRestorerLocale locale, SettingsManager settingsManager) {
         this.commandManager = platform.createCommandManager();
         this.annotationParser = new AnnotationParser<>(commandManager, SRCommandSender.class);
 
-        if (commandManager instanceof BrigadierManagerHolder<?,?> holder && holder.hasBrigadierManager()) {
-            holder.brigadierManager().setNativeNumberSuggestions(true);
+        Optional<CloudBrigadierManager<SRCommandSender, ?>> optional = extractBrigadier(commandManager);
+        if (optional.isPresent()) {
+            CloudBrigadierManager<SRCommandSender, ?> brigadierManager = optional.get();
+            brigadierManager.setNativeNumberSuggestions(true);
         }
 
         commandManager.captionRegistry().registerProvider(TranslationBundle.core(SRCommandSender::getLocale));
         commandManager.captionRegistry().registerProvider(MinecraftExtrasTranslationBundle.minecraftExtras(SRCommandSender::getLocale));
 
-                MinecraftExceptionHandler
-                        .create(ComponentHelper::commandSenderToAudience)
-                        .defaultHandlers()
-                        .handler(InvalidCommandSenderException.class, (formatter, ctx) -> ComponentHelper.convertJsonToComponent(locale.getMessageRequired(ctx.context().sender(), Message.ONLY_ALLOWED_ON_PLAYER)))
-                        .handler(SRMessageException.class, (formatter, ctx) -> ComponentHelper.convertJsonToComponent(ctx.exception().getMessageSupplier().apply(locale)))
-                        .captionFormatter(ComponentCaptionFormatter.miniMessage())
-                        .registerTo(commandManager);
+        MinecraftExceptionHandler
+                .create(ComponentHelper::commandSenderToAudience)
+                .defaultHandlers()
+                .handler(InvalidCommandSenderException.class, (formatter, ctx) -> ComponentHelper.convertJsonToComponent(locale.getMessageRequired(ctx.context().sender(), Message.ONLY_ALLOWED_ON_PLAYER)))
+                .handler(SRMessageException.class, (formatter, ctx) -> ComponentHelper.convertJsonToComponent(ctx.exception().getMessageSupplier().apply(locale)))
+                .captionFormatter(ComponentCaptionFormatter.miniMessage())
+                .registerTo(commandManager);
 
         commandManager.registerCommandPostProcessor(s -> {
             if (!(s.commandContext().sender() instanceof SRProxyPlayer proxyPlayer)) {
@@ -113,8 +125,8 @@ public class SRCommandManager {
                 return;
             }
 
-            Optional<String> optional = proxyPlayer.getCurrentServer();
-            if (optional.isEmpty()) {
+            Optional<String> currentServer = proxyPlayer.getCurrentServer();
+            if (currentServer.isEmpty()) {
                 if (!settingsManager.getProperty(ProxyConfig.NOT_ALLOWED_COMMAND_SERVERS_IF_NONE_BLOCK_COMMAND)) {
                     proxyPlayer.sendMessage(Message.NOT_CONNECTED_TO_SERVER);
                     ConsumerService.interrupt();
@@ -123,12 +135,11 @@ public class SRCommandManager {
                 return;
             }
 
-            String server = optional.get();
-            boolean inList = settingsManager.getProperty(ProxyConfig.NOT_ALLOWED_COMMAND_SERVERS).contains(server);
+            boolean inList = settingsManager.getProperty(ProxyConfig.NOT_ALLOWED_COMMAND_SERVERS).contains(currentServer.get());
             boolean shouldBlock = settingsManager.getProperty(ProxyConfig.NOT_ALLOWED_COMMAND_SERVERS_ALLOWLIST) != inList;
 
             if (shouldBlock) {
-                proxyPlayer.sendMessage(Message.COMMAND_SERVER_NOT_ALLOWED_MESSAGE, Placeholder.unparsed("server", server));
+                proxyPlayer.sendMessage(Message.COMMAND_SERVER_NOT_ALLOWED_MESSAGE, Placeholder.unparsed("server", currentServer.get()));
                 ConsumerService.interrupt();
             }
         });
