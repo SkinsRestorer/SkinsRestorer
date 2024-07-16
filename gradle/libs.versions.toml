@@ -6,7 +6,7 @@ runtask = "2.3.0"
 runpaperversion = "1.21"
 runwaterfallversion = "1.19"
 runvelocityversion = "3.2.0-SNAPSHOT"
-adventure-platform = "4.3.4-SNAPSHOT"
+adventure-platform = "4.3.3"
 
 [libraries]
 adventure-bukkit = { module = "com.github.KyoriPowered.adventure-platform:adventure-platform-bukkit", version = "7724203684" }

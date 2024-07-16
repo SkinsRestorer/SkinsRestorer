@@ -101,7 +101,6 @@
   "skinsrestorer.skinsmenu_select_skin": "<dark_green>Click to select this skin",
   "skinsrestorer.skin_search_message": "<dark_green>You can find skins matching <green><search></green> here: <newline><green>https://namemc.com/minecraft-skins/tag/<search> <newline><newline><dark_green>If no skins are found, you can always find some skins at https://namemc.com/minecraft-skins/tag <newline>You can set the skin using the skin link:<newline>/skin https://namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>Error<dark_gray>: <red>No skin data found!",
-  "skinsrestorer.info_no_brackets": "<bold>Do not</bold> put your text between brackets <bold>< ></bold> and <bold>[ ]</bold><newline>Example: <dark_green>/skin <jebb></dark_green> to just <dark_green>/skin jebb</dark_green>",
   "skinsrestorer.outdated": "<dark_red>You are running an outdated version of SkinsRestorer on your <platform>!<newline><red>Please update to the latest version on Spigot: <newline><yellow>https://www.spigotmc.org/resources/skinsrestorer.2124/",
   "skinsrestorer.unsupported_java": "<dark_red>The Java version (<version>) of your <platform> is not supported by SkinsRestorer!<newline><red>Please update to Java 17 or higher to use SkinsRestorer without issues. Newer Java versions can also run older servers, so a Minecraft 1.8 server can run on Java 17. Read console info for more details.",
   "skinsrestorer.permission_player_wildcard": "Wildcard permission for players",
