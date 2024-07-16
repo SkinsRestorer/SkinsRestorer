@@ -48,14 +48,14 @@ public final class SRServerMessageAdapter {
         try {
             String subChannel = in.readUTF();
 
-            if (subChannel.equalsIgnoreCase("returnSkinsV4")) {
+            if (subChannel.equalsIgnoreCase("returnSkinsV5")) {
                 int len = in.readInt();
                 byte[] msgBytes = new byte[len];
                 in.readFully(msgBytes);
 
                 PageInfo pageInfo = MessageProtocolUtil.convertToPageInfo(msgBytes);
 
-                plugin.openProxyGUI(event.getPlayer(), pageInfo);
+                plugin.openGUIPage(event.getPlayer(), pageInfo);
             } else if (subChannel.equalsIgnoreCase("SkinUpdateV2")) {
                 skinApplier.applySkin(event.getPlayer().getAs(Object.class),
                         SkinProperty.of(in.readUTF(), in.readUTF()));

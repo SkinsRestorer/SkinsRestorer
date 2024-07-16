@@ -19,6 +19,7 @@ package net.skinsrestorer.shared.listeners;
 
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.commands.library.SRCommandManager;
+import net.skinsrestorer.shared.gui.PageType;
 import net.skinsrestorer.shared.listeners.event.SRProxyMessageEvent;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
@@ -53,7 +54,7 @@ public final class SRProxyMessageAdapter {
         try {
             String subChannel = in.readUTF();
             switch (subChannel) {
-                case "getSkinsV2" -> event.getPlayer().sendPage(skinStorage.getGUIPage(in.readInt()));
+                case "getSkinsV3" -> event.getPlayer().sendPageToServer(skinStorage.getGUIPage(event.getPlayer(), in.readInt(), PageType.fromKey(in.readUTF()).orElseThrow()));
                 case "clearSkinV2" -> commandManager.execute(event.getPlayer(), "skin clear");
                 case "setSkinV2" -> {
                     String skin = in.readUTF();

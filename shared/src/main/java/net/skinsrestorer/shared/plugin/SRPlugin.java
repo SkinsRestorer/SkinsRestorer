@@ -34,9 +34,8 @@ import net.skinsrestorer.shared.api.SharedSkinApplier;
 import net.skinsrestorer.shared.api.SharedSkinsRestorer;
 import net.skinsrestorer.shared.api.SkinApplierAccess;
 import net.skinsrestorer.shared.api.event.EventBusImpl;
-import net.skinsrestorer.shared.commands.ProxyGUICommand;
+import net.skinsrestorer.shared.commands.GUICommand;
 import net.skinsrestorer.shared.commands.SRCommand;
-import net.skinsrestorer.shared.commands.ServerGUICommand;
 import net.skinsrestorer.shared.commands.SkinCommand;
 import net.skinsrestorer.shared.commands.library.SRCommandManager;
 import net.skinsrestorer.shared.config.*;
@@ -109,13 +108,7 @@ public class SRPlugin {
         }
 
         if (!settings.getProperty(CommandConfig.DISABLE_GUI_COMMAND)) {
-            if (injector.getIfAvailable(SRServerPlugin.class) != null) {
-                manager.registerCommand(injector.newInstance(ServerGUICommand.class));
-            } else if (injector.getIfAvailable(SRProxyPlugin.class) != null) {
-                manager.registerCommand(injector.newInstance(ProxyGUICommand.class));
-            } else {
-                throw new IllegalStateException("Unknown platform");
-            }
+            manager.registerCommand(injector.newInstance(GUICommand.class));
         }
     }
 

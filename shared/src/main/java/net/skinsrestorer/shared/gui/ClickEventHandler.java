@@ -15,17 +15,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package net.skinsrestorer.shared.listeners.event;
+package net.skinsrestorer.shared.gui;
 
-import net.skinsrestorer.shared.gui.PageInfo;
-import net.skinsrestorer.shared.subjects.SRServerPlayer;
+import net.skinsrestorer.shared.listeners.event.ClickEventInfo;
 
-public record ClickEventInfo(MaterialType material, String skinName, SRServerPlayer player, PageInfo pageInfo) {
-    public enum MaterialType {
-        HEAD,
-        YELLOW_PANE,
-        GREEN_PANE,
-        RED_PANE,
-        UNKNOWN
-    }
+public interface ClickEventHandler {
+    void handle(ClickEventInfo event);
 }

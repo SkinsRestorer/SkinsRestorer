@@ -29,9 +29,7 @@ public interface SRServerAdapter extends SRPlatformAdapter {
 
     boolean determineProxy();
 
-    void openServerGUI(SRPlayer player, int page);
-
-    void openProxyGUI(SRPlayer player, PageInfo pageInfo);
+    void openGUIPage(SRPlayer player, PageInfo pageInfo);
 
     Optional<SRPlayer> getPlayer(String name);
 }

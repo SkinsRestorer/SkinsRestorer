@@ -15,17 +15,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package net.skinsrestorer.shared.listeners.event;
+package net.skinsrestorer.shared.gui;
 
-import net.skinsrestorer.shared.gui.PageInfo;
-import net.skinsrestorer.shared.subjects.SRServerPlayer;
+import lombok.Getter;
 
-public record ClickEventInfo(MaterialType material, String skinName, SRServerPlayer player, PageInfo pageInfo) {
-    public enum MaterialType {
-        HEAD,
-        YELLOW_PANE,
-        GREEN_PANE,
-        RED_PANE,
-        UNKNOWN
+import java.util.Locale;
+import java.util.Optional;
+
+@Getter
+public enum PageType {
+    MAIN;
+
+    private final String key = name().toLowerCase(Locale.ROOT);
+
+    public static Optional<PageType> fromKey(String key) {
+        for (PageType pageType : values()) {
+            if (pageType.key.equals(key)) {
+                return Optional.of(pageType);
+            }
+        }
+
+        return Optional.empty();
     }
 }

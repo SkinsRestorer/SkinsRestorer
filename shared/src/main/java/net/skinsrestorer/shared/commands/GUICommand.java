@@ -21,26 +21,36 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.commands.library.annotations.CommandDescription;
 import net.skinsrestorer.shared.commands.library.annotations.CommandPermission;
 import net.skinsrestorer.shared.commands.library.annotations.RootDescription;
+import net.skinsrestorer.shared.gui.PageInfo;
+import net.skinsrestorer.shared.gui.PageType;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
+import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.subjects.SRPlayer;
+import net.skinsrestorer.shared.subjects.SRProxyPlayer;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
 import org.incendo.cloud.annotations.Command;
 
 import javax.inject.Inject;
 
-@SuppressWarnings({"unused"})
+@SuppressWarnings("unused")
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class ServerGUICommand {
-    private final SRServerAdapter plugin;
+public final class GUICommand {
+    private final SkinStorageImpl skinStorage;
+    private final SRServerAdapter serverAdapter;
 
     @Command("skins")
     @RootDescription(Message.HELP_SKINS)
     @CommandDescription(Message.HELP_SKINS)
     @CommandPermission(value = PermissionRegistry.SKINS)
-    private void onDefault(SRPlayer srPlayer) {
-        srPlayer.sendMessage(Message.SKINSMENU_OPEN);
+    private void onDefault(SRPlayer player) {
+        player.sendMessage(Message.SKINSMENU_OPEN);
 
-        plugin.openServerGUI(srPlayer, 0);
+        PageInfo pageInfo = skinStorage.getGUIPage(player, 0, PageType.MAIN);
+        if (player instanceof SRProxyPlayer proxyPlayer) {
+            proxyPlayer.sendPageToServer(pageInfo);
+        } else {
+            serverAdapter.openGUIPage(player, pageInfo);
+        }
     }
 }

@@ -28,11 +28,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
-import net.skinsrestorer.shared.gui.GUIManager;
-import net.skinsrestorer.shared.gui.GUISkinEntry;
-import net.skinsrestorer.shared.gui.PageInfo;
-import net.skinsrestorer.shared.gui.SharedGUI;
-import net.skinsrestorer.shared.listeners.event.ClickEventInfo;
+import net.skinsrestorer.shared.gui.*;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.subjects.SRForeign;
 import net.skinsrestorer.shared.subjects.messages.Message;
@@ -44,12 +40,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import javax.inject.Inject;
-import java.util.List;
 import java.util.Objects;
-import java.util.function.Consumer;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SkinsGUI implements GUIManager<Inventory> {
+    private final ClickEventHandler callback;
     private final SkinsRestorerLocale locale;
     private final SRLogger logger;
     private final Server server;
@@ -61,25 +56,25 @@ public class SkinsGUI implements GUIManager<Inventory> {
         properties.put(SharedGUI.SR_PROPERTY_INTERNAL_NAME, new Property(SharedGUI.SR_PROPERTY_INTERNAL_NAME, skinName, null));
     }
 
-    private ItemStack createSkull(SRForeign player, GUISkinEntry entry) {
+    private ItemStack createSkull(GUISkinEntry entry) {
         ItemStack itemStack = XSkull.createItem()
-                .profile(Profileable.of(Objects.requireNonNull(ProfileInputType.typeOf(entry.textureHash())), entry.textureHash()))
+                .profile(Profileable.of(Objects.requireNonNull(ProfileInputType.typeOf(entry.base().textureHash())), entry.base().textureHash()))
                 .apply();
 
         if (itemStack == null) {
-            throw new IllegalStateException("Could not create skull for " + entry.skinId() + "!");
+            throw new IllegalStateException("Could not create skull for " + entry.base().skinId() + "!");
         }
 
         ItemMeta skullMeta = itemStack.getItemMeta();
 
         if (skullMeta == null) {
-            throw new IllegalStateException("Could not create skull for " + entry.skinId() + "!");
+            throw new IllegalStateException("Could not create skull for " + entry.base().skinId() + "!");
         }
 
-        skullMeta.setDisplayName(entry.skinName());
-        skullMeta.setLore(List.of(ComponentHelper.convertJsonToLegacy(locale.getMessageRequired(player, Message.SKINSMENU_SELECT_SKIN))));
+        skullMeta.setDisplayName(entry.base().skinName());
+        skullMeta.setLore(entry.lore().stream().map(ComponentHelper::convertJsonToLegacy).toList());
 
-        injectCustomInfo(XSkull.of(itemStack).getProfile(), entry.skinId());
+        injectCustomInfo(XSkull.of(itemStack).getProfile(), entry.base().skinId());
 
         itemStack.setItemMeta(skullMeta);
 
@@ -107,8 +102,8 @@ public class SkinsGUI implements GUIManager<Inventory> {
         return itemStack;
     }
 
-    public Inventory createGUI(Consumer<ClickEventInfo> callback, SRForeign player, PageInfo pageInfo) {
-        SkinsGUIHolder instance = new SkinsGUIHolder(pageInfo.page(), callback, wrapper);
+    public Inventory createGUI(SRForeign player, PageInfo pageInfo) {
+        SkinsGUIHolder instance = new SkinsGUIHolder(pageInfo, callback, wrapper);
         Inventory inventory = server.createInventory(instance, 9 * 6, ComponentHelper.convertJsonToLegacy(
                 locale.getMessageRequired(player, Message.SKINSMENU_TITLE_NEW,
                         Placeholder.parsed("page_number", String.valueOf(pageInfo.page() + 1)))));
@@ -126,7 +121,7 @@ public class SkinsGUI implements GUIManager<Inventory> {
                 break;
             }
 
-            inventory.addItem(createSkull(player, entry));
+            inventory.addItem(createSkull(entry));
         }
 
         // White Glass line
