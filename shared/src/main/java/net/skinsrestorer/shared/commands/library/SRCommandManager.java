@@ -18,7 +18,6 @@
 package net.skinsrestorer.shared.commands.library;
 
 import ch.jalu.configme.SettingsManager;
-import io.leangen.geantyref.TypeToken;
 import lombok.Getter;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.skinsrestorer.api.property.SkinVariant;
@@ -39,6 +38,7 @@ import org.incendo.cloud.Command;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.annotations.AnnotationParser;
 import org.incendo.cloud.description.Description;
+import org.incendo.cloud.exception.InvalidCommandSenderException;
 import org.incendo.cloud.key.CloudKey;
 import org.incendo.cloud.minecraft.extras.MinecraftExceptionHandler;
 import org.incendo.cloud.minecraft.extras.caption.ComponentCaptionFormatter;
@@ -94,6 +94,7 @@ public class SRCommandManager {
         MinecraftExceptionHandler
                 .create(ComponentHelper::commandSenderToAudience)
                 .defaultHandlers()
+                .handler(InvalidCommandSenderException.class, (formatter, ctx) -> ComponentHelper.convertJsonToComponent(locale.getMessageRequired(ctx.context().sender(), Message.ONLY_ALLOWED_ON_PLAYER)))
                 .captionFormatter(ComponentCaptionFormatter.miniMessage())
                 .registerTo(commandManager);
 
@@ -124,19 +125,6 @@ public class SRCommandManager {
                 proxyPlayer.sendMessage(Message.COMMAND_SERVER_NOT_ALLOWED_MESSAGE, Placeholder.unparsed("server", server));
                 ConsumerService.interrupt();
             }
-        });
-        commandManager.registerCommandPostProcessor(s -> {
-            if (!(s.command().senderType().orElseThrow().equals(TypeToken.get(SRPlayer.class)))) {
-                return;
-            }
-
-            SRCommandSender sender = s.commandContext().sender();
-            if (sender instanceof SRPlayer) {
-                return;
-            }
-
-            sender.sendMessage(Message.ONLY_ALLOWED_ON_PLAYER);
-            ConsumerService.interrupt();
         });
         commandManager.registerCommandPostProcessor(new CustomCooldownProcessor<>(cooldownManager));
 
