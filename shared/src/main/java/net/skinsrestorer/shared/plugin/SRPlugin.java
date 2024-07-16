@@ -45,6 +45,8 @@ import net.skinsrestorer.shared.connections.RecommendationsState;
 import net.skinsrestorer.shared.connections.ServiceCheckerService;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.floodgate.FloodgateUtil;
+import net.skinsrestorer.shared.gui.ClickEventHandler;
+import net.skinsrestorer.shared.gui.SharedGUI;
 import net.skinsrestorer.shared.log.SRChatColor;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.storage.CacheStorageImpl;
@@ -300,6 +302,10 @@ public class SRPlugin {
         if (serverPlugin != null) {
             // Check if we are running in proxy mode
             serverPlugin.checkProxyMode();
+
+            injector.register(ClickEventHandler.class, serverPlugin.isProxyMode() ?
+                    injector.getSingleton(SharedGUI.ProxyGUIClickCallback.class)
+                    : injector.getSingleton(SharedGUI.ServerGUIClickCallback.class));
         }
 
         moveOldFiles();
