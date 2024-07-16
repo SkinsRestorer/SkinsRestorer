@@ -21,11 +21,13 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
+import net.skinsrestorer.shared.config.MessageConfig;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.SRProxyPlayer;
 import net.skinsrestorer.shared.utils.SRConstants;
 
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -35,12 +37,12 @@ public class WrapperPlayer extends WrapperCommandSender implements SRProxyPlayer
 
     @Override
     public Locale getLocale() {
-        Locale playerLocale = player.getEffectiveLocale();
-        if (playerLocale == null) {
-            return super.getLocale();
+        if (!settings.getProperty(MessageConfig.PER_ISSUER_LOCALE)) {
+            return settings.getProperty(MessageConfig.LOCALE);
         }
 
-        return playerLocale;
+        return Objects.requireNonNullElseGet(player.getEffectiveLocale(),
+                () -> settings.getProperty(MessageConfig.LOCALE));
     }
 
     @Override

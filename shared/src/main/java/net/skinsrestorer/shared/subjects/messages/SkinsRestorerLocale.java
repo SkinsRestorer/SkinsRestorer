@@ -24,9 +24,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.skinsrestorer.shared.config.MessageConfig;
-import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRForeign;
-import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.utils.ComponentHelper;
 import net.skinsrestorer.shared.utils.ComponentString;
 
@@ -56,11 +54,7 @@ public class SkinsRestorerLocale {
     }
 
     private Optional<Component> getMessageInternal(SRForeign foreign, Message key, TagResolver tagResolver) {
-        SRForeign target = settings.getProperty(MessageConfig.PER_ISSUER_LOCALE) ? foreign : defaultForeign;
-        boolean isConsole = foreign instanceof SRCommandSender && !(foreign instanceof SRPlayer);
-        Locale locale = isConsole ? settings.getProperty(MessageConfig.CONSOLE_LOCALE) : target.getLocale();
-
-        String message = localeManager.getMessage(locale, key);
+        String message = localeManager.getMessage(foreign.getLocale(), key);
 
         if (message == null) {
             throw new IllegalStateException(String.format("Message %s not found", key.name()));
@@ -74,7 +68,7 @@ public class SkinsRestorerLocale {
 
         Message parent = key.getParent();
         if (parent != null && parent != Message.PREFIX_FORMAT && !settings.getProperty(MessageConfig.DISABLE_PREFIX)) {
-            return getMessageInternal(target, Message.PREFIX_FORMAT, TagResolver.resolver(
+            return getMessageInternal(foreign, Message.PREFIX_FORMAT, TagResolver.resolver(
                     tagResolver,
                     Placeholder.component("message", component)
             ));
