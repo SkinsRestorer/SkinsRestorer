@@ -65,9 +65,7 @@ public class SkinsRestorerLocale {
         }
 
         Component component = miniMessage.deserialize(message, tagResolver);
-
-        Message parent = key.getParent();
-        if (parent != null && parent != Message.PREFIX_FORMAT && !settings.getProperty(MessageConfig.DISABLE_PREFIX)) {
+        if (key.getParent() == Message.PREFIX_FORMAT && !settings.getProperty(MessageConfig.DISABLE_PREFIX)) {
             return getMessageInternal(foreign, Message.PREFIX_FORMAT, TagResolver.resolver(
                     tagResolver,
                     Placeholder.component("message", component)
