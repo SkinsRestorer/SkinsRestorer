@@ -26,7 +26,6 @@ import net.skinsrestorer.shared.commands.SRCommand;
 import net.skinsrestorer.shared.commands.library.annotations.*;
 import net.skinsrestorer.shared.commands.library.types.PlayerSelectorArgumentParser;
 import net.skinsrestorer.shared.config.ProxyConfig;
-import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
@@ -41,6 +40,8 @@ import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.annotations.AnnotationParser;
 import org.incendo.cloud.description.Description;
 import org.incendo.cloud.key.CloudKey;
+import org.incendo.cloud.minecraft.extras.MinecraftExceptionHandler;
+import org.incendo.cloud.minecraft.extras.caption.ComponentCaptionFormatter;
 import org.incendo.cloud.parser.ParserDescriptor;
 import org.incendo.cloud.parser.standard.EnumParser;
 import org.incendo.cloud.processors.cooldown.*;
@@ -53,6 +54,7 @@ import org.incendo.cloud.services.type.ConsumerService;
 import org.incendo.cloud.translations.TranslationBundle;
 import org.incendo.cloud.translations.minecraft.extras.MinecraftExtrasTranslationBundle;
 
+import javax.inject.Inject;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
@@ -81,12 +83,20 @@ public class SRCommandManager {
             .bypassCooldown(context -> !(context.sender() instanceof SRPlayer) || context.sender().hasPermission(PermissionRegistry.BYPASS_COOLDOWN))
             .build());
 
-    public SRCommandManager(SRPlatformAdapter platform, SRLogger logger, SkinsRestorerLocale locale, SettingsManager settingsManager) {
+    @Inject
+    public SRCommandManager(SRPlatformAdapter platform, SkinsRestorerLocale locale, SettingsManager settingsManager) {
         this.commandManager = platform.createCommandManager();
         this.annotationParser = new AnnotationParser<>(commandManager, SRCommandSender.class);
 
         commandManager.captionRegistry().registerProvider(TranslationBundle.core(SRCommandSender::getLocale));
         commandManager.captionRegistry().registerProvider(MinecraftExtrasTranslationBundle.minecraftExtras(SRCommandSender::getLocale));
+
+        MinecraftExceptionHandler
+                .create(ComponentHelper::commandSenderToAudience)
+                .defaultHandlers()
+                .captionFormatter(ComponentCaptionFormatter.miniMessage())
+                .registerTo(commandManager);
+
         commandManager.registerCommandPostProcessor(s -> {
             if (!(s.commandContext().sender() instanceof SRProxyPlayer proxyPlayer)) {
                 return;

@@ -21,4 +21,6 @@ public interface SRSubjectWrapper<C, P, S extends SRPlayer> {
     SRCommandSender commandSender(C commandSender);
 
     S player(P player);
+
+    C unwrap(SRCommandSender sender);
 }

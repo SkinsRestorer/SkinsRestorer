@@ -46,4 +46,9 @@ public class WrapperVelocity implements SRSubjectWrapper<CommandSource, Player, 
     public SRProxyPlayer player(Player player) {
         return WrapperPlayer.builder().player(player).sender(player).locale(locale).settings(settings).build();
     }
+
+    @Override
+    public CommandSource unwrap(SRCommandSender sender) {
+        return sender.getAs(CommandSource.class);
+    }
 }

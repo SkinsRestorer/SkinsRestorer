@@ -43,7 +43,6 @@ import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.utils.ProviderSelector;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Server;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -117,7 +116,7 @@ public class SRBukkitAdapter implements SRServerAdapter {
                         .build(),
                 SenderMapper.create(
                         wrapper::commandSender,
-                        s -> s.getAs(CommandSender.class)
+                        wrapper::unwrap
                 )
         );
 

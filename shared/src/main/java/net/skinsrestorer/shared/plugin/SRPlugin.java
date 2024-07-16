@@ -57,7 +57,6 @@ import net.skinsrestorer.shared.storage.adapter.file.FileAdapter;
 import net.skinsrestorer.shared.storage.adapter.mysql.MySQLAdapter;
 import net.skinsrestorer.shared.storage.adapter.mysql.MySQLProvider;
 import net.skinsrestorer.shared.subjects.messages.MessageLoader;
-import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.update.UpdateCheckInit;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
@@ -101,11 +100,7 @@ public class SRPlugin {
     }
 
     public void initCommands() {
-        SRCommandManager manager = new SRCommandManager(adapter, logger,
-                injector.getSingleton(SkinsRestorerLocale.class),
-                injector.getSingleton(SettingsManager.class));
-        injector.register(SRCommandManager.class, manager);
-
+        SRCommandManager manager = injector.getSingleton(SRCommandManager.class);
         manager.registerCommand(injector.newInstance(SRCommand.class));
 
         SettingsManager settings = injector.getSingleton(SettingsManager.class);

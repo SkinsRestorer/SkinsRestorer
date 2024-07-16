@@ -48,4 +48,9 @@ public class WrapperBungee implements SRSubjectWrapper<CommandSender, ProxiedPla
     public SRProxyPlayer player(ProxiedPlayer player) {
         return WrapperPlayer.builder().player(player).sender(player).locale(locale).settings(settings).adapter(adapter).build();
     }
+
+    @Override
+    public CommandSender unwrap(SRCommandSender sender) {
+        return sender.getAs(CommandSender.class);
+    }
 }

@@ -18,7 +18,6 @@
 package net.skinsrestorer.velocity;
 
 import ch.jalu.injector.Injector;
-import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.proxy.Player;
@@ -79,7 +78,7 @@ public record SRVelocityAdapter(Injector injector, SRVelocityBootstrap pluginIns
                 ExecutionCoordinator.asyncCoordinator(),
                 SenderMapper.create(
                         wrapper::commandSender,
-                        s -> s.getAs(CommandSource.class)
+                        wrapper::unwrap
                 )
         );
     }
