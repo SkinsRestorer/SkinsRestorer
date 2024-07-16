@@ -17,6 +17,7 @@
  */
 package net.skinsrestorer.shared.commands;
 
+import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.commands.library.annotations.CommandDescription;
 import net.skinsrestorer.shared.commands.library.annotations.CommandPermission;
@@ -37,7 +38,7 @@ import javax.inject.Inject;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class GUICommand {
     private final SkinStorageImpl skinStorage;
-    private final SRServerAdapter serverAdapter;
+    private final Injector injector;
 
     @Command("skins")
     @RootDescription(Message.HELP_SKINS)
@@ -50,7 +51,7 @@ public final class GUICommand {
         if (player instanceof SRProxyPlayer proxyPlayer) {
             proxyPlayer.sendPageToServer(pageInfo);
         } else {
-            serverAdapter.openGUIPage(player, pageInfo);
+            injector.getSingleton(SRServerAdapter.class).openGUIPage(player, pageInfo);
         }
     }
 }
