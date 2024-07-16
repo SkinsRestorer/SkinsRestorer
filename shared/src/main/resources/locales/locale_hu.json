@@ -81,6 +81,7 @@
   "skinsrestorer.admincommand_dump_error": "<red>Egy hiba történt az adatok bytebin.lucko.me weboldalra feltöltés során.",
   "skinsrestorer.command_server_not_allowed_message": "<red>A parancsok le vannak tiltva a(z) <server> szerveren.",
   "skinsrestorer.command_unknown_player": "Ismeretlen játékos: <name>",
+  "skinsrestorer.command_no_targets_supplied": "Nincs megadva a játékos.",
   "skinsrestorer.player_has_no_permission_skin": "<dark_red>Hiba<dark_gray>: <red>Nincs engedélyed beállítani ezt a kinézetet.",
   "skinsrestorer.player_has_no_permission_url": "<dark_red>Hiba<dark_gray>: <red>Nincs engedélyed a kinézet URL-ről való beállításához.",
   "skinsrestorer.not_premium": "<dark_red>Hiba<dark_gray>: <red>Nincs premium játékos ezzel a névvel.",
