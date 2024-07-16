@@ -17,8 +17,18 @@
  */
 package net.skinsrestorer.shared.gui;
 
-import net.skinsrestorer.shared.listeners.event.ClickEventInfo;
-
 public interface ClickEventHandler {
-    void handle(ClickEventInfo event);
+    static ClickEventHandler empty() {
+        return type -> {
+        };
+    }
+
+    void handle(ClickEventType type);
+
+    enum ClickEventType {
+        LEFT,
+        MIDDLE,
+        RIGHT,
+        OTHER
+    }
 }

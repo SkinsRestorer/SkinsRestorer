@@ -15,21 +15,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package net.skinsrestorer.shared.plugin;
+package net.skinsrestorer.shared.gui;
 
-import net.skinsrestorer.shared.gui.SRInventory;
-import net.skinsrestorer.shared.subjects.SRServerPlayer;
+import net.skinsrestorer.shared.utils.ComponentString;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
+import java.util.List;
+import java.util.Map;
 
-public interface SRServerAdapter extends SRPlatformAdapter {
-    void runSync(Runnable runnable);
+public record SRInventory(int rows, ComponentString title, Map<Integer, Item> items) {
+    public record Item(
+            MaterialType materialType,
+            ComponentString displayName,
+            List<ComponentString> lore,
+            @Nullable String textureHash,
+            ClickEventHandler clickEventHandler
+    ) {
+    }
 
-    void runSyncToPlayer(SRServerPlayer player, Runnable runnable);
-
-    boolean determineProxy();
-
-    void openGUI(SRServerPlayer player, SRInventory srInventory);
-
-    Optional<SRServerPlayer> getPlayer(String name);
+    public enum MaterialType {
+        SKULL,
+        WHITE_PANE,
+        YELLOW_PANE,
+        RED_PANE,
+        GREEN_PANE,
+    }
 }

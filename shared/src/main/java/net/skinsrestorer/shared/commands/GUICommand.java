@@ -24,10 +24,12 @@ import net.skinsrestorer.shared.commands.library.annotations.CommandPermission;
 import net.skinsrestorer.shared.commands.library.annotations.RootDescription;
 import net.skinsrestorer.shared.gui.PageInfo;
 import net.skinsrestorer.shared.gui.PageType;
+import net.skinsrestorer.shared.gui.SharedGUI;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.SRProxyPlayer;
+import net.skinsrestorer.shared.subjects.SRServerPlayer;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
 import org.incendo.cloud.annotations.Command;
@@ -50,8 +52,10 @@ public final class GUICommand {
         PageInfo pageInfo = skinStorage.getGUIPage(player, 0, PageType.MAIN);
         if (player instanceof SRProxyPlayer proxyPlayer) {
             proxyPlayer.sendPageToServer(pageInfo);
-        } else {
-            injector.getSingleton(SRServerAdapter.class).openGUIPage(player, pageInfo);
+        } else if (player instanceof SRServerPlayer serverPlayer) {
+            SharedGUI sharedGUI = injector.getSingleton(SharedGUI.class);
+            injector.getSingleton(SRServerAdapter.class)
+                    .openGUI(serverPlayer, sharedGUI.createGUIPage(serverPlayer, pageInfo));
         }
     }
 }

@@ -61,6 +61,10 @@ public class ComponentHelper {
         return PLAIN_COMPONENT_SERIALIZER.serialize(component);
     }
 
+    public static ComponentString convertPlainToJson(String text) {
+        return convertToJsonString(PLAIN_COMPONENT_SERIALIZER.deserialize(text));
+    }
+
     public static Audience commandSenderToAudience(SRCommandSender sender) {
         return new Audience() {
             @Override

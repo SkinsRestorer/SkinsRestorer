@@ -22,7 +22,7 @@ import lombok.Getter;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.bukkit.folia.FoliaSchedulerProvider;
-import net.skinsrestorer.bukkit.gui.SkinsGUI;
+import net.skinsrestorer.bukkit.gui.BukkitGUI;
 import net.skinsrestorer.bukkit.listener.ForceAliveListener;
 import net.skinsrestorer.bukkit.paper.PaperUtil;
 import net.skinsrestorer.bukkit.spigot.SpigotConfigUtil;
@@ -30,13 +30,14 @@ import net.skinsrestorer.bukkit.utils.BukkitSchedulerProvider;
 import net.skinsrestorer.bukkit.utils.SchedulerProvider;
 import net.skinsrestorer.bukkit.utils.SkinApplyBukkitAdapter;
 import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
-import net.skinsrestorer.shared.gui.PageInfo;
+import net.skinsrestorer.shared.gui.SRInventory;
 import net.skinsrestorer.shared.info.ClassInfo;
 import net.skinsrestorer.shared.info.Platform;
 import net.skinsrestorer.shared.info.PluginInfo;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
+import net.skinsrestorer.shared.subjects.SRServerPlayer;
 import net.skinsrestorer.shared.utils.ProviderSelector;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Server;
@@ -136,7 +137,7 @@ public class SRBukkitAdapter implements SRServerAdapter {
     }
 
     @Override
-    public void runSyncToPlayer(SRPlayer player, Runnable runnable) {
+    public void runSyncToPlayer(SRServerPlayer player, Runnable runnable) {
         runSyncToPlayer(player.getAs(Player.class), runnable);
     }
 
@@ -168,18 +169,14 @@ public class SRBukkitAdapter implements SRServerAdapter {
     }
 
     @Override
-    public void openGUIPage(SRPlayer player, PageInfo pageInfo) {
-        openGUI(player, pageInfo);
-    }
-
-    private void openGUI(SRPlayer player, PageInfo pageInfo) {
-        Inventory inventory = injector.getSingleton(SkinsGUI.class).createGUI(player, pageInfo);
+    public void openGUI(SRServerPlayer player, SRInventory srInventory) {
+        Inventory inventory = injector.getSingleton(BukkitGUI.class).createGUI(srInventory);
 
         runSyncToPlayer(player, () -> player.getAs(Player.class).openInventory(inventory));
     }
 
     @Override
-    public Optional<SRPlayer> getPlayer(String name) {
+    public Optional<SRServerPlayer> getPlayer(String name) {
         return Optional.ofNullable(server.getPlayer(name)).map(p -> injector.getSingleton(WrapperBukkit.class).player(p));
     }
 
