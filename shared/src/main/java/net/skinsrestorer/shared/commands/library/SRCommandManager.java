@@ -96,12 +96,13 @@ public class SRCommandManager {
         commandManager.captionRegistry().registerProvider(TranslationBundle.core(SRCommandSender::getLocale));
         commandManager.captionRegistry().registerProvider(MinecraftExtrasTranslationBundle.minecraftExtras(SRCommandSender::getLocale));
 
-        MinecraftExceptionHandler
-                .create(ComponentHelper::commandSenderToAudience)
-                .defaultHandlers()
-                .handler(InvalidCommandSenderException.class, (formatter, ctx) -> ComponentHelper.convertJsonToComponent(locale.getMessageRequired(ctx.context().sender(), Message.ONLY_ALLOWED_ON_PLAYER)))
-                .captionFormatter(ComponentCaptionFormatter.miniMessage())
-                .registerTo(commandManager);
+                MinecraftExceptionHandler
+                        .create(ComponentHelper::commandSenderToAudience)
+                        .defaultHandlers()
+                        .handler(InvalidCommandSenderException.class, (formatter, ctx) -> ComponentHelper.convertJsonToComponent(locale.getMessageRequired(ctx.context().sender(), Message.ONLY_ALLOWED_ON_PLAYER)))
+                        .handler(SRMessageException.class, (formatter, ctx) -> ComponentHelper.convertJsonToComponent(ctx.exception().getMessageSupplier().apply(locale)))
+                        .captionFormatter(ComponentCaptionFormatter.miniMessage())
+                        .registerTo(commandManager);
 
         commandManager.registerCommandPostProcessor(s -> {
             if (!(s.commandContext().sender() instanceof SRProxyPlayer proxyPlayer)) {

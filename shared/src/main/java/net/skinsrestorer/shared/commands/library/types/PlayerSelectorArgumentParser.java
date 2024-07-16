@@ -18,10 +18,13 @@
 package net.skinsrestorer.shared.commands.library.types;
 
 import lombok.RequiredArgsConstructor;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.skinsrestorer.shared.commands.library.PlayerSelector;
+import net.skinsrestorer.shared.commands.library.SRMessageException;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
+import net.skinsrestorer.shared.subjects.messages.Message;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.context.CommandInput;
@@ -83,7 +86,8 @@ public class PlayerSelectorArgumentParser implements ArgumentParser<SRCommandSen
             }
 
             commandInput.cursor(current - requestedPlayer.length());
-            return ArgumentParseResult.failure(new Throwable("Unknown player: " + requestedPlayer));
+            return ArgumentParseResult.failure(new SRMessageException(locale ->
+                    locale.getMessageRequired(commandContext.sender(), Message.COMMAND_UNKNOWN_PLAYER, Placeholder.unparsed("name", requestedPlayer))));
         }
 
         if (!toResolve.isEmpty()) {
@@ -91,7 +95,8 @@ public class PlayerSelectorArgumentParser implements ArgumentParser<SRCommandSen
         }
 
         commandInput.cursor(start);
-        return ArgumentParseResult.failure(new Throwable("No targets supplied"));
+        return ArgumentParseResult.failure(new SRMessageException(locale ->
+                locale.getMessageRequired(commandContext.sender(), Message.COMMAND_NO_TARGETS_SUPPLIED)));
     }
 
     @Override
