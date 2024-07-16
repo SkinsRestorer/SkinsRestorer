@@ -41,7 +41,7 @@ public class SRBungeeInit implements SRProxyPlatformInit {
 
     @Override
     public void initSkinApplier() {
-        plugin.registerSkinApplier(injector.getSingleton(SkinApplierBungee.class), ProxiedPlayer.class, wrapper::player);
+        plugin.registerSkinApplier(injector.getSingleton(SkinApplierBungee.class), ProxiedPlayer.class, wrapper);
     }
 
     @Override

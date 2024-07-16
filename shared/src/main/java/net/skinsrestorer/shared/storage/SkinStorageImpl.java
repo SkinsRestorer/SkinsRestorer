@@ -32,13 +32,15 @@ import net.skinsrestorer.shared.connections.MineSkinAPIImpl;
 import net.skinsrestorer.shared.connections.MojangAPIImpl;
 import net.skinsrestorer.shared.connections.RecommendationsState;
 import net.skinsrestorer.shared.connections.responses.RecommenationResponse;
-import net.skinsrestorer.shared.gui.GUISkinEntry;
 import net.skinsrestorer.shared.gui.PageInfo;
+import net.skinsrestorer.shared.gui.PageType;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.storage.adapter.AdapterReference;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.storage.model.cache.MojangCacheData;
 import net.skinsrestorer.shared.storage.model.skin.*;
+import net.skinsrestorer.shared.subjects.SRPlayer;
+import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.utils.GUIUtils;
 import net.skinsrestorer.shared.utils.SRHelpers;
 import net.skinsrestorer.shared.utils.UUIDUtils;
@@ -54,6 +56,7 @@ import java.util.concurrent.TimeUnit;
 public class SkinStorageImpl implements SkinStorage {
     public static final String RECOMMENDATION_PREFIX = "sr-recommendation-";
     private final SRLogger logger;
+    private final SkinsRestorerLocale locale;
     private final CacheStorageImpl cacheStorage;
     private final MojangAPIImpl mojangAPI;
     private final MineSkinAPIImpl mineSkinAPI;
@@ -200,11 +203,16 @@ public class SkinStorageImpl implements SkinStorage {
         adapterReference.get().setCustomSkinData(skinName, CustomSkinData.of(skinName, textures));
     }
 
-    public PageInfo getGUIPage(int page) {
-        return GUIUtils.getGUIPage(page, new GUIUtils.GUIDataSource() {
+    public PageInfo getGUIPage(SRPlayer player, int page, PageType pageType) {
+        return GUIUtils.getGUIPage(player, locale, page, pageType, new GUIUtils.GUIDataSource() {
             @Override
             public boolean isEnabled() {
                 return settings.getProperty(GUIConfig.CUSTOM_GUI_ENABLED);
+            }
+
+            @Override
+            public PageType getPageType() {
+                return PageType.MAIN;
             }
 
             @Override
@@ -218,13 +226,18 @@ public class SkinStorageImpl implements SkinStorage {
             }
 
             @Override
-            public List<GUISkinEntry> getGUISkins(int offset, int limit) {
+            public List<GUIUtils.GUIRawSkinEntry> getGUISkins(int offset, int limit) {
                 return adapterReference.get().getCustomGUISkins(offset, limit);
             }
         }, new GUIUtils.GUIDataSource() {
             @Override
             public boolean isEnabled() {
                 return settings.getProperty(GUIConfig.PLAYERS_GUI_ENABLED);
+            }
+
+            @Override
+            public PageType getPageType() {
+                return PageType.MAIN;
             }
 
             @Override
@@ -238,13 +251,18 @@ public class SkinStorageImpl implements SkinStorage {
             }
 
             @Override
-            public List<GUISkinEntry> getGUISkins(int offset, int limit) {
+            public List<GUIUtils.GUIRawSkinEntry> getGUISkins(int offset, int limit) {
                 return adapterReference.get().getPlayerGUISkins(offset, limit);
             }
         }, new GUIUtils.GUIDataSource() {
             @Override
             public boolean isEnabled() {
                 return settings.getProperty(GUIConfig.RECOMMENDATIONS_GUI_ENABLED);
+            }
+
+            @Override
+            public PageType getPageType() {
+                return PageType.MAIN;
             }
 
             @Override
@@ -258,9 +276,9 @@ public class SkinStorageImpl implements SkinStorage {
             }
 
             @Override
-            public List<GUISkinEntry> getGUISkins(int offset, int limit) {
+            public List<GUIUtils.GUIRawSkinEntry> getGUISkins(int offset, int limit) {
                 return Arrays.stream(recommendationsState.getRecommendationsOffset(offset, limit))
-                        .map(r -> new GUISkinEntry(
+                        .map(r -> new GUIUtils.GUIRawSkinEntry(
                                 RECOMMENDATION_PREFIX + r.getSkinId(),
                                 r.getSkinName(),
                                 PropertyUtils.getSkinTextureHash(r.getValue())

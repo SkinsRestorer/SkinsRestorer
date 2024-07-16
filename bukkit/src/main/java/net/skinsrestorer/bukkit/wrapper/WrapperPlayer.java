@@ -19,6 +19,7 @@ package net.skinsrestorer.bukkit.wrapper;
 
 import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
+import net.skinsrestorer.shared.config.MessageConfig;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.SRServerPlayer;
 import net.skinsrestorer.shared.utils.LocaleParser;
@@ -34,16 +35,16 @@ public class WrapperPlayer extends WrapperCommandSender implements SRServerPlaye
 
     @Override
     public Locale getLocale() {
-        try {
-            return LocaleParser.parseLocale(player.getLocale()).orElseGet(super::getLocale);
-        } catch (NoSuchMethodError ignored) {
-            return super.getLocale();
+        if (!settings.getProperty(MessageConfig.PER_ISSUER_LOCALE)) {
+            return settings.getProperty(MessageConfig.LOCALE);
         }
-    }
 
-    @Override
-    public <P> P getAs(Class<P> playerClass) {
-        return playerClass.cast(player);
+        try {
+            return LocaleParser.parseLocale(player.getLocale())
+                    .orElseGet(() -> settings.getProperty(MessageConfig.LOCALE));
+        } catch (NoSuchMethodError ignored) {
+            return settings.getProperty(MessageConfig.LOCALE);
+        }
     }
 
     @Override

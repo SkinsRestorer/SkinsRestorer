@@ -6,9 +6,11 @@ runtask = "2.3.0"
 runpaperversion = "1.21"
 runwaterfallversion = "1.19"
 runvelocityversion = "3.2.0-SNAPSHOT"
+adventure-platform = "4.3.3"
 
 [libraries]
-brigadier = "com.mojang:brigadier:1.1.8"
+adventure-bukkit = { module = "com.github.KyoriPowered.adventure-platform:adventure-platform-bukkit", version = "7724203684" }
+adventure-bungeecord = { module = "net.kyori:adventure-platform-bungeecord", version.ref = "adventure-platform" }
 
 [plugins]
 

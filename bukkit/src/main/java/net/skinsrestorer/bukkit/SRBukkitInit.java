@@ -21,8 +21,6 @@ import ch.jalu.configme.SettingsManager;
 import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.semver.SemanticVersion;
-import net.skinsrestorer.bukkit.command.SRBukkitCommand;
-import net.skinsrestorer.bukkit.command.SRHelpTopic;
 import net.skinsrestorer.bukkit.hooks.SRPlaceholderAPIExpansion;
 import net.skinsrestorer.bukkit.listener.*;
 import net.skinsrestorer.bukkit.paper.PaperPlayerJoinEvent;
@@ -78,7 +76,7 @@ public class SRBukkitInit implements SRServerPlatformInit {
         injector.register(SkinApplyBukkitAdapter.class, selectSkinApplyAdapter());
         injector.register(SkinRefresher.class, detectRefresh());
 
-        plugin.registerSkinApplier(injector.getSingleton(SkinApplierBukkit.class), Player.class, wrapper::player);
+        plugin.registerSkinApplier(injector.getSingleton(SkinApplierBukkit.class), Player.class, wrapper);
 
         // Log information about the platform
         logger.info(SRChatColor.GREEN + "Running on Minecraft " + SRChatColor.YELLOW + BukkitReflection.SERVER_VERSION + SRChatColor.GREEN + ".");
@@ -190,9 +188,6 @@ public class SRBukkitInit implements SRServerPlatformInit {
 
     @Override
     public void prePlatformInit() {
-        server.getHelpMap().registerHelpTopicFactory(SRBukkitCommand.class, command ->
-                new SRHelpTopic((SRBukkitCommand) command, wrapper, locale));
-
         // Shutdown kyori adventure
         plugin.getShutdownHooks().add(() -> adapter.getAdventure().close());
     }

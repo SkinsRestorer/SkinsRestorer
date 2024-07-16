@@ -15,26 +15,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package net.skinsrestorer.shared.commands.library;
+package net.skinsrestorer.shared.gui;
 
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import lombok.RequiredArgsConstructor;
+import lombok.Getter;
 
-import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 
-@RequiredArgsConstructor
-public class ConditionCommand implements CommandWrapper {
-    private final List<ConditionRegistration> conditions;
-    private final CommandWrapper delegate;
+@Getter
+public enum PageType {
+    MAIN;
 
-    @Override
-    public int run(ContextWrapper context) throws CommandSyntaxException {
-        for (ConditionRegistration condition : conditions) {
-            if (!condition.condition().test(context.getSource())) {
-                return 0;
+    private final String key = name().toLowerCase(Locale.ROOT);
+
+    public static Optional<PageType> fromKey(String key) {
+        for (PageType pageType : values()) {
+            if (pageType.key.equals(key)) {
+                return Optional.of(pageType);
             }
         }
 
-        return delegate.run(context);
+        return Optional.empty();
     }
 }

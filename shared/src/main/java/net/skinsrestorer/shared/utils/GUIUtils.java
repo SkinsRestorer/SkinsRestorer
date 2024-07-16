@@ -19,7 +19,11 @@ package net.skinsrestorer.shared.utils;
 
 import net.skinsrestorer.shared.gui.GUISkinEntry;
 import net.skinsrestorer.shared.gui.PageInfo;
+import net.skinsrestorer.shared.gui.PageType;
 import net.skinsrestorer.shared.gui.SharedGUI;
+import net.skinsrestorer.shared.subjects.SRPlayer;
+import net.skinsrestorer.shared.subjects.messages.Message;
+import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,13 +31,14 @@ import java.util.Comparator;
 import java.util.List;
 
 public class GUIUtils {
-    public static PageInfo getGUIPage(int page, GUIDataSource... sources) {
+    public static PageInfo getGUIPage(SRPlayer player, SkinsRestorerLocale locale, int page, PageType pageType, GUIDataSource... sources) {
         if (page < 0) {
             page = 0;
         }
 
         List<GUIDataSource> enabledSources = Arrays.stream(sources)
                 .filter(GUIDataSource::isEnabled)
+                .filter(source -> source.getPageType() == pageType)
                 .sorted(Comparator.comparingInt(GUIDataSource::getIndex))
                 .toList();
         int offset = page * SharedGUI.HEAD_COUNT_PER_PAGE;
@@ -55,8 +60,10 @@ public class GUIUtils {
                 sourceOffset = 0;
             }
 
-            List<GUISkinEntry> sourceSkins = source.getGUISkins(sourceOffset, sourceLimit);
-            skinPage.addAll(sourceSkins);
+            List<GUIUtils.GUIRawSkinEntry> sourceSkins = source.getGUISkins(sourceOffset, sourceLimit);
+            sourceSkins.stream()
+                    .map(base -> new GUISkinEntry(base, List.of(locale.getMessageRequired(player, Message.SKINSMENU_SELECT_SKIN))))
+                    .forEach(skinPage::add);
 
             if (sourceSkins.size() < sourceTotal - sourceOffset) {
                 hasNextPage = true;
@@ -66,6 +73,7 @@ public class GUIUtils {
 
         return new PageInfo(
                 page,
+                pageType,
                 page > 0,
                 page < Integer.MAX_VALUE && hasNextPage,
                 skinPage
@@ -75,10 +83,15 @@ public class GUIUtils {
     public interface GUIDataSource {
         boolean isEnabled();
 
+        PageType getPageType();
+
         int getIndex();
 
         int getTotalSkins();
 
-        List<GUISkinEntry> getGUISkins(int offset, int limit);
+        List<GUIUtils.GUIRawSkinEntry> getGUISkins(int offset, int limit);
+    }
+
+    public record GUIRawSkinEntry(String skinId, String skinName, String textureHash) {
     }
 }

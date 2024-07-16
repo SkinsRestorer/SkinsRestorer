@@ -27,9 +27,9 @@ import java.util.Optional;
 public interface SRProxyPlayer extends SRPlayer {
     Optional<String> getCurrentServer();
 
-    default void sendPage(PageInfo pageInfo) {
+    default void sendPageToServer(PageInfo pageInfo) {
         sendToMessageChannel(out -> {
-            out.writeUTF("returnSkinsV4");
+            out.writeUTF("returnSkinsV5");
             byte[] ba = MessageProtocolUtil.convertToByteArray(pageInfo);
             out.writeInt(ba.length);
             out.write(ba);

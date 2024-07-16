@@ -23,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.Locale;
 import java.util.Optional;
 
+@Getter
 @RequiredArgsConstructor
 public enum Message {
     PREFIX_FORMAT,
@@ -108,9 +109,8 @@ public enum Message {
     ADMINCOMMAND_DUMP_SUCCESS(Message.PREFIX_FORMAT),
     ADMINCOMMAND_DUMP_ERROR(Message.PREFIX_FORMAT),
     COMMAND_SERVER_NOT_ALLOWED_MESSAGE(Message.PREFIX_FORMAT),
-    COMMAND_CLICK_TO_SUGGEST,
-    COMMAND_HELP_HEADER,
-    COMMAND_HELP_FORMAT,
+    COMMAND_UNKNOWN_PLAYER,
+    COMMAND_NO_TARGETS_SUPPLIED,
     PLAYER_HAS_NO_PERMISSION_SKIN(Message.PREFIX_FORMAT),
     PLAYER_HAS_NO_PERMISSION_URL(Message.PREFIX_FORMAT),
     NOT_PREMIUM(Message.PREFIX_FORMAT),
@@ -156,12 +156,10 @@ public enum Message {
     SKINSMENU_SELECT_SKIN,
     SKIN_SEARCH_MESSAGE(Message.PREFIX_FORMAT),
     NO_SKIN_DATA(Message.PREFIX_FORMAT),
-    INFO_NO_BRACKETS(Message.PREFIX_FORMAT),
     OUTDATED(Message.PREFIX_FORMAT),
     UNSUPPORTED_JAVA(Message.PREFIX_FORMAT);
 
     private final String key = "skinsrestorer." + this.name().toLowerCase(Locale.ROOT);
-    @Getter
     private final Message parent;
 
     Message() {

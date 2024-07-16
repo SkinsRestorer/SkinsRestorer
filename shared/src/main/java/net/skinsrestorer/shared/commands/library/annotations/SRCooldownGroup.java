@@ -15,11 +15,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package net.skinsrestorer.shared.commands.library;
+package net.skinsrestorer.shared.commands.library.annotations;
 
-import net.skinsrestorer.shared.subjects.SRCommandSender;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import java.util.function.Predicate;
-
-public record ConditionRegistration(String name, Predicate<SRCommandSender> condition) {
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface SRCooldownGroup {
+    String value();
 }

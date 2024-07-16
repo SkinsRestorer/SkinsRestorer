@@ -18,17 +18,23 @@
 package net.skinsrestorer.shared.plugin;
 
 import net.skinsrestorer.api.property.SkinProperty;
-import net.skinsrestorer.shared.commands.library.CommandPlatform;
 import net.skinsrestorer.shared.info.Platform;
 import net.skinsrestorer.shared.info.PluginInfo;
+import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
+import org.incendo.cloud.CommandManager;
 
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-public interface SRPlatformAdapter<P, C> extends CommandPlatform<C> {
+public interface SRPlatformAdapter {
+    CommandManager<SRCommandSender> createCommandManager();
+
+    Collection<SRPlayer> getOnlinePlayers();
+
     InputStream getResource(String resource);
 
     void runAsync(Runnable runnable);
@@ -58,7 +64,7 @@ public interface SRPlatformAdapter<P, C> extends CommandPlatform<C> {
      * @param plugin The plugin to keep the object alive.
      * @param object The object to keep alive.
      */
-    void extendLifeTime(P plugin, Object object);
+    void extendLifeTime(Object plugin, Object object);
 
     boolean supportsDefaultPermissions();
 

@@ -26,7 +26,7 @@ import javax.inject.Inject;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class UpdateCheckExecutor {
-    private final SRPlatformAdapter<?, ?> adapter;
+    private final SRPlatformAdapter adapter;
     private final SettingsManager settings;
 
     public void checkUpdate(UpdateCause cause, UpdateCheckerGitHub updateChecker, UpdateDownloader downloader, boolean isSync) {

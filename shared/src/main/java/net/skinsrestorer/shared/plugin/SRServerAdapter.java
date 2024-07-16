@@ -22,16 +22,14 @@ import net.skinsrestorer.shared.subjects.SRPlayer;
 
 import java.util.Optional;
 
-public interface SRServerAdapter<P, C> extends SRPlatformAdapter<P, C> {
+public interface SRServerAdapter extends SRPlatformAdapter {
     void runSync(Runnable runnable);
 
     void runSyncToPlayer(SRPlayer player, Runnable runnable);
 
     boolean determineProxy();
 
-    void openServerGUI(SRPlayer player, int page);
-
-    void openProxyGUI(SRPlayer player, PageInfo pageInfo);
+    void openGUIPage(SRPlayer player, PageInfo pageInfo);
 
     Optional<SRPlayer> getPlayer(String name);
 }

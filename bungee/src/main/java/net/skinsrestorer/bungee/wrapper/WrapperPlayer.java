@@ -20,11 +20,13 @@ package net.skinsrestorer.bungee.wrapper;
 import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.skinsrestorer.shared.config.MessageConfig;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.SRProxyPlayer;
 import net.skinsrestorer.shared.utils.SRConstants;
 
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -34,17 +36,12 @@ public class WrapperPlayer extends WrapperCommandSender implements SRProxyPlayer
 
     @Override
     public Locale getLocale() {
-        Locale playerLocale = player.getLocale();
-        if (playerLocale == null) {
-            return super.getLocale();
+        if (!settings.getProperty(MessageConfig.PER_ISSUER_LOCALE)) {
+            return settings.getProperty(MessageConfig.LOCALE);
         }
 
-        return playerLocale;
-    }
-
-    @Override
-    public <P> P getAs(Class<P> playerClass) {
-        return playerClass.cast(player);
+        return Objects.requireNonNullElseGet(player.getLocale(),
+                () -> settings.getProperty(MessageConfig.LOCALE));
     }
 
     @Override

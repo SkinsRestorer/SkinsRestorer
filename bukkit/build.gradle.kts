@@ -12,7 +12,7 @@ dependencies {
     implementation(projects.multiver.bukkit.v17)
     implementation(projects.multiver.bukkit.folia)
 
-    implementation("net.kyori:adventure-platform-bukkit:4.3.3")
+    implementation(libs.adventure.bukkit)
 
     rootProject.subprojects.forEach {
         if (!it.name.startsWith("mc-")) return@forEach
@@ -31,6 +31,8 @@ dependencies {
 
     // MultiPaper support
     implementation("com.github.puregero:multilib:1.2.3")
+
+    implementation("org.incendo:cloud-paper:2.0.0-beta.9")
 
     // PAPI API hook
     compileOnly("me.clip:placeholderapi:2.11.6") {

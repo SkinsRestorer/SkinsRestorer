@@ -17,35 +17,41 @@
  */
 package net.skinsrestorer.shared.commands;
 
+import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.commands.library.annotations.*;
-import net.skinsrestorer.shared.plugin.SRProxyPlugin;
+import net.skinsrestorer.shared.commands.library.annotations.CommandDescription;
+import net.skinsrestorer.shared.commands.library.annotations.CommandPermission;
+import net.skinsrestorer.shared.commands.library.annotations.RootDescription;
+import net.skinsrestorer.shared.gui.PageInfo;
+import net.skinsrestorer.shared.gui.PageType;
+import net.skinsrestorer.shared.plugin.SRServerAdapter;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.SRProxyPlayer;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
+import org.incendo.cloud.annotations.Command;
 
 import javax.inject.Inject;
 
 @SuppressWarnings("unused")
-@CommandNames("skins")
-@Description(Message.HELP_SKINS)
-@CommandPermission(value = PermissionRegistry.SKINS)
-@CommandConditions({"cooldown", "allowed-server"})
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public final class ProxyGUICommand {
+public final class GUICommand {
     private final SkinStorageImpl skinStorage;
-    private final SRProxyPlugin proxyPlugin;
+    private final Injector injector;
 
-    @RootCommand
+    @Command("skins")
+    @RootDescription(Message.HELP_SKINS)
+    @CommandDescription(Message.HELP_SKINS)
+    @CommandPermission(value = PermissionRegistry.SKINS)
     private void onDefault(SRPlayer player) {
-        if (!(player instanceof SRProxyPlayer proxyPlayer)) {
-            throw new IllegalStateException("Player is not a proxy player");
-        }
-
         player.sendMessage(Message.SKINSMENU_OPEN);
 
-        proxyPlayer.sendPage(skinStorage.getGUIPage(0));
+        PageInfo pageInfo = skinStorage.getGUIPage(player, 0, PageType.MAIN);
+        if (player instanceof SRProxyPlayer proxyPlayer) {
+            proxyPlayer.sendPageToServer(pageInfo);
+        } else {
+            injector.getSingleton(SRServerAdapter.class).openGUIPage(player, pageInfo);
+        }
     }
 }

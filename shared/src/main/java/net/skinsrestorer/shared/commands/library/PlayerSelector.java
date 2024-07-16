@@ -17,6 +17,7 @@
  */
 package net.skinsrestorer.shared.commands.library;
 
+import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.utils.SRHelpers;
@@ -42,10 +43,7 @@ public record PlayerSelector(Collection<Resolvable> toResolve) {
 
     public enum SelectorType {
         ALL_PLAYERS,
-        ALL_ENTITIES,
-        RANDOM_PLAYER,
-        SELF_PLAYER,
-        CLOSEST_PLAYER
+        RANDOM_PLAYER
     }
 
     public interface Resolvable {
@@ -59,14 +57,12 @@ public record PlayerSelector(Collection<Resolvable> toResolve) {
         }
     }
 
-    public record Selector(CommandPlatform<?> platform, SelectorType type) implements Resolvable {
+    public record Selector(SRPlatformAdapter platform, SelectorType type) implements Resolvable {
         @Override
         public Collection<SRPlayer> resolve(SRCommandSender commandSender) {
             return switch (type) {
-                case ALL_PLAYERS, ALL_ENTITIES -> platform.getOnlinePlayers();
+                case ALL_PLAYERS -> platform.getOnlinePlayers();
                 case RANDOM_PLAYER -> List.of(SRHelpers.getRandomEntry(platform.getOnlinePlayers()));
-                case SELF_PLAYER, CLOSEST_PLAYER ->
-                        commandSender instanceof SRPlayer player ? List.of(player) : List.of();
             };
         }
     }

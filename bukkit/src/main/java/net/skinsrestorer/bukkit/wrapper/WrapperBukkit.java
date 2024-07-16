@@ -48,4 +48,9 @@ public class WrapperBukkit implements SRSubjectWrapper<CommandSender, Player, SR
     public SRServerPlayer player(Player player) {
         return WrapperPlayer.builder().player(player).sender(player).locale(locale).settings(settings).adapter(adapter).build();
     }
+
+    @Override
+    public CommandSender unwrap(SRCommandSender sender) {
+        return sender.getAs(CommandSender.class);
+    }
 }

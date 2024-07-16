@@ -19,6 +19,7 @@ package net.skinsrestorer.shared.utils;
 
 import net.skinsrestorer.shared.gui.GUISkinEntry;
 import net.skinsrestorer.shared.gui.PageInfo;
+import net.skinsrestorer.shared.gui.PageType;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -27,25 +28,51 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 public class MessageProtocolUtil {
-    public static PageInfo convertToPageInfo(byte[] byteArr) {
+    private static <T> List<T> readList(DataInputStream is, ThrowingSupplier<T> reader) {
         try {
-            DataInputStream ois = new DataInputStream(new GZIPInputStream(new ByteArrayInputStream(byteArr)));
-
-            int page = ois.readInt();
-            boolean hasPrevious = ois.readBoolean();
-            boolean hasNext = ois.readBoolean();
-            int size = ois.readInt();
-            List<GUISkinEntry> skinList = new ArrayList<>(size);
-
+            int size = is.readInt();
+            List<T> list = new ArrayList<>(size);
             for (int i = 0; i < size; i++) {
-                String skinId = ois.readUTF();
-                String skinName = ois.readUTF();
-                String textureHash = ois.readUTF();
-
-                skinList.add(new GUISkinEntry(skinId, skinName, textureHash));
+                list.add(reader.get());
             }
 
-            return new PageInfo(page, hasPrevious, hasNext, skinList);
+            return list;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static <T> void writeList(DataOutputStream os, List<T> list, ThrowingConsumer<T> writer) {
+        try {
+            os.writeInt(list.size());
+            for (T entry : list) {
+                writer.accept(entry);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static PageInfo convertToPageInfo(byte[] byteArr) {
+        try {
+            DataInputStream is = new DataInputStream(new GZIPInputStream(new ByteArrayInputStream(byteArr)));
+
+            int page = is.readInt();
+            PageType pageType = PageType.fromKey(is.readUTF()).orElseThrow();
+            boolean hasPrevious = is.readBoolean();
+            boolean hasNext = is.readBoolean();
+            List<GUISkinEntry> skinList = readList(is, () -> {
+                String skinId = is.readUTF();
+                String skinName = is.readUTF();
+                String textureHash = is.readUTF();
+                GUIUtils.GUIRawSkinEntry base = new GUIUtils.GUIRawSkinEntry(skinId, skinName, textureHash);
+
+                List<ComponentString> lore = readList(is, () -> new ComponentString(is.readUTF()));
+
+                return new GUISkinEntry(base, lore);
+            });
+
+            return new PageInfo(page, pageType, hasPrevious, hasNext, skinList);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -55,23 +82,32 @@ public class MessageProtocolUtil {
         ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
 
         try (GZIPOutputStream gzipOut = new GZIPOutputStream(byteOut)) {
-            DataOutputStream dataOut = new DataOutputStream(gzipOut);
+            DataOutputStream os = new DataOutputStream(gzipOut);
 
-            dataOut.writeInt(pageInfo.page());
-            dataOut.writeBoolean(pageInfo.hasPrevious());
-            dataOut.writeBoolean(pageInfo.hasNext());
-            dataOut.writeInt(pageInfo.skinList().size());
-            for (GUISkinEntry entry : pageInfo.skinList()) {
-                dataOut.writeUTF(entry.skinId());
-                dataOut.writeUTF(entry.skinName());
-                dataOut.writeUTF(entry.textureHash());
-            }
+            os.writeInt(pageInfo.page());
+            os.writeUTF(pageInfo.pageType().getKey());
+            os.writeBoolean(pageInfo.hasPrevious());
+            os.writeBoolean(pageInfo.hasNext());
+            writeList(os, pageInfo.skinList(), (entry) -> {
+                os.writeUTF(entry.base().skinId());
+                os.writeUTF(entry.base().skinName());
+                os.writeUTF(entry.base().textureHash());
+                writeList(os, entry.lore(), (component) -> os.writeUTF(component.jsonString()));
+            });
 
-            dataOut.flush();
+            os.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
         return byteOut.toByteArray();
+    }
+
+    private interface ThrowingSupplier<T> {
+        T get() throws IOException;
+    }
+
+    private interface ThrowingConsumer<T> {
+        void accept(T t) throws IOException;
     }
 }

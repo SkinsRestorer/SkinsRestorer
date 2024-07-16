@@ -15,12 +15,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package net.skinsrestorer.shared.commands.library;
+package net.skinsrestorer.shared.gui;
 
-import net.skinsrestorer.shared.subjects.SRCommandSender;
+import net.skinsrestorer.shared.listeners.event.ClickEventInfo;
 
-import java.util.function.Predicate;
-
-public record SRCommandMeta(String rootName, String[] aliases, Predicate<SRCommandSender> permission,
-                            CommandHelpData rootHelp) {
+public interface ClickEventHandler {
+    void handle(ClickEventInfo event);
 }

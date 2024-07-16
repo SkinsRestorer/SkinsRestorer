@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith({MockitoExtension.class, SRExtension.class})
 public class EventBusTest {
     @Mock
-    private SRPlatformAdapter<?, ?> srPlatformAdapter;
+    private SRPlatformAdapter srPlatformAdapter;
     @Mock
     private Object plugin;
 

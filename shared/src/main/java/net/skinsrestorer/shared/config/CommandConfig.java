@@ -74,13 +74,6 @@ public class CommandConfig implements SettingsHolder {
     })
     public static final Property<Integer> MAX_HISTORY_LENGTH = newProperty("commands.maxHistoryLength", SharedGUI.HEAD_COUNT_PER_PAGE);
     @Comment({
-            "Removes < > and [ ] encasing from command arguments.",
-            "Example: /skin set <skin> will become /skin set skin if this is enabled.",
-            "This is useful to prevent players from incorrectly using the command, as those brackets are not supposed to be there.",
-            "This will also send a message to the player that they incorrectly use the command, but the command will still run fixed arguments."
-    })
-    public static final Property<Boolean> REMOVE_BRACKETS = newProperty("commands.removeBrackets", true);
-    @Comment({
             "Override the automatically generated translated help message with a custom one.",
             "This is useful if you want to have a custom help message for your server.",
             "This only affects the base help message when running /skin with no parameters, not the error/subcommand help messages."

@@ -32,6 +32,11 @@ public class WrapperCommandSender extends AbstractSRCommandSender {
     private final @NonNull SRBungeeAdapter adapter;
 
     @Override
+    public <S> S getAs(Class<S> senderClass) {
+        return senderClass.cast(sender);
+    }
+
+    @Override
     public void sendMessage(ComponentString messageJson) {
         adapter.getAdventure().sender(sender).sendMessage(BungeeComponentHelper.deserialize(messageJson));
     }

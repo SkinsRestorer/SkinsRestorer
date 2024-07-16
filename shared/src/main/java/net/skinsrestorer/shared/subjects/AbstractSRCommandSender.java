@@ -36,7 +36,7 @@ public abstract class AbstractSRCommandSender implements SRCommandSender {
 
     @Override
     public Locale getLocale() {
-        return settings.getProperty(MessageConfig.LOCALE);
+        return settings.getProperty(MessageConfig.CONSOLE_LOCALE);
     }
 
     @Override

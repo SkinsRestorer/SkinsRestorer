@@ -33,9 +33,12 @@ import net.skinsrestorer.api.property.*;
 import net.skinsrestorer.api.storage.CacheStorage;
 import net.skinsrestorer.api.storage.PlayerStorage;
 import net.skinsrestorer.builddata.BuildData;
-import net.skinsrestorer.shared.commands.library.CommandManager;
 import net.skinsrestorer.shared.commands.library.PlayerSelector;
-import net.skinsrestorer.shared.commands.library.annotations.*;
+import net.skinsrestorer.shared.commands.library.SRCommandManager;
+import net.skinsrestorer.shared.commands.library.annotations.CommandDescription;
+import net.skinsrestorer.shared.commands.library.annotations.CommandPermission;
+import net.skinsrestorer.shared.commands.library.annotations.ConsoleOnly;
+import net.skinsrestorer.shared.commands.library.annotations.RootDescription;
 import net.skinsrestorer.shared.config.DevConfig;
 import net.skinsrestorer.shared.config.StorageConfig;
 import net.skinsrestorer.shared.connections.DumpService;
@@ -61,6 +64,14 @@ import net.skinsrestorer.shared.subjects.permissions.Permission;
 import net.skinsrestorer.shared.subjects.permissions.PermissionGroup;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
 import net.skinsrestorer.shared.utils.*;
+import org.incendo.cloud.annotation.specifier.Greedy;
+import org.incendo.cloud.annotations.Argument;
+import org.incendo.cloud.annotations.Command;
+import org.incendo.cloud.annotations.suggestion.Suggestions;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.help.result.CommandEntry;
+import org.incendo.cloud.minecraft.extras.MinecraftHelp;
+import org.incendo.cloud.minecraft.extras.caption.ComponentCaptionFormatter;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -71,15 +82,13 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Command("sr|skinsrestorer")
+@RootDescription(Message.HELP_SR)
 @SuppressWarnings("unused")
-@CommandNames({"sr", "skinsrestorer"})
-@Description(Message.HELP_SR)
-@CommandPermission(PermissionRegistry.SR)
-@CommandConditions("allowed-server")
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class SRCommand {
     private final SRPlugin plugin;
-    private final SRPlatformAdapter<?, ?> adapter;
+    private final SRPlatformAdapter adapter;
     private final ServiceCheckerService serviceCheckerService;
     private final PlayerStorage playerStorage;
     private final CacheStorage cacheStorage;
@@ -93,16 +102,59 @@ public final class SRCommand {
     private final SkinApplier<Object> skinApplier;
     private final Injector injector;
     private final SkinsRestorerLocale locale;
-    private final CommandManager<SRCommandSender> commandManager;
+    private final SRCommandManager commandManager;
 
-    @RootCommand
-    private void onDefault(SRCommandSender sender) {
-        commandManager.getHelpMessage("sr", sender).forEach(sender::sendMessage);
+    @Command("")
+    @CommandPermission(PermissionRegistry.SR)
+    public void rootCommand(SRCommandSender sender) {
+        MinecraftHelp.<SRCommandSender>builder()
+                .commandManager(commandManager.getCommandManager())
+                .audienceProvider(ComponentHelper::commandSenderToAudience)
+                .commandPrefix("/sr")
+                .messageProvider(MinecraftHelp.captionMessageProvider(
+                        commandManager.getCommandManager().captionRegistry(),
+                        ComponentCaptionFormatter.miniMessage()
+                ))
+                .descriptionDecorator((s, d) -> ComponentHelper.convertJsonToComponent(locale.getMessageRequired(s, Message.fromKey(d).orElseThrow())))
+                .commandFilter(c -> c.rootComponent().name().equals("sr") && !c.commandDescription().description().isEmpty())
+                .maxResultsPerPage(Integer.MAX_VALUE)
+                .build()
+                .queryCommands("", sender);
     }
 
-    @Subcommand("reload")
+    @Suggestions("help_queries_sr")
+    public List<String> suggestHelpQueries(CommandContext<SRCommandSender> ctx, String input) {
+        return this.commandManager.getCommandManager()
+                .createHelpHandler()
+                .queryRootIndex(ctx.sender())
+                .entries()
+                .stream()
+                .filter(e -> e.command().rootComponent().name().equals("sr"))
+                .map(CommandEntry::syntax)
+                .toList();
+    }
+
+    @Command("help [query]")
+    @CommandPermission(PermissionRegistry.SR)
+    @CommandDescription(Message.HELP_SR)
+    public void commandHelp(SRCommandSender sender, @Argument(suggestions = "help_queries_sr") @Greedy String query) {
+        MinecraftHelp.<SRCommandSender>builder()
+                .commandManager(commandManager.getCommandManager())
+                .audienceProvider(ComponentHelper::commandSenderToAudience)
+                .commandPrefix("/sr help")
+                .messageProvider(MinecraftHelp.captionMessageProvider(
+                        commandManager.getCommandManager().captionRegistry(),
+                        ComponentCaptionFormatter.miniMessage()
+                ))
+                .descriptionDecorator((s, d) -> ComponentHelper.convertJsonToComponent(locale.getMessageRequired(s, Message.fromKey(d).orElseThrow())))
+                .commandFilter(c -> c.rootComponent().name().equals("sr") && !c.commandDescription().description().isEmpty())
+                .build()
+                .queryCommands(query == null ? "" : query, sender);
+    }
+
+    @Command("reload")
     @CommandPermission(PermissionRegistry.SR_RELOAD)
-    @Description(Message.HELP_SR_RELOAD)
+    @CommandDescription(Message.HELP_SR_RELOAD)
     private void onReload(SRCommandSender sender) {
         plugin.loadConfig();
         try {
@@ -120,18 +172,7 @@ public final class SRCommand {
         sender.sendMessage(Message.SUCCESS_ADMIN_RELOAD);
     }
 
-    @Private
-    @Subcommand("docs-commands")
-    @CommandPermission(PermissionRegistry.SR)
-    private void onDocsCommands(SRCommandSender sender) {
-        commandManager.getHelpMessageNodeStart(commandManager.getDispatcher().getRoot(),
-                        (s, t) -> Optional.of(ComponentHelper.parseMiniMessageToJsonString("| `/<command>` | <description> | `<permission>` |", t)),
-                        List.of(), sender)
-                .stream().map(ComponentHelper::convertToJsonString).forEach(sender::sendMessage);
-    }
-
-    @Private
-    @Subcommand("docs-permissions")
+    @Command("docs permissions")
     @CommandPermission(PermissionRegistry.SR)
     private void onDocsPermissions(SRCommandSender sender) {
         for (PermissionRegistry permission : PermissionRegistry.values()) {
@@ -152,9 +193,9 @@ public final class SRCommand {
         }
     }
 
-    @Subcommand("status")
+    @Command("status")
     @CommandPermission(PermissionRegistry.SR_STATUS)
-    @Description(Message.HELP_SR_STATUS)
+    @CommandDescription(Message.HELP_SR_STATUS)
     private void onStatus(SRCommandSender sender) {
         sender.sendMessage(Message.ADMINCOMMAND_STATUS_CHECKING);
 
@@ -202,9 +243,9 @@ public final class SRCommand {
         sender.sendMessage(Message.DIVIDER);
     }
 
-    @Subcommand({"drop", "remove"})
+    @Command("drop|remove <playerOrSkin> <target>")
     @CommandPermission(PermissionRegistry.SR_DROP)
-    @Description(Message.HELP_SR_DROP)
+    @CommandDescription(Message.HELP_SR_DROP)
     private void onDrop(SRCommandSender sender, PlayerOrSkin playerOrSkin, String target) {
         switch (playerOrSkin) {
             case PLAYER -> {
@@ -239,9 +280,9 @@ public final class SRCommand {
         sender.sendMessage(Message.SUCCESS_ADMIN_DROP, Placeholder.unparsed("type", playerOrSkin.toString()), Placeholder.unparsed("target", target));
     }
 
-    @Subcommand({"info", "props", "lookup"})
+    @Command("info|props|lookup <playerOrSkin> <input>")
     @CommandPermission(PermissionRegistry.SR_INFO)
-    @Description(Message.HELP_SR_INFO)
+    @CommandDescription(Message.HELP_SR_INFO)
     private void onInfo(SRCommandSender sender, PlayerOrSkin playerOrSkin, String input) {
         try {
             sender.sendMessage(Message.ADMINCOMMAND_INFO_CHECKING);
@@ -347,9 +388,9 @@ public final class SRCommand {
         }
     }
 
-    @Subcommand("applyskin")
+    @Command("applyskin <selector>")
     @CommandPermission(PermissionRegistry.SR_APPLY_SKIN)
-    @Description(Message.HELP_SR_APPLY_SKIN)
+    @CommandDescription(Message.HELP_SR_APPLY_SKIN)
     private void onApplySkin(SRCommandSender sender, PlayerSelector selector) {
         for (SRPlayer target : selector.resolve(sender)) {
             try {
@@ -361,16 +402,16 @@ public final class SRCommand {
         }
     }
 
-    @Subcommand("createcustom")
+    @Command("createcustom <skinName> <skinInput>")
     @CommandPermission(PermissionRegistry.SR_CREATE_CUSTOM)
-    @Description(Message.HELP_SR_CREATE_CUSTOM)
+    @CommandDescription(Message.HELP_SR_CREATE_CUSTOM)
     private void onCreateCustom(SRCommandSender sender, String skinName, String skinInput) {
         createCustom(sender, skinName, skinInput, null);
     }
 
-    @Subcommand("createcustom")
+    @Command("createcustom <skinName> <skinInput> <skinVariant>")
     @CommandPermission(PermissionRegistry.SR_CREATE_CUSTOM)
-    @Description(Message.HELP_SR_CREATE_CUSTOM)
+    @CommandDescription(Message.HELP_SR_CREATE_CUSTOM)
     private void onCreateCustom(SRCommandSender sender, String skinName, String skinInput, SkinVariant skinVariant) {
         createCustom(sender, skinName, skinInput, skinVariant);
     }
@@ -390,10 +431,10 @@ public final class SRCommand {
         }
     }
 
-    @Subcommand("purgeolddata")
+    @ConsoleOnly
+    @Command("purgeolddata <days>")
     @CommandPermission(PermissionRegistry.SR_PURGE_OLD_DATA)
-    @Description(Message.HELP_SR_PURGE_OLD_DATA)
-    @CommandConditions("console-only")
+    @CommandDescription(Message.HELP_SR_PURGE_OLD_DATA)
     private void onPurgeOldData(SRCommandSender sender, int days) {
         if (skinStorage.purgeOldSkins(days)) {
             sender.sendMessage(Message.ADMINCOMMAND_PURGEOLDDATA_SUCCESS);
@@ -402,9 +443,9 @@ public final class SRCommand {
         }
     }
 
-    @Subcommand("dump")
+    @Command("dump")
     @CommandPermission(PermissionRegistry.SR_DUMP)
-    @Description(Message.HELP_SR_DUMP)
+    @CommandDescription(Message.HELP_SR_DUMP)
     private void onDump(SRCommandSender sender) {
         try {
             sender.sendMessage(Message.ADMINCOMMAND_DUMP_UPLOADING);

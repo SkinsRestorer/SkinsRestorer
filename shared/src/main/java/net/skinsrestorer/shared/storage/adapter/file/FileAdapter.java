@@ -24,7 +24,6 @@ import net.skinsrestorer.api.PropertyUtils;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.property.SkinVariant;
 import net.skinsrestorer.shared.config.GUIConfig;
-import net.skinsrestorer.shared.gui.GUISkinEntry;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
@@ -37,6 +36,7 @@ import net.skinsrestorer.shared.storage.model.cache.MojangCacheData;
 import net.skinsrestorer.shared.storage.model.player.LegacyPlayerData;
 import net.skinsrestorer.shared.storage.model.player.PlayerData;
 import net.skinsrestorer.shared.storage.model.skin.*;
+import net.skinsrestorer.shared.utils.GUIUtils;
 import net.skinsrestorer.shared.utils.SRHelpers;
 import net.skinsrestorer.shared.utils.UUIDUtils;
 
@@ -470,15 +470,15 @@ public class FileAdapter implements StorageAdapter {
     }
 
     @Override
-    public List<GUISkinEntry> getCustomGUISkins(int offset, int limit) {
-        List<GUISkinEntry> list = new ArrayList<>();
+    public List<GUIUtils.GUIRawSkinEntry> getCustomGUISkins(int offset, int limit) {
+        List<GUIUtils.GUIRawSkinEntry> list = new ArrayList<>();
         List<GUIFileData> files = getCustomGUISkinFiles(offset, limit);
 
         for (GUIFileData data : files) {
             String fileName = data.fileName();
             try {
                 CustomSkinData customSkinData = getCustomSkinData(fileName).orElseThrow();
-                list.add(new GUISkinEntry(
+                list.add(new GUIUtils.GUIRawSkinEntry(
                         fileName,
                         fileName,
                         PropertyUtils.getSkinTextureHash(customSkinData.getProperty()))
@@ -549,15 +549,15 @@ public class FileAdapter implements StorageAdapter {
     }
 
     @Override
-    public List<GUISkinEntry> getPlayerGUISkins(int offset, int limit) {
-        List<GUISkinEntry> list = new ArrayList<>();
+    public List<GUIUtils.GUIRawSkinEntry> getPlayerGUISkins(int offset, int limit) {
+        List<GUIUtils.GUIRawSkinEntry> list = new ArrayList<>();
         List<GUIFileData> files = getPlayerGUISkinFiles(offset, limit);
 
         for (GUIFileData data : files) {
             String fileName = data.fileName();
             try {
                 PlayerSkinData playerSkinData = getPlayerSkinData(UUID.fromString(fileName)).orElseThrow();
-                list.add(new GUISkinEntry(
+                list.add(new GUIUtils.GUIRawSkinEntry(
                         fileName,
                         playerSkinData.getLastKnownName(),
                         PropertyUtils.getSkinTextureHash(playerSkinData.getProperty()))

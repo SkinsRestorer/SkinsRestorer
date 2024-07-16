@@ -21,6 +21,6 @@ import net.skinsrestorer.shared.subjects.SRProxyPlayer;
 
 import java.util.Optional;
 
-public interface SRProxyAdapter<P, C> extends SRPlatformAdapter<P, C> {
+public interface SRProxyAdapter extends SRPlatformAdapter {
     Optional<SRProxyPlayer> getPlayer(String name);
 }

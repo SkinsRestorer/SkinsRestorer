@@ -27,16 +27,18 @@ import net.skinsrestorer.api.exception.MineSkinException;
 import net.skinsrestorer.api.property.*;
 import net.skinsrestorer.api.storage.SkinStorage;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
-import net.skinsrestorer.shared.commands.library.CommandManager;
 import net.skinsrestorer.shared.commands.library.PlayerSelector;
-import net.skinsrestorer.shared.commands.library.annotations.*;
+import net.skinsrestorer.shared.commands.library.SRCommandManager;
+import net.skinsrestorer.shared.commands.library.annotations.CommandDescription;
+import net.skinsrestorer.shared.commands.library.annotations.CommandPermission;
+import net.skinsrestorer.shared.commands.library.annotations.RootDescription;
+import net.skinsrestorer.shared.commands.library.annotations.SRCooldownGroup;
 import net.skinsrestorer.shared.config.CommandConfig;
 import net.skinsrestorer.shared.connections.RecommendationsState;
 import net.skinsrestorer.shared.log.SRLogLevel;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.plugin.SRPlugin;
-import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.PlayerStorageImpl;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.storage.model.player.HistoryData;
@@ -49,80 +51,126 @@ import net.skinsrestorer.shared.utils.ComponentHelper;
 import net.skinsrestorer.shared.utils.SRConstants;
 import net.skinsrestorer.shared.utils.SRHelpers;
 import net.skinsrestorer.shared.utils.ValidationUtil;
+import org.incendo.cloud.annotation.specifier.Greedy;
+import org.incendo.cloud.annotations.Argument;
+import org.incendo.cloud.annotations.Command;
+import org.incendo.cloud.annotations.suggestion.Suggestions;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.help.result.CommandEntry;
+import org.incendo.cloud.minecraft.extras.MinecraftHelp;
+import org.incendo.cloud.minecraft.extras.caption.ComponentCaptionFormatter;
+import org.incendo.cloud.processors.cooldown.CooldownGroup;
 
 import javax.inject.Inject;
+import java.time.Duration;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+@Command("skin")
+@RootDescription(Message.HELP_SKIN)
 @SuppressWarnings("unused")
-@CommandNames("skin")
-@Description(Message.HELP_SKIN)
-@CommandPermission(value = PermissionRegistry.SKIN)
-@CommandConditions("allowed-server")
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class SkinCommand {
-    private final SRPlatformAdapter<?, ?> adapter;
+    public static final String COOLDOWN_GROUP_ID = "skin";
+    public static final CooldownGroup COOLDOWN_GROUP = CooldownGroup.named(COOLDOWN_GROUP_ID);
+
+    private final SRPlatformAdapter adapter;
     private final SRPlugin plugin;
     private final SettingsManager settings;
-    private final CooldownStorage cooldownStorage;
     private final SkinStorage skinStorage;
     private final PlayerStorageImpl playerStorage;
     private final SkinsRestorerLocale locale;
     private final SRLogger logger;
     private final SharedSkinApplier<Object> skinApplier;
     private final MineSkinAPI mineSkinAPI;
-    private final CommandManager<SRCommandSender> commandManager;
+    private final SRCommandManager commandManager;
     private final RecommendationsState recommendationsState;
 
-    @RootCommand
-    private void onDefault(SRCommandSender sender) {
+    @Command("")
+    @CommandPermission(PermissionRegistry.SKIN)
+    public void rootCommand(SRCommandSender sender) {
         if (settings.getProperty(CommandConfig.CUSTOM_HELP_ENABLED)) {
-            for (String line : settings.getProperty(CommandConfig.CUSTOM_HELP_MESSAGE)) {
-                sender.sendMessage(ComponentHelper.parseMiniMessageToJsonString(line));
-            }
+            settings.getProperty(CommandConfig.CUSTOM_HELP_MESSAGE)
+                    .forEach(l -> sender.sendMessage(ComponentHelper.parseMiniMessageToJsonString(l)));
             return;
         }
 
-        commandManager.getHelpMessage("skin", sender).forEach(sender::sendMessage);
+        MinecraftHelp.<SRCommandSender>builder()
+                .commandManager(commandManager.getCommandManager())
+                .audienceProvider(ComponentHelper::commandSenderToAudience)
+                .commandPrefix("/skin")
+                .messageProvider(MinecraftHelp.captionMessageProvider(
+                        commandManager.getCommandManager().captionRegistry(),
+                        ComponentCaptionFormatter.miniMessage()
+                ))
+                .descriptionDecorator((s, d) -> ComponentHelper.convertJsonToComponent(locale.getMessageRequired(s, Message.fromKey(d).orElseThrow())))
+                .commandFilter(c -> c.rootComponent().name().equals("skin") && !c.commandDescription().description().isEmpty())
+                .maxResultsPerPage(Integer.MAX_VALUE)
+                .build()
+                .queryCommands("", sender);
     }
 
-    @Subcommand("help")
-    @Description(Message.HELP_SKIN_HELP)
-    @CommandPermission(PermissionRegistry.SKIN_SET)
-    private void onSkinHelp(SRCommandSender sender) {
-        onDefault(sender);
+    @Suggestions("help_queries_skin")
+    public List<String> suggestHelpQueries(CommandContext<SRCommandSender> ctx, String input) {
+        return this.commandManager.getCommandManager()
+                .createHelpHandler()
+                .queryRootIndex(ctx.sender())
+                .entries()
+                .stream()
+                .filter(e -> e.command().rootComponent().name().equals("skin"))
+                .map(CommandEntry::syntax)
+                .toList();
     }
 
-    @RootCommand
+    @Command("help [query]")
+    @CommandPermission(PermissionRegistry.SKIN)
+    @CommandDescription(Message.HELP_SKIN)
+    public void commandHelp(SRCommandSender sender, @Argument(suggestions = "help_queries_skin") @Greedy String query) {
+        MinecraftHelp.<SRCommandSender>builder()
+                .commandManager(commandManager.getCommandManager())
+                .audienceProvider(ComponentHelper::commandSenderToAudience)
+                .commandPrefix("/skin help")
+                .messageProvider(MinecraftHelp.captionMessageProvider(
+                        commandManager.getCommandManager().captionRegistry(),
+                        ComponentCaptionFormatter.miniMessage()
+                ))
+                .descriptionDecorator((s, d) -> ComponentHelper.convertJsonToComponent(locale.getMessageRequired(s, Message.fromKey(d).orElseThrow())))
+                .commandFilter(c -> c.rootComponent().name().equals("skin") && !c.commandDescription().description().isEmpty())
+                .build()
+                .queryCommands(query == null ? "" : query, sender);
+    }
+
+    @Command("<skinName>")
     @CommandPermission(PermissionRegistry.SKIN_SET)
-    @Description(Message.HELP_SKIN_SET)
-    @CommandConditions("cooldown")
+    @CommandDescription(Message.HELP_SKIN_SET)
+    @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinSetShort(SRPlayer player, String skinName) {
         onSkinSetOther(player, skinName, PlayerSelector.singleton(player), null);
     }
 
-    @RootCommand
+    @Command("<skinName> <selector>")
     @CommandPermission(PermissionRegistry.SKIN_SET_OTHER)
-    @Description(Message.HELP_SKIN_SET_OTHER)
-    @CommandConditions("cooldown")
+    @CommandDescription(Message.HELP_SKIN_SET_OTHER)
+    @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinSetShortOther(SRPlayer player, String skinName, PlayerSelector selector) {
         onSkinSetOther(player, skinName, selector, null);
     }
 
-    @Subcommand({"clear", "reset"})
+    @Command("clear|reset")
     @CommandPermission(PermissionRegistry.SKIN_CLEAR)
-    @Description(Message.HELP_SKIN_CLEAR)
-    @CommandConditions("cooldown")
+    @CommandDescription(Message.HELP_SKIN_CLEAR)
+    @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinClear(SRPlayer player) {
         onSkinClearOther(player, PlayerSelector.singleton(player));
     }
 
-    @Subcommand({"clear", "reset"})
+    @Command("clear|reset <selector>")
     @CommandPermission(PermissionRegistry.SKIN_CLEAR_OTHER)
-    @Description(Message.HELP_SKIN_CLEAR_OTHER)
-    @CommandConditions("cooldown")
+    @CommandDescription(Message.HELP_SKIN_CLEAR_OTHER)
+    @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinClearOther(SRCommandSender sender, PlayerSelector selector) {
         for (SRPlayer target : selector.resolve(sender)) {
             // Remove the targets defined skin from database
@@ -144,42 +192,42 @@ public final class SkinCommand {
         }
     }
 
-    @Subcommand("random")
+    @Command("random")
     @CommandPermission(PermissionRegistry.SKIN_RANDOM)
-    @Description(Message.HELP_SKIN_RANDOM)
-    @CommandConditions("cooldown")
+    @CommandDescription(Message.HELP_SKIN_RANDOM)
+    @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinRandom(SRPlayer player) {
         onSkinRandomOther(player, PlayerSelector.singleton(player));
     }
 
-    @Subcommand("random")
+    @Command("random <selector>")
     @CommandPermission(PermissionRegistry.SKIN_RANDOM_OTHER)
-    @Description(Message.HELP_SKIN_RANDOM_OTHER)
-    @CommandConditions("cooldown")
+    @CommandDescription(Message.HELP_SKIN_RANDOM_OTHER)
+    @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinRandomOther(SRCommandSender sender, PlayerSelector selector) {
         onSkinSetOther(sender, SkinStorageImpl.RECOMMENDATION_PREFIX + recommendationsState.getRandomRecommendation().getSkinId(), selector);
     }
 
-    @Subcommand("search")
+    @Command("search <searchString>")
     @CommandPermission(PermissionRegistry.SKIN_SEARCH)
-    @Description(Message.HELP_SKIN_SEARCH)
-    @CommandConditions("cooldown")
+    @CommandDescription(Message.HELP_SKIN_SEARCH)
+    @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinSearch(SRCommandSender sender, String searchString) {
         sender.sendMessage(Message.SKIN_SEARCH_MESSAGE, Placeholder.unparsed("search", searchString));
     }
 
-    @Subcommand({"update", "refresh"})
+    @Command("update|refresh")
     @CommandPermission(PermissionRegistry.SKIN_UPDATE)
-    @Description(Message.HELP_SKIN_UPDATE)
-    @CommandConditions("cooldown")
+    @CommandDescription(Message.HELP_SKIN_UPDATE)
+    @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinUpdate(SRPlayer player) {
         onSkinUpdateOther(player, PlayerSelector.singleton(player));
     }
 
-    @Subcommand({"update", "refresh"})
+    @Command("update|refresh <selector>")
     @CommandPermission(PermissionRegistry.SKIN_UPDATE_OTHER)
-    @Description(Message.HELP_SKIN_UPDATE_OTHER)
-    @CommandConditions("cooldown")
+    @CommandDescription(Message.HELP_SKIN_UPDATE_OTHER)
+    @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinUpdateOther(SRCommandSender sender, PlayerSelector selector) {
         for (SRPlayer target : selector.resolve(sender)) {
             try {
@@ -210,26 +258,26 @@ public final class SkinCommand {
         }
     }
 
-    @Subcommand({"set", "select"})
+    @Command("set|select <skinName>")
     @CommandPermission(PermissionRegistry.SKIN_SET)
-    @Description(Message.HELP_SKIN_SET)
-    @CommandConditions("cooldown")
+    @CommandDescription(Message.HELP_SKIN_SET)
+    @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinSet(SRPlayer player, String skinName) {
         onSkinSetOther(player, skinName, PlayerSelector.singleton(player));
     }
 
-    @Subcommand({"set", "select"})
+    @Command("set|select <skinName> <selector>")
     @CommandPermission(PermissionRegistry.SKIN_SET_OTHER)
-    @Description(Message.HELP_SKIN_SET_OTHER)
-    @CommandConditions("cooldown")
+    @CommandDescription(Message.HELP_SKIN_SET_OTHER)
+    @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinSetOther(SRCommandSender sender, String skinName, PlayerSelector selector) {
         onSkinSetOther(sender, skinName, selector, null);
     }
 
-    @Subcommand({"set", "select"})
+    @Command("set|select <skinName> <selector> <skinVariant>")
     @CommandPermission(PermissionRegistry.SKIN_SET_OTHER)
-    @Description(Message.HELP_SKIN_SET_OTHER)
-    @CommandConditions("cooldown")
+    @CommandDescription(Message.HELP_SKIN_SET_OTHER)
+    @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinSetOther(SRCommandSender sender, String skinName, PlayerSelector selector, SkinVariant skinVariant) {
         for (SRPlayer target : selector.resolve(sender)) {
             if (!setSkin(sender, target, skinName, skinVariant, true)) {
@@ -247,10 +295,10 @@ public final class SkinCommand {
         }
     }
 
-    @Subcommand("url")
+    @Command("url <url>")
     @CommandPermission(PermissionRegistry.SKIN_SET_URL)
-    @Description(Message.HELP_SKIN_SET_URL)
-    @CommandConditions("cooldown")
+    @CommandDescription(Message.HELP_SKIN_SET_URL)
+    @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinSetUrlShort(SRPlayer player, String url) {
         if (!ValidationUtil.validSkinUrl(url)) {
             player.sendMessage(Message.ERROR_INVALID_URLSKIN);
@@ -260,10 +308,10 @@ public final class SkinCommand {
         onSkinSetOther(player, url, PlayerSelector.singleton(player), null);
     }
 
-    @Subcommand("url")
+    @Command("url <url> <skinVariant>")
     @CommandPermission(PermissionRegistry.SKIN_SET_URL)
-    @Description(Message.HELP_SKIN_SET_URL)
-    @CommandConditions("cooldown")
+    @CommandDescription(Message.HELP_SKIN_SET_URL)
+    @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinSetUrl(SRPlayer player, String url, SkinVariant skinVariant) {
         if (!ValidationUtil.validSkinUrl(url)) {
             player.sendMessage(Message.ERROR_INVALID_URLSKIN);
@@ -273,18 +321,18 @@ public final class SkinCommand {
         onSkinSetOther(player, url, PlayerSelector.singleton(player), skinVariant);
     }
 
-    @Subcommand({"undo", "revert"})
+    @Command("undo|revert")
     @CommandPermission(PermissionRegistry.SKIN_UNDO)
-    @Description(Message.HELP_SKIN_UNDO)
-    @CommandConditions("cooldown")
+    @CommandDescription(Message.HELP_SKIN_UNDO)
+    @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinUndo(SRPlayer player) {
         onSkinUndoOther(player, PlayerSelector.singleton(player));
     }
 
-    @Subcommand({"undo", "revert"})
+    @Command("undo|revert <selector>")
     @CommandPermission(PermissionRegistry.SKIN_UNDO_OTHER)
-    @Description(Message.HELP_SKIN_UNDO_OTHER)
-    @CommandConditions("cooldown")
+    @CommandDescription(Message.HELP_SKIN_UNDO_OTHER)
+    @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinUndoOther(SRCommandSender sender, PlayerSelector selector) {
         for (SRPlayer target : selector.resolve(sender)) {
             Optional<HistoryData> historyData = playerStorage.getTopOfHistory(target.getUniqueId(), 0);
@@ -325,11 +373,11 @@ public final class SkinCommand {
         }
     }
 
-    @Subcommand({"menu", "gui"})
+    @Command("menu|gui")
     @CommandPermission(PermissionRegistry.SKINS)
-    @Private
+    @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onGUIShortcut(SRPlayer player) {
-        commandManager.executeCommand(player, "skins");
+        commandManager.execute(player, "skins");
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
@@ -403,8 +451,7 @@ public final class SkinCommand {
 
     private void setCoolDown(SRCommandSender sender, Property<Integer> time) {
         if (sender instanceof SRPlayer player) {
-            UUID senderUUID = player.getUniqueId();
-            cooldownStorage.setCooldown(senderUUID, settings.getProperty(time), TimeUnit.SECONDS);
+            commandManager.setCooldown(player, COOLDOWN_GROUP, Duration.of(settings.getProperty(time), TimeUnit.SECONDS.toChronoUnit()));
         }
     }
 

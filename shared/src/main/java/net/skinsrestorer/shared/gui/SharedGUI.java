@@ -18,14 +18,13 @@
 package net.skinsrestorer.shared.gui;
 
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.commands.library.CommandManager;
+import net.skinsrestorer.shared.commands.library.SRCommandManager;
 import net.skinsrestorer.shared.listeners.event.ClickEventInfo;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
-import net.skinsrestorer.shared.subjects.SRCommandSender;
+import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.subjects.SRServerPlayer;
 
 import javax.inject.Inject;
-import java.util.function.Consumer;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SharedGUI {
@@ -33,34 +32,37 @@ public class SharedGUI {
     public static final String SR_PROPERTY_INTERNAL_NAME = "skinsrestorer.skull-internal-name";
 
     @RequiredArgsConstructor(onConstructor_ = @Inject)
-    public static class ServerGUIActions implements Consumer<ClickEventInfo> {
-        private final SRServerAdapter<?, ?> adapter;
-        private final CommandManager<SRCommandSender> commandManager;
+    public static class ServerGUIClickCallback implements ClickEventHandler {
+        private final SRServerAdapter adapter;
+        private final SkinStorageImpl skinStorage;
+        private final SRCommandManager commandManager;
 
         @Override
-        public void accept(ClickEventInfo event) {
+        public void handle(ClickEventInfo event) {
             SRServerPlayer player = event.player();
             switch (event.material()) {
                 case HEAD -> {
-                    commandManager.executeCommand(player, "skin set " + event.skinName());
+                    commandManager.execute(player, "skin set " + event.skinName());
                     player.closeInventory();
                 }
                 case RED_PANE -> {
-                    commandManager.executeCommand(player, "skin clear");
+                    commandManager.execute(player, "skin clear");
                     player.closeInventory();
                 }
-                case GREEN_PANE -> adapter.runAsync(() -> adapter.openServerGUI(player, event.currentPage() + 1));
-                case YELLOW_PANE -> adapter.runAsync(() -> adapter.openServerGUI(player, event.currentPage() - 1));
+                case GREEN_PANE ->
+                        adapter.runAsync(() -> adapter.openGUIPage(player, skinStorage.getGUIPage(player, event.pageInfo().page() + 1, event.pageInfo().pageType())));
+                case YELLOW_PANE ->
+                        adapter.runAsync(() -> adapter.openGUIPage(player, skinStorage.getGUIPage(player, event.pageInfo().page() - 1, event.pageInfo().pageType())));
             }
         }
     }
 
     @RequiredArgsConstructor(onConstructor_ = @Inject)
-    public static class ProxyGUIActions implements Consumer<ClickEventInfo> {
-        private final SRServerAdapter<?, ?> adapter;
+    public static class ProxyGUIClickCallback implements ClickEventHandler {
+        private final SRServerAdapter adapter;
 
         @Override
-        public void accept(ClickEventInfo event) {
+        public void handle(ClickEventInfo event) {
             SRServerPlayer player = event.player();
             switch (event.material()) {
                 case HEAD -> {
@@ -76,9 +78,9 @@ public class SharedGUI {
                     player.closeInventory();
                 }
                 case GREEN_PANE ->
-                        adapter.runAsync(() -> event.player().requestSkinsFromProxy(event.currentPage() + 1));
+                        adapter.runAsync(() -> event.player().requestSkinsFromProxy(event.pageInfo().page() + 1, event.pageInfo().pageType()));
                 case YELLOW_PANE ->
-                        adapter.runAsync(() -> event.player().requestSkinsFromProxy(event.currentPage() - 1));
+                        adapter.runAsync(() -> event.player().requestSkinsFromProxy(event.pageInfo().page() - 1, event.pageInfo().pageType()));
             }
         }
     }

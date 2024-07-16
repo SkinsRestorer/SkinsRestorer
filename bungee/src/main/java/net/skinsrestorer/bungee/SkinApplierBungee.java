@@ -29,7 +29,6 @@ import net.skinsrestorer.shared.api.event.EventBusImpl;
 import net.skinsrestorer.shared.api.event.SkinApplyEventImpl;
 import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.log.SRLogger;
-import net.skinsrestorer.shared.plugin.SRProxyPlugin;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,7 +41,6 @@ public class SkinApplierBungee implements SkinApplierAccess<ProxiedPlayer> {
     private static final SkinApplyBungeeAdapter applyAdapter = selectSkinApplyAdapter();
     private final SettingsManager settings;
     private final WrapperBungee wrapper;
-    private final SRProxyPlugin proxyPlugin;
     private final EventBusImpl eventBus;
     private final SRLogger logger;
 

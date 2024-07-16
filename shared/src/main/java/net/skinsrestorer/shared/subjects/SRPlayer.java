@@ -20,8 +20,6 @@ package net.skinsrestorer.shared.subjects;
 import java.util.UUID;
 
 public interface SRPlayer extends SRCommandSender {
-    <P> P getAs(Class<P> playerClass);
-
     UUID getUniqueId();
 
     String getName();

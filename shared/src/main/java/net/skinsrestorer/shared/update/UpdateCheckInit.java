@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class UpdateCheckInit {
     private final SRPlugin plugin;
-    private final SRPlatformAdapter<?, ?> adapter;
+    private final SRPlatformAdapter adapter;
     private final UpdateCheckerGitHub updateChecker;
     private final UpdateCheckExecutor updateCheckExecutor;
     private final Injector injector;

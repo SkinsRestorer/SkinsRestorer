@@ -17,5 +17,10 @@
  */
 package net.skinsrestorer.shared.gui;
 
-public record GUISkinEntry(String skinId, String skinName, String textureHash) {
+import net.skinsrestorer.shared.utils.ComponentString;
+import net.skinsrestorer.shared.utils.GUIUtils;
+
+import java.util.List;
+
+public record GUISkinEntry(GUIUtils.GUIRawSkinEntry base, List<ComponentString> lore) {
 }

@@ -17,45 +17,38 @@
  */
 package net.skinsrestorer.bukkit;
 
-import ch.jalu.configme.SettingsManager;
 import ch.jalu.injector.Injector;
 import lombok.Getter;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.skinsrestorer.api.property.SkinProperty;
-import net.skinsrestorer.bukkit.command.SRBukkitCommand;
 import net.skinsrestorer.bukkit.folia.FoliaSchedulerProvider;
 import net.skinsrestorer.bukkit.gui.SkinsGUI;
 import net.skinsrestorer.bukkit.listener.ForceAliveListener;
-import net.skinsrestorer.bukkit.paper.PaperTabCompleteEvent;
 import net.skinsrestorer.bukkit.paper.PaperUtil;
 import net.skinsrestorer.bukkit.spigot.SpigotConfigUtil;
 import net.skinsrestorer.bukkit.utils.BukkitSchedulerProvider;
 import net.skinsrestorer.bukkit.utils.SchedulerProvider;
 import net.skinsrestorer.bukkit.utils.SkinApplyBukkitAdapter;
 import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
-import net.skinsrestorer.shared.commands.library.SRRegisterPayload;
-import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.gui.PageInfo;
-import net.skinsrestorer.shared.gui.SharedGUI;
 import net.skinsrestorer.shared.info.ClassInfo;
 import net.skinsrestorer.shared.info.Platform;
 import net.skinsrestorer.shared.info.PluginInfo;
-import net.skinsrestorer.shared.listeners.event.ClickEventInfo;
-import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
-import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.utils.ProviderSelector;
-import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Server;
-import org.bukkit.command.CommandMap;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.incendo.cloud.CommandManager;
+import org.incendo.cloud.SenderMapper;
+import org.incendo.cloud.bukkit.CloudBukkitCapabilities;
+import org.incendo.cloud.execution.ExecutionCoordinator;
+import org.incendo.cloud.paper.LegacyPaperCommandManager;
 
 import javax.inject.Inject;
 import java.io.InputStream;
@@ -67,10 +60,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin, CommandSender> {
+public class SRBukkitAdapter implements SRServerAdapter {
     private final Injector injector;
     private final Server server;
     @Getter
@@ -79,7 +71,6 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin, CommandSende
     private final BukkitAudiences adventure;
     @Getter
     private final SchedulerProvider schedulerProvider;
-    private final SRLogger logger;
 
     @Inject
     public SRBukkitAdapter(Injector injector, Server server, JavaPlugin pluginInstance, BukkitAudiences adventure) {
@@ -87,7 +78,6 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin, CommandSende
         this.server = server;
         this.pluginInstance = pluginInstance;
         this.adventure = adventure;
-        this.logger = injector.getSingleton(SRLogger.class);
         this.schedulerProvider = ProviderSelector.<SchedulerProvider>selector()
                 .add(FoliaSchedulerProvider::isAvailable,
                         () -> injector.getSingleton(FoliaSchedulerProvider.class))
@@ -109,6 +99,30 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin, CommandSende
     @Override
     public InputStream getResource(String resource) {
         return getClass().getClassLoader().getResourceAsStream(resource);
+    }
+
+    @Override
+    public CommandManager<SRCommandSender> createCommandManager() {
+        WrapperBukkit wrapper = injector.getSingleton(WrapperBukkit.class);
+        LegacyPaperCommandManager<SRCommandSender> commandManager = new LegacyPaperCommandManager<>(
+                pluginInstance,
+                ExecutionCoordinator.<SRCommandSender>builder()
+                        .commonPoolExecutor()
+                        .suggestionsExecutor(ExecutionCoordinator.nonSchedulingExecutor())
+                        .build(),
+                SenderMapper.create(
+                        wrapper::commandSender,
+                        wrapper::unwrap
+                )
+        );
+
+        if (commandManager.hasCapability(CloudBukkitCapabilities.NATIVE_BRIGADIER)) {
+            commandManager.registerBrigadier();
+        } else if (commandManager.hasCapability(CloudBukkitCapabilities.ASYNCHRONOUS_COMPLETION)) {
+            commandManager.registerAsynchronousCompletions();
+        }
+
+        return commandManager;
     }
 
     @Override
@@ -154,18 +168,12 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin, CommandSende
     }
 
     @Override
-    public void openServerGUI(SRPlayer player, int page) {
-        openGUI(player, SharedGUI.ServerGUIActions.class, injector.getSingleton(SkinStorageImpl.class).getGUIPage(page));
+    public void openGUIPage(SRPlayer player, PageInfo pageInfo) {
+        openGUI(player, pageInfo);
     }
 
-    @Override
-    public void openProxyGUI(SRPlayer player, PageInfo pageInfo) {
-        openGUI(player, SharedGUI.ProxyGUIActions.class, pageInfo);
-    }
-
-    private void openGUI(SRPlayer player, Class<? extends Consumer<ClickEventInfo>> consumer, PageInfo pageInfo) {
-        Inventory inventory = injector.getSingleton(SkinsGUI.class)
-                .createGUI(injector.getSingleton(consumer), player, pageInfo);
+    private void openGUI(SRPlayer player, PageInfo pageInfo) {
+        Inventory inventory = injector.getSingleton(SkinsGUI.class).createGUI(player, pageInfo);
 
         runSyncToPlayer(player, () -> player.getAs(Player.class).openInventory(inventory));
     }
@@ -181,8 +189,8 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin, CommandSende
     }
 
     @Override
-    public void extendLifeTime(JavaPlugin plugin, Object object) {
-        server.getPluginManager().registerEvents(new ForceAliveListener(object), plugin);
+    public void extendLifeTime(Object plugin, Object object) {
+        server.getPluginManager().registerEvents(new ForceAliveListener(object), (JavaPlugin) plugin);
     }
 
     @Override
@@ -231,37 +239,6 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin, CommandSende
     public Collection<SRPlayer> getOnlinePlayers() {
         WrapperBukkit wrapper = injector.getSingleton(WrapperBukkit.class);
         return server.getOnlinePlayers().stream().map(wrapper::player).collect(Collectors.toList());
-    }
-
-    @Override
-    public SRCommandSender convertPlatformSender(CommandSender sender) {
-        return injector.getSingleton(WrapperBukkit.class).commandSender(sender);
-    }
-
-    @Override
-    public Class<CommandSender> getPlatformSenderClass() {
-        return CommandSender.class;
-    }
-
-    @Override
-    public void registerCommand(SRRegisterPayload<CommandSender> payload) {
-        SettingsManager settingsManager = injector.getSingleton(SettingsManager.class);
-        WrapperBukkit wrapper = injector.getSingleton(WrapperBukkit.class);
-
-        try {
-            CommandMap commandMap = (CommandMap) ReflectionUtil.invokeObjectMethod(server, "getCommandMap");
-            SRBukkitCommand command = new SRBukkitCommand(payload, pluginInstance, injector.getSingleton(WrapperBukkit.class));
-
-            if (settingsManager.getProperty(AdvancedConfig.ENABLE_PAPER_ASYNC_TAB_LISTENER)
-                    && ReflectionUtil.classExists("com.destroystokyo.paper.event.server.AsyncTabCompleteEvent")) {
-                server.getPluginManager().registerEvents(
-                        new PaperTabCompleteEvent(payload, wrapper::commandSender), pluginInstance);
-            }
-
-            commandMap.register(payload.meta().rootName(), "skinsrestorer", command);
-        } catch (ReflectiveOperationException e) {
-            logger.severe("Encountered a error while registering a command", e);
-        }
     }
 
     @Override

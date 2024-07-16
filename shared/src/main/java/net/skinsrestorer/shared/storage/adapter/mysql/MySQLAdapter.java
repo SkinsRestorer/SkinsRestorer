@@ -26,7 +26,6 @@ import net.skinsrestorer.api.property.SkinType;
 import net.skinsrestorer.api.property.SkinVariant;
 import net.skinsrestorer.shared.config.DatabaseConfig;
 import net.skinsrestorer.shared.config.GUIConfig;
-import net.skinsrestorer.shared.gui.GUISkinEntry;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
@@ -36,6 +35,7 @@ import net.skinsrestorer.shared.storage.model.player.HistoryData;
 import net.skinsrestorer.shared.storage.model.player.LegacyPlayerData;
 import net.skinsrestorer.shared.storage.model.player.PlayerData;
 import net.skinsrestorer.shared.storage.model.skin.*;
+import net.skinsrestorer.shared.utils.GUIUtils;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -499,14 +499,14 @@ public class MySQLAdapter implements StorageAdapter {
     }
 
     @Override
-    public List<GUISkinEntry> getCustomGUISkins(int offset, int limit) {
-        List<GUISkinEntry> skins = new ArrayList<>();
+    public List<GUIUtils.GUIRawSkinEntry> getCustomGUISkins(int offset, int limit) {
+        List<GUIUtils.GUIRawSkinEntry> skins = new ArrayList<>();
         try (ResultSet crs = mysql.query(getCustomSkinQuery(offset, limit))) {
             while (crs.next()) {
                 String name = crs.getString("name");
                 String value = crs.getString("value");
 
-                skins.add(new GUISkinEntry(name, name, PropertyUtils.getSkinTextureHash(value)));
+                skins.add(new GUIUtils.GUIRawSkinEntry(name, name, PropertyUtils.getSkinTextureHash(value)));
             }
         } catch (SQLException e) {
             logger.warning("Failed to get stored skins", e);
@@ -553,15 +553,15 @@ public class MySQLAdapter implements StorageAdapter {
     }
 
     @Override
-    public List<GUISkinEntry> getPlayerGUISkins(int offset, int limit) {
-        List<GUISkinEntry> skins = new ArrayList<>();
+    public List<GUIUtils.GUIRawSkinEntry> getPlayerGUISkins(int offset, int limit) {
+        List<GUIUtils.GUIRawSkinEntry> skins = new ArrayList<>();
         try (ResultSet crs = mysql.query(getPlayerSkinQuery(offset, limit))) {
             while (crs.next()) {
                 String uuid = crs.getString("uuid");
                 String lastKnownName = crs.getString("last_known_name");
                 String value = crs.getString("value");
 
-                skins.add(new GUISkinEntry(
+                skins.add(new GUIUtils.GUIRawSkinEntry(
                         uuid,
                         lastKnownName,
                         PropertyUtils.getSkinTextureHash(value))

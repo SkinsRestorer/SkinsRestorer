@@ -44,7 +44,7 @@ public class SRVelocityInit implements SRProxyPlatformInit {
 
     @Override
     public void initSkinApplier() {
-        plugin.registerSkinApplier(injector.getSingleton(SkinApplierVelocity.class), Player.class, wrapper::player);
+        plugin.registerSkinApplier(injector.getSingleton(SkinApplierVelocity.class), Player.class, wrapper);
     }
 
     @Override

@@ -24,6 +24,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
+import net.skinsrestorer.shared.gui.ClickEventHandler;
+import net.skinsrestorer.shared.gui.PageInfo;
 import net.skinsrestorer.shared.gui.SharedGUI;
 import net.skinsrestorer.shared.listeners.event.ClickEventInfo;
 import net.skinsrestorer.shared.utils.AuthLibHelper;
@@ -35,12 +37,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.Optional;
-import java.util.function.Consumer;
 
 @RequiredArgsConstructor
 public class SkinsGUIHolder implements InventoryHolder {
-    private final int page; // Page number start with 0
-    private final Consumer<ClickEventInfo> callback;
+    private final PageInfo page;
+    private final ClickEventHandler callback;
     private final WrapperBukkit wrapper;
     @Getter
     @Setter
@@ -75,7 +76,7 @@ public class SkinsGUIHolder implements InventoryHolder {
             skinName = null;
         }
 
-        callback.accept(new ClickEventInfo(getMaterialType(XMaterial.matchXMaterial(currentItem)), skinName, wrapper.player(player), page));
+        callback.handle(new ClickEventInfo(getMaterialType(XMaterial.matchXMaterial(currentItem)), skinName, wrapper.player(player), page));
     }
 
     private ClickEventInfo.MaterialType getMaterialType(XMaterial material) {

@@ -15,10 +15,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package net.skinsrestorer.shared.api;
+package net.skinsrestorer.shared.commands.library.annotations;
 
-import net.skinsrestorer.shared.subjects.SRPlayer;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public interface PlatformWrapper<P> {
-    SRPlayer convert(P player);
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface ConsoleOnly {
 }

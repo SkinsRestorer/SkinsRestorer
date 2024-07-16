@@ -72,7 +72,7 @@ public class DumpService {
 
     private final SRLogger logger;
     private final SRPlugin plugin;
-    private final SRPlatformAdapter<?, ?> adapter;
+    private final SRPlatformAdapter adapter;
     private final Injector injector;
     private final HttpClient httpClient;
     private final SettingsManager settingsManager;

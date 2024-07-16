@@ -17,15 +17,17 @@
  */
 package net.skinsrestorer.shared.subjects;
 
+import net.skinsrestorer.shared.gui.PageType;
 import net.skinsrestorer.shared.utils.DataStreamConsumer;
 
 public interface SRServerPlayer extends SRPlayer {
     void closeInventory();
 
-    default void requestSkinsFromProxy(int page) {
+    default void requestSkinsFromProxy(int page, PageType pageType) {
         sendToMessageChannel(out -> {
-            out.writeUTF("getSkinsV2");
+            out.writeUTF("getSkinsV3");
             out.writeInt(page);
+            out.writeUTF(pageType.getKey());
         });
     }
 

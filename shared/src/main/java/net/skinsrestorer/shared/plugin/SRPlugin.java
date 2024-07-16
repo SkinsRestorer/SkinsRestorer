@@ -21,7 +21,6 @@ import ch.jalu.configme.SettingsManager;
 import ch.jalu.configme.SettingsManagerBuilder;
 import ch.jalu.injector.Injector;
 import lombok.Getter;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.skinsrestorer.api.SkinsRestorer;
 import net.skinsrestorer.api.SkinsRestorerProvider;
 import net.skinsrestorer.api.connections.MineSkinAPI;
@@ -31,16 +30,14 @@ import net.skinsrestorer.api.storage.CacheStorage;
 import net.skinsrestorer.api.storage.PlayerStorage;
 import net.skinsrestorer.api.storage.SkinStorage;
 import net.skinsrestorer.builddata.BuildData;
-import net.skinsrestorer.shared.api.PlatformWrapper;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
 import net.skinsrestorer.shared.api.SharedSkinsRestorer;
 import net.skinsrestorer.shared.api.SkinApplierAccess;
 import net.skinsrestorer.shared.api.event.EventBusImpl;
-import net.skinsrestorer.shared.commands.ProxyGUICommand;
+import net.skinsrestorer.shared.commands.GUICommand;
 import net.skinsrestorer.shared.commands.SRCommand;
-import net.skinsrestorer.shared.commands.ServerGUICommand;
 import net.skinsrestorer.shared.commands.SkinCommand;
-import net.skinsrestorer.shared.commands.library.CommandManager;
+import net.skinsrestorer.shared.commands.library.SRCommandManager;
 import net.skinsrestorer.shared.config.*;
 import net.skinsrestorer.shared.connections.MineSkinAPIImpl;
 import net.skinsrestorer.shared.connections.MojangAPIImpl;
@@ -48,22 +45,19 @@ import net.skinsrestorer.shared.connections.RecommendationsState;
 import net.skinsrestorer.shared.connections.ServiceCheckerService;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.floodgate.FloodgateUtil;
+import net.skinsrestorer.shared.gui.ClickEventHandler;
+import net.skinsrestorer.shared.gui.SharedGUI;
 import net.skinsrestorer.shared.log.SRChatColor;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.storage.CacheStorageImpl;
-import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.PlayerStorageImpl;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.storage.adapter.AdapterReference;
 import net.skinsrestorer.shared.storage.adapter.file.FileAdapter;
 import net.skinsrestorer.shared.storage.adapter.mysql.MySQLAdapter;
 import net.skinsrestorer.shared.storage.adapter.mysql.MySQLProvider;
-import net.skinsrestorer.shared.subjects.SRPlayer;
-import net.skinsrestorer.shared.subjects.SRProxyPlayer;
-import net.skinsrestorer.shared.subjects.messages.Message;
+import net.skinsrestorer.shared.subjects.SRSubjectWrapper;
 import net.skinsrestorer.shared.subjects.messages.MessageLoader;
-import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
-import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
 import net.skinsrestorer.shared.update.UpdateCheckInit;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
@@ -80,15 +74,12 @@ import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 public class SRPlugin {
     private static final String USER_AGENT = "SkinsRestorer/%s (%s)";
     @Getter
     private static final boolean unitTest = System.getProperty("sr.unit.test") != null;
-    private final SRPlatformAdapter<?, ?> adapter;
+    private final SRPlatformAdapter adapter;
     private final SRLogger logger;
     @Getter
     private final Path dataFolder;
@@ -110,15 +101,7 @@ public class SRPlugin {
     }
 
     public void initCommands() {
-        CommandManager<?> manager = new CommandManager<>(adapter, logger,
-                injector.getSingleton(SkinsRestorerLocale.class),
-                injector.getSingleton(SettingsManager.class));
-        injector.register(CommandManager.class, manager);
-
-        registerConditions(manager);
-
-        adapter.runRepeatAsync(injector.getSingleton(CooldownStorage.class)::cleanup, 60, 60, TimeUnit.SECONDS);
-
+        SRCommandManager manager = injector.getSingleton(SRCommandManager.class);
         manager.registerCommand(injector.newInstance(SRCommand.class));
 
         SettingsManager settings = injector.getSingleton(SettingsManager.class);
@@ -127,63 +110,8 @@ public class SRPlugin {
         }
 
         if (!settings.getProperty(CommandConfig.DISABLE_GUI_COMMAND)) {
-            if (injector.getIfAvailable(SRServerPlugin.class) != null) {
-                manager.registerCommand(injector.newInstance(ServerGUICommand.class));
-            } else if (injector.getIfAvailable(SRProxyPlugin.class) != null) {
-                manager.registerCommand(injector.newInstance(ProxyGUICommand.class));
-            } else {
-                throw new IllegalStateException("Unknown platform");
-            }
+            manager.registerCommand(injector.newInstance(GUICommand.class));
         }
-    }
-
-    private void registerConditions(CommandManager<?> manager) {
-        SettingsManager settings = injector.getSingleton(SettingsManager.class);
-        CooldownStorage cooldownStorage = injector.getSingleton(CooldownStorage.class);
-
-        manager.registerCondition("allowed-server", sender -> {
-            if (!(sender instanceof SRProxyPlayer proxyPlayer)) {
-                return true;
-            }
-
-            if (!settings.getProperty(ProxyConfig.NOT_ALLOWED_COMMAND_SERVERS_ENABLED)) {
-                return true;
-            }
-
-            Optional<String> optional = proxyPlayer.getCurrentServer();
-            if (optional.isEmpty()) {
-                if (!settings.getProperty(ProxyConfig.NOT_ALLOWED_COMMAND_SERVERS_IF_NONE_BLOCK_COMMAND)) {
-                    sender.sendMessage(Message.NOT_CONNECTED_TO_SERVER);
-                    return false;
-                }
-
-                return true;
-            }
-
-            String server = optional.get();
-            boolean inList = settings.getProperty(ProxyConfig.NOT_ALLOWED_COMMAND_SERVERS).contains(server);
-            boolean shouldBlock = settings.getProperty(ProxyConfig.NOT_ALLOWED_COMMAND_SERVERS_ALLOWLIST) != inList;
-
-            if (shouldBlock) {
-                sender.sendMessage(Message.COMMAND_SERVER_NOT_ALLOWED_MESSAGE, Placeholder.unparsed("server", server));
-                return false;
-            }
-
-            return true;
-        });
-
-        manager.registerCondition("cooldown", sender -> {
-            if (sender instanceof SRPlayer player) {
-                UUID senderUUID = player.getUniqueId();
-                if (!sender.hasPermission(PermissionRegistry.BYPASS_COOLDOWN) && cooldownStorage.hasCooldown(senderUUID)) {
-                    sender.sendMessage(Message.SKIN_COOLDOWN, Placeholder.parsed("time", String.valueOf(cooldownStorage.getCooldownSeconds(senderUUID))));
-
-                    return false;
-                }
-            }
-
-            return true;
-        });
     }
 
     public void loadConfig() {
@@ -330,7 +258,7 @@ public class SRPlugin {
         injector.register(SkinsRestorer.class, api);
     }
 
-    public <P> void registerSkinApplier(SkinApplierAccess<P> skinApplier, Class<P> playerClass, PlatformWrapper<P> platformWrapper) {
+    public <P> void registerSkinApplier(SkinApplierAccess<P> skinApplier, Class<P> playerClass, SRSubjectWrapper<?, P, ?> platformWrapper) {
         SharedSkinApplier<P> sharedSkinApplier = new SharedSkinApplier<>(playerClass, skinApplier, platformWrapper,
                 injector.getSingleton(PlayerStorageImpl.class), injector.getSingleton(SkinStorageImpl.class), injector);
         injector.register(SharedSkinApplier.class, sharedSkinApplier);
@@ -374,6 +302,10 @@ public class SRPlugin {
         if (serverPlugin != null) {
             // Check if we are running in proxy mode
             serverPlugin.checkProxyMode();
+
+            injector.register(ClickEventHandler.class, serverPlugin.isProxyMode() ?
+                    injector.getSingleton(SharedGUI.ProxyGUIClickCallback.class)
+                    : injector.getSingleton(SharedGUI.ServerGUIClickCallback.class));
         }
 
         moveOldFiles();

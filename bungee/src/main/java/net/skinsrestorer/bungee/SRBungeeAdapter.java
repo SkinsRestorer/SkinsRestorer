@@ -21,15 +21,12 @@ import ch.jalu.injector.Injector;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.platform.bungeecord.BungeeAudiences;
-import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.skinsrestorer.api.property.SkinProperty;
-import net.skinsrestorer.bungee.command.SRBungeeCommand;
 import net.skinsrestorer.bungee.listeners.ForceAliveListener;
 import net.skinsrestorer.bungee.wrapper.WrapperBungee;
-import net.skinsrestorer.shared.commands.library.SRRegisterPayload;
 import net.skinsrestorer.shared.info.Platform;
 import net.skinsrestorer.shared.info.PluginInfo;
 import net.skinsrestorer.shared.plugin.SRProxyAdapter;
@@ -37,6 +34,10 @@ import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.SRProxyPlayer;
 import org.bstats.bungeecord.Metrics;
+import org.incendo.cloud.CommandManager;
+import org.incendo.cloud.SenderMapper;
+import org.incendo.cloud.bungee.BungeeCommandManager;
+import org.incendo.cloud.execution.ExecutionCoordinator;
 
 import javax.inject.Inject;
 import java.io.InputStream;
@@ -47,7 +48,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class SRBungeeAdapter implements SRProxyAdapter<Plugin, CommandSender> {
+public class SRBungeeAdapter implements SRProxyAdapter {
     private final Injector injector;
     private final ProxyServer proxy;
     @Getter
@@ -71,6 +72,19 @@ public class SRBungeeAdapter implements SRProxyAdapter<Plugin, CommandSender> {
     }
 
     @Override
+    public CommandManager<SRCommandSender> createCommandManager() {
+        WrapperBungee wrapper = injector.getSingleton(WrapperBungee.class);
+        return new BungeeCommandManager<>(
+                pluginInstance,
+                ExecutionCoordinator.asyncCoordinator(),
+                SenderMapper.create(
+                        wrapper::commandSender,
+                        wrapper::unwrap
+                )
+        );
+    }
+
+    @Override
     public void runAsync(Runnable runnable) {
         proxy.getScheduler().runAsync(pluginInstance, runnable);
     }
@@ -81,8 +95,8 @@ public class SRBungeeAdapter implements SRProxyAdapter<Plugin, CommandSender> {
     }
 
     @Override
-    public void extendLifeTime(Plugin plugin, Object object) {
-        proxy.getPluginManager().registerListener(plugin, new ForceAliveListener(object));
+    public void extendLifeTime(Object plugin, Object object) {
+        proxy.getPluginManager().registerListener((Plugin) plugin, new ForceAliveListener(object));
     }
 
     @Override
@@ -134,23 +148,7 @@ public class SRBungeeAdapter implements SRProxyAdapter<Plugin, CommandSender> {
     }
 
     @Override
-    public SRCommandSender convertPlatformSender(CommandSender sender) {
-        return injector.getSingleton(WrapperBungee.class).commandSender(sender);
-    }
-
-    @Override
-    public Class<CommandSender> getPlatformSenderClass() {
-        return CommandSender.class;
-    }
-
-    @Override
     public Optional<SRProxyPlayer> getPlayer(String name) {
         return Optional.ofNullable(proxy.getPlayer(name)).map(p -> injector.getSingleton(WrapperBungee.class).player(p));
-    }
-
-    @Override
-    public void registerCommand(SRRegisterPayload<CommandSender> payload) {
-        proxy.getPluginManager().registerCommand(pluginInstance,
-                new SRBungeeCommand(payload, injector.getSingleton(WrapperBungee.class)));
     }
 }
