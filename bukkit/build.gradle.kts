@@ -32,7 +32,7 @@ dependencies {
     // MultiPaper support
     implementation("com.github.puregero:multilib:1.2.3")
 
-    implementation("org.incendo:cloud-paper:2.0.0-beta.9")
+    implementation("org.incendo:cloud-paper:2.0.0-SNAPSHOT")
 
     // PAPI API hook
     compileOnly("me.clip:placeholderapi:2.11.6") {
