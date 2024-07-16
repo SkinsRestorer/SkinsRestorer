@@ -76,7 +76,7 @@ public class SRBukkitInit implements SRServerPlatformInit {
         injector.register(SkinApplyBukkitAdapter.class, selectSkinApplyAdapter());
         injector.register(SkinRefresher.class, detectRefresh());
 
-        plugin.registerSkinApplier(injector.getSingleton(SkinApplierBukkit.class), Player.class, wrapper::player);
+        plugin.registerSkinApplier(injector.getSingleton(SkinApplierBukkit.class), Player.class, wrapper);
 
         // Log information about the platform
         logger.info(SRChatColor.GREEN + "Running on Minecraft " + SRChatColor.YELLOW + BukkitReflection.SERVER_VERSION + SRChatColor.GREEN + ".");

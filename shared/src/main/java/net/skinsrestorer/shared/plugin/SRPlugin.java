@@ -30,7 +30,6 @@ import net.skinsrestorer.api.storage.CacheStorage;
 import net.skinsrestorer.api.storage.PlayerStorage;
 import net.skinsrestorer.api.storage.SkinStorage;
 import net.skinsrestorer.builddata.BuildData;
-import net.skinsrestorer.shared.api.PlatformWrapper;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
 import net.skinsrestorer.shared.api.SharedSkinsRestorer;
 import net.skinsrestorer.shared.api.SkinApplierAccess;
@@ -56,6 +55,7 @@ import net.skinsrestorer.shared.storage.adapter.AdapterReference;
 import net.skinsrestorer.shared.storage.adapter.file.FileAdapter;
 import net.skinsrestorer.shared.storage.adapter.mysql.MySQLAdapter;
 import net.skinsrestorer.shared.storage.adapter.mysql.MySQLProvider;
+import net.skinsrestorer.shared.subjects.SRSubjectWrapper;
 import net.skinsrestorer.shared.subjects.messages.MessageLoader;
 import net.skinsrestorer.shared.update.UpdateCheckInit;
 import net.skinsrestorer.shared.utils.MetricsCounter;
@@ -263,7 +263,7 @@ public class SRPlugin {
         injector.register(SkinsRestorer.class, api);
     }
 
-    public <P> void registerSkinApplier(SkinApplierAccess<P> skinApplier, Class<P> playerClass, PlatformWrapper<P> platformWrapper) {
+    public <P> void registerSkinApplier(SkinApplierAccess<P> skinApplier, Class<P> playerClass, SRSubjectWrapper<?, P, ?> platformWrapper) {
         SharedSkinApplier<P> sharedSkinApplier = new SharedSkinApplier<>(playerClass, skinApplier, platformWrapper,
                 injector.getSingleton(PlayerStorageImpl.class), injector.getSingleton(SkinStorageImpl.class), injector);
         injector.register(SharedSkinApplier.class, sharedSkinApplier);
