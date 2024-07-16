@@ -11,7 +11,7 @@ dependencies {
     implementation(projects.multiver.bungee.propertynew)
     testImplementation(testFixtures(projects.skinsrestorerShared))
 
-    implementation("net.kyori:adventure-platform-bungeecord:4.3.3")
+    implementation(libs.adventure.bungeecord)
 
     compileOnly("net.md-5:bungeecord-api:1.20-R0.2") {
         isTransitive = false
