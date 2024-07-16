@@ -37,6 +37,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.Command;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.annotations.AnnotationParser;
+import org.incendo.cloud.brigadier.BrigadierManagerHolder;
 import org.incendo.cloud.description.Description;
 import org.incendo.cloud.exception.InvalidCommandSenderException;
 import org.incendo.cloud.key.CloudKey;
@@ -87,6 +88,10 @@ public class SRCommandManager {
     public SRCommandManager(SRPlatformAdapter platform, SkinsRestorerLocale locale, SettingsManager settingsManager) {
         this.commandManager = platform.createCommandManager();
         this.annotationParser = new AnnotationParser<>(commandManager, SRCommandSender.class);
+
+        if (commandManager instanceof BrigadierManagerHolder<?,?> holder && holder.hasBrigadierManager()) {
+            holder.brigadierManager().setNativeNumberSuggestions(true);
+        }
 
         commandManager.captionRegistry().registerProvider(TranslationBundle.core(SRCommandSender::getLocale));
         commandManager.captionRegistry().registerProvider(MinecraftExtrasTranslationBundle.minecraftExtras(SRCommandSender::getLocale));
