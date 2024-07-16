@@ -56,20 +56,11 @@ public class PlayerSelectorArgumentParser implements ArgumentParser<SRCommandSen
 
             isFirst = false;
 
-            if (requestedPlayer.equalsIgnoreCase("@a")) {
+            if (requestedPlayer.equalsIgnoreCase("-all")) {
                 toResolve.add(new PlayerSelector.Selector(platform, PlayerSelector.SelectorType.ALL_PLAYERS));
                 continue;
-            } else if (requestedPlayer.equalsIgnoreCase("@e")) {
-                toResolve.add(new PlayerSelector.Selector(platform, PlayerSelector.SelectorType.ALL_ENTITIES));
-                continue;
-            } else if (requestedPlayer.equalsIgnoreCase("@r")) {
+            } else if (requestedPlayer.equalsIgnoreCase("-random")) {
                 toResolve.add(new PlayerSelector.Selector(platform, PlayerSelector.SelectorType.RANDOM_PLAYER));
-                continue;
-            } else if (requestedPlayer.equalsIgnoreCase("@s")) {
-                toResolve.add(new PlayerSelector.Selector(platform, PlayerSelector.SelectorType.SELF_PLAYER));
-                continue;
-            } else if (requestedPlayer.equalsIgnoreCase("@p")) {
-                toResolve.add(new PlayerSelector.Selector(platform, PlayerSelector.SelectorType.CLOSEST_PLAYER));
                 continue;
             }
 
@@ -106,7 +97,7 @@ public class PlayerSelectorArgumentParser implements ArgumentParser<SRCommandSen
     @Override
     public @NonNull Iterable<? extends @NonNull Suggestion> suggestions(@NonNull CommandContext<SRCommandSender> context, @NonNull CommandInput input) {
         final Collection<String> usableNames = Stream.concat(
-                Stream.of("@a", "@e", "@r", "@s", "@p"),
+                Stream.of("-all", "-random"),
                 platform.getOnlinePlayers().stream()
                         .filter(player -> !(context.sender() instanceof SRPlayer sourcePlayer) || sourcePlayer.canSee(player))
                         .map(SRPlayer::getName)
