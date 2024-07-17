@@ -17,6 +17,7 @@
  */
 package net.skinsrestorer.shared.gui;
 
+<<<<<<<< HEAD:shared/src/main/java/net/skinsrestorer/shared/gui/ClickEventType.java
 import java.util.Locale;
 
 public enum ClickEventType implements NetworkId {
@@ -30,5 +31,26 @@ public enum ClickEventType implements NetworkId {
     @Override
     public String getId() {
         return name().toLowerCase(Locale.ROOT);
+========
+import lombok.Getter;
+
+import java.util.Locale;
+import java.util.Optional;
+
+@Getter
+public enum PageType {
+    MAIN;
+
+    private final String key = name().toLowerCase(Locale.ROOT);
+
+    public static Optional<PageType> fromKey(String key) {
+        for (PageType pageType : values()) {
+            if (pageType.key.equals(key)) {
+                return Optional.of(pageType);
+            }
+        }
+
+        return Optional.empty();
+>>>>>>>> origin/dev:shared/src/main/java/net/skinsrestorer/shared/gui/PageType.java
     }
 }

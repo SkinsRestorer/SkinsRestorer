@@ -14,8 +14,6 @@
   "skinsrestorer.help_sr_drop": "डेटाबेस से प्लेयर या स्किन डाटा को हटाए।",
   "skinsrestorer.help_sr_apply_skin": "चुने हुए प्लेयर पे पुनः स्किन लगाए।",
   "skinsrestorer.help_sr_create_custom": "पूरे सर्वर के लिए मन मुताबिक स्किन बनाए।",
-  "skinsrestorer.help_sr_set_skin_all": "सभी प्लेयर पे एक ही स्किन लगाए।",
-  "skinsrestorer.help_sr_apply_skin_all": "सभी प्लेयर पर पुनः स्किन लगाए।",
   "skinsrestorer.help_sr_purge_old_data": "x दिन पहले का पुराना स्किन डेटा मिटाएँ।",
   "skinsrestorer.help_sr_dump": "सपोर्ट डाटा को bytebin.lucko.me पे अपलोड करें।"
 }
