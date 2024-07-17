@@ -375,7 +375,6 @@ public final class SkinCommand {
 
     @Command("menu|gui")
     @CommandPermission(PermissionRegistry.SKINS)
-    @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onGUIShortcut(SRPlayer player) {
         commandManager.execute(player, "skins");
     }
