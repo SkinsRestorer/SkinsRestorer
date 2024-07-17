@@ -25,7 +25,7 @@ dependencies {
     api("org.incendo:cloud-processors-requirements:1.0.0-SNAPSHOT")
     api("org.incendo:cloud-processors-cooldown:1.0.0-SNAPSHOT")
     api("org.incendo:cloud-brigadier:2.0.0-SNAPSHOT")
-    api("org.incendo:cloud-minecraft-extras:2.0.0-beta.9")
+    api("org.incendo:cloud-minecraft-extras:2.0.0-SNAPSHOT")
     api("org.incendo:cloud-translations-core:1.0.0-beta.2")
     api("org.incendo:cloud-translations-minecraft-extras:1.0.0-SNAPSHOT")
 
