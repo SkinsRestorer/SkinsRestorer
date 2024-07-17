@@ -20,7 +20,6 @@ package net.skinsrestorer.shared.listeners;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
-import net.skinsrestorer.shared.gui.PageInfo;
 import net.skinsrestorer.shared.gui.SharedGUI;
 import net.skinsrestorer.shared.listeners.event.SRServerMessageEvent;
 import net.skinsrestorer.shared.log.SRLogger;
@@ -50,14 +49,12 @@ public final class SRServerMessageAdapter {
         try {
             String subChannel = in.readUTF();
 
-            if (subChannel.equalsIgnoreCase("returnSkinsV5")) {
+            if (subChannel.equalsIgnoreCase("openGUI")) {
                 int len = in.readInt();
                 byte[] msgBytes = new byte[len];
                 in.readFully(msgBytes);
 
-                PageInfo pageInfo = MessageProtocolUtil.convertToPageInfo(msgBytes);
-
-                plugin.openGUI(event.getPlayer(), sharedGUI.createGUIPage(event.getPlayer(), pageInfo));
+                plugin.openGUI(event.getPlayer(), MessageProtocolUtil.convertToInventory(msgBytes));
             } else if (subChannel.equalsIgnoreCase("SkinUpdateV2")) {
                 skinApplier.applySkin(event.getPlayer().getAs(Object.class),
                         SkinProperty.of(in.readUTF(), in.readUTF()));

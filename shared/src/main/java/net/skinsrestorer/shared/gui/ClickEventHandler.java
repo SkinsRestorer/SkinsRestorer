@@ -24,11 +24,4 @@ public interface ClickEventHandler {
     }
 
     void handle(ClickEventType type);
-
-    enum ClickEventType {
-        LEFT,
-        MIDDLE,
-        RIGHT,
-        OTHER
-    }
 }

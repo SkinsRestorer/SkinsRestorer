@@ -17,15 +17,15 @@
  */
 package net.skinsrestorer.shared.gui;
 
-import lombok.Getter;
-
 import java.util.Locale;
 
-@Getter
-public enum PageType implements NetworkId {
-    MAIN;
+public enum ClickEventType implements NetworkId {
+    LEFT,
+    MIDDLE,
+    RIGHT,
+    OTHER;
 
-    public static final NetworkCodec<PageType> CODEC = CodecHelpers.createEnumCodec(PageType.class);
+    public static final NetworkCodec<ClickEventType> CODEC = CodecHelpers.createEnumCodec(ClickEventType.class);
 
     @Override
     public String getId() {

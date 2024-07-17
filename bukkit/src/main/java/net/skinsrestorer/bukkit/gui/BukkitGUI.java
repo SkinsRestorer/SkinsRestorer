@@ -17,6 +17,8 @@
  */
 package net.skinsrestorer.bukkit.gui;
 
+import ch.jalu.injector.Injector;
+import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.profiles.builder.XSkull;
 import com.cryptomorin.xseries.profiles.objects.ProfileInputType;
@@ -27,6 +29,7 @@ import net.skinsrestorer.shared.gui.SRInventory;
 import net.skinsrestorer.shared.utils.ComponentHelper;
 import org.bukkit.Server;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -36,6 +39,7 @@ import java.util.Objects;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class BukkitGUI implements GUIManager<Inventory> {
+    private final Injector injector;
     private final Server server;
 
     private ItemStack createItem(SRInventory.Item entry) {
@@ -47,15 +51,17 @@ public class BukkitGUI implements GUIManager<Inventory> {
             case GREEN_PANE -> XMaterial.GREEN_STAINED_GLASS_PANE;
         };
         ItemStack itemStack = Objects.requireNonNull(material.parseItem());
-        if (entry.textureHash() != null) {
-            XSkull.of(itemStack)
-                    .profile(Profileable.of(Objects.requireNonNull(ProfileInputType.typeOf(entry.textureHash())), entry.textureHash()))
-                    .apply();
-        }
+        entry.textureHash().ifPresent(hash -> XSkull.of(itemStack)
+                .profile(Profileable.of(Objects.requireNonNull(ProfileInputType.typeOf(hash)), hash))
+                .apply());
 
         ItemMeta skullMeta = Objects.requireNonNull(itemStack.getItemMeta());
         skullMeta.setDisplayName(ComponentHelper.convertJsonToLegacy(entry.displayName()));
         skullMeta.setLore(entry.lore().stream().map(ComponentHelper::convertJsonToLegacy).toList());
+        if (entry.enchantmentGlow()) {
+            skullMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            skullMeta.addEnchant(Objects.requireNonNull(XEnchantment.LURE.getEnchant()), 1, true);
+        }
 
         itemStack.setItemMeta(skullMeta);
 
@@ -63,14 +69,14 @@ public class BukkitGUI implements GUIManager<Inventory> {
     }
 
     public Inventory createGUI(SRInventory srInventory) {
-        BukkitGUIHolder instance = new BukkitGUIHolder();
+        BukkitGUIHolder instance = injector.newInstance(BukkitGUIHolder.class);
         Inventory inventory = server.createInventory(instance, srInventory.rows() * 9,
                 ComponentHelper.convertJsonToLegacy(srInventory.title()));
         instance.setInventory(inventory);
 
         for (Map.Entry<Integer, SRInventory.Item> entry : srInventory.items().entrySet()) {
             inventory.setItem(entry.getKey(), createItem(entry.getValue()));
-            instance.getHandlers().put(entry.getKey(), entry.getValue().clickEventHandler());
+            instance.getHandlers().put(entry.getKey(), entry.getValue().clickHandlers());
         }
 
         return inventory;

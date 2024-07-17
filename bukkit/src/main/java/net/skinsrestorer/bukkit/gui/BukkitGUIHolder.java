@@ -20,38 +20,44 @@ package net.skinsrestorer.bukkit.gui;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import net.skinsrestorer.shared.gui.ClickEventHandler;
+import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
+import net.skinsrestorer.shared.gui.ActionDataCallback;
+import net.skinsrestorer.shared.gui.ClickEventType;
+import net.skinsrestorer.shared.gui.SRInventory;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
 
+import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
 
 @Getter
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class BukkitGUIHolder implements InventoryHolder {
-    private final Map<Integer, ClickEventHandler> handlers = new HashMap<>();
+    private final ActionDataCallback dataCallback;
+    private final WrapperBukkit wrapper;
+    private final Map<Integer, Map<ClickEventType, SRInventory.ClickEventAction>> handlers = new HashMap<>();
     @Setter
     private Inventory inventory;
 
     public void onClick(InventoryClickEvent event) {
-        ItemStack currentItem = event.getCurrentItem();
-
-        // Cancel invalid items
-        if (currentItem == null || !currentItem.hasItemMeta()) {
+        if (!(event.getWhoClicked() instanceof Player player)) {
             return;
         }
 
-        ClickEventHandler handler = handlers.get(event.getRawSlot());
-        if (handler != null) {
-            handler.handle(switch (event.getClick()) {
-                case LEFT -> ClickEventHandler.ClickEventType.LEFT;
-                case RIGHT -> ClickEventHandler.ClickEventType.RIGHT;
-                case MIDDLE -> ClickEventHandler.ClickEventType.MIDDLE;
-                default -> ClickEventHandler.ClickEventType.OTHER;
+        Map<ClickEventType, SRInventory.ClickEventAction> handlers = this.handlers.get(event.getRawSlot());
+        if (handlers != null) {
+            SRInventory.ClickEventAction action = handlers.get(switch (event.getClick()) {
+                case LEFT -> ClickEventType.LEFT;
+                case RIGHT -> ClickEventType.RIGHT;
+                case MIDDLE -> ClickEventType.MIDDLE;
+                default -> ClickEventType.OTHER;
             });
+            if (action != null) {
+                dataCallback.handle(wrapper.player(player), action.actionBytes());
+            }
         }
     }
 }

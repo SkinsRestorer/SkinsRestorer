@@ -17,6 +17,9 @@
  */
 package net.skinsrestorer.shared.utils;
 
+import net.skinsrestorer.shared.gui.CodecHelpers;
+import net.skinsrestorer.shared.gui.NetworkCodec;
+
 /**
  * Represents a json string that can safely be shared across platforms.
  * This prevents coding errors like passing a json string to a component that expects a legacy string.
@@ -24,4 +27,5 @@ package net.skinsrestorer.shared.utils;
  * @param jsonString The json string.
  */
 public record ComponentString(String jsonString) {
+    public static final NetworkCodec<ComponentString> CODEC = CodecHelpers.STRING_CODEC.map(ComponentString::jsonString, ComponentString::new);
 }

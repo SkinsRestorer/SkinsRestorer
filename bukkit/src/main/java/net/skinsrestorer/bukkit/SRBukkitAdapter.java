@@ -137,7 +137,7 @@ public class SRBukkitAdapter implements SRServerAdapter {
     }
 
     @Override
-    public void runSyncToPlayer(SRServerPlayer player, Runnable runnable) {
+    public void runSyncToPlayer(SRPlayer player, Runnable runnable) {
         runSyncToPlayer(player.getAs(Player.class), runnable);
     }
 
@@ -169,7 +169,7 @@ public class SRBukkitAdapter implements SRServerAdapter {
     }
 
     @Override
-    public void openGUI(SRServerPlayer player, SRInventory srInventory) {
+    public void openGUI(SRPlayer player, SRInventory srInventory) {
         Inventory inventory = injector.getSingleton(BukkitGUI.class).createGUI(srInventory);
 
         runSyncToPlayer(player, () -> player.getAs(Player.class).openInventory(inventory));

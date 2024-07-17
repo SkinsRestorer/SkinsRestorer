@@ -27,7 +27,6 @@ import net.skinsrestorer.bungee.wrapper.WrapperBungee;
 import net.skinsrestorer.shared.api.SkinApplierAccess;
 import net.skinsrestorer.shared.api.event.EventBusImpl;
 import net.skinsrestorer.shared.api.event.SkinApplyEventImpl;
-import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.jetbrains.annotations.Nullable;
@@ -91,6 +90,6 @@ public class SkinApplierBungee implements SkinApplierAccess<ProxiedPlayer> {
             return;
         }
 
-        wrapper.player(player).sendUpdateRequest(settings.getProperty(AdvancedConfig.FORWARD_TEXTURES) ? textures : null);
+        wrapper.player(player).sendUpdateRequest(textures);
     }
 }

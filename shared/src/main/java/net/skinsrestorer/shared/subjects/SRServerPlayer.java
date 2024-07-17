@@ -25,9 +25,6 @@ public interface SRServerPlayer extends SRPlayer {
 
     default void requestSkinsFromProxy(int page, PageType pageType) {
         sendToMessageChannel(out -> {
-            out.writeUTF("getSkinsV3");
-            out.writeInt(page);
-            out.writeUTF(pageType.getKey());
         });
     }
 
