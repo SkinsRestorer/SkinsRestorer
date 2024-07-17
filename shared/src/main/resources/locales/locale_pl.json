@@ -80,6 +80,8 @@
   "skinsrestorer.admincommand_dump_success": "<green>Przesyłanie zakończone! <yellow><url>",
   "skinsrestorer.admincommand_dump_error": "<red>Błąd podczas przesyłania danych do bytebin.lucko.me",
   "skinsrestorer.command_server_not_allowed_message": "<dark_red>Błąd<dark_gray>: <red>Komendy zostały wyłączone dla serwera <server>.",
+  "skinsrestorer.command_unknown_player": "Nieznany gracz: <name>",
+  "skinsrestorer.command_no_targets_supplied": "Nie dostarczono żadnych docelowych graczy.",
   "skinsrestorer.player_has_no_permission_skin": "<dark_red>Błąd<dark_gray>: <red>Nie posiadasz uprawnień do ustawienia tego skina.",
   "skinsrestorer.player_has_no_permission_url": "<dark_red>Błąd<dark_gray>: <red>Nie posiadasz uprawnień do ustawiania skinów przez adres URL.",
   "skinsrestorer.not_premium": "<dark_red>Błąd<dark_gray>: <red>Gracz premium z takim nickiem nie istnieje.",
