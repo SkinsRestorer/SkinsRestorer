@@ -18,32 +18,18 @@
 package net.skinsrestorer.shared.subjects;
 
 import net.skinsrestorer.api.property.SkinProperty;
-import net.skinsrestorer.shared.gui.PageInfo;
 import net.skinsrestorer.shared.utils.DataStreamConsumer;
-import net.skinsrestorer.shared.utils.MessageProtocolUtil;
 
 import java.util.Optional;
 
 public interface SRProxyPlayer extends SRPlayer {
     Optional<String> getCurrentServer();
 
-    default void sendPageToServer(PageInfo pageInfo) {
-        sendToMessageChannel(out -> {
-            out.writeUTF("returnSkinsV5");
-            byte[] ba = MessageProtocolUtil.convertToByteArray(pageInfo);
-            out.writeInt(ba.length);
-            out.write(ba);
-        });
-    }
-
     default void sendUpdateRequest(SkinProperty textures) {
         sendToMessageChannel(out -> {
             out.writeUTF("SkinUpdateV2");
-
-            if (textures != null) {
-                out.writeUTF(textures.getValue());
-                out.writeUTF(textures.getSignature());
-            }
+            out.writeUTF(textures.getValue());
+            out.writeUTF(textures.getSignature());
         });
     }
 

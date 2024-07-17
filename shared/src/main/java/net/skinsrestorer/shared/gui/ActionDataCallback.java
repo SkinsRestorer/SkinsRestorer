@@ -15,19 +15,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package net.skinsrestorer.shared.plugin;
+package net.skinsrestorer.shared.gui;
 
-import net.skinsrestorer.shared.subjects.SRPlayer;
+import ch.jalu.injector.Injector;
+import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.shared.listeners.GUIActionListener;
+import net.skinsrestorer.shared.plugin.SRServerPlugin;
 import net.skinsrestorer.shared.subjects.SRServerPlayer;
 
-import java.util.Optional;
+import javax.inject.Inject;
 
-public interface SRServerAdapter extends SRPlatformAdapter {
-    void runSync(Runnable runnable);
+@RequiredArgsConstructor(onConstructor_ = @Inject)
+public class ActionDataCallback {
+    private final Injector injector;
+    private final SRServerPlugin plugin;
 
-    void runSyncToPlayer(SRPlayer player, Runnable runnable);
-
-    boolean determineProxy();
-
-    Optional<SRServerPlayer> getPlayer(String name);
+    public void handle(SRServerPlayer player, byte[] data) {
+        if (plugin.isProxyMode()) {
+            player.sendToMessageChannel(os -> {
+                os.writeUTF("guiAction");
+                os.write(data);
+            });
+        } else {
+            injector.getSingleton(GUIActionListener.class).handle(player, data);
+        }
+    }
 }

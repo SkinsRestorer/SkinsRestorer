@@ -17,8 +17,6 @@
  */
 package net.skinsrestorer.shared.gui;
 
-import net.skinsrestorer.shared.subjects.SRForeign;
-
 public interface GUIManager<T> {
-    T createGUI(SRForeign player, PageInfo pageInfo);
+    T createGUI(SRInventory srInventory);
 }

@@ -41,14 +41,6 @@ public class AdvancedConfig implements SettingsHolder {
     public static final Property<Boolean> ENABLE_PAPER_JOIN_LISTENER = newProperty("advanced.enablePaperJoinListener", true);
     @Comment({
             "<!! Warning !!>",
-            "When enabled if a skin gets applied on the proxy, the new texture will be forwarded to the backend as well.",
-            "This is optional sometimes as the backend may pick up the new one of the proxy.",
-            "It is recommended though to **KEEP THIS ON** because it keeps the backend data in sync.",
-            "This feature is required for solutions like RedisBungee and also fixes bugs in some cases."
-    })
-    public static final Property<Boolean> FORWARD_TEXTURES = newProperty("advanced.forwardTextures", true);
-    @Comment({
-            "<!! Warning !!>",
             "When enabled SkinsRestorer will not try to connect to any web server, which means the follow things won't work:",
             "Getting new skins from Mojang, looking up uuids of players, skin url, update checking and more.",
             "SkinsRestorer will only be able to access already downloaded skins.",

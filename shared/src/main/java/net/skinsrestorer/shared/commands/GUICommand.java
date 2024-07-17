@@ -22,12 +22,11 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.commands.library.annotations.CommandDescription;
 import net.skinsrestorer.shared.commands.library.annotations.CommandPermission;
 import net.skinsrestorer.shared.commands.library.annotations.RootDescription;
-import net.skinsrestorer.shared.gui.PageInfo;
 import net.skinsrestorer.shared.gui.PageType;
-import net.skinsrestorer.shared.plugin.SRServerAdapter;
+import net.skinsrestorer.shared.gui.SharedGUI;
+import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.subjects.SRPlayer;
-import net.skinsrestorer.shared.subjects.SRProxyPlayer;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
 import org.incendo.cloud.annotations.Command;
@@ -37,7 +36,9 @@ import javax.inject.Inject;
 @SuppressWarnings("unused")
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class GUICommand {
+    private final SRPlatformAdapter platformAdapter;
     private final SkinStorageImpl skinStorage;
+    private final SharedGUI sharedGUI;
     private final Injector injector;
 
     @Command("skins")
@@ -47,11 +48,6 @@ public final class GUICommand {
     private void onDefault(SRPlayer player) {
         player.sendMessage(Message.SKINSMENU_OPEN);
 
-        PageInfo pageInfo = skinStorage.getGUIPage(player, 0, PageType.MAIN);
-        if (player instanceof SRProxyPlayer proxyPlayer) {
-            proxyPlayer.sendPageToServer(pageInfo);
-        } else {
-            injector.getSingleton(SRServerAdapter.class).openGUIPage(player, pageInfo);
-        }
+        platformAdapter.openGUI(player, sharedGUI.createGUIPage(player, skinStorage.getGUIPage(player, 0, PageType.MAIN)));
     }
 }

@@ -97,7 +97,6 @@ public class ConfigMigratorService implements MigrationService {
         migrated |= moveProperty(newProperty("DisableOnJoinSkins", false), AdvancedConfig.DISABLE_ON_JOIN_SKINS, reader, configData);
         migrated |= moveProperty(newProperty("DisallowAutoUpdateSkin", false), StorageConfig.DISALLOW_AUTO_UPDATE_SKIN, reader, configData);
         migrated |= moveProperty(newProperty("EnablePaperJoinListener", true), AdvancedConfig.ENABLE_PAPER_JOIN_LISTENER, reader, configData);
-        migrated |= moveProperty(newProperty("ForwardTextures", true), AdvancedConfig.FORWARD_TEXTURES, reader, configData);
 
         if (Boolean.TRUE.equals(configData.getValue(DatabaseConfig.MYSQL_ENABLED))) {
             Property<String> oldMySQLSkinTable = newProperty("MySQL.SkinTable", "Skins");
