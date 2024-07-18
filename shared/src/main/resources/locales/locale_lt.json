@@ -44,7 +44,6 @@
   "skinsrestorer.skinsmenu_open": "<dark_green>Atidaromas išvaizdų meniu...",
   "skinsrestorer.skinsmenu_title_new": "<blue>Išvaizdų Meniu - Puslapis <page_number>",
   "skinsrestorer.skinsmenu_next_page": "<green><bold>»</bold> <gray>Kitas puslapis</gray> <bold>»</bold>",
-  "skinsrestorer.skinsmenu_previous_page": "<yellow><bold>« <gray>Ankstesnis puslapis</gray> <bold>«</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[</bold> <gray>Pašalinti išvaizdą</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_select_skin": "<dark_green>Spustelėkite, kad pasirinktumėte šią išvaizdą",
   "skinsrestorer.skin_search_message": "<dark_green>Galite rasti tinkamą išvaizdą <green><search></green> čia: <newline><green>https://namemc.com/minecraft-skins/tag/<search> <newline><newline><dark_green>Jei išvaizdų nerandate čia, jų visada galite rasti https://namemc.com/minecraft-skins/tag <newline>Galite nustatyti savo išvaizdą naudodami išvaizdos nuorodą:<newline>/skin https://namemc.com/skin/",
