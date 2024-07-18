@@ -102,15 +102,12 @@ public class SharedGUI {
             skinCount++;
         }
 
-        // If page is above starting page (0), add previous button
         if (pageInfo.hasPrevious()) {
-            items.put(49, previous);
+            items.put(48, previous);
         }
 
-        // Middle button //remove skin
         items.put(49, delete);
 
-        // If the page is full, adding Next Page button.
         if (pageInfo.hasNext()) {
             items.put(50, next);
         }
