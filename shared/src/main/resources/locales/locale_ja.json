@@ -85,7 +85,6 @@
   "skinsrestorer.skinsmenu_open": "<dark_green>スキンメニューを開いています…",
   "skinsrestorer.skinsmenu_title_new": "<blue>スキンメニュー - <page_number>ページ",
   "skinsrestorer.skinsmenu_next_page": "<green><bold>»</bold> <gray>次のページへ</gray> <bold>»</bold>",
-  "skinsrestorer.skinsmenu_previous_page": "<yellow><bold>« <gray>前のページへ</gray> <bold>«</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red>［ <gray>スキンを削除</gray> ］",
   "skinsrestorer.skinsmenu_select_skin": "<dark_green>クリックしてスキンを選択します",
   "skinsrestorer.skin_search_message": "<dark_green>「<green><search></green>」に一致するスキンが見つかりました：<newline><green>https://namemc.com/minecraft-skins/tag/<search> <newline><newline><dark_green>スキンが見つからない場合は、「https://namemc.com/minecraft-skins/tag」でスキンを探すことができます。<newline>スキンのリンクを使用してスキンを設定できます：<newline>/skin https://namemc.com/skin/",

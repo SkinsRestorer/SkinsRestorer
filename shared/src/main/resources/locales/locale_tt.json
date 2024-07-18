@@ -49,7 +49,6 @@
   "skinsrestorer.skinsmenu_open": "<dark_green>Кыяфәт менюсын ачу...",
   "skinsrestorer.skinsmenu_title_new": "<blue>Кыяфәт менюсы — <page_number> бит",
   "skinsrestorer.skinsmenu_next_page": "<green><bold>»</bold> <gray>Киләсе бит</gray> <bold>»</bold>",
-  "skinsrestorer.skinsmenu_previous_page": "<yellow><bold>« <gray>Элекке бит</gray> <bold>«</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[</bold> <gray>Кыяфәтне бетерү</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_select_skin": "<dark_green>Бу кыяфәтне сайлау өчен басыгыз",
   "skinsrestorer.no_skin_data": "<dark_red>Хата<dark_gray>: <red>Кыяфәт мәгълүматы табылмады!",

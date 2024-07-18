@@ -33,7 +33,6 @@
   "skinsrestorer.error_updating_skin": "Ocorreu um erro ao atualizar a skin. Tenta de novo mais tarde!",
   "skinsrestorer.error_ms_unknown": "Erro desconhecido do MineSkin!",
   "skinsrestorer.not_connected_to_server": "<red>Não estás conectado a nenhum servidor.",
-  "skinsrestorer.skinsmenu_previous_page": "<yellow><bold>« <gray>Página Anterior</gray> <bold>«</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[</bold> <gray>Remover Skin</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_select_skin": "<dark_green>Clica para usar esta skin"
 }
