@@ -30,6 +30,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 public class SRHelpers {
@@ -220,5 +221,14 @@ public class SRHelpers {
     public static String formatEpochSeconds(long epochSeconds, Locale locale) {
         return new SimpleDateFormat(SRConstants.DATE_FORMAT, locale)
                 .format(new Date(TimeUnit.SECONDS.toMillis(epochSeconds)));
+    }
+
+    public static <E extends Enum<E>, V> Map<E, V> suppliedMap(Class<E> clazz, Function<E, V> mapper) {
+        Map<E, V> map = new EnumMap<>(clazz);
+        for (E e : clazz.getEnumConstants()) {
+            map.put(e, mapper.apply(e));
+        }
+
+        return map;
     }
 }
