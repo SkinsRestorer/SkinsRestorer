@@ -17,10 +17,8 @@
  */
 package net.skinsrestorer.shared.gui;
 
-import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.skinsrestorer.shared.commands.library.SRCommandManager;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.messages.Message;
@@ -36,24 +34,14 @@ import java.util.Optional;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SharedGUI {
     public static final int HEAD_COUNT_PER_PAGE = 9 * 4;
-    private final Injector injector;
     private final SkinsRestorerLocale locale;
     private final SRLogger logger;
-    private final SRCommandManager commandManager;
 
     public SRInventory createGUIPage(SRPlayer player, PageInfo pageInfo) {
         Map<Integer, SRInventory.Item> items = new HashMap<>();
 
-        SRInventory.Item none = new SRInventory.Item(
-                SRInventory.MaterialType.WHITE_PANE,
-                ComponentHelper.convertPlainToJson(" "),
-                List.of(),
-                Optional.empty(),
-                false,
-                Map.of()
-        );
         SRInventory.Item previous = new SRInventory.Item(
-                SRInventory.MaterialType.YELLOW_PANE,
+                SRInventory.MaterialType.ARROW,
                 locale.getMessageRequired(player, Message.SKINSMENU_PREVIOUS_PAGE),
                 List.of(),
                 Optional.empty(),
@@ -67,19 +55,17 @@ public class SharedGUI {
                 )
         );
         SRInventory.Item delete = new SRInventory.Item(
-                SRInventory.MaterialType.RED_PANE,
+                SRInventory.MaterialType.BARRIER,
                 locale.getMessageRequired(player, Message.SKINSMENU_CLEAR_SKIN),
                 List.of(),
                 Optional.empty(),
                 false,
                 Map.ofEntries(
-                        Map.entry(ClickEventType.LEFT, SRInventory.ClickEventAction.fromStream(os -> {
-                            os.writeUTF("clearSkin");
-                        }, true))
+                        Map.entry(ClickEventType.LEFT, SRInventory.ClickEventAction.fromStream(os -> os.writeUTF("clearSkin"), true))
                 )
         );
         SRInventory.Item next = new SRInventory.Item(
-                SRInventory.MaterialType.GREEN_PANE,
+                SRInventory.MaterialType.ARROW,
                 locale.getMessageRequired(player, Message.SKINSMENU_NEXT_PAGE),
                 List.of(),
                 Optional.empty(),
@@ -116,44 +102,17 @@ public class SharedGUI {
             skinCount++;
         }
 
-        // White Glass line
-        items.put(36, none);
-        items.put(37, none);
-        items.put(38, none);
-        items.put(39, none);
-        items.put(40, none);
-        items.put(41, none);
-        items.put(42, none);
-        items.put(43, none);
-        items.put(44, none);
-
         // If page is above starting page (0), add previous button
         if (pageInfo.hasPrevious()) {
-            items.put(45, previous);
-            items.put(46, previous);
-            items.put(47, previous);
-        } else {
-            // Empty place previous
-            items.put(45, none);
-            items.put(46, none);
-            items.put(47, none);
+            items.put(49, previous);
         }
 
         // Middle button //remove skin
-        items.put(48, delete);
         items.put(49, delete);
-        items.put(50, delete);
 
         // If the page is full, adding Next Page button.
         if (pageInfo.hasNext()) {
-            items.put(51, next);
-            items.put(52, next);
-            items.put(53, next);
-        } else {
-            // Empty place next
-            items.put(51, none);
-            items.put(52, none);
-            items.put(53, none);
+            items.put(50, next);
         }
 
         return new SRInventory(

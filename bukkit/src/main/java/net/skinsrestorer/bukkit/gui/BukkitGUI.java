@@ -45,10 +45,8 @@ public class BukkitGUI implements GUIManager<Inventory> {
     private ItemStack createItem(SRInventory.Item entry) {
         XMaterial material = switch (entry.materialType()) {
             case SKULL -> XMaterial.PLAYER_HEAD;
-            case WHITE_PANE -> XMaterial.WHITE_STAINED_GLASS_PANE;
-            case YELLOW_PANE -> XMaterial.YELLOW_STAINED_GLASS_PANE;
-            case RED_PANE -> XMaterial.RED_STAINED_GLASS_PANE;
-            case GREEN_PANE -> XMaterial.GREEN_STAINED_GLASS_PANE;
+            case ARROW -> XMaterial.ARROW;
+            case BARRIER -> XMaterial.BARRIER.or(XMaterial.RED_WOOL);
         };
         ItemStack itemStack = Objects.requireNonNull(material.parseItem());
         entry.textureHash().ifPresent(hash -> XSkull.of(itemStack)

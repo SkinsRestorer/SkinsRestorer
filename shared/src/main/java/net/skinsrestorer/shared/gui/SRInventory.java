@@ -47,10 +47,8 @@ public record SRInventory(int rows, ComponentString title, Map<Integer, Item> it
     @Getter
     public enum MaterialType implements NetworkId {
         SKULL,
-        WHITE_PANE,
-        YELLOW_PANE,
-        RED_PANE,
-        GREEN_PANE;
+        ARROW,
+        BARRIER;
 
         public static final NetworkCodec<MaterialType> CODEC = CodecHelpers.createEnumCodec(MaterialType.class);
 
