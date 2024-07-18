@@ -67,7 +67,6 @@
   "skinsrestorer.skinsmenu_open": "<dark_green>正在打开皮肤菜单",
   "skinsrestorer.skinsmenu_title_new": "<blue>皮肤菜单 - 第 <page_number> 页",
   "skinsrestorer.skinsmenu_next_page": "<green><bold>»<gray> 下一页</gray><bold> »</bold>",
-  "skinsrestorer.skinsmenu_previous_page": "<yellow><bold>«<gray> 上一页</gray><bold> «</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[ <gray>删除皮肤</gray><bold> ]</bold>",
   "skinsrestorer.skinsmenu_select_skin": "<dark_green>点击选择该皮肤",
   "skinsrestorer.skin_search_message": "<dark_green>您可以在这里找到匹配 <green><search></green> 的皮肤: <newline><green>htps://namemc.com/minecraft-skins/tag/<search> <newline><newline><dark_green>如果找不到皮肤，您可以在 https://namemc.com/minecraft-skins/tag 找到其他皮肤。 <newline>您可以通过以下命令使用链接设置皮肤：<newline> /skin https://namemc.com/skin/",

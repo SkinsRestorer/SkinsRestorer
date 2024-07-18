@@ -67,7 +67,6 @@
   "skinsrestorer.skinsmenu_open": "<dark_green>Odperas skin menu...",
   "skinsrestorer.skinsmenu_title_new": "<blue>Skin menu – stran <page_number>",
   "skinsrestorer.skinsmenu_next_page": "<green><bold>»</bold> <gray>Naslednja stran</gray> <bold>»</bold>",
-  "skinsrestorer.skinsmenu_previous_page": "<yellow><bold>« <gray>Prejsnja stran</gray> <bold>«</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[</bold> <gray>Odstrani skin</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_select_skin": "<dark_green>Klikni, da izberes ta skin",
   "skinsrestorer.skin_search_message": "<dark_green>Lahko najdes skine, ki se ujemajo <green><search></green> tukaj: <newline><green>https://namemc.com/minecraft-skins/tag/<search> <newline><newline><dark_green>Ce ni najdenih nobenih skinov, jih lahko vedno najdes na https://namemc.com/minecraft-skins/tag <newline>Skin lahko nastavis s povezavo:<newline>/skin https://namemc.com/skin/",

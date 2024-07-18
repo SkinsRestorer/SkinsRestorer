@@ -85,7 +85,6 @@
   "skinsrestorer.skinsmenu_open": "<dark_green>Abrindo menu de skins...",
   "skinsrestorer.skinsmenu_title_new": "<blue>Menu de Skins — Página <page_number>",
   "skinsrestorer.skinsmenu_next_page": "<green><bold>»</bold> <gray>Próxima página</gray> <bold>»</bold>",
-  "skinsrestorer.skinsmenu_previous_page": "<yellow><bold>« <gray>Página Anterior</gray> <bold>«</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[</bold> <gray>Remover skin</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_select_skin": "<dark_green>Clique para selecionar essa skin",
   "skinsrestorer.skin_search_message": "<dark_green>Voce pore procurar skins correspondentes<green><search></green> aqui: <newline><green>https://namemc.com/minecraft-skins/tag/<search> <newline><newline><dark_green>se nenhuma skin relacionada for encontrada, você pode achar alguma em https://namemc.com/minecraft-skins/tag <newline>Você pode alterar usando o link da skin:<newline>/skin https://namemc.com/skin/",

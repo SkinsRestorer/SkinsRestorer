@@ -82,7 +82,6 @@
   "skinsrestorer.skinsmenu_open": "<dark_green>Відкриття меню скінів...",
   "skinsrestorer.skinsmenu_title_new": "<blue>Меню скінів - Сторінка <page_number>",
   "skinsrestorer.skinsmenu_next_page": "<green><bold>»<gray> Наступна сторінка</gray><bold> »</bold>",
-  "skinsrestorer.skinsmenu_previous_page": "<yellow><bold>«<gray> Попередня сторінка</gray><bold> «</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[ <gray>Видалити скін</gray><bold> ]</bold>",
   "skinsrestorer.skinsmenu_select_skin": "<dark_green>Натисніть, щоб вибрати цей скін",
   "skinsrestorer.skin_search_message": "<dark_green>Ви можете знайти скіни, які відповідають <green><search></green> тут: <newline><green>https://namemc.com/minecraft-skins/tag/<search> <newline><newline><dark_green>Якщо скіни не знайдено, ви завжди можете знайти кілька скінів на https://namemc.com/minecraft-skins/tag<newline>Ви можете встановити скін за посиланням:<newline> /skin https://namemc.com/skin/",
