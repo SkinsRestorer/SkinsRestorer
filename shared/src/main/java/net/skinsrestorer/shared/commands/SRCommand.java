@@ -110,7 +110,7 @@ public final class SRCommand {
         MinecraftHelp.<SRCommandSender>builder()
                 .commandManager(commandManager.getCommandManager())
                 .audienceProvider(ComponentHelper::commandSenderToAudience)
-                .commandPrefix("/sr")
+                .commandPrefix("/sr help")
                 .messageProvider(MinecraftHelp.captionMessageProvider(
                         commandManager.getCommandManager().captionRegistry(),
                         ComponentCaptionFormatter.miniMessage()

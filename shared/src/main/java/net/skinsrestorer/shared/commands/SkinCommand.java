@@ -101,7 +101,7 @@ public final class SkinCommand {
         MinecraftHelp.<SRCommandSender>builder()
                 .commandManager(commandManager.getCommandManager())
                 .audienceProvider(ComponentHelper::commandSenderToAudience)
-                .commandPrefix("/skin")
+                .commandPrefix("/skin help")
                 .messageProvider(MinecraftHelp.captionMessageProvider(
                         commandManager.getCommandManager().captionRegistry(),
                         ComponentCaptionFormatter.miniMessage()
