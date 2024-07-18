@@ -18,6 +18,7 @@
 package net.skinsrestorer.api.property;
 
 public enum SkinVariant {
+    // TODO: Rename to WIDE on next major
     CLASSIC,
     SLIM
 }
