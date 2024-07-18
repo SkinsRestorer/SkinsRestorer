@@ -85,7 +85,6 @@
   "skinsrestorer.skinsmenu_open": "<dark_green>Skin menüsü açılıyor...",
   "skinsrestorer.skinsmenu_title_new": "<blue>Skin Menüsü - Sayfa <page_number>",
   "skinsrestorer.skinsmenu_next_page": "<green><bold>»</bold> <gray>Sonraki Sayfa</gray> <bold>»</bold>",
-  "skinsrestorer.skinsmenu_previous_page": "<yellow><bold>« <gray>Önceki Sayfa</gray> <bold>«</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[</bold> <gray>Skin'i Kaldır</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_select_skin": "<dark_green>Bu skin'i seçmek için tıklayın",
   "skinsrestorer.skin_search_message": "<dark_green> ile eşleşen skinleri burada <green><search></green> bulabilirsiniz: <newline><green>https://namemc.com/minecraft-skins/tag/<search> <newline><newline><dark_green>Eğer hiçbir skin bulunamadıysa, her zaman bazı skinleri https://namemc.com/minecraft-skins/tag adresinden bulabilirsiniz. <newline>Skin bağlantısını kullanarak skin'i ayarlayabilirsiniz:<newline>/skin https://namemc.com/skin/",
