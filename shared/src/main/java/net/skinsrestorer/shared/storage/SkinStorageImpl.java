@@ -184,13 +184,13 @@ public class SkinStorageImpl implements SkinStorage {
     }
 
     @Override
-    public void setPlayerSkinData(UUID uuid, String lastKnownName, SkinProperty textures, long timestamp) {
-        adapterReference.get().setPlayerSkinData(uuid, PlayerSkinData.of(uuid, lastKnownName, textures, timestamp));
+    public void setPlayerSkinData(UUID uuid, String lastKnownName, SkinProperty property, long timestamp) {
+        adapterReference.get().setPlayerSkinData(uuid, PlayerSkinData.of(uuid, lastKnownName, property, timestamp));
     }
 
     @Override
-    public void setURLSkinData(String url, String mineSkinId, SkinProperty textures, SkinVariant skinVariant) {
-        adapterReference.get().setURLSkinData(url, URLSkinData.of(url, mineSkinId, textures, skinVariant));
+    public void setURLSkinData(String url, String mineSkinId, SkinProperty property, SkinVariant skinVariant) {
+        adapterReference.get().setURLSkinData(url, URLSkinData.of(url, mineSkinId, property, skinVariant));
     }
 
     @Override
@@ -199,8 +199,8 @@ public class SkinStorageImpl implements SkinStorage {
     }
 
     @Override
-    public void setCustomSkinData(String skinName, SkinProperty textures) {
-        adapterReference.get().setCustomSkinData(skinName, CustomSkinData.of(skinName, textures));
+    public void setCustomSkinData(String skinName, SkinProperty property) {
+        adapterReference.get().setCustomSkinData(skinName, CustomSkinData.of(skinName, property));
     }
 
     public PageInfo getGUIPage(SRPlayer player, int page, PageType pageType) {

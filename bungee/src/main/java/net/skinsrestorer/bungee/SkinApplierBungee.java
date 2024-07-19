@@ -17,7 +17,6 @@
  */
 package net.skinsrestorer.bungee;
 
-import ch.jalu.configme.SettingsManager;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -27,6 +26,7 @@ import net.skinsrestorer.bungee.wrapper.WrapperBungee;
 import net.skinsrestorer.shared.api.SkinApplierAccess;
 import net.skinsrestorer.shared.api.event.EventBusImpl;
 import net.skinsrestorer.shared.api.event.SkinApplyEventImpl;
+import net.skinsrestorer.shared.codec.SRServerPluginMessage;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.jetbrains.annotations.Nullable;
@@ -38,7 +38,6 @@ public class SkinApplierBungee implements SkinApplierAccess<ProxiedPlayer> {
     public static final boolean IS_NEW_PROPERTY_CLASS = ReflectionUtil.classExists("net.md_5.bungee.protocol.Property");
     @Getter
     private static final SkinApplyBungeeAdapter applyAdapter = selectSkinApplyAdapter();
-    private final SettingsManager settings;
     private final WrapperBungee wrapper;
     private final EventBusImpl eventBus;
     private final SRLogger logger;
@@ -83,13 +82,13 @@ public class SkinApplierBungee implements SkinApplierAccess<ProxiedPlayer> {
         applyWithProperty(player, handler, event.getProperty());
     }
 
-    private void applyWithProperty(@Nullable ProxiedPlayer player, InitialHandler handler, SkinProperty textures) throws ReflectiveOperationException {
-        applyAdapter.applyToHandler(handler, textures);
+    private void applyWithProperty(@Nullable ProxiedPlayer player, InitialHandler handler, SkinProperty property) throws ReflectiveOperationException {
+        applyAdapter.applyToHandler(handler, property);
 
         if (player == null) {
             return;
         }
 
-        wrapper.player(player).sendUpdateRequest(textures);
+        wrapper.player(player).sendToMessageChannel(SRServerPluginMessage.CODEC, new SRServerPluginMessage(new SRServerPluginMessage.SkinUpdateChannelPayload(property)));
     }
 }

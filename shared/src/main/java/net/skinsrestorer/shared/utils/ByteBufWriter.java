@@ -17,20 +17,18 @@
  */
 package net.skinsrestorer.shared.utils;
 
+import net.skinsrestorer.shared.codec.SROutputWriter;
+
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
-import java.io.IOException;
+import java.util.function.Consumer;
 
-public interface DataStreamConsumer extends IOExceptionConsumer<DataOutputStream> {
+public interface ByteBufWriter extends Consumer<SROutputWriter> {
     default byte[] toByteArray() {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         DataOutputStream out = new DataOutputStream(bytes);
 
-        try {
-            accept(out);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        accept(new SROutputWriter(out));
 
         return bytes.toByteArray();
     }

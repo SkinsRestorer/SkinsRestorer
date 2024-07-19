@@ -19,6 +19,7 @@ package net.skinsrestorer.shared.gui;
 
 import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.shared.codec.SRProxyPluginMessage;
 import net.skinsrestorer.shared.listeners.GUIActionListener;
 import net.skinsrestorer.shared.plugin.SRServerPlugin;
 import net.skinsrestorer.shared.subjects.SRServerPlayer;
@@ -30,14 +31,15 @@ public class ActionDataCallback {
     private final Injector injector;
     private final SRServerPlugin plugin;
 
-    public void handle(SRServerPlayer player, byte[] data) {
+    public void handle(SRServerPlayer player, SRInventory.ClickEventAction action) {
         if (plugin.isProxyMode()) {
-            player.sendToMessageChannel(os -> {
-                os.writeUTF("guiAction");
-                os.write(data);
-            });
+            player.sendToMessageChannel(SRProxyPluginMessage.CODEC, new SRProxyPluginMessage(action.actionChannelPayload()));
         } else {
-            injector.getSingleton(GUIActionListener.class).handle(player, data);
+            injector.getSingleton(GUIActionListener.class).handle(player, action.actionChannelPayload());
+        }
+
+        if (action.closeInventory()) {
+            player.closeInventory();
         }
     }
 }

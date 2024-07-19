@@ -18,51 +18,30 @@
 package net.skinsrestorer.shared.listeners;
 
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.codec.CodecHelpers;
+import net.skinsrestorer.shared.codec.SRProxyPluginMessage;
 import net.skinsrestorer.shared.commands.library.SRCommandManager;
-import net.skinsrestorer.shared.gui.PageType;
 import net.skinsrestorer.shared.gui.SharedGUI;
-import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 
 import javax.inject.Inject;
-import java.io.ByteArrayInputStream;
-import java.io.DataInput;
-import java.io.DataInputStream;
-import java.io.IOException;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class GUIActionListener {
-    private final SRLogger logger;
     private final SRPlatformAdapter adapter;
     private final SkinStorageImpl skinStorage;
     private final SharedGUI sharedGUI;
     private final SRCommandManager commandManager;
 
-    public void handle(SRPlayer player, byte[] data) {
-        handle(player, new DataInputStream(new ByteArrayInputStream(data)));
-    }
-
-    public void handle(SRPlayer player, DataInput in) {
-        try {
-            String subChannel = in.readUTF();
-            switch (subChannel) {
-                case "openPage" -> {
-                    int page = CodecHelpers.INT_CODEC.read(in);
-                    PageType type = PageType.CODEC.read(in);
-
-                    adapter.openGUI(player, sharedGUI.createGUIPage(player, skinStorage.getGUIPage(player, page, type)));
-                }
-                case "clearSkin" -> commandManager.execute(player, "skin clear");
-                case "setSkin" -> {
-                    String skin = CodecHelpers.STRING_CODEC.read(in);
-                    commandManager.execute(player, String.format("skin set %s", skin));
-                }
-            }
-        } catch (IOException e) {
-            logger.severe("Error while handling plugin message", e);
+    public void handle(SRPlayer player, SRProxyPluginMessage.GUIActionChannelPayload actionChannelPayload) {
+        SRProxyPluginMessage.GUIActionChannelPayload.GUIActionPayload<?> actionPayload = actionChannelPayload.payload();
+        if (actionPayload instanceof SRProxyPluginMessage.GUIActionChannelPayload.OpenPagePayload openPagePayload) {
+            adapter.openGUI(player, sharedGUI.createGUIPage(player, skinStorage.getGUIPage(player, openPagePayload.page(), openPagePayload.type())));
+        } else if (actionPayload instanceof SRProxyPluginMessage.GUIActionChannelPayload.ClearSkinPayload) {
+            commandManager.execute(player, "skin clear");
+        } else if (actionPayload instanceof SRProxyPluginMessage.GUIActionChannelPayload.SetSkinPayload setSkinPayload) {
+            commandManager.execute(player, String.format("skin set %s", setSkinPayload.skin()));
         }
     }
 }

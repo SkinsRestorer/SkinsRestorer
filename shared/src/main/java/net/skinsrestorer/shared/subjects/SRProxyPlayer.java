@@ -17,23 +17,19 @@
  */
 package net.skinsrestorer.shared.subjects;
 
-import net.skinsrestorer.api.property.SkinProperty;
-import net.skinsrestorer.shared.codec.CodecHelpers;
-import net.skinsrestorer.shared.utils.DataStreamConsumer;
+import net.skinsrestorer.shared.codec.NetworkCodec;
+import net.skinsrestorer.shared.utils.ByteBufWriter;
 
 import java.util.Optional;
 
 public interface SRProxyPlayer extends SRPlayer {
     Optional<String> getCurrentServer();
 
-    default void sendUpdateRequest(SkinProperty textures) {
-        sendToMessageChannel(out -> {
-            out.writeUTF("SkinUpdateV2");
-            CodecHelpers.SKIN_PROPERTY_CODEC.write(out, textures);
-        });
+    default <T> void sendToMessageChannel(NetworkCodec<T> codec, T value) {
+        sendToMessageChannel(out -> codec.write(out, value));
     }
 
-    default void sendToMessageChannel(DataStreamConsumer consumer) {
+    default void sendToMessageChannel(ByteBufWriter consumer) {
         sendToMessageChannel(consumer.toByteArray());
     }
 

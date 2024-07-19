@@ -38,7 +38,6 @@ import org.incendo.cloud.Command;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.annotations.AnnotationParser;
 import org.incendo.cloud.brigadier.BrigadierManagerHolder;
-import org.incendo.cloud.brigadier.CloudBrigadierManager;
 import org.incendo.cloud.description.Description;
 import org.incendo.cloud.exception.InvalidCommandSenderException;
 import org.incendo.cloud.key.CloudKey;
@@ -60,6 +59,7 @@ import javax.inject.Inject;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executors;
 
@@ -81,7 +81,7 @@ public class SRCommandManager {
     private final CooldownManager<SRCommandSender> cooldownManager = CooldownManager.cooldownManager(CooldownConfiguration.<SRCommandSender>builder()
             .repository(cooldownRepository)
             .addCreationListener(new ScheduledCleanupCreationListener<>(Executors.newSingleThreadScheduledExecutor(), cooldownRepository))
-            .addActiveCooldownListeners(new CooldownMessenger())
+            .addAllActiveCooldownListeners(List.of(new CooldownMessenger()))
             .bypassCooldown(context -> !(context.sender() instanceof SRPlayer) || context.sender().hasPermission(PermissionRegistry.BYPASS_COOLDOWN))
             .build());
 
@@ -90,10 +90,8 @@ public class SRCommandManager {
         this.commandManager = platform.createCommandManager();
         this.annotationParser = new AnnotationParser<>(commandManager, SRCommandSender.class);
 
-        Optional<CloudBrigadierManager<SRCommandSender, ?>> optional = extractBrigadier(commandManager);
-        if (optional.isPresent()) {
-            CloudBrigadierManager<SRCommandSender, ?> brigadierManager = optional.get();
-            brigadierManager.setNativeNumberSuggestions(true);
+        if (commandManager instanceof BrigadierManagerHolder<?, ?> holder && holder.hasBrigadierManager()) {
+            holder.brigadierManager().setNativeNumberSuggestions(true);
         }
 
         commandManager.captionRegistry().registerProvider(TranslationBundle.core(SRCommandSender::getLocale));
@@ -164,15 +162,6 @@ public class SRCommandManager {
                 ConsoleOnly.class,
                 annotation -> new ConsoleOnlyRequirement()
         );
-    }
-
-    @SuppressWarnings("unchecked")
-    private static Optional<CloudBrigadierManager<SRCommandSender, ?>> extractBrigadier(CommandManager<SRCommandSender> commandManager) {
-        if (commandManager instanceof BrigadierManagerHolder<?, ?> holder && holder.hasBrigadierManager()) {
-            return Optional.of((CloudBrigadierManager<SRCommandSender, ?>) holder.brigadierManager());
-        }
-
-        return Optional.empty();
     }
 
     public void registerCommand(Object command) {

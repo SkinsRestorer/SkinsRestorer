@@ -17,10 +17,10 @@
  */
 package net.skinsrestorer.shared.plugin;
 
+import net.skinsrestorer.shared.codec.SRServerPluginMessage;
 import net.skinsrestorer.shared.gui.SRInventory;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.SRProxyPlayer;
-import net.skinsrestorer.shared.utils.MessageProtocolUtil;
 
 import java.util.Optional;
 
@@ -30,11 +30,6 @@ public interface SRProxyAdapter extends SRPlatformAdapter {
     @Override
     default void openGUI(SRPlayer player, SRInventory srInventory) {
         SRProxyPlayer proxyPlayer = (SRProxyPlayer) player;
-        proxyPlayer.sendToMessageChannel(out -> {
-            out.writeUTF("openGUI");
-            byte[] ba = MessageProtocolUtil.convertToByteArray(srInventory);
-            out.writeInt(ba.length);
-            out.write(ba);
-        });
+        proxyPlayer.sendToMessageChannel(SRServerPluginMessage.CODEC, new SRServerPluginMessage(new SRServerPluginMessage.GUIPageChannelPayload(srInventory)));
     }
 }

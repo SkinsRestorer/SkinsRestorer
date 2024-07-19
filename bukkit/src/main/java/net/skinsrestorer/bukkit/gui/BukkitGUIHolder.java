@@ -56,7 +56,7 @@ public class BukkitGUIHolder implements InventoryHolder {
                 default -> ClickEventType.OTHER;
             });
             if (action != null) {
-                dataCallback.handle(wrapper.player(player), action.actionBytes());
+                dataCallback.handle(wrapper.player(player), action);
             }
         }
     }

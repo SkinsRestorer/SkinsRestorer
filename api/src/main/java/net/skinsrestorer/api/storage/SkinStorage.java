@@ -69,20 +69,20 @@ public interface SkinStorage {
      *
      * @param uuid          Player UUID
      * @param lastKnownName Last known name of the player
-     * @param textures      Property object
+     * @param property      Property object
      * @param timestamp     timestamp string in milliseconds
      */
-    void setPlayerSkinData(UUID uuid, String lastKnownName, SkinProperty textures, long timestamp);
+    void setPlayerSkinData(UUID uuid, String lastKnownName, SkinProperty property, long timestamp);
 
     /**
      * Saves an url skin to the database.
      *
      * @param url         URL to skin
      * @param mineSkinId  MineSkin ID
-     * @param textures    Property object
+     * @param property    Property object
      * @param skinVariant Skin variant
      */
-    void setURLSkinData(String url, String mineSkinId, SkinProperty textures, SkinVariant skinVariant);
+    void setURLSkinData(String url, String mineSkinId, SkinProperty property, SkinVariant skinVariant);
 
     /**
      * Saves an url index to the database.
@@ -110,9 +110,9 @@ public interface SkinStorage {
      * Saves a custom skin to the database.
      *
      * @param skinName Skin name
-     * @param textures Property object
+     * @param property Property object
      */
-    void setCustomSkinData(String skinName, SkinProperty textures);
+    void setCustomSkinData(String skinName, SkinProperty property);
 
     /**
      * @see #findSkinData(String)

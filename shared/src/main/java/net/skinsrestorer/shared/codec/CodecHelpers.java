@@ -19,33 +19,29 @@ package net.skinsrestorer.shared.codec;
 
 import net.skinsrestorer.api.property.SkinProperty;
 
-import java.io.DataInput;
-import java.io.DataOutput;
 import java.util.*;
 
 public class CodecHelpers {
     public static NetworkCodec<String> STRING_CODEC = NetworkCodec.of(
-            DataOutput::writeUTF,
-            DataInput::readUTF
+            SROutputWriter::writeString,
+            SRInputReader::readString
     );
     public static NetworkCodec<Integer> INT_CODEC = NetworkCodec.of(
-            DataOutput::writeInt,
-            DataInput::readInt
+            SROutputWriter::writeInt,
+            SRInputReader::readInt
     );
     public static NetworkCodec<Boolean> BOOLEAN_CODEC = NetworkCodec.of(
-            DataOutput::writeBoolean,
-            DataInput::readBoolean
+            SROutputWriter::writeBoolean,
+            SRInputReader::readBoolean
     );
     public static NetworkCodec<byte[]> BYTE_ARRAY_CODEC = NetworkCodec.of(
             (os, s) -> {
                 INT_CODEC.write(os, s.length);
-                os.write(s);
+                os.writeBytes(s);
             },
             is -> {
                 int length = INT_CODEC.read(is);
-                byte[] bytes = new byte[length];
-                is.readFully(bytes);
-                return bytes;
+                return is.readBytes(length);
             }
     );
     public static NetworkCodec<SkinProperty> SKIN_PROPERTY_CODEC = NetworkCodec.of(

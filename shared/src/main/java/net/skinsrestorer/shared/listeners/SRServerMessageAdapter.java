@@ -19,45 +19,30 @@ package net.skinsrestorer.shared.listeners;
 
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
-import net.skinsrestorer.shared.codec.CodecHelpers;
+import net.skinsrestorer.shared.codec.SRInputReader;
+import net.skinsrestorer.shared.codec.SRServerPluginMessage;
 import net.skinsrestorer.shared.listeners.event.SRServerMessageEvent;
-import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
-import net.skinsrestorer.shared.utils.MessageProtocolUtil;
 import net.skinsrestorer.shared.utils.SRConstants;
 
 import javax.inject.Inject;
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class SRServerMessageAdapter {
     private final SRServerAdapter plugin;
     private final SharedSkinApplier<Object> skinApplier;
-    private final SRLogger logger;
 
     public void handlePluginMessage(SRServerMessageEvent event) {
         if (!event.getChannel().equals(SRConstants.MESSAGE_CHANNEL)) {
             return;
         }
 
-        DataInputStream in = new DataInputStream(new ByteArrayInputStream(event.getData()));
-
-        try {
-            String subChannel = in.readUTF();
-
-            if (subChannel.equalsIgnoreCase("openGUI")) {
-                int len = in.readInt();
-                byte[] msgBytes = new byte[len];
-                in.readFully(msgBytes);
-
-                plugin.openGUI(event.getPlayer(), MessageProtocolUtil.convertToInventory(msgBytes));
-            } else if (subChannel.equalsIgnoreCase("SkinUpdateV2")) {
-                skinApplier.applySkin(event.getPlayer().getAs(Object.class), CodecHelpers.SKIN_PROPERTY_CODEC.read(in));
-            }
-        } catch (IOException e) {
-            logger.severe("Error while handling plugin message", e);
+        SRServerPluginMessage message = SRServerPluginMessage.CODEC.read(new SRInputReader(event.getData()));
+        SRServerPluginMessage.ChannelPayload<?> channelPayload = message.channelPayload();
+        if (channelPayload instanceof SRServerPluginMessage.GUIPageChannelPayload payload) {
+            plugin.openGUI(event.getPlayer(), payload.srInventory());
+        } else if (channelPayload instanceof SRServerPluginMessage.SkinUpdateChannelPayload payload) {
+            skinApplier.applySkin(event.getPlayer().getAs(Object.class), payload.skinProperty());
         }
     }
 }

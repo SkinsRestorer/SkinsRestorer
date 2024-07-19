@@ -28,7 +28,6 @@ import org.bukkit.Server;
 
 import javax.inject.Inject;
 import javax.net.ssl.HttpsURLConnection;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -62,14 +61,7 @@ public class UpdateDownloaderGithub implements UpdateDownloader {
                     throw new IOException("Failed to open input stream");
                 }
 
-                ByteArrayOutputStream byteData = new ByteArrayOutputStream();
-                byte[] buffer = new byte[4096];
-                int read;
-                while ((read = is.read(buffer)) != -1) {
-                    byteData.write(buffer, 0, read);
-                }
-
-                fileData = byteData.toByteArray();
+                fileData = is.readAllBytes();
                 String hash = connection.getHeaderField("content-md5");
                 if (hash != null && !Arrays.equals(Base64.getDecoder().decode(hash), SRHelpers.md5(fileData))) {
                     throw new UpdateException("Downloaded file is corrupted");

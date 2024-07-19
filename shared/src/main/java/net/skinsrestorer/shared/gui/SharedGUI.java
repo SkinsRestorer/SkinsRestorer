@@ -19,7 +19,7 @@ package net.skinsrestorer.shared.gui;
 
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.skinsrestorer.shared.codec.CodecHelpers;
+import net.skinsrestorer.shared.codec.SRProxyPluginMessage;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.messages.Message;
@@ -48,11 +48,9 @@ public class SharedGUI {
                 Optional.empty(),
                 false,
                 Map.ofEntries(
-                        Map.entry(ClickEventType.LEFT, SRInventory.ClickEventAction.fromStream(os -> {
-                            os.writeUTF("openPage");
-                            CodecHelpers.INT_CODEC.write(os, pageInfo.page() - 1);
-                            PageType.CODEC.write(os, pageInfo.pageType());
-                        }, false))
+                        Map.entry(ClickEventType.LEFT, SRInventory.ClickEventAction.fromPayload(new SRProxyPluginMessage.GUIActionChannelPayload(new SRProxyPluginMessage.GUIActionChannelPayload.OpenPagePayload(
+                                pageInfo.page() - 1, pageInfo.pageType()
+                        )), false))
                 )
         );
         SRInventory.Item delete = new SRInventory.Item(
@@ -62,7 +60,7 @@ public class SharedGUI {
                 Optional.empty(),
                 false,
                 Map.ofEntries(
-                        Map.entry(ClickEventType.LEFT, SRInventory.ClickEventAction.fromStream(os -> os.writeUTF("clearSkin"), true))
+                        Map.entry(ClickEventType.LEFT, SRInventory.ClickEventAction.fromPayload(new SRProxyPluginMessage.GUIActionChannelPayload(new SRProxyPluginMessage.GUIActionChannelPayload.ClearSkinPayload()), true))
                 )
         );
         SRInventory.Item next = new SRInventory.Item(
@@ -72,11 +70,9 @@ public class SharedGUI {
                 Optional.empty(),
                 false,
                 Map.ofEntries(
-                        Map.entry(ClickEventType.LEFT, SRInventory.ClickEventAction.fromStream(os -> {
-                            os.writeUTF("openPage");
-                            CodecHelpers.INT_CODEC.write(os, pageInfo.page() + 1);
-                            PageType.CODEC.write(os, pageInfo.pageType());
-                        }, false))
+                        Map.entry(ClickEventType.LEFT, SRInventory.ClickEventAction.fromPayload(new SRProxyPluginMessage.GUIActionChannelPayload(new SRProxyPluginMessage.GUIActionChannelPayload.OpenPagePayload(
+                                pageInfo.page() + 1, pageInfo.pageType()
+                        )), false))
                 )
         );
 
@@ -94,10 +90,9 @@ public class SharedGUI {
                     Optional.of(entry.base().textureHash()),
                     false,
                     Map.ofEntries(
-                            Map.entry(ClickEventType.LEFT, SRInventory.ClickEventAction.fromStream(os -> {
-                                os.writeUTF("setSkin");
-                                CodecHelpers.STRING_CODEC.write(os, entry.base().skinId());
-                            }, true))
+                            Map.entry(ClickEventType.LEFT, SRInventory.ClickEventAction.fromPayload(new SRProxyPluginMessage.GUIActionChannelPayload(new SRProxyPluginMessage.GUIActionChannelPayload.SetSkinPayload(
+                                    entry.base().skinId()
+                            )), true))
                     )
             ));
             skinCount++;

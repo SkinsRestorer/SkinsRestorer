@@ -30,9 +30,9 @@ import java.util.Optional;
 
 public class SkinApplierBungeeOld implements SkinApplyBungeeAdapter {
     @Override
-    public void applyToHandler(InitialHandler handler, SkinProperty textures) throws ReflectiveOperationException {
+    public void applyToHandler(InitialHandler handler, SkinProperty property) throws ReflectiveOperationException {
         LoginResult profile = handler.getLoginProfile();
-        Property[] newProps = new Property[]{new Property(SkinProperty.TEXTURES_NAME, textures.getValue(), textures.getSignature())};
+        Property[] newProps = new Property[]{new Property(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature())};
 
         if (profile == null) {
             try {
@@ -49,8 +49,8 @@ public class SkinApplierBungeeOld implements SkinApplyBungeeAdapter {
                 Field field = InitialHandler.class.getDeclaredField("loginProfile");
                 field.setAccessible(true);
                 field.set(handler, profile);
-            } catch (NoSuchFieldException | IllegalAccessException e) {
-                e.printStackTrace();
+            } catch (ReflectiveOperationException e) {
+                throw new RuntimeException("Failed to apply skin property to InitialHandler", e);
             }
         } else {
             profile.setProperties(newProps);

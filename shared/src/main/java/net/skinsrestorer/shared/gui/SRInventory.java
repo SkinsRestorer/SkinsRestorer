@@ -21,12 +21,9 @@ import lombok.Getter;
 import net.skinsrestorer.shared.codec.CodecHelpers;
 import net.skinsrestorer.shared.codec.NetworkCodec;
 import net.skinsrestorer.shared.codec.NetworkId;
+import net.skinsrestorer.shared.codec.SRProxyPluginMessage;
 import net.skinsrestorer.shared.utils.ComponentString;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutput;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -45,7 +42,7 @@ public record SRInventory(int rows, ComponentString title, Map<Integer, Item> it
                 Map<Integer, Item> items = CodecHelpers.createMapCodec(CodecHelpers.INT_CODEC, Item.CODEC).read(stream);
                 return new SRInventory(rows, title, items);
             }
-    );
+    ).compressed();
 
     @Getter
     public enum MaterialType implements NetworkId {
@@ -90,31 +87,22 @@ public record SRInventory(int rows, ComponentString title, Map<Integer, Item> it
         );
     }
 
-    public record ClickEventAction(byte[] actionBytes, boolean closeInventory) {
+    public record ClickEventAction(SRProxyPluginMessage.GUIActionChannelPayload actionChannelPayload,
+                                   boolean closeInventory) {
         public static final NetworkCodec<ClickEventAction> CODEC = NetworkCodec.of(
                 (stream, action) -> {
-                    CodecHelpers.BYTE_ARRAY_CODEC.write(stream, action.actionBytes());
+                    SRProxyPluginMessage.GUIActionChannelPayload.CODEC.write(stream, action.actionChannelPayload());
                     CodecHelpers.BOOLEAN_CODEC.write(stream, action.closeInventory());
                 },
                 stream -> {
-                    byte[] actionBytes = CodecHelpers.BYTE_ARRAY_CODEC.read(stream);
+                    SRProxyPluginMessage.GUIActionChannelPayload actionChannelPayload = SRProxyPluginMessage.GUIActionChannelPayload.CODEC.read(stream);
                     boolean closeInventory = CodecHelpers.BOOLEAN_CODEC.read(stream);
-                    return new ClickEventAction(actionBytes, closeInventory);
+                    return new ClickEventAction(actionChannelPayload, closeInventory);
                 }
         );
 
-        public static ClickEventAction fromStream(ThrowingConsumer<DataOutput> writer, boolean closeInventory) {
-            try {
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                writer.accept(new DataOutputStream(baos));
-                return new ClickEventAction(baos.toByteArray(), closeInventory);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        public interface ThrowingConsumer<T> {
-            void accept(T t) throws IOException;
+        public static ClickEventAction fromPayload(SRProxyPluginMessage.GUIActionChannelPayload payload, boolean closeInventory) {
+            return new ClickEventAction(payload, closeInventory);
         }
     }
 }

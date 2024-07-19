@@ -18,18 +18,15 @@
 package net.skinsrestorer.shared.listeners;
 
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.shared.codec.SRInputReader;
+import net.skinsrestorer.shared.codec.SRProxyPluginMessage;
 import net.skinsrestorer.shared.listeners.event.SRProxyMessageEvent;
-import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.utils.SRConstants;
 
 import javax.inject.Inject;
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class SRProxyMessageAdapter {
-    private final SRLogger logger;
     private final GUIActionListener guiActionListener;
 
     public void handlePluginMessage(SRProxyMessageEvent event) {
@@ -46,14 +43,10 @@ public final class SRProxyMessageAdapter {
             return;
         }
 
-        DataInputStream in = new DataInputStream(new ByteArrayInputStream(event.getData()));
-        try {
-            String subChannel = in.readUTF();
-            if (subChannel.equals("guiAction")) {
-                guiActionListener.handle(event.getPlayer(), in);
-            }
-        } catch (IOException e) {
-            logger.severe("Error while handling plugin message", e);
+        SRInputReader in = new SRInputReader(event.getData());
+        SRProxyPluginMessage.ChannelPayload<?> msg = SRProxyPluginMessage.CODEC.read(in).channelPayload();
+        if (msg instanceof SRProxyPluginMessage.GUIActionChannelPayload actionChannelPayload) {
+            guiActionListener.handle(event.getPlayer(), actionChannelPayload);
         }
     }
 }
