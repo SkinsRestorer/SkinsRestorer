@@ -36,12 +36,11 @@ public record SRInventory(int rows, ComponentString title, Map<Integer, Item> it
                 ComponentString.CODEC.write(stream, inventory.title());
                 CodecHelpers.createMapCodec(CodecHelpers.INT_CODEC, Item.CODEC).write(stream, inventory.items());
             },
-            stream -> {
-                int rows = CodecHelpers.INT_CODEC.read(stream);
-                ComponentString title = ComponentString.CODEC.read(stream);
-                Map<Integer, Item> items = CodecHelpers.createMapCodec(CodecHelpers.INT_CODEC, Item.CODEC).read(stream);
-                return new SRInventory(rows, title, items);
-            }
+            stream -> new SRInventory(
+                    CodecHelpers.INT_CODEC.read(stream),
+                    ComponentString.CODEC.read(stream),
+                    CodecHelpers.createMapCodec(CodecHelpers.INT_CODEC, Item.CODEC).read(stream)
+            )
     ).compressed();
 
     @Getter
@@ -75,15 +74,14 @@ public record SRInventory(int rows, ComponentString title, Map<Integer, Item> it
                     CodecHelpers.BOOLEAN_CODEC.write(stream, item.enchantmentGlow());
                     CodecHelpers.createMapCodec(ClickEventType.CODEC, ClickEventAction.CODEC).write(stream, item.clickHandlers());
                 },
-                stream -> {
-                    MaterialType materialType = MaterialType.CODEC.read(stream);
-                    ComponentString displayName = ComponentString.CODEC.read(stream);
-                    List<ComponentString> lore = CodecHelpers.createListCodec(ComponentString.CODEC).read(stream);
-                    Optional<String> textureHash = CodecHelpers.createOptionalCodec(CodecHelpers.STRING_CODEC).read(stream);
-                    boolean enchantmentGlow = CodecHelpers.BOOLEAN_CODEC.read(stream);
-                    Map<ClickEventType, ClickEventAction> clickHandlers = CodecHelpers.createMapCodec(ClickEventType.CODEC, ClickEventAction.CODEC).read(stream);
-                    return new Item(materialType, displayName, lore, textureHash, enchantmentGlow, clickHandlers);
-                }
+                stream -> new Item(
+                        MaterialType.CODEC.read(stream),
+                        ComponentString.CODEC.read(stream),
+                        CodecHelpers.createListCodec(ComponentString.CODEC).read(stream),
+                        CodecHelpers.createOptionalCodec(CodecHelpers.STRING_CODEC).read(stream),
+                        CodecHelpers.BOOLEAN_CODEC.read(stream),
+                        CodecHelpers.createMapCodec(ClickEventType.CODEC, ClickEventAction.CODEC).read(stream)
+                )
         );
     }
 
@@ -94,15 +92,10 @@ public record SRInventory(int rows, ComponentString title, Map<Integer, Item> it
                     SRProxyPluginMessage.GUIActionChannelPayload.CODEC.write(stream, action.actionChannelPayload());
                     CodecHelpers.BOOLEAN_CODEC.write(stream, action.closeInventory());
                 },
-                stream -> {
-                    SRProxyPluginMessage.GUIActionChannelPayload actionChannelPayload = SRProxyPluginMessage.GUIActionChannelPayload.CODEC.read(stream);
-                    boolean closeInventory = CodecHelpers.BOOLEAN_CODEC.read(stream);
-                    return new ClickEventAction(actionChannelPayload, closeInventory);
-                }
+                stream -> new ClickEventAction(
+                        SRProxyPluginMessage.GUIActionChannelPayload.CODEC.read(stream),
+                        CodecHelpers.BOOLEAN_CODEC.read(stream)
+                )
         );
-
-        public static ClickEventAction fromPayload(SRProxyPluginMessage.GUIActionChannelPayload payload, boolean closeInventory) {
-            return new ClickEventAction(payload, closeInventory);
-        }
     }
 }

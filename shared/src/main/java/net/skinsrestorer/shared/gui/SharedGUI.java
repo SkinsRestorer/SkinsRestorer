@@ -48,7 +48,7 @@ public class SharedGUI {
                 Optional.empty(),
                 false,
                 Map.ofEntries(
-                        Map.entry(ClickEventType.LEFT, SRInventory.ClickEventAction.fromPayload(new SRProxyPluginMessage.GUIActionChannelPayload(new SRProxyPluginMessage.GUIActionChannelPayload.OpenPagePayload(
+                        Map.entry(ClickEventType.LEFT, new SRInventory.ClickEventAction(new SRProxyPluginMessage.GUIActionChannelPayload(new SRProxyPluginMessage.GUIActionChannelPayload.OpenPagePayload(
                                 pageInfo.page() - 1, pageInfo.pageType()
                         )), false))
                 )
@@ -60,7 +60,7 @@ public class SharedGUI {
                 Optional.empty(),
                 false,
                 Map.ofEntries(
-                        Map.entry(ClickEventType.LEFT, SRInventory.ClickEventAction.fromPayload(new SRProxyPluginMessage.GUIActionChannelPayload(new SRProxyPluginMessage.GUIActionChannelPayload.ClearSkinPayload()), true))
+                        Map.entry(ClickEventType.LEFT, new SRInventory.ClickEventAction(new SRProxyPluginMessage.GUIActionChannelPayload(new SRProxyPluginMessage.GUIActionChannelPayload.ClearSkinPayload()), true))
                 )
         );
         SRInventory.Item next = new SRInventory.Item(
@@ -70,7 +70,7 @@ public class SharedGUI {
                 Optional.empty(),
                 false,
                 Map.ofEntries(
-                        Map.entry(ClickEventType.LEFT, SRInventory.ClickEventAction.fromPayload(new SRProxyPluginMessage.GUIActionChannelPayload(new SRProxyPluginMessage.GUIActionChannelPayload.OpenPagePayload(
+                        Map.entry(ClickEventType.LEFT, new SRInventory.ClickEventAction(new SRProxyPluginMessage.GUIActionChannelPayload(new SRProxyPluginMessage.GUIActionChannelPayload.OpenPagePayload(
                                 pageInfo.page() + 1, pageInfo.pageType()
                         )), false))
                 )
@@ -90,7 +90,7 @@ public class SharedGUI {
                     Optional.of(entry.base().textureHash()),
                     false,
                     Map.ofEntries(
-                            Map.entry(ClickEventType.LEFT, SRInventory.ClickEventAction.fromPayload(new SRProxyPluginMessage.GUIActionChannelPayload(new SRProxyPluginMessage.GUIActionChannelPayload.SetSkinPayload(
+                            Map.entry(ClickEventType.LEFT, new SRInventory.ClickEventAction(new SRProxyPluginMessage.GUIActionChannelPayload(new SRProxyPluginMessage.GUIActionChannelPayload.SetSkinPayload(
                                     entry.base().skinId()
                             )), true))
                     )
