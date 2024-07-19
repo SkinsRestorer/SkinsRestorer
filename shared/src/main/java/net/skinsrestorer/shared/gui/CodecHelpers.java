@@ -101,14 +101,13 @@ public class CodecHelpers {
     }
 
     public static <T extends Enum<T> & NetworkId> NetworkCodec<T> createEnumCodec(Class<T> clazz) {
-        return STRING_CODEC.map(NetworkId::getId, id -> {
-            for (T value : clazz.getEnumConstants()) {
-                if (value.getId().equals(id)) {
-                    return value;
-                }
-            }
+        Map<String, T> idToValue = new HashMap<>();
+        for (T value : clazz.getEnumConstants()) {
+            idToValue.put(value.getId(), value);
+        }
 
-            throw new IllegalArgumentException("Unknown enum value \"" + id + "\"");
-        });
+        return STRING_CODEC.map(NetworkId::getId, id -> idToValue.computeIfAbsent(id, i -> {
+            throw new IllegalArgumentException("Unknown enum value: " + i);
+        }));
     }
 }

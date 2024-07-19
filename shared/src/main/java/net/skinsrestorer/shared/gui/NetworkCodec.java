@@ -17,29 +17,14 @@
  */
 package net.skinsrestorer.shared.gui;
 
-import java.io.*;
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
 import java.util.function.Function;
 
 public record NetworkCodec<T>(Writer<T> writer, Reader<T> reader) {
     public static <T> NetworkCodec<T> of(Writer<T> writer, Reader<T> reader) {
         return new NetworkCodec<>(writer, reader);
-    }
-
-    public static <T> byte[] encode(NetworkCodec<T> codec, T t) {
-        try (ByteArrayOutputStream stream = new ByteArrayOutputStream()) {
-            codec.write(new DataOutputStream(stream), t);
-            return stream.toByteArray();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static <T> T decode(NetworkCodec<T> codec, byte[] bytes) {
-        try (ByteArrayInputStream stream = new ByteArrayInputStream(bytes)) {
-            return codec.read(new DataInputStream(stream));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public void write(DataOutput stream, T t) {
