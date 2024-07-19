@@ -24,32 +24,24 @@ import net.skinsrestorer.shared.gui.PageType;
 public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
     public static final NetworkCodec<SRProxyPluginMessage> CODEC = NetworkCodec.of(
             (out, msg) -> {
-                CodecHelpers.STRING_CODEC.write(out, msg.channelPayload().getType().getChannelName());
+                ChannelType.CODEC.write(out, msg.channelPayload().getType());
                 msg.channelPayload().writeCodec(out);
             },
-            in -> {
-                String channelName = CodecHelpers.STRING_CODEC.read(in);
-                ChannelType type = ChannelType.fromName(channelName);
-                return new SRProxyPluginMessage(type.getCodec().read(in));
-            }
+            in -> new SRProxyPluginMessage(ChannelType.CODEC.read(in).getCodec().read(in))
     );
 
     @Getter
     @RequiredArgsConstructor
-    public enum ChannelType {
+    public enum ChannelType implements NetworkId {
         GUI_ACTION("guiAction", GUIActionChannelPayload.CODEC);
 
+        public static final NetworkCodec<ChannelType> CODEC = CodecHelpers.createEnumCodec(ChannelType.class);
         private final String channelName;
         private final NetworkCodec<? extends ChannelPayload<?>> codec;
 
-        public static ChannelType fromName(String name) {
-            for (ChannelType type : values()) {
-                if (type.getChannelName().equals(name)) {
-                    return type;
-                }
-            }
-
-            throw new IllegalArgumentException("Unknown channel type: " + name);
+        @Override
+        public String getId() {
+            return channelName;
         }
     }
 
@@ -69,14 +61,10 @@ public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
             GUIActionPayload<?> payload) implements ChannelPayload<GUIActionChannelPayload> {
         public static final NetworkCodec<GUIActionChannelPayload> CODEC = NetworkCodec.of(
                 (out, msg) -> {
-                    CodecHelpers.STRING_CODEC.write(out, msg.payload().getType().getChannelName());
+                    GUIActionType.CODEC.write(out, msg.payload().getType());
                     msg.payload().writeCodec(out);
                 },
-                in -> {
-                    String channelName = CodecHelpers.STRING_CODEC.read(in);
-                    GUIActionType type = GUIActionType.valueOf(channelName);
-                    return new GUIActionChannelPayload(type.getCodec().read(in));
-                }
+                in -> new GUIActionChannelPayload(GUIActionType.CODEC.read(in).getCodec().read(in))
         );
 
         @Override
@@ -96,13 +84,19 @@ public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
 
         @Getter
         @RequiredArgsConstructor
-        public enum GUIActionType {
+        public enum GUIActionType implements NetworkId {
             OPEN_PAGE("openPage", OpenPagePayload.CODEC),
             CLEAR_SKIN("clearSkin", ClearSkinPayload.CODEC),
             SET_SKIN("setSkin", SetSkinPayload.CODEC);
 
+            public static final NetworkCodec<GUIActionType> CODEC = CodecHelpers.createEnumCodec(GUIActionType.class);
             private final String channelName;
             private final NetworkCodec<? extends GUIActionPayload<?>> codec;
+
+            @Override
+            public String getId() {
+                return channelName;
+            }
         }
 
         public interface GUIActionPayload<T extends GUIActionPayload<T>> {
@@ -123,11 +117,7 @@ public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
                         CodecHelpers.INT_CODEC.write(out, msg.page());
                         PageType.CODEC.write(out, msg.type());
                     },
-                    in -> {
-                        int page = CodecHelpers.INT_CODEC.read(in);
-                        PageType type = PageType.CODEC.read(in);
-                        return new OpenPagePayload(page, type);
-                    }
+                    in -> new OpenPagePayload(CodecHelpers.INT_CODEC.read(in), PageType.CODEC.read(in))
             );
 
             @Override

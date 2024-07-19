@@ -25,33 +25,25 @@ import net.skinsrestorer.shared.gui.SRInventory;
 public record SRServerPluginMessage(ChannelPayload<?> channelPayload) {
     public static final NetworkCodec<SRServerPluginMessage> CODEC = NetworkCodec.of(
             (out, msg) -> {
-                CodecHelpers.STRING_CODEC.write(out, msg.channelPayload().getType().getChannelName());
+                ChannelType.CODEC.write(out, msg.channelPayload().getType());
                 msg.channelPayload().writeCodec(out);
             },
-            in -> {
-                String channelName = CodecHelpers.STRING_CODEC.read(in);
-                ChannelType type = ChannelType.fromName(channelName);
-                return new SRServerPluginMessage(type.getCodec().read(in));
-            }
+            in -> new SRServerPluginMessage(ChannelType.CODEC.read(in).getCodec().read(in))
     );
 
     @Getter
     @RequiredArgsConstructor
-    public enum ChannelType {
+    public enum ChannelType implements NetworkId {
         OPEN_GUI("openGUI", GUIPageChannelPayload.CODEC),
         SKIN_UPDATE("SkinUpdateV2", GUIPageChannelPayload.CODEC);
 
+        public static final NetworkCodec<ChannelType> CODEC = CodecHelpers.createEnumCodec(ChannelType.class);
         private final String channelName;
         private final NetworkCodec<? extends ChannelPayload<?>> codec;
 
-        public static ChannelType fromName(String name) {
-            for (ChannelType type : values()) {
-                if (type.getChannelName().equals(name)) {
-                    return type;
-                }
-            }
-
-            throw new IllegalArgumentException("Unknown channel type: " + name);
+        @Override
+        public String getId() {
+            return channelName;
         }
     }
 
@@ -69,13 +61,8 @@ public record SRServerPluginMessage(ChannelPayload<?> channelPayload) {
 
     public record GUIPageChannelPayload(SRInventory srInventory) implements ChannelPayload<GUIPageChannelPayload> {
         public static final NetworkCodec<GUIPageChannelPayload> CODEC = NetworkCodec.of(
-                (out, msg) -> {
-                    SRInventory.CODEC.write(out, msg.srInventory());
-                },
-                in -> {
-                    SRInventory srInventory = SRInventory.CODEC.read(in);
-                    return new GUIPageChannelPayload(srInventory);
-                }
+                (out, msg) -> SRInventory.CODEC.write(out, msg.srInventory()),
+                in -> new GUIPageChannelPayload(SRInventory.CODEC.read(in))
         );
 
         @Override
@@ -97,13 +84,8 @@ public record SRServerPluginMessage(ChannelPayload<?> channelPayload) {
     public record SkinUpdateChannelPayload(
             SkinProperty skinProperty) implements ChannelPayload<SkinUpdateChannelPayload> {
         public static final NetworkCodec<SkinUpdateChannelPayload> CODEC = NetworkCodec.of(
-                (out, msg) -> {
-                    CodecHelpers.SKIN_PROPERTY_CODEC.write(out, msg.skinProperty());
-                },
-                in -> {
-                    SkinProperty skinProperty = CodecHelpers.SKIN_PROPERTY_CODEC.read(in);
-                    return new SkinUpdateChannelPayload(skinProperty);
-                }
+                (out, msg) -> CodecHelpers.SKIN_PROPERTY_CODEC.write(out, msg.skinProperty()),
+                in -> new SkinUpdateChannelPayload(CodecHelpers.SKIN_PROPERTY_CODEC.read(in))
         );
 
         @Override

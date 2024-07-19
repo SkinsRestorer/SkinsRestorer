@@ -34,26 +34,15 @@ public class CodecHelpers {
             SROutputWriter::writeBoolean,
             SRInputReader::readBoolean
     );
-    public static NetworkCodec<byte[]> BYTE_ARRAY_CODEC = NetworkCodec.of(
-            (os, s) -> {
-                INT_CODEC.write(os, s.length);
-                os.writeBytes(s);
-            },
-            is -> {
-                int length = INT_CODEC.read(is);
-                return is.readBytes(length);
-            }
-    );
     public static NetworkCodec<SkinProperty> SKIN_PROPERTY_CODEC = NetworkCodec.of(
             (os, s) -> {
                 STRING_CODEC.write(os, s.getValue());
                 STRING_CODEC.write(os, s.getSignature());
             },
-            is -> {
-                String value = STRING_CODEC.read(is);
-                String signature = STRING_CODEC.read(is);
-                return SkinProperty.of(value, signature);
-            }
+            is -> SkinProperty.of(
+                    STRING_CODEC.read(is),
+                    STRING_CODEC.read(is)
+            )
     );
 
     public static <T> NetworkCodec<Optional<T>> createOptionalCodec(NetworkCodec<T> elementCodec) {
