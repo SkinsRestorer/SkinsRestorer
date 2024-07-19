@@ -18,8 +18,8 @@
 package net.skinsrestorer.shared.listeners;
 
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.shared.codec.CodecHelpers;
 import net.skinsrestorer.shared.commands.library.SRCommandManager;
-import net.skinsrestorer.shared.gui.CodecHelpers;
 import net.skinsrestorer.shared.gui.PageType;
 import net.skinsrestorer.shared.gui.SharedGUI;
 import net.skinsrestorer.shared.log.SRLogger;

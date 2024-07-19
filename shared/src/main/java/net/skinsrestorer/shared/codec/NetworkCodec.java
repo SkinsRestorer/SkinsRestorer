@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package net.skinsrestorer.shared.gui;
+package net.skinsrestorer.shared.codec;
 
 import java.io.DataInput;
 import java.io.DataOutput;

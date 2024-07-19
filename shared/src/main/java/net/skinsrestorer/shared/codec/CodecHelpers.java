@@ -15,7 +15,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package net.skinsrestorer.shared.gui;
+package net.skinsrestorer.shared.codec;
+
+import net.skinsrestorer.api.property.SkinProperty;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -44,6 +46,17 @@ public class CodecHelpers {
                 byte[] bytes = new byte[length];
                 is.readFully(bytes);
                 return bytes;
+            }
+    );
+    public static NetworkCodec<SkinProperty> SKIN_PROPERTY_CODEC = NetworkCodec.of(
+            (os, s) -> {
+                STRING_CODEC.write(os, s.getValue());
+                STRING_CODEC.write(os, s.getSignature());
+            },
+            is -> {
+                String value = STRING_CODEC.read(is);
+                String signature = STRING_CODEC.read(is);
+                return SkinProperty.of(value, signature);
             }
     );
 

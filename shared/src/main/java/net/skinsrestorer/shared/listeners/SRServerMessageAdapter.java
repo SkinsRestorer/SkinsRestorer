@@ -18,9 +18,8 @@
 package net.skinsrestorer.shared.listeners;
 
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
-import net.skinsrestorer.shared.gui.SharedGUI;
+import net.skinsrestorer.shared.codec.CodecHelpers;
 import net.skinsrestorer.shared.listeners.event.SRServerMessageEvent;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
@@ -35,7 +34,6 @@ import java.io.IOException;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class SRServerMessageAdapter {
     private final SRServerAdapter plugin;
-    private final SharedGUI sharedGUI;
     private final SharedSkinApplier<Object> skinApplier;
     private final SRLogger logger;
 
@@ -56,8 +54,7 @@ public final class SRServerMessageAdapter {
 
                 plugin.openGUI(event.getPlayer(), MessageProtocolUtil.convertToInventory(msgBytes));
             } else if (subChannel.equalsIgnoreCase("SkinUpdateV2")) {
-                skinApplier.applySkin(event.getPlayer().getAs(Object.class),
-                        SkinProperty.of(in.readUTF(), in.readUTF()));
+                skinApplier.applySkin(event.getPlayer().getAs(Object.class), CodecHelpers.SKIN_PROPERTY_CODEC.read(in));
             }
         } catch (IOException e) {
             logger.severe("Error while handling plugin message", e);

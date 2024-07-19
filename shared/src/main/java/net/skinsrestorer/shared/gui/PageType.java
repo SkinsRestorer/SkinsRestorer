@@ -18,6 +18,9 @@
 package net.skinsrestorer.shared.gui;
 
 import lombok.Getter;
+import net.skinsrestorer.shared.codec.CodecHelpers;
+import net.skinsrestorer.shared.codec.NetworkCodec;
+import net.skinsrestorer.shared.codec.NetworkId;
 
 import java.util.Locale;
 

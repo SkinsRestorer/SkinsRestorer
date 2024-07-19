@@ -17,8 +17,8 @@
  */
 package net.skinsrestorer.shared.utils;
 
-import net.skinsrestorer.shared.gui.CodecHelpers;
-import net.skinsrestorer.shared.gui.NetworkCodec;
+import net.skinsrestorer.shared.codec.CodecHelpers;
+import net.skinsrestorer.shared.codec.NetworkCodec;
 
 /**
  * Represents a json string that can safely be shared across platforms.
