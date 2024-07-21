@@ -57,7 +57,7 @@ public class SROutputWriter {
             @Override
             public void write(int b) {
                 try {
-                    dataOutput.write(b);
+                    dataOutput.writeByte(b);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
