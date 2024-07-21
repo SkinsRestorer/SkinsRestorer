@@ -54,17 +54,6 @@ public class SRInputReader {
         }
     }
 
-    public byte[] readBytes(int length) {
-        byte[] bytes = new byte[length];
-        try {
-            dataInput.readFully(bytes);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        return bytes;
-    }
-
     public InputStream wrapper() {
         return new InputStream() {
             @Override

@@ -52,14 +52,6 @@ public class SROutputWriter {
         }
     }
 
-    public void writeBytes(byte[] bytes) {
-        try {
-            dataOutput.write(bytes);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public OutputStream wrapper() {
         return new OutputStream() {
             @Override
