@@ -45,6 +45,7 @@ import org.incendo.cloud.minecraft.extras.MinecraftExceptionHandler;
 import org.incendo.cloud.minecraft.extras.caption.ComponentCaptionFormatter;
 import org.incendo.cloud.parser.ParserDescriptor;
 import org.incendo.cloud.parser.standard.EnumParser;
+import org.incendo.cloud.permission.PredicatePermission;
 import org.incendo.cloud.processors.cooldown.*;
 import org.incendo.cloud.processors.cooldown.listener.CooldownActiveListener;
 import org.incendo.cloud.processors.cooldown.listener.ScheduledCleanupCreationListener;
@@ -139,7 +140,7 @@ public class SRCommandManager {
         commandManager.parserRegistry().registerParser(ParserDescriptor.of(new PlayerSelectorArgumentParser(platform), PlayerSelector.class));
         annotationParser.registerBuilderModifier(
                 CommandPermission.class,
-                (commandPermission, builder) -> builder.permission(commandPermission.value().getPermission().getPermissionString())
+                (commandPermission, builder) -> builder.permission(PredicatePermission.of(c -> c.hasPermission(commandPermission.value().getPermission())))
         );
         annotationParser.registerBuilderModifier(
                 CommandDescription.class,
