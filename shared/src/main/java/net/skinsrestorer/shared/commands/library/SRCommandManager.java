@@ -203,7 +203,7 @@ public class SRCommandManager {
     private record CooldownMessenger() implements CooldownActiveListener<SRCommandSender> {
         @Override
         public void cooldownActive(@NonNull SRCommandSender sender, @NonNull Command<SRCommandSender> command, @NonNull CooldownInstance cooldown, @NonNull Duration remainingTime) {
-            sender.sendMessage(Message.SKIN_COOLDOWN, Placeholder.parsed("time", remainingTime.toString()));
+            sender.sendMessage(Message.SKIN_COOLDOWN, Placeholder.parsed("time", String.valueOf(remainingTime.getSeconds())));
         }
     }
 }
