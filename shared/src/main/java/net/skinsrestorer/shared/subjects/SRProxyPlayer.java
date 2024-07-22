@@ -17,7 +17,7 @@
  */
 package net.skinsrestorer.shared.subjects;
 
-import net.skinsrestorer.shared.codec.NetworkCodec;
+import net.skinsrestorer.shared.codec.SRServerPluginMessage;
 import net.skinsrestorer.shared.utils.ByteBufWriter;
 
 import java.util.Optional;
@@ -25,8 +25,8 @@ import java.util.Optional;
 public interface SRProxyPlayer extends SRPlayer {
     Optional<String> getCurrentServer();
 
-    default <T> void sendToMessageChannel(NetworkCodec<T> codec, T value) {
-        sendToMessageChannel(out -> codec.write(out, value));
+    default void sendToMessageChannel(SRServerPluginMessage value) {
+        sendToMessageChannel(out -> SRServerPluginMessage.CODEC.write(out, value));
     }
 
     default void sendToMessageChannel(ByteBufWriter consumer) {

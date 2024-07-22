@@ -89,6 +89,6 @@ public class SkinApplierBungee implements SkinApplierAccess<ProxiedPlayer> {
             return;
         }
 
-        wrapper.player(player).sendToMessageChannel(SRServerPluginMessage.CODEC, new SRServerPluginMessage(new SRServerPluginMessage.SkinUpdateChannelPayload(property)));
+        wrapper.player(player).sendToMessageChannel(new SRServerPluginMessage(new SRServerPluginMessage.SkinUpdateChannelPayload(property)));
     }
 }

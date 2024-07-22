@@ -34,7 +34,7 @@ public class ActionDataCallback {
     public void handle(SRServerPlayer player, SRInventory.ClickEventAction action) {
         action.actionChannelPayload().ifPresent(p -> {
             if (plugin.isProxyMode()) {
-                player.sendToMessageChannel(SRProxyPluginMessage.CODEC, new SRProxyPluginMessage(p));
+                player.sendToMessageChannel(new SRProxyPluginMessage(p));
             } else {
                 injector.getSingleton(GUIActionListener.class).handle(player, p);
             }

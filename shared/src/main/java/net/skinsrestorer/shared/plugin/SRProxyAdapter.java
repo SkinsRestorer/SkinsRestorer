@@ -30,6 +30,6 @@ public interface SRProxyAdapter extends SRPlatformAdapter {
     @Override
     default void openGUI(SRPlayer player, SRInventory srInventory) {
         SRProxyPlayer proxyPlayer = (SRProxyPlayer) player;
-        proxyPlayer.sendToMessageChannel(SRServerPluginMessage.CODEC, new SRServerPluginMessage(new SRServerPluginMessage.GUIPageChannelPayload(srInventory)));
+        proxyPlayer.sendToMessageChannel(new SRServerPluginMessage(new SRServerPluginMessage.GUIPageChannelPayload(srInventory)));
     }
 }

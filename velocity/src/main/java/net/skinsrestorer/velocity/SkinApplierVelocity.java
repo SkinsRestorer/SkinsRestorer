@@ -49,7 +49,7 @@ public class SkinApplierVelocity implements SkinApplierAccess<Player> {
         SkinProperty appliedProperty = applyEvent.getProperty();
 
         player.setGameProfileProperties(updatePropertiesSkin(player.getGameProfileProperties(), appliedProperty));
-        wrapper.player(player).sendToMessageChannel(SRServerPluginMessage.CODEC, new SRServerPluginMessage(new SRServerPluginMessage.SkinUpdateChannelPayload(property)));
+        wrapper.player(player).sendToMessageChannel(new SRServerPluginMessage(new SRServerPluginMessage.SkinUpdateChannelPayload(property)));
     }
 
     public GameProfile updateProfileSkin(GameProfile profile, SkinProperty property) {

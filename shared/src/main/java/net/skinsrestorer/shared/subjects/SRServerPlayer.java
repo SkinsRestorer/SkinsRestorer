@@ -17,14 +17,14 @@
  */
 package net.skinsrestorer.shared.subjects;
 
-import net.skinsrestorer.shared.codec.NetworkCodec;
+import net.skinsrestorer.shared.codec.SRProxyPluginMessage;
 import net.skinsrestorer.shared.utils.ByteBufWriter;
 
 public interface SRServerPlayer extends SRPlayer {
     void closeInventory();
 
-    default <T> void sendToMessageChannel(NetworkCodec<T> codec, T value) {
-        sendToMessageChannel(out -> codec.write(out, value));
+    default void sendToMessageChannel(SRProxyPluginMessage value) {
+        sendToMessageChannel(out -> SRProxyPluginMessage.CODEC.write(out, value));
     }
 
     default void sendToMessageChannel(ByteBufWriter consumer) {
