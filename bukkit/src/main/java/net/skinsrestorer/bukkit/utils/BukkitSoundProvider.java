@@ -15,12 +15,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package net.skinsrestorer.shared.utils;
+package net.skinsrestorer.bukkit.utils;
 
 import ch.jalu.injector.Injector;
 import net.skinsrestorer.shared.subjects.SRPlayer;
+import net.skinsrestorer.shared.utils.SoundProvider;
 
-import java.util.function.BiConsumer;
-
-public interface SoundProvider extends BiConsumer<Injector, SRPlayer> {
+public class BukkitSoundProvider implements SoundProvider {
+    @Override
+    public void accept(Injector injector, SRPlayer player) {
+        injector.getSingleton(SoundUtil.class).playSound(player);
+    }
 }

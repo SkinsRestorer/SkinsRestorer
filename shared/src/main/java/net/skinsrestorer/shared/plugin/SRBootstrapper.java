@@ -25,12 +25,13 @@ import net.skinsrestorer.shared.log.SRPlatformLogger;
 import net.skinsrestorer.shared.update.UpdateCheckInit;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.function.Consumer;
 
 public class SRBootstrapper {
     public static void startPlugin(
             Consumer<Runnable> shutdownHookConsumer,
-            Consumer<Injector> platformRegister,
+            List<PlatformClass<?>> platformRegister,
             SRPlatformLogger isrLogger, boolean loggerColor,
             Class<? extends SRPlatformAdapter> adapterClass,
             Class<?> srPlatformClass,
@@ -40,7 +41,7 @@ public class SRBootstrapper {
         try {
             Injector injector = new InjectorBuilder().addDefaultHandlers("net.skinsrestorer").create();
 
-            platformRegister.accept(injector);
+            platformRegister.forEach(pc -> pc.accept(injector));
 
             injector.register(SRLogger.class, new SRLogger(isrLogger, loggerColor));
 
@@ -74,6 +75,12 @@ public class SRBootstrapper {
             } catch (Throwable t) {
                 isrLogger.log(SRLogLevel.SEVERE, "An unexpected error occurred while initializing the updater. Please check the console for more details.", t);
             }
+        }
+    }
+
+    public record PlatformClass<V>(Class<V> clazz, V value) {
+        public void accept(Injector injector) {
+            injector.register(clazz, value);
         }
     }
 }

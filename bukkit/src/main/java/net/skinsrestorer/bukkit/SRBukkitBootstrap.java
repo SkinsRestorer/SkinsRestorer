@@ -21,8 +21,8 @@ import lombok.Getter;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.skinsrestorer.bukkit.logger.BukkitConsoleImpl;
 import net.skinsrestorer.bukkit.update.UpdateDownloaderGithub;
+import net.skinsrestorer.bukkit.utils.BukkitSoundProvider;
 import net.skinsrestorer.bukkit.utils.PluginJarProvider;
-import net.skinsrestorer.bukkit.utils.SoundUtil;
 import net.skinsrestorer.shared.log.JavaLoggerImpl;
 import net.skinsrestorer.shared.plugin.SRBootstrapper;
 import net.skinsrestorer.shared.plugin.SRServerPlugin;
@@ -32,6 +32,7 @@ import org.bukkit.Server;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.nio.file.Path;
+import java.util.List;
 
 @Getter
 @SuppressWarnings("unused")
@@ -44,14 +45,14 @@ public class SRBukkitBootstrap extends JavaPlugin {
         Path pluginFile = getFile().toPath();
         SRBootstrapper.startPlugin(
                 runnable -> this.shutdownHook = runnable,
-                injector -> {
-                    injector.register(JavaPlugin.class, this);
-                    injector.register(Server.class, server);
-                    injector.register(BukkitAudiences.class, BukkitAudiences.create(this));
-                    injector.register(PluginJarProvider.class, () -> pluginFile);
-                    injector.register(DownloaderClassProvider.class, () -> UpdateDownloaderGithub.class);
-                    injector.register(SoundProvider.class, player -> injector.getSingleton(SoundUtil.class).playSound(player));
-                },
+                List.of(
+                    new SRBootstrapper.PlatformClass<>(JavaPlugin.class, this),
+                    new SRBootstrapper.PlatformClass<>(Server.class, server),
+                    new SRBootstrapper.PlatformClass<>(BukkitAudiences.class, BukkitAudiences.create(this)),
+                    new SRBootstrapper.PlatformClass<>(PluginJarProvider.class, () -> pluginFile),
+                    new SRBootstrapper.PlatformClass<>(DownloaderClassProvider.class, () -> UpdateDownloaderGithub.class),
+                    new SRBootstrapper.PlatformClass<>(SoundProvider.class, new BukkitSoundProvider())
+                ),
                 new JavaLoggerImpl(new BukkitConsoleImpl(server.getConsoleSender()), server.getLogger()),
                 true,
                 SRBukkitAdapter.class,

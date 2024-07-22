@@ -32,6 +32,7 @@ import net.skinsrestorer.velocity.logger.Slf4jLoggerImpl;
 import org.slf4j.Logger;
 
 import java.nio.file.Path;
+import java.util.List;
 
 @Plugin(id = "skinsrestorer", name = "SkinsRestorer",
         version = BuildData.VERSION, description = BuildData.DESCRIPTION, url = BuildData.URL,
@@ -53,11 +54,11 @@ public class SRVelocityBootstrap {
         SRBootstrapper.startPlugin(
                 runnable -> {
                 },
-                injector -> {
-                    injector.register(ProxyServer.class, proxy);
-                    injector.register(Injector.class, guiceInjector);
-                    injector.register(SRVelocityBootstrap.class, this);
-                },
+                List.of(
+                        new SRBootstrapper.PlatformClass<>(ProxyServer.class, proxy),
+                        new SRBootstrapper.PlatformClass<>(Injector.class, guiceInjector),
+                        new SRBootstrapper.PlatformClass<>(SRVelocityBootstrap.class, this)
+                ),
                 new Slf4jLoggerImpl(logger),
                 false,
                 SRVelocityAdapter.class,

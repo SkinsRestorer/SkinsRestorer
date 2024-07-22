@@ -41,6 +41,7 @@ import org.junit.jupiter.api.io.TempDir;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Logger;
@@ -106,13 +107,13 @@ public class LoadTest {
                             throw new RuntimeException(e);
                         }
                     },
-                    injector -> {
-                        injector.register(JavaPlugin.class, plugin);
-                        injector.register(Server.class, server);
-                        injector.register(BukkitAudiences.class, adventure);
-                        injector.register(PluginJarProvider.class, () -> pluginFile);
-                        injector.register(DownloaderClassProvider.class, () -> UpdateDownloaderGithub.class);
-                    },
+                    List.of(
+                            new SRBootstrapper.PlatformClass<>(JavaPlugin.class, plugin),
+                            new SRBootstrapper.PlatformClass<>(Server.class, server),
+                            new SRBootstrapper.PlatformClass<>(BukkitAudiences.class, adventure),
+                            new SRBootstrapper.PlatformClass<>(PluginJarProvider.class, () -> pluginFile),
+                            new SRBootstrapper.PlatformClass<>(DownloaderClassProvider.class, () -> UpdateDownloaderGithub.class)
+                    ),
                     new JavaLoggerImpl(new BukkitConsoleImpl(server.getConsoleSender()), server.getLogger()),
                     true,
                     SRBukkitAdapter.class,

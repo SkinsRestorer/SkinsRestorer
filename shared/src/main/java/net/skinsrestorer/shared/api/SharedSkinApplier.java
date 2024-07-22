@@ -63,6 +63,6 @@ public class SharedSkinApplier<P> implements SkinApplier<P> {
 
         SRPlayer srPlayer = wrapper.player(player);
         Optional.ofNullable(injector.getIfAvailable(SoundProvider.class))
-                .ifPresent(soundProvider -> soundProvider.accept(srPlayer));
+                .ifPresent(soundProvider -> soundProvider.accept(injector, srPlayer));
     }
 }
