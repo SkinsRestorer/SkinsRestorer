@@ -49,7 +49,7 @@ public class ComponentHelper {
         return LEGACY_COMPONENT_SERIALIZER.serialize(GSON_COMPONENT_SERIALIZER.deserialize(messageJson.jsonString()));
     }
 
-    public static ComponentString convertToJsonString(Component component) {
+    public static ComponentString convertComponentToJson(Component component) {
         return new ComponentString(GSON_COMPONENT_SERIALIZER.serialize(component));
     }
 
@@ -57,19 +57,23 @@ public class ComponentHelper {
         return GSON_COMPONENT_SERIALIZER.deserialize(messageJson.jsonString());
     }
 
-    public static String convertToPlain(Component component) {
+    public static String convertComponentToPlain(Component component) {
         return PLAIN_COMPONENT_SERIALIZER.serialize(component);
     }
 
     public static ComponentString convertPlainToJson(String text) {
-        return convertToJsonString(PLAIN_COMPONENT_SERIALIZER.deserialize(text));
+        return convertComponentToJson(PLAIN_COMPONENT_SERIALIZER.deserialize(text));
+    }
+
+    public static String convertJsonToPlain(ComponentString messageJson) {
+        return convertComponentToPlain(convertJsonToComponent(messageJson));
     }
 
     public static Audience commandSenderToAudience(SRCommandSender sender) {
         return new Audience() {
             @Override
             public void sendMessage(@NotNull Component message) {
-                sender.sendMessage(convertToJsonString(message));
+                sender.sendMessage(convertComponentToJson(message));
             }
         };
     }

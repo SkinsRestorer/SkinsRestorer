@@ -44,13 +44,13 @@ public class SkinsRestorerLocale {
     private final SRForeign defaultForeign = () -> settings.getProperty(MessageConfig.LOCALE);
 
     public ComponentString getMessageRequired(SRForeign foreign, Message key, TagResolver... tagResolver) {
-        return ComponentHelper.convertToJsonString(getMessageInternal(foreign, key, TagResolver.resolver(tagResolver))
+        return ComponentHelper.convertComponentToJson(getMessageInternal(foreign, key, TagResolver.resolver(tagResolver))
                 .orElseGet(Component::empty));
     }
 
     public Optional<ComponentString> getMessageOptional(SRForeign foreign, Message key, TagResolver... tagResolver) {
         return getMessageInternal(foreign, key, TagResolver.resolver(tagResolver))
-                .map(ComponentHelper::convertToJsonString);
+                .map(ComponentHelper::convertComponentToJson);
     }
 
     private Optional<Component> getMessageInternal(SRForeign foreign, Message key, TagResolver tagResolver) {

@@ -17,6 +17,10 @@
  */
 package net.skinsrestorer.shared.utils;
 
+import net.skinsrestorer.shared.subjects.SRCommandSender;
+import net.skinsrestorer.shared.subjects.messages.Message;
+import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
+
 import java.io.IOException;
 import java.net.URL;
 import java.nio.ByteBuffer;
@@ -27,6 +31,7 @@ import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
@@ -242,5 +247,40 @@ public class SRHelpers {
                 || c >= 'a' && c <= 'z'
                 || c == '_' || c == '-'
                 || c == '.' || c == '+';
+    }
+
+    public static String durationFormat(SkinsRestorerLocale locale, SRCommandSender sender, Duration duration) {
+        long days = duration.toDaysPart();
+        long hours = duration.toHoursPart();
+        long minutes = duration.toMinutesPart();
+        long seconds = duration.toSecondsPart();
+
+        StringBuilder result = new StringBuilder();
+        if (days > 0) {
+            result.append(days)
+                    .append(" ")
+                    .append(ComponentHelper.convertJsonToPlain(locale.getMessageRequired(sender, days == 1 ? Message.DURATION_DAY : Message.DURATION_DAYS)))
+                    .append(" ");
+        }
+        if (hours > 0) {
+            result.append(hours)
+                    .append(" ")
+                    .append(ComponentHelper.convertJsonToPlain(locale.getMessageRequired(sender, hours == 1 ? Message.DURATION_HOUR : Message.DURATION_HOURS)))
+                    .append(" ");
+        }
+        if (minutes > 0) {
+            result.append(minutes)
+                    .append(" ")
+                    .append(ComponentHelper.convertJsonToPlain(locale.getMessageRequired(sender, minutes == 1 ? Message.DURATION_MINUTE : Message.DURATION_MINUTES)))
+                    .append(" ");
+        }
+        if (seconds > 0 || result.isEmpty()) {
+            result.append(seconds)
+                    .append(" ")
+                    .append(ComponentHelper.convertJsonToPlain(locale.getMessageRequired(sender, seconds == 1 ? Message.DURATION_SECOND : Message.DURATION_SECONDS)))
+                    .append(" ");
+        }
+
+        return result.toString().trim();
     }
 }

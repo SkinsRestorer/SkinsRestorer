@@ -90,7 +90,7 @@
   "skinsrestorer.only_allowed_on_console": "<dark_red>Error<dark_gray>: <red>Only console may execute this command!",
   "skinsrestorer.only_allowed_on_player": "<dark_red>Error<dark_gray>: <red>Only players may execute this command!",
   "skinsrestorer.invalid_player": "<dark_red>Error<dark_gray>: <red><input> is not a valid username or URL.",
-  "skinsrestorer.skin_cooldown": "<dark_red>Error<dark_gray>: <red>You can change your skin again in <yellow><time></yellow> seconds.",
+  "skinsrestorer.skin_cooldown": "<dark_red>Error<dark_gray>: <red>You can change your skin again in: <yellow><time></yellow>",
   "skinsrestorer.ms_uploading_skin": "<dark_green>Uploading skin, please wait... (This may take up some time)",
   "skinsrestorer.wait_a_minute": "<dark_red>Error<dark_gray>: <red>Please wait a minute before requesting that skin again. (Rate Limited)",
   "skinsrestorer.skinsmenu_open": "<dark_green>Opening the skins menu...",
@@ -130,5 +130,13 @@
   "skinsrestorer.permission_admincommand_dump": "Allows access to upload server information via \"/sr dump\".",
   "skinsrestorer.permission_bypasscooldown": "Bypasses any command cooldown set in the config.",
   "skinsrestorer.permission_bypassdisabled": "Bypasses any disabled skins set in the config.",
-  "skinsrestorer.permission_ownskin": "Allows access to set your own skin."
+  "skinsrestorer.permission_ownskin": "Allows access to set your own skin.",
+  "skinsrestorer.duration_day": "day",
+  "skinsrestorer.duration_days": "days",
+  "skinsrestorer.duration_hour": "hour",
+  "skinsrestorer.duration_hours": "hours",
+  "skinsrestorer.duration_minute": "minute",
+  "skinsrestorer.duration_minutes": "minutes",
+  "skinsrestorer.duration_second": "second",
+  "skinsrestorer.duration_seconds": "seconds"
 }

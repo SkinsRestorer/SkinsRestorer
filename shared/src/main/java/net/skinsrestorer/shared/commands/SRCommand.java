@@ -199,17 +199,17 @@ public final class SRCommand {
     @CommandPermission(PermissionRegistry.SR)
     private void onDocsPermissions(SRCommandSender sender) {
         for (PermissionRegistry permission : PermissionRegistry.values()) {
-            sender.sendMessage(ComponentHelper.convertToJsonString(Component.text("| `%s` | %s |".formatted(
+            sender.sendMessage(ComponentHelper.convertComponentToJson(Component.text("| `%s` | %s |".formatted(
                     permission.getPermission().getPermissionString(),
-                    ComponentHelper.convertToPlain(ComponentHelper.convertJsonToComponent(locale.getMessageRequired(sender, permission.getDescription())))
+                    ComponentHelper.convertComponentToPlain(ComponentHelper.convertJsonToComponent(locale.getMessageRequired(sender, permission.getDescription())))
             ))));
         }
 
         for (PermissionGroup group : PermissionGroup.VALUES) {
-            sender.sendMessage(ComponentHelper.convertToJsonString(Component.text("| `%s` / `%s` | %s | %s |".formatted(
+            sender.sendMessage(ComponentHelper.convertComponentToJson(Component.text("| `%s` / `%s` | %s | %s |".formatted(
                     group.getBasePermission().getPermissionString(),
                     group.getWildcard().getPermissionString(),
-                    ComponentHelper.convertToPlain(ComponentHelper.convertJsonToComponent(locale.getMessageRequired(sender, group.getDescription()))),
+                    ComponentHelper.convertComponentToPlain(ComponentHelper.convertJsonToComponent(locale.getMessageRequired(sender, group.getDescription()))),
                     Stream.concat(Arrays.stream(group.getParents()).map(PermissionGroup::getBasePermission), Arrays.stream(group.getPermissions()).map(PermissionRegistry::getPermission))
                             .map(Permission::getPermissionString).map("`%s`"::formatted).collect(Collectors.joining(", "))
             ))));

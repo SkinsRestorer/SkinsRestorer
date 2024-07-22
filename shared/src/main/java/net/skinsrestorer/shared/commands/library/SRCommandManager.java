@@ -33,8 +33,7 @@ import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
 import net.skinsrestorer.shared.utils.ComponentHelper;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.incendo.cloud.Command;
+import net.skinsrestorer.shared.utils.SRHelpers;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.annotations.AnnotationParser;
 import org.incendo.cloud.brigadier.BrigadierManagerHolder;
@@ -49,7 +48,6 @@ import org.incendo.cloud.parser.ParserDescriptor;
 import org.incendo.cloud.parser.standard.EnumParser;
 import org.incendo.cloud.permission.PredicatePermission;
 import org.incendo.cloud.processors.cooldown.*;
-import org.incendo.cloud.processors.cooldown.listener.CooldownActiveListener;
 import org.incendo.cloud.processors.cooldown.listener.ScheduledCleanupCreationListener;
 import org.incendo.cloud.processors.cooldown.profile.CooldownProfile;
 import org.incendo.cloud.processors.requirements.RequirementPostprocessor;
@@ -71,28 +69,30 @@ public class SRCommandManager {
     @Getter
     private final CommandManager<SRCommandSender> commandManager;
     private final AnnotationParser<SRCommandSender> annotationParser;
-    private final CooldownRepository<SRCommandSender> cooldownRepository = CooldownRepository.mapping(
-            sender -> {
-                if (sender instanceof SRPlayer player) {
-                    return player.getUniqueId();
-                }
-
-                throw new IllegalArgumentException("Only SRPlayer is supported");
-            },
-            CooldownRepository.forMap(new HashMap<>())
-    );
-    private final CooldownManager<SRCommandSender> cooldownManager = CooldownManager.cooldownManager(CooldownConfiguration.<SRCommandSender>builder()
-            .repository(cooldownRepository)
-            .addCreationListener(new ScheduledCleanupCreationListener<>(Executors.newSingleThreadScheduledExecutor(), cooldownRepository))
-            .addAllActiveCooldownListeners(List.of(new CooldownMessenger()))
-            .bypassCooldown(context -> !(context.sender() instanceof SRPlayer) || context.sender().hasPermission(PermissionRegistry.BYPASS_COOLDOWN))
-            .build());
+    private final CooldownManager<SRCommandSender> cooldownManager;
 
     @SuppressWarnings("unchecked")
     @Inject
     public SRCommandManager(SRPlatformAdapter platform, SkinsRestorerLocale locale, SettingsManager settingsManager) {
         this.commandManager = platform.createCommandManager();
         this.annotationParser = new AnnotationParser<>(commandManager, SRCommandSender.class);
+        CooldownRepository<SRCommandSender> cooldownRepository = CooldownRepository.mapping(
+                sender -> {
+                    if (sender instanceof SRPlayer player) {
+                        return player.getUniqueId();
+                    }
+
+                    throw new IllegalArgumentException("Only SRPlayer is supported");
+                },
+                CooldownRepository.forMap(new HashMap<>())
+        );
+        this.cooldownManager = CooldownManager.cooldownManager(CooldownConfiguration.<SRCommandSender>builder()
+                .repository(cooldownRepository)
+                .addCreationListener(new ScheduledCleanupCreationListener<>(Executors.newSingleThreadScheduledExecutor(), cooldownRepository))
+                .addAllActiveCooldownListeners(List.of((sender, command, cooldown, remainingTime) ->
+                        sender.sendMessage(Message.SKIN_COOLDOWN, Placeholder.parsed("time", SRHelpers.durationFormat(locale, sender, remainingTime)))))
+                .bypassCooldown(context -> !(context.sender() instanceof SRPlayer) || context.sender().hasPermission(PermissionRegistry.BYPASS_COOLDOWN))
+                .build());
 
         if (commandManager instanceof BrigadierManagerHolder<?, ?> holder && holder.hasBrigadierManager()) {
             CloudBrigadierManager<SRCommandSender, ?> brigadierManager = (CloudBrigadierManager<SRCommandSender, ?>) holder.brigadierManager();
@@ -198,12 +198,5 @@ public class SRCommandManager {
 
     public void execute(SRCommandSender executor, String input) {
         commandManager.commandExecutor().executeCommand(executor, input);
-    }
-
-    private record CooldownMessenger() implements CooldownActiveListener<SRCommandSender> {
-        @Override
-        public void cooldownActive(@NonNull SRCommandSender sender, @NonNull Command<SRCommandSender> command, @NonNull CooldownInstance cooldown, @NonNull Duration remainingTime) {
-            sender.sendMessage(Message.SKIN_COOLDOWN, Placeholder.parsed("time", String.valueOf(remainingTime.getSeconds())));
-        }
     }
 }
