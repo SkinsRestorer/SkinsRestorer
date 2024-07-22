@@ -115,8 +115,6 @@ public record NetworkCodec<T>(Writer<T> writer, Reader<T> reader) {
                     try (GZIPOutputStream gzip = new GZIPOutputStream(stream.wrapper());
                          DataOutputStream outputStream = new DataOutputStream(gzip)) {
                         writer.write(new SROutputWriter(outputStream), t);
-
-                        outputStream.flush();
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
