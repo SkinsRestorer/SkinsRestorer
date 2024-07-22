@@ -52,7 +52,6 @@ import net.skinsrestorer.shared.utils.SRConstants;
 import net.skinsrestorer.shared.utils.SRHelpers;
 import net.skinsrestorer.shared.utils.ValidationUtil;
 import org.incendo.cloud.annotation.specifier.Greedy;
-import org.incendo.cloud.annotation.specifier.Quoted;
 import org.incendo.cloud.annotations.Argument;
 import org.incendo.cloud.annotations.Command;
 import org.incendo.cloud.annotations.suggestion.Suggestions;
@@ -148,16 +147,16 @@ public final class SkinCommand {
     @CommandPermission(PermissionRegistry.SKIN_SET)
     @CommandDescription(Message.HELP_SKIN_SET)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
-    private void onSkinSetShort(SRPlayer player, @Quoted String skinName) {
-        onSkinSetOther(player, skinName, PlayerSelector.singleton(player), null);
+    private void onSkinSetShort(SRPlayer player, @Greedy String skinName) {
+        onSkinSetOther(player, PlayerSelector.singleton(player), null, skinName);
     }
 
-    @Command("<skinName> <selector>")
+    @Command("<selector> <skinName>")
     @CommandPermission(PermissionRegistry.SKIN_SET_OTHER)
     @CommandDescription(Message.HELP_SKIN_SET_OTHER)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
-    private void onSkinSetShortOther(SRPlayer player, @Quoted String skinName, PlayerSelector selector) {
-        onSkinSetOther(player, skinName, selector, null);
+    private void onSkinSetShortOther(SRPlayer player, PlayerSelector selector, @Greedy String skinName) {
+        onSkinSetOther(player, selector, null, skinName);
     }
 
     @Command("clear|reset")
@@ -206,14 +205,14 @@ public final class SkinCommand {
     @CommandDescription(Message.HELP_SKIN_RANDOM_OTHER)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinRandomOther(SRCommandSender sender, PlayerSelector selector) {
-        onSkinSetOther(sender, SkinStorageImpl.RECOMMENDATION_PREFIX + recommendationsState.getRandomRecommendation().getSkinId(), selector);
+        onSkinSetOther(sender, selector, SkinStorageImpl.RECOMMENDATION_PREFIX + recommendationsState.getRandomRecommendation().getSkinId());
     }
 
     @Command("search <searchString>")
     @CommandPermission(PermissionRegistry.SKIN_SEARCH)
     @CommandDescription(Message.HELP_SKIN_SEARCH)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
-    private void onSkinSearch(SRCommandSender sender, @Quoted String searchString) {
+    private void onSkinSearch(SRCommandSender sender, @Greedy String searchString) {
         sender.sendMessage(Message.SKIN_SEARCH_MESSAGE, Placeholder.unparsed("search", searchString));
     }
 
@@ -263,23 +262,23 @@ public final class SkinCommand {
     @CommandPermission(PermissionRegistry.SKIN_SET)
     @CommandDescription(Message.HELP_SKIN_SET)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
-    private void onSkinSet(SRPlayer player, @Quoted String skinName) {
-        onSkinSetOther(player, skinName, PlayerSelector.singleton(player));
+    private void onSkinSet(SRPlayer player, @Greedy String skinName) {
+        onSkinSetOther(player, PlayerSelector.singleton(player), skinName);
     }
 
-    @Command("set|select <skinName> <selector>")
+    @Command("set|select <selector> <skinName>")
     @CommandPermission(PermissionRegistry.SKIN_SET_OTHER)
     @CommandDescription(Message.HELP_SKIN_SET_OTHER)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
-    private void onSkinSetOther(SRCommandSender sender, @Quoted String skinName, PlayerSelector selector) {
-        onSkinSetOther(sender, skinName, selector, null);
+    private void onSkinSetOther(SRCommandSender sender, PlayerSelector selector, @Greedy String skinName) {
+        onSkinSetOther(sender, selector, null, skinName);
     }
 
-    @Command("set|select <skinName> <selector> <skinVariant>")
+    @Command("set|select <selector> <skinVariant> <skinName>")
     @CommandPermission(PermissionRegistry.SKIN_SET_OTHER)
     @CommandDescription(Message.HELP_SKIN_SET_OTHER)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
-    private void onSkinSetOther(SRCommandSender sender, @Quoted String skinName, PlayerSelector selector, SkinVariant skinVariant) {
+    private void onSkinSetOther(SRCommandSender sender, PlayerSelector selector, SkinVariant skinVariant, @Greedy String skinName) {
         for (SRPlayer target : selector.resolve(sender)) {
             if (!setSkin(sender, target, skinName, skinVariant, true)) {
                 return;
@@ -300,26 +299,26 @@ public final class SkinCommand {
     @CommandPermission(PermissionRegistry.SKIN_SET_URL)
     @CommandDescription(Message.HELP_SKIN_SET_URL)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
-    private void onSkinSetUrlShort(SRPlayer player, @Quoted String url) {
+    private void onSkinSetUrlShort(SRPlayer player, @Greedy String url) {
         if (!ValidationUtil.validSkinUrl(url)) {
             player.sendMessage(Message.ERROR_INVALID_URLSKIN);
             return;
         }
 
-        onSkinSetOther(player, url, PlayerSelector.singleton(player), null);
+        onSkinSetOther(player, PlayerSelector.singleton(player), null, url);
     }
 
-    @Command("url <url> <skinVariant>")
+    @Command("url <skinVariant> <url>")
     @CommandPermission(PermissionRegistry.SKIN_SET_URL)
     @CommandDescription(Message.HELP_SKIN_SET_URL)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
-    private void onSkinSetUrl(SRPlayer player, @Quoted String url, SkinVariant skinVariant) {
+    private void onSkinSetUrl(SRPlayer player, SkinVariant skinVariant, @Greedy String url) {
         if (!ValidationUtil.validSkinUrl(url)) {
             player.sendMessage(Message.ERROR_INVALID_URLSKIN);
             return;
         }
 
-        onSkinSetOther(player, url, PlayerSelector.singleton(player), skinVariant);
+        onSkinSetOther(player, PlayerSelector.singleton(player), skinVariant, url);
     }
 
     @Command("undo|revert")

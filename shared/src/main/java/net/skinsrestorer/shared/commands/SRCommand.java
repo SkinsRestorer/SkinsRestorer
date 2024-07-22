@@ -65,7 +65,6 @@ import net.skinsrestorer.shared.subjects.permissions.PermissionGroup;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
 import net.skinsrestorer.shared.utils.*;
 import org.incendo.cloud.annotation.specifier.Greedy;
-import org.incendo.cloud.annotation.specifier.Quoted;
 import org.incendo.cloud.annotations.Argument;
 import org.incendo.cloud.annotations.Command;
 import org.incendo.cloud.annotations.suggestion.Suggestions;
@@ -406,18 +405,18 @@ public final class SRCommand {
     @Command("createcustom <skinName> <skinInput>")
     @CommandPermission(PermissionRegistry.SR_CREATE_CUSTOM)
     @CommandDescription(Message.HELP_SR_CREATE_CUSTOM)
-    private void onCreateCustom(SRCommandSender sender, String skinName, @Quoted String skinInput) {
-        createCustom(sender, skinName, skinInput, null);
+    private void onCreateCustom(SRCommandSender sender, String skinName, @Greedy String skinInput) {
+        createCustom(sender, skinName, null, skinInput);
     }
 
-    @Command("createcustom <skinName> <skinInput> <skinVariant>")
+    @Command("createcustom <skinName> <skinVariant> <skinInput>")
     @CommandPermission(PermissionRegistry.SR_CREATE_CUSTOM)
     @CommandDescription(Message.HELP_SR_CREATE_CUSTOM)
-    private void onCreateCustom(SRCommandSender sender, String skinName, @Quoted String skinInput, SkinVariant skinVariant) {
-        createCustom(sender, skinName, skinInput, skinVariant);
+    private void onCreateCustom(SRCommandSender sender, String skinName, SkinVariant skinVariant, @Greedy String skinInput) {
+        createCustom(sender, skinName, skinVariant, skinInput);
     }
 
-    private void createCustom(SRCommandSender sender, String skinName, @Quoted String skinInput, SkinVariant skinVariant) {
+    private void createCustom(SRCommandSender sender, String skinName, SkinVariant skinVariant, @Greedy String skinInput) {
         try {
             Optional<InputDataResult> response = skinStorage.findOrCreateSkinData(skinInput, skinVariant);
             if (response.isEmpty()) {
