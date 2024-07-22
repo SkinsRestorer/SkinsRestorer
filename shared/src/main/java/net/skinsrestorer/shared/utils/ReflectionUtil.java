@@ -96,7 +96,7 @@ public class ReflectionUtil {
                 return subClass;
         }
 
-        throw new ClassNotFoundException("Sub class " + className + " of " + clazz.getSimpleName() + " not found!");
+        throw new ClassNotFoundException("Sub class %s of %s not found!".formatted(className, clazz.getSimpleName()));
     }
 
     public static Field getField(Class<?> clazz, String fieldName) throws ReflectiveOperationException {
@@ -158,7 +158,7 @@ public class ReflectionUtil {
         }
 
         if (fields.isEmpty() && obj.getClass() == superClass) {
-            throw new ReflectiveOperationException("Could not find field of type " + typeName + " in " + obj.getClass().getSimpleName());
+            throw new ReflectiveOperationException("Could not find field of type %s in %s".formatted(typeName, obj.getClass().getSimpleName()));
         } else {
             return fields;
         }

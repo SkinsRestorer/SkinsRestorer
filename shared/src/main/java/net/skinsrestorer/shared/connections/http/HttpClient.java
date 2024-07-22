@@ -53,7 +53,7 @@ public class HttpClient {
             throw new IOException("Only HTTPS is supported.");
         }
 
-        logger.debug("Sending " + method + " request to " + url + " with body: " + requestBody);
+        logger.debug("Sending %s request to %s with body: %s".formatted(method, url, requestBody));
 
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
         connection.setRequestMethod(method.name());
@@ -100,11 +100,11 @@ public class HttpClient {
                 connection.getHeaderFields()
         );
 
-        logger.debug("Response body: " + response.body()
+        logger.debug("Response body: %s".formatted(response.body()
                 .replace("\n", "")
-                .replace("\r", ""));
-        logger.debug("Response code: " + response.statusCode());
-        logger.debug("Request took " + (System.currentTimeMillis() - start) + "ms.");
+                .replace("\r", "")));
+        logger.debug("Response code: %d".formatted(response.statusCode()));
+        logger.debug("Request took %dms.".formatted(System.currentTimeMillis() - start));
 
         return response;
     }

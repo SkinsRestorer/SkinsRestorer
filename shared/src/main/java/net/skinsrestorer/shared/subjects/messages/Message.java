@@ -159,7 +159,7 @@ public enum Message {
     OUTDATED(Message.PREFIX_FORMAT),
     UNSUPPORTED_JAVA(Message.PREFIX_FORMAT);
 
-    private final String key = "skinsrestorer." + this.name().toLowerCase(Locale.ROOT);
+    private final String key = "skinsrestorer.%s".formatted(this.name().toLowerCase(Locale.ROOT));
     private final Message parent;
 
     Message() {

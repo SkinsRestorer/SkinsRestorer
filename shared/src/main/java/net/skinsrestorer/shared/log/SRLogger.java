@@ -88,7 +88,7 @@ public class SRLogger {
     }
 
     private String formatMessage(String message) {
-        message = color ? "§e[§2SkinsRestorer§e] §r" + message : message;
+        message = color ? "§e[§2SkinsRestorer§e] §r%s".formatted(message) : message;
         message += "§r";
         message = ANSIConverter.convertToAnsi(message);
         return message;

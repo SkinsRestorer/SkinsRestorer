@@ -51,7 +51,7 @@ public class RecommendationsService {
         );
 
         if (response.statusCode() != 200) {
-            logger.warning("Failed to get recommended skins. Response code: " + response.statusCode());
+            logger.warning("Failed to get recommended skins. Response code: %d".formatted(response.statusCode()));
             return Optional.empty();
         }
 

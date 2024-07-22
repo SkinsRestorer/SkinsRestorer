@@ -41,11 +41,11 @@ public class SoundUtil {
         String sound = settings.getProperty(ServerConfig.SOUND_VALUE);
         XSound.Record record = XSound.parse(sound);
         if (record == null) {
-            logger.warning("Invalid sound value in config: " + sound);
+            logger.warning("Invalid sound value in config: %s".formatted(sound));
             return;
         }
 
-        logger.debug("Playing sound for player: " + player.getName());
+        logger.debug("Playing sound for player: %s".formatted(player.getName()));
         record.soundPlayer().forPlayers(p).play();
     }
 }

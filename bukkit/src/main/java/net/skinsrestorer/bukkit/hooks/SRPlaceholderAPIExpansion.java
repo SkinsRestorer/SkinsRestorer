@@ -117,7 +117,7 @@ public class SRPlaceholderAPIExpansion extends PlaceholderExpansion {
                     }
                 }
             } catch (DataRequestException e) {
-                logger.severe("Failed to get skin data of player " + offlinePlayer.getUniqueId(), e);
+                logger.severe("Failed to get skin data of player %s".formatted(offlinePlayer.getUniqueId()), e);
             }
 
             return ERROR_MESSAGE;
@@ -145,7 +145,7 @@ public class SRPlaceholderAPIExpansion extends PlaceholderExpansion {
                     }
                 }
             } catch (DataRequestException e) {
-                logger.severe("Failed to get skin data of player " + offlinePlayer.getUniqueId(), e);
+                logger.severe("Failed to get skin data of player %s".formatted(offlinePlayer.getUniqueId()), e);
             }
 
             return ERROR_MESSAGE;

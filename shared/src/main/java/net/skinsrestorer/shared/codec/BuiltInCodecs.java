@@ -20,19 +20,19 @@ package net.skinsrestorer.shared.codec;
 import net.skinsrestorer.api.property.SkinProperty;
 
 public class BuiltInCodecs {
-    public static NetworkCodec<String> STRING_CODEC = NetworkCodec.of(
+    public static final NetworkCodec<String> STRING_CODEC = NetworkCodec.of(
             SROutputWriter::writeString,
             SRInputReader::readString
     );
-    public static NetworkCodec<Integer> INT_CODEC = NetworkCodec.of(
+    public static final NetworkCodec<Integer> INT_CODEC = NetworkCodec.of(
             SROutputWriter::writeInt,
             SRInputReader::readInt
     );
-    public static NetworkCodec<Boolean> BOOLEAN_CODEC = NetworkCodec.of(
+    public static final NetworkCodec<Boolean> BOOLEAN_CODEC = NetworkCodec.of(
             SROutputWriter::writeBoolean,
             SRInputReader::readBoolean
     );
-    public static NetworkCodec<SkinProperty> SKIN_PROPERTY_CODEC = NetworkCodec.of(
+    public static final NetworkCodec<SkinProperty> SKIN_PROPERTY_CODEC = NetworkCodec.of(
             (os, s) -> {
                 STRING_CODEC.write(os, s.getValue());
                 STRING_CODEC.write(os, s.getSignature());

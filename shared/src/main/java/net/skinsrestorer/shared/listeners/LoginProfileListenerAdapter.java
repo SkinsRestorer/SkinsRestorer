@@ -40,7 +40,7 @@ public final class LoginProfileListenerAdapter<R> {
     private final AdapterReference adapterReference;
 
     public R handleLogin(SRLoginProfileEvent<R> event) {
-        logger.debug("Handling login for " + event.getPlayerName() + " (" + event.getPlayerUniqueId() + ")");
+        logger.debug("Handling login for %s (%s)".formatted(event.getPlayerName(), event.getPlayerUniqueId()));
         if (handleSync(event)) {
             return null;
         }
@@ -62,8 +62,7 @@ public final class LoginProfileListenerAdapter<R> {
         try {
             adapterReference.get().migrateLegacyPlayer(event.getPlayerName(), event.getPlayerUniqueId());
         } catch (StorageAdapter.StorageException e) {
-            logger.severe("There was a bug while migrating a legacy player to the new format, " +
-                    "contact us on discord and provide this error message:", e);
+            logger.severe("There was a bug while migrating a legacy player to the new format, contact us on discord and provide this error message:", e);
         }
 
         return playerStorage.getSkinForPlayer(event.getPlayerUniqueId(), event.getPlayerName(), event.hasOnlineProperties());

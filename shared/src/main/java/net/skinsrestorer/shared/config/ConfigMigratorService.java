@@ -140,9 +140,9 @@ public class ConfigMigratorService implements MigrationService {
         PropertyValue<T> oldPropertyValue = oldProperty.determineValue(reader);
         if (oldPropertyValue.isValidInResource()) {
             if (reader.contains(newProperty.getPath())) {
-                logger.info("Detected deprecated property " + oldProperty.getPath());
+                logger.info("Detected deprecated property %s".formatted(oldProperty.getPath()));
             } else {
-                logger.info("Renaming " + oldProperty.getPath() + " to " + newProperty.getPath());
+                logger.info("Renaming %s to %s".formatted(oldProperty.getPath(), newProperty.getPath()));
                 configData.setValue(newProperty, oldPropertyValue.getValue());
             }
             return true;

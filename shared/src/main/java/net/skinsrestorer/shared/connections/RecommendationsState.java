@@ -68,7 +68,7 @@ public class RecommendationsState {
                 RecommenationResponse recommenationResponse = gson.fromJson(Files.newBufferedReader(path), RecommenationResponse.class);
                 setDataFromResponse(recommenationResponse.getSkins());
             } catch (IOException e) {
-                logger.warning("Failed to load recommendations from file: " + e.getMessage());
+                logger.warning("Failed to load recommendations from file: %s".formatted(e.getMessage()));
             }
         }
 
@@ -81,11 +81,11 @@ public class RecommendationsState {
                     try {
                         Files.write(path, gson.toJson(recommenationResponse).getBytes());
                     } catch (IOException e) {
-                        logger.warning("Failed to save recommendations to file: " + e.getMessage());
+                        logger.warning("Failed to save recommendations to file: %s".formatted(e.getMessage()));
                     }
                 });
             } catch (IOException | DataRequestException e) {
-                logger.warning("Failed to get recommended skins: " + e.getMessage());
+                logger.warning("Failed to get recommended skins: %s".formatted(e.getMessage()));
             }
         }, offsetSeconds, (int) (TimeUnit.HOURS.toSeconds(6) + offsetSeconds), TimeUnit.SECONDS);
     }

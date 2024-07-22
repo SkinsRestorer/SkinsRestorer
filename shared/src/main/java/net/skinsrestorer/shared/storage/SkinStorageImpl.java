@@ -126,7 +126,7 @@ public class SkinStorageImpl implements SkinStorage {
             setPlayerSkinData(uuid, response.getProfileName(), skinProperty.get(), SRHelpers.getEpochSecond());
             return skinProperty;
         } catch (StorageAdapter.StorageException e) {
-            logger.warning("Failed to update skin data for " + uuid, e);
+            logger.warning("Failed to update skin data for %s".formatted(uuid), e);
             return Optional.empty();
         }
     }
@@ -178,7 +178,7 @@ public class SkinStorageImpl implements SkinStorage {
 
             return optional;
         } catch (StorageAdapter.StorageException e) {
-            logger.warning("Failed to get skin from cache for " + nameOrUniqueId, e);
+            logger.warning("Failed to get skin from cache for %s".formatted(nameOrUniqueId), e);
             return Optional.empty();
         }
     }
@@ -337,7 +337,7 @@ public class SkinStorageImpl implements SkinStorage {
                 }
             }
         } catch (StorageAdapter.StorageException | DataRequestException e) {
-            logger.warning("Failed to find skin data for " + input, e);
+            logger.warning("Failed to find skin data for %s".formatted(input), e);
         }
 
         return Optional.empty();
@@ -402,7 +402,7 @@ public class SkinStorageImpl implements SkinStorage {
             };
 
         } catch (StorageAdapter.StorageException e) {
-            logger.warning("Failed to get skin data for " + identifier, e);
+            logger.warning("Failed to get skin data for %s".formatted(identifier), e);
             return Optional.empty();
         }
     }

@@ -107,13 +107,13 @@ public class MojangAPIImpl implements MojangAPI {
             logger.debug(e);
         }
 
-        throw new DataRequestExceptionShared("Failed to get UUID for player: " + playerName);
+        throw new DataRequestExceptionShared("Failed to get UUID for player: %s".formatted(playerName));
     }
 
     public Optional<UUID> getUUIDEclipse(String playerName) throws DataRequestException {
         HttpResponse httpResponse = readURL(URI.create(UUID_ECLIPSE.replace("%playerName%", playerName)), MetricsCounter.Service.ECLIPSE_UUID);
         if (httpResponse.statusCode() != 200) {
-            throw new DataRequestExceptionShared("Eclipse error: " + httpResponse.statusCode());
+            throw new DataRequestExceptionShared("Eclipse error: %d".formatted(httpResponse.statusCode()));
         }
 
         EclipseUUIDResponse response = httpResponse.getBodyAs(EclipseUUIDResponse.class);
@@ -136,7 +136,7 @@ public class MojangAPIImpl implements MojangAPI {
 
         MojangUUIDResponse response = httpResponse.getBodyAs(MojangUUIDResponse.class);
         if (response.getError() != null) {
-            throw new DataRequestExceptionShared("Mojang error: " + response.getError());
+            throw new DataRequestExceptionShared("Mojang error: %s".formatted(response.getError()));
         }
 
         return Optional.ofNullable(response.getId())
@@ -148,7 +148,7 @@ public class MojangAPIImpl implements MojangAPI {
         MineToolsUUIDResponse response = httpResponse.getBodyAs(MineToolsUUIDResponse.class);
 
         if (response.getStatus() != null && response.getStatus().equals("ERR")) {
-            throw new DataRequestExceptionShared("MineTools error: " + response.getStatus());
+            throw new DataRequestExceptionShared("MineTools error: %s".formatted(response.getStatus()));
         }
 
         return Optional.ofNullable(response.getId())
@@ -176,13 +176,13 @@ public class MojangAPIImpl implements MojangAPI {
             logger.debug(e);
         }
 
-        throw new DataRequestExceptionShared("Failed to get profile for player: " + uuid);
+        throw new DataRequestExceptionShared("Failed to get profile for player: %s".formatted(uuid));
     }
 
     public Optional<SkinProperty> getProfileEclipse(UUID uuid) throws DataRequestException {
         HttpResponse httpResponse = readURL(URI.create(PROFILE_ECLIPSE.replace("%uuid%", uuid.toString())), MetricsCounter.Service.ECLIPSE_PROFILE);
         if (httpResponse.statusCode() != 200) {
-            throw new DataRequestExceptionShared("Eclipse error: " + httpResponse.statusCode());
+            throw new DataRequestExceptionShared("Eclipse error: %d".formatted(httpResponse.statusCode()));
         }
 
         EclipseProfileResponse response = httpResponse.getBodyAs(EclipseProfileResponse.class);
@@ -217,7 +217,7 @@ public class MojangAPIImpl implements MojangAPI {
 
         MineToolsProfileResponse.Raw raw = response.getRaw();
         if (raw.getStatus() != null && raw.getStatus().equals("ERR")) {
-            throw new DataRequestExceptionShared("MineTools error: " + raw.getStatus());
+            throw new DataRequestExceptionShared("MineTools error: %s".formatted(raw.getStatus()));
         }
 
         PropertyResponse property = raw.getProperties()[0];
@@ -246,7 +246,7 @@ public class MojangAPIImpl implements MojangAPI {
                     timeout
             );
         } catch (IOException e) {
-            logger.debug("Error while reading URL: " + uri, e);
+            logger.debug("Error while reading URL: %s".formatted(uri), e);
             throw new DataRequestExceptionShared(e);
         }
     }

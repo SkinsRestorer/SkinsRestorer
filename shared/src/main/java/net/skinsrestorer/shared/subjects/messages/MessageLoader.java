@@ -53,7 +53,7 @@ public class MessageLoader {
 
     private void loadDefaultMessages() throws IOException {
         for (String localeFile : BuildData.LOCALES) {
-            String resourcePath = "locales/" + localeFile;
+            String resourcePath = "locales/%s".formatted(localeFile);
             Locale locale = getTranslationLocale(localeFile);
 
             int count = 0;
@@ -89,7 +89,7 @@ public class MessageLoader {
         Files.createDirectories(customFolder);
 
         for (String localeFile : BuildData.LOCALES) {
-            String resourcePath = "locales/" + localeFile;
+            String resourcePath = "locales/%s".formatted(localeFile);
             Path filePath = repositoryFolder.resolve(localeFile);
 
             try (InputStream is = adapter.getResource(resourcePath)) {
@@ -126,7 +126,7 @@ public class MessageLoader {
                     for (Map.Entry<String, String> entry : TranslationReader.readJsonTranslation(is).entrySet()) {
                         Optional<Message> message = Message.fromKey(entry.getKey());
                         if (message.isEmpty()) {
-                            logger.warning("Skipping unknown message key " + entry.getKey());
+                            logger.warning("Skipping unknown message key %s".formatted(entry.getKey()));
                             continue;
                         }
 
@@ -135,7 +135,7 @@ public class MessageLoader {
                     }
                 }
 
-                logger.debug(String.format("Loaded %d custom message strings for locale %s", count, locale));
+                logger.debug("Loaded %d custom message strings for locale %s".formatted(count, locale));
             }
         }
     }

@@ -43,12 +43,12 @@ public class SRExtension implements BeforeAllCallback, ParameterResolver {
         SRLogger logger = new SRLogger(new SRPlatformLogger() {
             @Override
             public void log(SRLogLevel level, String message) {
-                System.out.println(level + " " + message);
+                System.out.printf("%s %s%n", level, message);
             }
 
             @Override
             public void log(SRLogLevel level, String message, Throwable throwable) {
-                System.out.println(level + " " + message);
+                System.out.printf("%s %s%n", level, message);
                 throwable.printStackTrace();
             }
         }, false);

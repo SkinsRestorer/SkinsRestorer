@@ -59,7 +59,7 @@ public class SkinApplierBungee implements SkinApplierAccess<ProxiedPlayer> {
         try {
             applyEvent(player, property, (InitialHandler) player.getPendingConnection());
         } catch (ReflectiveOperationException e) {
-            logger.severe("Failed to apply skin to player " + player.getName(), e);
+            logger.severe("Failed to apply skin to player %s".formatted(player.getName()), e);
         }
     }
 

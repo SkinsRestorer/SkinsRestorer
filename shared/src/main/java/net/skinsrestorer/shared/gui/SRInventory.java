@@ -65,7 +65,7 @@ public record SRInventory(int rows, ComponentString title, Map<Integer, Item> it
             boolean enchantmentGlow,
             Map<ClickEventType, ClickEventAction> clickHandlers
     ) {
-        public static NetworkCodec<Item> CODEC = NetworkCodec.of(
+        public static final NetworkCodec<Item> CODEC = NetworkCodec.of(
                 (stream, item) -> {
                     MaterialType.CODEC.write(stream, item.materialType());
                     ComponentString.CODEC.write(stream, item.displayName());

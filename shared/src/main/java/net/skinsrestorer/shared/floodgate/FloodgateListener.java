@@ -37,7 +37,7 @@ public class FloodgateListener implements Consumer<SkinApplyEvent> {
     @Override
     public void accept(SkinApplyEvent event) {
         FloodgatePlayer floodgatePlayer = event.player();
-        logger.debug("Handling Floodgate skin apply for " + floodgatePlayer.getCorrectUsername() + " (" + floodgatePlayer.getCorrectUniqueId() + ")");
+        logger.debug("Handling Floodgate skin apply for %s (%s)".formatted(floodgatePlayer.getCorrectUsername(), floodgatePlayer.getCorrectUniqueId()));
         try {
             Optional<SkinProperty> optional =
                     playerStorage.getSkinForPlayer(floodgatePlayer.getCorrectUniqueId(), floodgatePlayer.getCorrectUsername(), true);
@@ -45,7 +45,7 @@ public class FloodgateListener implements Consumer<SkinApplyEvent> {
             optional.ifPresent(skinProperty ->
                     event.newSkin(new SkinDataImpl(skinProperty.getValue(), skinProperty.getSignature())));
         } catch (DataRequestException e) {
-            logger.warning("Failed to get skin for " + floodgatePlayer.getCorrectUsername() + " (" + floodgatePlayer.getCorrectUniqueId() + ")", e);
+            logger.warning("Failed to get skin for %s (%s)".formatted(floodgatePlayer.getCorrectUsername(), floodgatePlayer.getCorrectUniqueId()), e);
         }
     }
 

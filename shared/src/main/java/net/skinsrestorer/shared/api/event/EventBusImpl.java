@@ -49,7 +49,7 @@ public class EventBusImpl implements EventBus {
             try {
                 subscription.callEvent(event);
             } catch (Throwable t) {
-                logger.severe("Error while calling event " + event.getClass().getSimpleName(), t);
+                logger.severe("Error while calling event %s".formatted(event.getClass().getSimpleName()), t);
             }
         }
     }

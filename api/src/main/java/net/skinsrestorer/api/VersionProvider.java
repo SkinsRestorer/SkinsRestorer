@@ -32,7 +32,7 @@ public class VersionProvider {
     private static final String VERSION = SkinsRestorerProvider.get().getVersion();
     private static final String COMMIT = SkinsRestorerProvider.get().getCommit();
     private static final String COMMIT_SHORT = SkinsRestorerProvider.get().getCommitShort();
-    private static final String VERSION_INFO = String.format("SkinsRestorer %s (%s)", VERSION, COMMIT_SHORT);
+    private static final String VERSION_INFO = "SkinsRestorer %s (%s)".formatted(VERSION, COMMIT_SHORT);
     private static final SemanticVersion SEMANTIC_VERSION = SemanticVersion.fromString(VERSION);
 
     /**

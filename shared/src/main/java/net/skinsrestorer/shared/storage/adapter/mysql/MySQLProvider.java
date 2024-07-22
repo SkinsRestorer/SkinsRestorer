@@ -48,10 +48,7 @@ public class MySQLProvider {
         int maxPoolSize = settings.getProperty(DatabaseConfig.MYSQL_MAX_POOL_SIZE);
         String options = settings.getProperty(DatabaseConfig.MYSQL_CONNECTION_OPTIONS);
 
-        Configuration configuration = Configuration.parse("jdbc:mysql://" + host + ":" + port + "/" + database +
-                "?permitMysqlScheme" +
-                "&maxPoolSize=" + maxPoolSize +
-                "&" + options);
+        Configuration configuration = Configuration.parse("jdbc:mysql://%s:%d/%s?permitMysqlScheme&maxPoolSize=%d&%s".formatted(host, port, database, maxPoolSize, options));
 
         pool = Pools.retrievePool(configuration.clone(username, password));
     }
@@ -68,7 +65,7 @@ public class MySQLProvider {
                 return;
             }
 
-            logger.warning("MySQL error: " + e.getMessage(), e);
+            logger.warning("MySQL error: %s".formatted(e.getMessage()), e);
 
             if (SRPlugin.isUnitTest()) {
                 throw new AssertionError(e);
@@ -93,7 +90,7 @@ public class MySQLProvider {
             try {
                 ps.setObject(i, obj);
             } catch (SQLException e) {
-                throw new SQLException("Error while setting prepared statement variable #" + i + " (" + obj + "): " + e.getMessage());
+                throw new SQLException("Error while setting prepared statement variable #%d (%s): %s".formatted(i, obj, e.getMessage()));
             }
         }
     }

@@ -99,7 +99,7 @@ public class SRHelpers {
             // Folders are case-insensitive on Windows, so we need to check it using this method
             List<String> files = stream.map(Path::getFileName).map(Path::toString).toList();
 
-            String tempName = newName + "_temp";
+            String tempName = "%s_temp".formatted(newName);
             if (files.contains(oldName) && !files.contains(tempName) && !files.contains(newName)) {
                 Path oldPath = parent.resolve(oldName);
                 Path tempPath = parent.resolve(tempName);
@@ -138,13 +138,13 @@ public class SRHelpers {
 
         String majorVersion;
         if (split.length == 0 || split.length > 2) {
-            throw new IllegalArgumentException("Invalid Java version: " + specVersion);
+            throw new IllegalArgumentException("Invalid Java version: %s".formatted(specVersion));
         } else if (split.length == 1) {
             majorVersion = split[0];
         } else if (split[0].equals("1")) {
             majorVersion = split[1];
         } else {
-            throw new IllegalArgumentException("Invalid Java version: " + specVersion);
+            throw new IllegalArgumentException("Invalid Java version: %s".formatted(specVersion));
         }
 
         return Integer.parseInt(majorVersion);

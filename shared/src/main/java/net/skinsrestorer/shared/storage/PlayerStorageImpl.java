@@ -59,7 +59,7 @@ public class PlayerStorageImpl implements PlayerStorage {
                 return Optional.ofNullable(playerData.getSkinIdentifier());
             }
         } catch (StorageAdapter.StorageException e) {
-            logger.severe("Failed to get skin data of player " + uuid, e);
+            logger.severe("Failed to get skin data of player %s".formatted(uuid), e);
         }
 
         return Optional.empty();
@@ -78,7 +78,7 @@ public class PlayerStorageImpl implements PlayerStorage {
                 adapterReference.get().setPlayerData(uuid, PlayerData.of(uuid, identifier, List.of()));
             }
         } catch (StorageAdapter.StorageException e) {
-            logger.severe("Failed to set skin data of player " + uuid, e);
+            logger.severe("Failed to set skin data of player %s".formatted(uuid), e);
         }
     }
 
@@ -94,7 +94,7 @@ public class PlayerStorageImpl implements PlayerStorage {
                         .findFirst();
             }
         } catch (StorageAdapter.StorageException e) {
-            logger.severe("Failed to get skin data of player " + uuid, e);
+            logger.severe("Failed to get skin data of player %s".formatted(uuid), e);
         }
 
         return Optional.empty();
@@ -121,7 +121,7 @@ public class PlayerStorageImpl implements PlayerStorage {
                 adapterReference.get().setPlayerData(uuid, PlayerData.of(uuid, null, List.of(historyData)));
             }
         } catch (StorageAdapter.StorageException e) {
-            logger.severe("Failed to push skin data of player " + uuid, e);
+            logger.severe("Failed to push skin data of player %s".formatted(uuid), e);
         }
     }
 
@@ -136,7 +136,7 @@ public class PlayerStorageImpl implements PlayerStorage {
                 adapterReference.get().setPlayerData(uuid, playerData);
             }
         } catch (StorageAdapter.StorageException e) {
-            logger.severe("Failed to remove skin data of player " + uuid, e);
+            logger.severe("Failed to remove skin data of player %s".formatted(uuid), e);
         }
     }
 
@@ -151,7 +151,7 @@ public class PlayerStorageImpl implements PlayerStorage {
                 adapterReference.get().setPlayerData(uuid, playerData);
             }
         } catch (StorageAdapter.StorageException e) {
-            logger.severe("Failed to remove skin data of player " + uuid, e);
+            logger.severe("Failed to remove skin data of player %s".formatted(uuid), e);
         }
     }
 
@@ -182,7 +182,7 @@ public class PlayerStorageImpl implements PlayerStorage {
         }
 
         if (FloodgateUtil.isFloodgateBedrockPlayer(uuid)) {
-            logger.debug("Player " + playerName + " is a Floodgate player, not searching for java skin.");
+            logger.debug("Player %s is a Floodgate player, not searching for java skin.".formatted(playerName));
             return Optional.empty();
         }
 

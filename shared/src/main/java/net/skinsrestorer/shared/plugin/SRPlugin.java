@@ -195,7 +195,7 @@ public class SRPlugin {
             return;
         }
 
-        logger.info("Moving old file " + path.getFileName() + " to archive folder.");
+        logger.info("Moving old file %s to archive folder.".formatted(path.getFileName()));
         Path archive = dataFolder.resolve("archive");
         Path target = archive.resolve(path.getFileName().toString() + "_" + SRHelpers.getEpochSecond());
 
@@ -203,7 +203,7 @@ public class SRPlugin {
             Files.createDirectories(archive);
             Files.move(path, target, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            logger.warning("Failed to move old file " + path.getFileName() + " to archive folder.", e);
+            logger.warning("Failed to move old file %s to archive folder.".formatted(path.getFileName()), e);
         }
     }
 
@@ -352,7 +352,7 @@ public class SRPlugin {
                 return;
             }
 
-            logger.warning(SRChatColor.YELLOW + "Your Java version \"" + version + "\" is not supported! SkinsRestorer now uses Java 17 primarily.");
+            logger.warning(SRChatColor.YELLOW + "Your Java version \"%s\" is not supported! SkinsRestorer now uses Java 17 primarily.".formatted(version));
             logger.warning(SRChatColor.YELLOW + "The plugin was \"downgraded\" to Java 1.8 (Java 8) to ensure compatibility with your server, but it may cause issues.");
             logger.warning(SRChatColor.YELLOW + "The plugin still works, but it may have Java version related issues.");
             logger.warning(SRChatColor.YELLOW + "Please update your server Java version to 17 or higher to get the best performance, security and to avoid issues with SkinsRestorer.");

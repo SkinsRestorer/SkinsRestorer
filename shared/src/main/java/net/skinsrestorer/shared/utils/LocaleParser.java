@@ -44,6 +44,6 @@ public class LocaleParser {
             return new Locale(split[0], split[1]);
         }
 
-        throw new IllegalArgumentException("Invalid locale: " + locale);
+        throw new IllegalArgumentException("Invalid locale: %s".formatted(locale));
     }
 }

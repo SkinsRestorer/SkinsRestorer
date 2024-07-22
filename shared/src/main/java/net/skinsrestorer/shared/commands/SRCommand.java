@@ -451,7 +451,7 @@ public final class SRCommand {
             sender.sendMessage(Message.ADMINCOMMAND_DUMP_UPLOADING);
             Optional<String> url = dumpService.dump();
             if (url.isPresent()) {
-                sender.sendMessage(Message.ADMINCOMMAND_DUMP_SUCCESS, Placeholder.unparsed("url", "https://bytebin.lucko.me/" + url.get()));
+                sender.sendMessage(Message.ADMINCOMMAND_DUMP_SUCCESS, Placeholder.unparsed("url", "https://bytebin.lucko.me/%s".formatted(url.get())));
             } else {
                 sender.sendMessage(Message.ADMINCOMMAND_DUMP_ERROR);
             }

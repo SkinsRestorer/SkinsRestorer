@@ -41,7 +41,7 @@ public class BukkitLegacyPropertyApplier implements SkinApplyBukkitAdapter {
             properties.removeAll(SkinProperty.TEXTURES_NAME);
             properties.put(SkinProperty.TEXTURES_NAME, new Property(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
         } catch (ReflectiveOperationException e) {
-            logger.severe("Failed to apply skin property to player " + player.getName(), e);
+            logger.severe("Failed to apply skin property to player %s".formatted(player.getName()), e);
         }
     }
 
@@ -58,7 +58,7 @@ public class BukkitLegacyPropertyApplier implements SkinApplyBukkitAdapter {
                     .flatMap(Optional::stream)
                     .findFirst();
         } catch (ReflectiveOperationException e) {
-            logger.severe("Failed to get skin property from player " + player.getName(), e);
+            logger.severe("Failed to get skin property from player %s".formatted(player.getName()), e);
             return Optional.empty();
         }
     }

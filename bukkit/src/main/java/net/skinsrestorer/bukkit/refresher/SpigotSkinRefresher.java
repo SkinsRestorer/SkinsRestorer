@@ -259,7 +259,7 @@ public final class SpigotSkinRefresher implements SkinRefresher {
             // TODO: Send proper permission level instead of this workaround
             OPRefreshUtil.refreshOP(player, adapter);
         } catch (ReflectiveOperationException e) {
-            logger.severe("Failed to refresh skin for player " + player.getName(), e);
+            logger.severe("Failed to refresh skin for player %s".formatted(player.getName()), e);
         }
     }
 
@@ -286,10 +286,10 @@ public final class SpigotSkinRefresher implements SkinRefresher {
                     }
                 }
             } catch (ReflectiveOperationException e2) {
-                logger.severe("Failed to get DimensionManager from " + worldObject.getClass().getSimpleName(), e2);
+                logger.severe("Failed to get DimensionManager from %s".formatted(worldObject.getClass().getSimpleName()), e2);
             }
         }
 
-        throw new ReflectiveOperationException("Could not get DimensionManager from " + worldObject.getClass().getSimpleName());
+        throw new ReflectiveOperationException("Could not get DimensionManager from %s".formatted(worldObject.getClass().getSimpleName()));
     }
 }

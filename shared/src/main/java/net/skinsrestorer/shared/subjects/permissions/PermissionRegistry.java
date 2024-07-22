@@ -59,6 +59,6 @@ public enum PermissionRegistry {
     }
 
     public static Permission forSkin(String skinName) {
-        return Permission.of("skinsrestorer.skin." + skinName);
+        return Permission.of("skinsrestorer.skin.%s".formatted(skinName));
     }
 }

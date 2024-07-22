@@ -52,7 +52,7 @@ public class UpdateDownloaderGithub implements UpdateDownloader {
             HttpsURLConnection connection = (HttpsURLConnection) new URL(downloadUrl).openConnection();
             connection.setRequestProperty("User-Agent", plugin.getUserAgent());
             if (connection.getResponseCode() != 200) {
-                throw new UpdateException("Download returned status code " + connection.getResponseCode());
+                throw new UpdateException("Download returned status code %d".formatted(connection.getResponseCode()));
             }
 
             byte[] fileData;

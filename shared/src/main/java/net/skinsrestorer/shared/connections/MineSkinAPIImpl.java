@@ -83,7 +83,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             } catch (IOException e) {
-                logger.debug(SRLogLevel.WARNING, "[ERROR] MineSkin Failed! IOException (connection/disk): (" + imageUrl + ")", e);
+                logger.debug(SRLogLevel.WARNING, "[ERROR] MineSkin Failed! IOException (connection/disk): (%s)".formatted(imageUrl), e);
                 throw new DataRequestExceptionShared(e);
             } finally {
                 lock.unlock();
@@ -95,7 +95,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
 
     private Optional<MineSkinResponse> genSkinInternal(String imageUrl, @Nullable SkinVariant skinVariant) throws DataRequestException, MineSkinException, IOException, InterruptedException {
         HttpResponse httpResponse = queryURL(imageUrl, skinVariant);
-        logger.debug("MineSkinAPI: Response: " + httpResponse);
+        logger.debug("MineSkinAPI: Response: %s".formatted(httpResponse));
 
         switch (httpResponse.statusCode()) {
             case 200 -> {
@@ -125,7 +125,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                 String errorCode = response.getErrorCode();
                 String error = response.getError();
                 if (errorCode.equals("invalid_api_key")) {
-                    logger.severe("[ERROR] MineSkin API key is invalid! Reason: " + error);
+                    logger.severe("[ERROR] MineSkin API key is invalid! Reason: %s".formatted(error));
                     switch (error) {
                         case "Invalid API Key" ->
                                 logger.severe(String.format("The API Key provided is not registered on MineSkin! Please empty \"%s\" in plugins/SkinsRestorer/config.yml and run /sr reload", APIConfig.MINESKIN_API_KEY.getPath()));
@@ -163,7 +163,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                 return Optional.empty(); // try again after nextRequest
             }
             default -> {
-                logger.debug("[ERROR] MineSkin Failed! Unknown error: (Image URL: " + imageUrl + ") " + httpResponse.statusCode());
+                logger.debug("[ERROR] MineSkin Failed! Unknown error: (Image URL: %s) %d".formatted(imageUrl, httpResponse.statusCode()));
                 throw new MineSkinExceptionShared(Message.ERROR_MS_API_FAILED);
             }
         }
