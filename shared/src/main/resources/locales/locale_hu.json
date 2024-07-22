@@ -88,7 +88,6 @@
   "skinsrestorer.only_allowed_on_console": "<dark_red>Hiba<dark_gray>: <red>Ezt a parancsot csak konzolból lehet futtatni!",
   "skinsrestorer.only_allowed_on_player": "<dark_red>Hiba<dark_gray>: <red>Ezt a parancsot csak játékosként lehet futtatni!",
   "skinsrestorer.invalid_player": "<dark_red>Hiba<dark_gray>: <red><input> nem egy érvényes játékosnév vagy URL.",
-  "skinsrestorer.skin_cooldown": "<dark_red>Hiba<dark_gray>: <red>A kinézetedet legkorábban <yellow><time></yellow> másodperc múlva változtathatod meg.",
   "skinsrestorer.ms_uploading_skin": "<dark_green>Kinézeted feltöltése, kérlek várj... (Ez lehet eltart egy ideig)",
   "skinsrestorer.wait_a_minute": "<dark_red>Hiba<dark_gray>: <red>Kérlek, vérj egy percet, mielőtt újra lekéred azt a kinézetet. (Rate Limited)",
   "skinsrestorer.skinsmenu_open": "<dark_green>Kinézetek menüjének megnyitása...",
