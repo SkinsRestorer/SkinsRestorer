@@ -20,7 +20,6 @@ package net.skinsrestorer.bukkit.gui;
 import ch.jalu.injector.Injector;
 import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XMaterial;
-import com.cryptomorin.xseries.profiles.builder.XSkull;
 import com.cryptomorin.xseries.profiles.objects.ProfileInputType;
 import com.cryptomorin.xseries.profiles.objects.Profileable;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +33,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import javax.inject.Inject;
+import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Objects;
 
@@ -42,6 +42,7 @@ public class BukkitGUI implements GUIManager<Inventory> {
     private final Injector injector;
     private final Server server;
 
+    @SuppressWarnings("UnstableApiUsage")
     private ItemStack createItem(SRInventory.Item entry) {
         XMaterial material = switch (entry.materialType()) {
             case SKULL -> XMaterial.PLAYER_HEAD;
@@ -49,9 +50,19 @@ public class BukkitGUI implements GUIManager<Inventory> {
             case BARRIER -> XMaterial.BARRIER.or(XMaterial.RED_WOOL);
         };
         ItemStack itemStack = Objects.requireNonNull(material.parseItem());
-        entry.textureHash().ifPresent(hash -> XSkull.of(itemStack)
-                .profile(Profileable.of(Objects.requireNonNull(ProfileInputType.typeOf(hash)), hash))
-                .apply());
+        entry.textureHash().ifPresent(hash -> {
+            ItemMeta skullMeta = Objects.requireNonNull(itemStack.getItemMeta());
+
+            try {
+                Field profileField = Objects.requireNonNull(skullMeta.getClass().getDeclaredField("profile"));
+                profileField.setAccessible(true);
+                profileField.set(skullMeta, Profileable.of(Objects.requireNonNull(ProfileInputType.typeOf(hash)), hash).getProfile());
+            } catch (ReflectiveOperationException e) {
+                throw new RuntimeException(e);
+            }
+
+            itemStack.setItemMeta(skullMeta);
+        });
 
         ItemMeta skullMeta = Objects.requireNonNull(itemStack.getItemMeta());
         skullMeta.setDisplayName(ComponentHelper.convertJsonToLegacy(entry.displayName()));
