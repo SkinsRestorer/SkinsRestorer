@@ -1,3 +1,4 @@
+import xyz.wagyourtail.jvmdg.gradle.task.DowngradeJar
 import xyz.wagyourtail.jvmdg.gradle.task.ShadeJar
 
 plugins {
@@ -6,10 +7,18 @@ plugins {
     id("sr.shadow-logic")
 }
 
-val downgradePlatform = tasks.register<ShadeJar>("downgradePlatform") {
+val downgradePlatformBase = tasks.register<DowngradeJar>("downgradePlatformBase") {
     dependsOn(tasks.shadowJar)
 
     inputFile = tasks.shadowJar.get().archiveFile
+    downgradeTo = JavaVersion.VERSION_1_8
+    archiveClassifier.set("downgraded-base")
+}
+
+val downgradePlatformShadow = tasks.register<ShadeJar>("downgradePlatformShadow") {
+    dependsOn(downgradePlatformBase)
+
+    inputFile = downgradePlatformBase.get().archiveFile
     downgradeTo = JavaVersion.VERSION_1_8
     archiveFileName.set(
         "SkinsRestorer-${
@@ -25,8 +34,8 @@ tasks {
     val downgradedTest by tasks.registering(Test::class) {
         group = "verification"
         useJUnitPlatform()
-        dependsOn(downgradePlatform)
-        classpath = downgradePlatform.get().outputs.files + sourceSets.test.get().output + sourceSets.test.get().runtimeClasspath - sourceSets.main.get().output
+        dependsOn(downgradePlatformShadow)
+        classpath = downgradePlatformShadow.get().outputs.files + sourceSets.test.get().output + sourceSets.test.get().runtimeClasspath - sourceSets.main.get().output
     }
     check {
         dependsOn(downgradedTest)
@@ -36,7 +45,7 @@ tasks {
 configurations.create("downgraded")
 
 artifacts {
-    add("downgraded", downgradePlatform.get().archiveFile) {
-        builtBy(downgradePlatform)
+    add("downgraded", downgradePlatformShadow.get().archiveFile) {
+        builtBy(downgradePlatformShadow)
     }
 }
