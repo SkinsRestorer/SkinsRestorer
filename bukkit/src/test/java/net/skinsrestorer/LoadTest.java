@@ -17,7 +17,6 @@
  */
 package net.skinsrestorer;
 
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.skinsrestorer.bukkit.SRBukkitAdapter;
 import net.skinsrestorer.bukkit.SRBukkitInit;
 import net.skinsrestorer.bukkit.logger.BukkitConsoleImpl;
@@ -98,36 +97,33 @@ public class LoadTest {
         when(plugin.getServer()).thenReturn(server);
         when(plugin.getName()).thenReturn("SkinsRestorer");
 
-        try (BukkitAudiences adventure = mock(BukkitAudiences.class)) {
-            SRBootstrapper.startPlugin(
-                    runnable -> {
-                        try {
-                            runnable.run();
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
-                    },
-                    List.of(
-                            new SRBootstrapper.PlatformClass<>(JavaPlugin.class, plugin),
-                            new SRBootstrapper.PlatformClass<>(Server.class, server),
-                            new SRBootstrapper.PlatformClass<>(BukkitAudiences.class, adventure),
-                            new SRBootstrapper.PlatformClass<>(PluginJarProvider.class, () -> pluginFile),
-                            new SRBootstrapper.PlatformClass<>(DownloaderClassProvider.class, () -> UpdateDownloaderGithub.class)
-                    ),
-                    new JavaLoggerImpl(new BukkitConsoleImpl(server.getConsoleSender()), server.getLogger()),
-                    true,
-                    SRBukkitAdapter.class,
-                    SRServerPlugin.class,
-                    configDir,
-                    SRBukkitInit.class
-            );
+        SRBootstrapper.startPlugin(
+                runnable -> {
+                    try {
+                        runnable.run();
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                },
+                List.of(
+                        new SRBootstrapper.PlatformClass<>(JavaPlugin.class, plugin),
+                        new SRBootstrapper.PlatformClass<>(Server.class, server),
+                        new SRBootstrapper.PlatformClass<>(PluginJarProvider.class, () -> pluginFile),
+                        new SRBootstrapper.PlatformClass<>(DownloaderClassProvider.class, () -> UpdateDownloaderGithub.class)
+                ),
+                new JavaLoggerImpl(new BukkitConsoleImpl(server.getConsoleSender()), server.getLogger()),
+                true,
+                SRBukkitAdapter.class,
+                SRServerPlugin.class,
+                configDir,
+                SRBukkitInit.class
+        );
 
-            while (!runQueue.isEmpty()) {
-                try {
-                    runQueue.poll().run();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
+        while (!runQueue.isEmpty()) {
+            try {
+                runQueue.poll().run();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
         }
     }

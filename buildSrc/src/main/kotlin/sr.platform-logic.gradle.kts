@@ -21,6 +21,18 @@ val downgradePlatform = tasks.register<ShadeJar>("downgradePlatform") {
     shadePath = { _ -> "net/skinsrestorer/shadow/jvmdowngrader" }
 }
 
+tasks {
+    val downgradedTest by tasks.registering(Test::class) {
+        group = "verification"
+        useJUnitPlatform()
+        dependsOn(downgradePlatform)
+        classpath = downgradePlatform.get().outputs.files + sourceSets.test.get().output + sourceSets.test.get().runtimeClasspath - sourceSets.main.get().output
+    }
+    check {
+        dependsOn(downgradedTest)
+    }
+}
+
 configurations.create("downgraded")
 
 artifacts {

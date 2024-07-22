@@ -18,7 +18,6 @@
 package net.skinsrestorer.bukkit;
 
 import lombok.Getter;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.skinsrestorer.bukkit.logger.BukkitConsoleImpl;
 import net.skinsrestorer.bukkit.update.UpdateDownloaderGithub;
 import net.skinsrestorer.bukkit.utils.BukkitSoundProvider;
@@ -48,7 +47,6 @@ public class SRBukkitBootstrap extends JavaPlugin {
                 List.of(
                     new SRBootstrapper.PlatformClass<>(JavaPlugin.class, this),
                     new SRBootstrapper.PlatformClass<>(Server.class, server),
-                    new SRBootstrapper.PlatformClass<>(BukkitAudiences.class, BukkitAudiences.create(this)),
                     new SRBootstrapper.PlatformClass<>(PluginJarProvider.class, () -> pluginFile),
                     new SRBootstrapper.PlatformClass<>(DownloaderClassProvider.class, () -> UpdateDownloaderGithub.class),
                     new SRBootstrapper.PlatformClass<>(SoundProvider.class, new BukkitSoundProvider())

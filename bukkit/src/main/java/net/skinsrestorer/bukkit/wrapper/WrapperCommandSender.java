@@ -42,7 +42,7 @@ public class WrapperCommandSender extends AbstractSRCommandSender {
     public void sendMessage(ComponentString messageJson) {
         Component message = BukkitComponentHelper.deserialize(messageJson);
 
-        Runnable runnable = () -> adapter.getAdventure().sender(sender).sendMessage(message);
+        Runnable runnable = () -> adapter.getAdventure().get().sender(sender).sendMessage(message);
         if (sender instanceof BlockCommandSender) {
             // Command blocks require messages to be sent synchronously in Bukkit
             adapter.runSync(runnable);

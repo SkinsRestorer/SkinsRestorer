@@ -52,7 +52,7 @@ public class SRBungeeInit implements SRProxyPlatformInit {
     @Override
     public void prePlatformInit() {
         // Shutdown kyori adventure
-        plugin.getShutdownHooks().add(() -> adapter.getAdventure().close());
+        plugin.getShutdownHooks().add(() -> adapter.getAdventure().get().close());
     }
 
     @Override
