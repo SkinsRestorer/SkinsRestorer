@@ -153,6 +153,28 @@ public final class SRCommand {
                 .queryCommands(query == null ? "" : query, sender);
     }
 
+    @Suggestions("skin_input_quote")
+    public List<String> suggestSkinInputUrl(CommandContext<SRCommandSender> ctx, String input) {
+        if (input.isEmpty()) {
+            return List.of();
+        }
+
+        boolean startsWithQuote = input.startsWith("\"");
+        boolean endsWithQuote = input.endsWith("\"");
+        String withoutStartQuote = startsWithQuote ? input.substring(1) : input;
+        String withoutEndQuote = endsWithQuote ? withoutStartQuote.substring(0, withoutStartQuote.length() - 1) : withoutStartQuote;
+
+        if (!startsWithQuote && !endsWithQuote && SRHelpers.isNotAllowedUnquotedString(withoutEndQuote)) {
+            return List.of("\"%s\"".formatted(input));
+        } else if (startsWithQuote && !endsWithQuote) {
+            return List.of("%s\"".formatted(input));
+        } else if (!startsWithQuote && endsWithQuote) {
+            return List.of("\"%s".formatted(input));
+        } else {
+            return List.of(input);
+        }
+    }
+
     @Command("reload")
     @CommandPermission(PermissionRegistry.SR_RELOAD)
     @CommandDescription(Message.HELP_SR_RELOAD)
@@ -406,18 +428,18 @@ public final class SRCommand {
     @Command("createcustom <skinName> <skinInput>")
     @CommandPermission(PermissionRegistry.SR_CREATE_CUSTOM)
     @CommandDescription(Message.HELP_SR_CREATE_CUSTOM)
-    private void onCreateCustom(SRCommandSender sender, String skinName, @Quoted String skinInput) {
+    private void onCreateCustom(SRCommandSender sender, String skinName, @Argument(suggestions = "skin_input_quote") @Quoted String skinInput) {
         createCustom(sender, skinName, skinInput, null);
     }
 
     @Command("createcustom <skinName> <skinInput> <skinVariant>")
     @CommandPermission(PermissionRegistry.SR_CREATE_CUSTOM)
     @CommandDescription(Message.HELP_SR_CREATE_CUSTOM)
-    private void onCreateCustom(SRCommandSender sender, String skinName, @Quoted String skinInput, SkinVariant skinVariant) {
+    private void onCreateCustom(SRCommandSender sender, String skinName, @Argument(suggestions = "skin_input_quote") @Quoted String skinInput, SkinVariant skinVariant) {
         createCustom(sender, skinName, skinInput, skinVariant);
     }
 
-    private void createCustom(SRCommandSender sender, String skinName, @Quoted String skinInput, SkinVariant skinVariant) {
+    private void createCustom(SRCommandSender sender, String skinName, @Argument(suggestions = "skin_input_quote") @Quoted String skinInput, SkinVariant skinVariant) {
         try {
             Optional<InputDataResult> response = skinStorage.findOrCreateSkinData(skinInput, skinVariant);
             if (response.isEmpty()) {
