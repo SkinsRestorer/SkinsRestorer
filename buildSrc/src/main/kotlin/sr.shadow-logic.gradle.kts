@@ -133,4 +133,7 @@ fun ShadowJar.configureRelocations() {
     relocate("ch.jalu.injector", "net.skinsrestorer.shadow.injector")
 
     relocate("com.github.puregero.multilib", "net.skinsrestorer.shadow.multilib")
+
+    relocate("org.incendo.cloud", "net.skinsrestorer.shadow.cloud")
+    relocate("io.leangen.geantyref", "net.skinsrestorer.shadow.geantyref")
 }
