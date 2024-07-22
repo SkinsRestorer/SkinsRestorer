@@ -52,6 +52,7 @@ import net.skinsrestorer.shared.utils.SRConstants;
 import net.skinsrestorer.shared.utils.SRHelpers;
 import net.skinsrestorer.shared.utils.ValidationUtil;
 import org.incendo.cloud.annotation.specifier.Greedy;
+import org.incendo.cloud.annotation.specifier.Quoted;
 import org.incendo.cloud.annotations.Argument;
 import org.incendo.cloud.annotations.Command;
 import org.incendo.cloud.annotations.suggestion.Suggestions;
@@ -147,7 +148,7 @@ public final class SkinCommand {
     @CommandPermission(PermissionRegistry.SKIN_SET)
     @CommandDescription(Message.HELP_SKIN_SET)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
-    private void onSkinSetShort(SRPlayer player, String skinName) {
+    private void onSkinSetShort(SRPlayer player, @Quoted String skinName) {
         onSkinSetOther(player, skinName, PlayerSelector.singleton(player), null);
     }
 
@@ -155,7 +156,7 @@ public final class SkinCommand {
     @CommandPermission(PermissionRegistry.SKIN_SET_OTHER)
     @CommandDescription(Message.HELP_SKIN_SET_OTHER)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
-    private void onSkinSetShortOther(SRPlayer player, String skinName, PlayerSelector selector) {
+    private void onSkinSetShortOther(SRPlayer player, @Quoted String skinName, PlayerSelector selector) {
         onSkinSetOther(player, skinName, selector, null);
     }
 
@@ -212,7 +213,7 @@ public final class SkinCommand {
     @CommandPermission(PermissionRegistry.SKIN_SEARCH)
     @CommandDescription(Message.HELP_SKIN_SEARCH)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
-    private void onSkinSearch(SRCommandSender sender, String searchString) {
+    private void onSkinSearch(SRCommandSender sender, @Quoted String searchString) {
         sender.sendMessage(Message.SKIN_SEARCH_MESSAGE, Placeholder.unparsed("search", searchString));
     }
 
@@ -262,7 +263,7 @@ public final class SkinCommand {
     @CommandPermission(PermissionRegistry.SKIN_SET)
     @CommandDescription(Message.HELP_SKIN_SET)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
-    private void onSkinSet(SRPlayer player, String skinName) {
+    private void onSkinSet(SRPlayer player, @Quoted String skinName) {
         onSkinSetOther(player, skinName, PlayerSelector.singleton(player));
     }
 
@@ -270,7 +271,7 @@ public final class SkinCommand {
     @CommandPermission(PermissionRegistry.SKIN_SET_OTHER)
     @CommandDescription(Message.HELP_SKIN_SET_OTHER)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
-    private void onSkinSetOther(SRCommandSender sender, String skinName, PlayerSelector selector) {
+    private void onSkinSetOther(SRCommandSender sender, @Quoted String skinName, PlayerSelector selector) {
         onSkinSetOther(sender, skinName, selector, null);
     }
 
@@ -278,7 +279,7 @@ public final class SkinCommand {
     @CommandPermission(PermissionRegistry.SKIN_SET_OTHER)
     @CommandDescription(Message.HELP_SKIN_SET_OTHER)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
-    private void onSkinSetOther(SRCommandSender sender, String skinName, PlayerSelector selector, SkinVariant skinVariant) {
+    private void onSkinSetOther(SRCommandSender sender, @Quoted String skinName, PlayerSelector selector, SkinVariant skinVariant) {
         for (SRPlayer target : selector.resolve(sender)) {
             if (!setSkin(sender, target, skinName, skinVariant, true)) {
                 return;
@@ -299,7 +300,7 @@ public final class SkinCommand {
     @CommandPermission(PermissionRegistry.SKIN_SET_URL)
     @CommandDescription(Message.HELP_SKIN_SET_URL)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
-    private void onSkinSetUrlShort(SRPlayer player, String url) {
+    private void onSkinSetUrlShort(SRPlayer player, @Quoted String url) {
         if (!ValidationUtil.validSkinUrl(url)) {
             player.sendMessage(Message.ERROR_INVALID_URLSKIN);
             return;
@@ -312,7 +313,7 @@ public final class SkinCommand {
     @CommandPermission(PermissionRegistry.SKIN_SET_URL)
     @CommandDescription(Message.HELP_SKIN_SET_URL)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
-    private void onSkinSetUrl(SRPlayer player, String url, SkinVariant skinVariant) {
+    private void onSkinSetUrl(SRPlayer player, @Quoted String url, SkinVariant skinVariant) {
         if (!ValidationUtil.validSkinUrl(url)) {
             player.sendMessage(Message.ERROR_INVALID_URLSKIN);
             return;
