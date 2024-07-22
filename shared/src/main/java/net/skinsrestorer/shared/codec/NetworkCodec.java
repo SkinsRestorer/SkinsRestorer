@@ -34,7 +34,7 @@ public record NetworkCodec<T>(Writer<T> writer, Reader<T> reader) {
         return ofEnum(clazz, id -> "Unknown %s id: %s".formatted(clazz.getSimpleName(), id));
     }
 
-    public static <T extends Enum<T> & NetworkId> NetworkCodec<T> ofEnum(Class<T> clazz, Function<String, String > messageSupplier) {
+    public static <T extends Enum<T> & NetworkId> NetworkCodec<T> ofEnum(Class<T> clazz, Function<String, String> messageSupplier) {
         Map<String, T> idToValue = new HashMap<>();
         for (T value : clazz.getEnumConstants()) {
             idToValue.put(value.getId(), value);
