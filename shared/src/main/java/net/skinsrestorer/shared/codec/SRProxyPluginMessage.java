@@ -35,7 +35,8 @@ public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
     public enum ChannelType implements NetworkId {
         GUI_ACTION("guiAction", GUIActionChannelPayload.CODEC);
 
-        public static final NetworkCodec<ChannelType> CODEC = NetworkCodec.ofEnum(ChannelType.class);
+        public static final NetworkCodec<ChannelType> CODEC = NetworkCodec.ofEnum(ChannelType.class,
+                "Unknown channel type: %s (Make sure the server and proxy are running the same version of SkinsRestorer)"::formatted);
         private final String channelName;
         private final NetworkCodec<? extends ChannelPayload<?>> codec;
 

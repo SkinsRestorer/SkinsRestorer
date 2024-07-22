@@ -37,7 +37,8 @@ public record SRServerPluginMessage(ChannelPayload<?> channelPayload) {
         OPEN_GUI("openGUI", GUIPageChannelPayload.CODEC),
         SKIN_UPDATE("SkinUpdateV2", GUIPageChannelPayload.CODEC);
 
-        public static final NetworkCodec<ChannelType> CODEC = NetworkCodec.ofEnum(ChannelType.class);
+        public static final NetworkCodec<ChannelType> CODEC = NetworkCodec.ofEnum(ChannelType.class,
+                "Unknown channel type: %s (Make sure the server and proxy are running the same version of SkinsRestorer)"::formatted);
         private final String channelName;
         private final NetworkCodec<? extends ChannelPayload<?>> codec;
 

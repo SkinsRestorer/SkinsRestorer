@@ -31,13 +31,17 @@ public record NetworkCodec<T>(Writer<T> writer, Reader<T> reader) {
     }
 
     public static <T extends Enum<T> & NetworkId> NetworkCodec<T> ofEnum(Class<T> clazz) {
+        return ofEnum(clazz, id -> "Unknown %s id: %s".formatted(clazz.getSimpleName(), id));
+    }
+
+    public static <T extends Enum<T> & NetworkId> NetworkCodec<T> ofEnum(Class<T> clazz, Function<String, String > messageSupplier) {
         Map<String, T> idToValue = new HashMap<>();
         for (T value : clazz.getEnumConstants()) {
             idToValue.put(value.getId(), value);
         }
 
         return BuiltInCodecs.STRING_CODEC.map(NetworkId::getId, id -> idToValue.computeIfAbsent(id, i -> {
-            throw new IllegalArgumentException("Unknown enum value: " + i);
+            throw new IllegalArgumentException(messageSupplier.apply(i));
         }));
     }
 
