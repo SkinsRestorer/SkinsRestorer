@@ -41,7 +41,7 @@ public class GUIActionListener {
         } else if (actionPayload instanceof SRProxyPluginMessage.GUIActionChannelPayload.ClearSkinPayload) {
             commandManager.execute(player, "skin clear");
         } else if (actionPayload instanceof SRProxyPluginMessage.GUIActionChannelPayload.SetSkinPayload setSkinPayload) {
-            commandManager.execute(player, String.format("skin set %s", setSkinPayload.skin()));
+            commandManager.execute(player, "skin set %s".formatted(setSkinPayload.skin()));
         }
     }
 }

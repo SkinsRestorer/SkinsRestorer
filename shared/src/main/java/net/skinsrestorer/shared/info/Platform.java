@@ -31,6 +31,6 @@ public enum Platform {
     private final PlatformType platformType;
 
     public String getPlatformDescription() {
-        return String.format("%s %s", friendlyName, platformType.getFriendlyName());
+        return "%s %s".formatted(friendlyName, platformType.getFriendlyName());
     }
 }

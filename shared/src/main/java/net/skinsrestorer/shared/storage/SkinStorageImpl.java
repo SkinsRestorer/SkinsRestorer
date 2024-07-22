@@ -75,7 +75,7 @@ public class SkinStorageImpl implements SkinStorage {
             try {
                 findOrCreateSkinData(skin);
             } catch (DataRequestException | MineSkinException e) {
-                logger.debug(String.format("DefaultSkin '%s' could not be found or requested! Removing from list..", skin), e);
+                logger.debug("DefaultSkin '%s' could not be found or requested! Removing from list..".formatted(skin), e);
                 toRemove.add(skin);
             }
         });

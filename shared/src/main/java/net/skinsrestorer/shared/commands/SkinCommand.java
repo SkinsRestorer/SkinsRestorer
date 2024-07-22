@@ -409,7 +409,7 @@ public final class SkinCommand {
         } catch (DataRequestException e) {
             ComponentHelper.sendException(e, sender, locale, logger);
         } catch (MineSkinException e) {
-            logger.debug(SRLogLevel.SEVERE, String.format("Could not generate skin url: %s", skinInput), e);
+            logger.debug(SRLogLevel.SEVERE, "Could not generate skin url: %s".formatted(skinInput), e);
             sender.sendMessage(Message.ERROR_INVALID_URLSKIN);
         }
 

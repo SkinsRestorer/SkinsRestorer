@@ -54,82 +54,82 @@ public class ServiceCheckerService {
             Optional<UUID> uuid = mojangAPI.getUUIDEclipse(selectedUsername);
 
             if (uuid.isPresent()) {
-                response.addResult(String.format(UUID_MESSAGE, "Eclipse", selectedUsername, uuid.get()), true, ServiceCheckResponse.ServiceCheckType.UUID);
+                response.addResult(UUID_MESSAGE.formatted("Eclipse", selectedUsername, uuid.get()), true, ServiceCheckResponse.ServiceCheckType.UUID);
             } else {
-                response.addResult(String.format(MESSAGE_ERROR, "Eclipse", "UUID"), false, ServiceCheckResponse.ServiceCheckType.UUID);
+                response.addResult(MESSAGE_ERROR.formatted("Eclipse", "UUID"), false, ServiceCheckResponse.ServiceCheckType.UUID);
             }
         } catch (DataRequestException e) {
             logger.severe("Error getting Eclipse UUID");
             logger.debug(e);
-            response.addResult(String.format(MESSAGE_ERROR_EXCEPTION, "Eclipse", "UUID", e.getMessage()), false, ServiceCheckResponse.ServiceCheckType.UUID);
+            response.addResult(MESSAGE_ERROR_EXCEPTION.formatted("Eclipse", "UUID", e.getMessage()), false, ServiceCheckResponse.ServiceCheckType.UUID);
         }
 
         try {
             Optional<UUID> uuid = mojangAPI.getUUIDMojang(selectedUsername);
 
             if (uuid.isPresent()) {
-                response.addResult(String.format(UUID_MESSAGE, "Mojang", selectedUsername, uuid.get()), true, ServiceCheckResponse.ServiceCheckType.UUID);
+                response.addResult(UUID_MESSAGE.formatted("Mojang", selectedUsername, uuid.get()), true, ServiceCheckResponse.ServiceCheckType.UUID);
             } else {
-                response.addResult(String.format(MESSAGE_ERROR, "Mojang", "UUID"), false, ServiceCheckResponse.ServiceCheckType.UUID);
+                response.addResult(MESSAGE_ERROR.formatted("Mojang", "UUID"), false, ServiceCheckResponse.ServiceCheckType.UUID);
             }
         } catch (DataRequestException e) {
             logger.severe("Error getting Mojang UUID");
             logger.debug(e);
-            response.addResult(String.format(MESSAGE_ERROR_EXCEPTION, "Mojang", "UUID", e.getMessage()), false, ServiceCheckResponse.ServiceCheckType.UUID);
+            response.addResult(MESSAGE_ERROR_EXCEPTION.formatted("Mojang", "UUID", e.getMessage()), false, ServiceCheckResponse.ServiceCheckType.UUID);
         }
 
         try {
             Optional<UUID> uuid = mojangAPI.getUUIDMineTools(selectedUsername);
 
             if (uuid.isPresent()) {
-                response.addResult(String.format(UUID_MESSAGE, "MineTools", selectedUsername, uuid.get()), true, ServiceCheckResponse.ServiceCheckType.UUID);
+                response.addResult(UUID_MESSAGE.formatted("MineTools", selectedUsername, uuid.get()), true, ServiceCheckResponse.ServiceCheckType.UUID);
             } else {
-                response.addResult(String.format(MESSAGE_ERROR, "MineTools", "UUID"), false, ServiceCheckResponse.ServiceCheckType.UUID);
+                response.addResult(MESSAGE_ERROR.formatted("MineTools", "UUID"), false, ServiceCheckResponse.ServiceCheckType.UUID);
             }
         } catch (DataRequestException e) {
             logger.severe("Error getting MineTools UUID");
             logger.debug(e);
-            response.addResult(String.format(MESSAGE_ERROR_EXCEPTION, "MineTools", "UUID", e.getMessage()), false, ServiceCheckResponse.ServiceCheckType.UUID);
+            response.addResult(MESSAGE_ERROR_EXCEPTION.formatted("MineTools", "UUID", e.getMessage()), false, ServiceCheckResponse.ServiceCheckType.UUID);
         }
 
         // ##### Profile requests #####
         try {
             Optional<SkinProperty> eclipse = mojangAPI.getProfileEclipse(selectedUUID);
             if (eclipse.isPresent()) {
-                response.addResult(String.format(PROFILE_MESSAGE, "Eclipse", selectedUUID, eclipse.get()), true, ServiceCheckResponse.ServiceCheckType.PROFILE);
+                response.addResult(PROFILE_MESSAGE.formatted("Eclipse", selectedUUID, eclipse.get()), true, ServiceCheckResponse.ServiceCheckType.PROFILE);
             } else {
-                response.addResult(String.format(MESSAGE_ERROR, "Eclipse", "Profile"), false, ServiceCheckResponse.ServiceCheckType.PROFILE);
+                response.addResult(MESSAGE_ERROR.formatted("Eclipse", "Profile"), false, ServiceCheckResponse.ServiceCheckType.PROFILE);
             }
         } catch (DataRequestException e) {
             logger.severe("Error getting Eclipse Profile");
             logger.debug(e);
-            response.addResult(String.format(MESSAGE_ERROR_EXCEPTION, "Eclipse", "Profile", e.getMessage()), false, ServiceCheckResponse.ServiceCheckType.PROFILE);
+            response.addResult(MESSAGE_ERROR_EXCEPTION.formatted("Eclipse", "Profile", e.getMessage()), false, ServiceCheckResponse.ServiceCheckType.PROFILE);
         }
 
         try {
             Optional<SkinProperty> mojang = mojangAPI.getProfileMojang(selectedUUID);
             if (mojang.isPresent()) {
-                response.addResult(String.format(PROFILE_MESSAGE, "Mojang", selectedUUID, mojang.get()), true, ServiceCheckResponse.ServiceCheckType.PROFILE);
+                response.addResult(PROFILE_MESSAGE.formatted("Mojang", selectedUUID, mojang.get()), true, ServiceCheckResponse.ServiceCheckType.PROFILE);
             } else {
-                response.addResult(String.format(MESSAGE_ERROR, "Mojang", "Profile"), false, ServiceCheckResponse.ServiceCheckType.PROFILE);
+                response.addResult(MESSAGE_ERROR.formatted("Mojang", "Profile"), false, ServiceCheckResponse.ServiceCheckType.PROFILE);
             }
         } catch (DataRequestException e) {
             logger.severe("Error getting Mojang Profile");
             logger.debug(e);
-            response.addResult(String.format(MESSAGE_ERROR_EXCEPTION, "Mojang", "Profile", e.getMessage()), false, ServiceCheckResponse.ServiceCheckType.PROFILE);
+            response.addResult(MESSAGE_ERROR_EXCEPTION.formatted("Mojang", "Profile", e.getMessage()), false, ServiceCheckResponse.ServiceCheckType.PROFILE);
         }
 
         try {
             Optional<SkinProperty> mineTools = mojangAPI.getProfileMineTools(selectedUUID);
             if (mineTools.isPresent()) {
-                response.addResult(String.format(PROFILE_MESSAGE, "MineTools", selectedUUID, mineTools.get()), true, ServiceCheckResponse.ServiceCheckType.PROFILE);
+                response.addResult(PROFILE_MESSAGE.formatted("MineTools", selectedUUID, mineTools.get()), true, ServiceCheckResponse.ServiceCheckType.PROFILE);
             } else {
-                response.addResult(String.format(MESSAGE_ERROR, "MineTools", "Profile"), false, ServiceCheckResponse.ServiceCheckType.PROFILE);
+                response.addResult(MESSAGE_ERROR.formatted("MineTools", "Profile"), false, ServiceCheckResponse.ServiceCheckType.PROFILE);
             }
         } catch (DataRequestException e) {
             logger.severe("Error getting MineTools Profile");
             logger.debug(e);
-            response.addResult(String.format(MESSAGE_ERROR_EXCEPTION, "MineTools", "Profile", e.getMessage()), false, ServiceCheckResponse.ServiceCheckType.PROFILE);
+            response.addResult(MESSAGE_ERROR_EXCEPTION.formatted("MineTools", "Profile", e.getMessage()), false, ServiceCheckResponse.ServiceCheckType.PROFILE);
         }
         return response;
     }

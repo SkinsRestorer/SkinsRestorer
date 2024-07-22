@@ -67,7 +67,7 @@ public class MessageLoader {
                     manager.addMessage(
                             message
                                     .orElseThrow(() -> new IllegalArgumentException(
-                                            String.format("No message enum found for key %s", entry.getKey())
+                                            "No message enum found for key %s".formatted(entry.getKey())
                                     )),
                             locale,
                             entry.getValue()
@@ -76,7 +76,7 @@ public class MessageLoader {
                 }
             }
 
-            logger.debug(String.format("Loaded %d default message strings for locale %s", count, locale));
+            logger.debug("Loaded %d default message strings for locale %s".formatted(count, locale));
         }
     }
 

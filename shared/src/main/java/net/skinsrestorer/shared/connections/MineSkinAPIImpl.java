@@ -108,7 +108,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
             case 500, 400 -> {
                 MineSkinErrorResponse response = httpResponse.getBodyAs(MineSkinErrorResponse.class);
                 String error = response.getErrorCode();
-                logger.debug(String.format("[ERROR] MineSkin Failed! Reason: %s Image URL: %s", error, imageUrl));
+                logger.debug("[ERROR] MineSkin Failed! Reason: %s Image URL: %s".formatted(error, imageUrl));
                 // try again
                 return switch (error) {
                     case "failed_to_create_id", "skin_change_failed" -> {
@@ -128,13 +128,13 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                     logger.severe("[ERROR] MineSkin API key is invalid! Reason: %s".formatted(error));
                     switch (error) {
                         case "Invalid API Key" ->
-                                logger.severe(String.format("The API Key provided is not registered on MineSkin! Please empty \"%s\" in plugins/SkinsRestorer/config.yml and run /sr reload", APIConfig.MINESKIN_API_KEY.getPath()));
+                                logger.severe("The API Key provided is not registered on MineSkin! Please empty \"%s\" in plugins/SkinsRestorer/config.yml and run /sr reload".formatted(APIConfig.MINESKIN_API_KEY.getPath()));
                         case "Client not allowed" ->
                                 logger.severe("This server ip is not on the api key allowed IPs list!");
                         case "Origin not allowed" ->
                                 logger.severe("This server Origin is not on the api key allowed Origins list!");
                         case "Agent not allowed" ->
-                                logger.severe(String.format("SkinsRestorer's agent \"%s\" is not on the api key allowed agents list!", MINESKIN_USER_AGENT));
+                                logger.severe("SkinsRestorer's agent \"%s\" is not on the api key allowed agents list!".formatted(MINESKIN_USER_AGENT));
                         default -> logger.severe("Unknown error, please report this to SkinsRestorer's discord!");
                     }
 
@@ -177,7 +177,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                 Map<String, String> headers = new HashMap<>();
                 Optional<String> apiKey = getApiKey(settings);
                 if (apiKey.isPresent()) {
-                    headers.put("Authorization", String.format("Bearer %s", apiKey));
+                    headers.put("Authorization", "Bearer %s".formatted(apiKey));
                 }
 
                 return httpClient.execute(

@@ -74,7 +74,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SRPlugin {
-    private static final String USER_AGENT = "SkinsRestorer/%s (%s)";
     @Getter
     private static final boolean unitTest = System.getProperty("sr.unit.test") != null;
     private final SRPlatformAdapter adapter;
@@ -372,7 +371,7 @@ public class SRPlugin {
     }
 
     public String getUserAgent() {
-        return String.format(USER_AGENT, BuildData.VERSION, adapter.getPlatform());
+        return "SkinsRestorer/%s (%s)".formatted(BuildData.VERSION, adapter.getPlatform());
     }
 
     public void shutdown() {

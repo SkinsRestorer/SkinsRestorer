@@ -57,7 +57,7 @@ public class SkinsRestorerLocale {
         String message = localeManager.getMessage(foreign.getLocale(), key);
 
         if (message == null) {
-            throw new IllegalStateException(String.format("Message %s not found", key.name()));
+            throw new IllegalStateException("Message %s not found".formatted(key.name()));
         }
 
         if (message.isEmpty()) {

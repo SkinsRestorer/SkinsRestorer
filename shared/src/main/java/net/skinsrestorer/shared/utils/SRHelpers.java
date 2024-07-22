@@ -180,7 +180,7 @@ public class SRHelpers {
             String skinPath = "/skin/";
             if (path.startsWith(skinPath)) {
                 String uuid = path.substring(skinPath.length());
-                return String.format(NAMEMC_IMG_URL, uuid);
+                return NAMEMC_IMG_URL.formatted(uuid);
             }
         }
 

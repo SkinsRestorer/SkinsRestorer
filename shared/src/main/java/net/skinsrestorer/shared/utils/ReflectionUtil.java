@@ -70,14 +70,14 @@ public class ReflectionUtil {
             }
         }
 
-        throw new ReflectiveOperationException(String.format("Enum constant not found %s", constant));
+        throw new ReflectiveOperationException("Enum constant not found %s".formatted(constant));
     }
 
     public static Enum<?> getEnum(Class<?> clazz, int ordinal) throws ReflectiveOperationException {
         try {
             return (Enum<?>) clazz.getEnumConstants()[ordinal];
         } catch (ArrayIndexOutOfBoundsException e) {
-            throw new ReflectiveOperationException(String.format("Enum constant not found %s", ordinal));
+            throw new ReflectiveOperationException("Enum constant not found %s".formatted(ordinal));
         }
     }
 
@@ -203,7 +203,7 @@ public class ReflectionUtil {
                 .map(s -> s == null ? "null" : s.getClass().getSimpleName())
                 .collect(Collectors.joining(", "));
 
-        throw new ReflectiveOperationException(String.format("Could not find constructor with args %s in %s", argsString, clazz.getSimpleName()));
+        throw new ReflectiveOperationException("Could not find constructor with args %s in %s".formatted(argsString, clazz.getSimpleName()));
     }
 
     private static boolean isAssignable(Class<?> clazz, Object obj) {
