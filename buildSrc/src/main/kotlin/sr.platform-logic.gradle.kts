@@ -2,26 +2,29 @@ import xyz.wagyourtail.jvmdg.gradle.task.ShadeJar
 
 plugins {
     `java-library`
-    id("sr.shadow-logic")
     id("xyz.wagyourtail.jvmdowngrader")
+    id("sr.shadow-logic")
 }
 
-tasks {
-    val platformDowngrade = register<ShadeJar>("platformDowngrade") {
-        dependsOn(tasks.shadowJar)
+val downgradePlatform = tasks.register<ShadeJar>("downgradePlatform") {
+    dependsOn(tasks.shadowJar)
 
-        inputFile = tasks.shadowJar.get().archiveFile
-        downgradeTo = JavaVersion.VERSION_1_8
-        archiveFileName.set(
-            "SkinsRestorer-${
-                project.name.substringAfter("skinsrestorer-").replaceFirstChar(Char::titlecase)
-            }-${project.version}-downgraded.jar"
-        )
+    inputFile = tasks.shadowJar.get().archiveFile
+    downgradeTo = JavaVersion.VERSION_1_8
+    archiveFileName.set(
+        "SkinsRestorer-${
+            project.name.substringAfter("skinsrestorer-").replaceFirstChar(Char::titlecase)
+        }-${project.version}-downgraded.jar"
+    )
 
-        destinationDirectory.set(rootProject.layout.buildDirectory.dir("libs"))
-        shadePath = { _ -> "net/skinsrestorer/shadow/jvmdowngrader" }
-    }
-    shadowJar {
-        finalizedBy(platformDowngrade)
+    destinationDirectory.set(rootProject.layout.buildDirectory.dir("libs"))
+    shadePath = { _ -> "net/skinsrestorer/shadow/jvmdowngrader" }
+}
+
+configurations.create("downgraded")
+
+artifacts {
+    add("downgraded", downgradePlatform.get().archiveFile) {
+        builtBy(downgradePlatform)
     }
 }

@@ -3,9 +3,9 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":skinsrestorer-bukkit", "shadow"))
-    implementation(project(":skinsrestorer-bungee", "shadow"))
-    implementation(project(":skinsrestorer-velocity", "shadow"))
+    implementation(project(":skinsrestorer-bukkit", "downgraded"))
+    implementation(project(":skinsrestorer-bungee", "downgraded"))
+    implementation(project(":skinsrestorer-velocity", "downgraded"))
 }
 
 tasks {
