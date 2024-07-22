@@ -88,7 +88,6 @@
   "skinsrestorer.only_allowed_on_console": "<dark_red>Error<dark_gray>: <red>Tylko konsola może wykonać to polecenie!",
   "skinsrestorer.only_allowed_on_player": "<dark_red>Error<dark_gray>: <red>Tylko gracze mogą wykonać tą komendę!",
   "skinsrestorer.invalid_player": "<dark_red>Błąd<dark_gray>: <red><input> nie jest prawidłową nazwą użytkownika ani adresem URL.",
-  "skinsrestorer.skin_cooldown": "<dark_red>Błąd<dark_gray>: <red>Możesz zmienić twojego skina ponownie za <yellow><time></yellow> sekund.",
   "skinsrestorer.ms_uploading_skin": "<dark_green>Przesyłanie skina, proszę czekać...(To może zająć trochę czasu)",
   "skinsrestorer.wait_a_minute": "<dark_red>Błąd<dark_gray>: <red>Odczekaj chwilę zanim znów wyśleś zapytanie odnośnie tego skina. (Ograniczenie czasowe)",
   "skinsrestorer.skinsmenu_open": "<dark_green>Otwieranie menu skinów...",
