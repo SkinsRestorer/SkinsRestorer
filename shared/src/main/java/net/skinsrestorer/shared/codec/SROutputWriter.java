@@ -55,12 +55,8 @@ public class SROutputWriter {
     public OutputStream wrapper() {
         return new OutputStream() {
             @Override
-            public void write(int b) {
-                try {
-                    dataOutput.writeByte(b);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+            public void write(int b) throws IOException {
+                dataOutput.writeByte(b);
             }
         };
     }

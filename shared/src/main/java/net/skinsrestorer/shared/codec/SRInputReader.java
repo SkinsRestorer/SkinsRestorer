@@ -57,12 +57,8 @@ public class SRInputReader {
     public InputStream wrapper() {
         return new InputStream() {
             @Override
-            public int read() {
-                try {
-                    return dataInput.readUnsignedByte();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+            public int read() throws IOException {
+                return dataInput.readUnsignedByte();
             }
         };
     }
