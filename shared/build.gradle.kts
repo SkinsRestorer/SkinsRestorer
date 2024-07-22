@@ -28,6 +28,7 @@ dependencies {
     api("org.incendo:cloud-minecraft-extras:2.0.0-SNAPSHOT")
     api("org.incendo:cloud-translations-core:1.0.0-SNAPSHOT")
     api("org.incendo:cloud-translations-minecraft-extras:1.0.0-SNAPSHOT")
+    compileOnly("com.mojang:brigadier:1.0.18")
 
     compileOnly("org.bstats:bstats-base:3.0.2") {
         isTransitive = false

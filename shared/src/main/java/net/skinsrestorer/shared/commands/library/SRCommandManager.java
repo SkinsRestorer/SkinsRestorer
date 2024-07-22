@@ -38,6 +38,8 @@ import org.incendo.cloud.Command;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.annotations.AnnotationParser;
 import org.incendo.cloud.brigadier.BrigadierManagerHolder;
+import org.incendo.cloud.brigadier.BrigadierSetting;
+import org.incendo.cloud.brigadier.CloudBrigadierManager;
 import org.incendo.cloud.description.Description;
 import org.incendo.cloud.exception.InvalidCommandSenderException;
 import org.incendo.cloud.key.CloudKey;
@@ -86,13 +88,16 @@ public class SRCommandManager {
             .bypassCooldown(context -> !(context.sender() instanceof SRPlayer) || context.sender().hasPermission(PermissionRegistry.BYPASS_COOLDOWN))
             .build());
 
+    @SuppressWarnings("unchecked")
     @Inject
     public SRCommandManager(SRPlatformAdapter platform, SkinsRestorerLocale locale, SettingsManager settingsManager) {
         this.commandManager = platform.createCommandManager();
         this.annotationParser = new AnnotationParser<>(commandManager, SRCommandSender.class);
 
         if (commandManager instanceof BrigadierManagerHolder<?, ?> holder && holder.hasBrigadierManager()) {
-            holder.brigadierManager().setNativeNumberSuggestions(true);
+            CloudBrigadierManager<SRCommandSender, ?> brigadierManager = (CloudBrigadierManager<SRCommandSender, ?>) holder.brigadierManager();
+            brigadierManager.setNativeNumberSuggestions(true);
+            brigadierManager.settings().set(BrigadierSetting.FORCE_EXECUTABLE, true);
         }
 
         commandManager.captionRegistry().registerProvider(TranslationBundle.core(SRCommandSender::getLocale));
