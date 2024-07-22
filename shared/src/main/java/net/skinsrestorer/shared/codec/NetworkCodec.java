@@ -20,6 +20,7 @@ package net.skinsrestorer.shared.codec;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.*;
 import java.util.function.Function;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -27,6 +28,17 @@ import java.util.zip.GZIPOutputStream;
 public record NetworkCodec<T>(Writer<T> writer, Reader<T> reader) {
     public static <T> NetworkCodec<T> of(Writer<T> writer, Reader<T> reader) {
         return new NetworkCodec<>(writer, reader);
+    }
+
+    public static <T extends Enum<T> & NetworkId> NetworkCodec<T> ofEnum(Class<T> clazz) {
+        Map<String, T> idToValue = new HashMap<>();
+        for (T value : clazz.getEnumConstants()) {
+            idToValue.put(value.getId(), value);
+        }
+
+        return BuiltInCodecs.STRING_CODEC.map(NetworkId::getId, id -> idToValue.computeIfAbsent(id, i -> {
+            throw new IllegalArgumentException("Unknown enum value: " + i);
+        }));
     }
 
     public void write(SROutputWriter buf, T t) {
@@ -41,6 +53,59 @@ public record NetworkCodec<T>(Writer<T> writer, Reader<T> reader) {
         return NetworkCodec.of(
                 (stream, o) -> writer.write(stream, to.apply(o)),
                 stream -> from.apply(reader.read(stream))
+        );
+    }
+
+    public NetworkCodec<Optional<T>> optional() {
+        return NetworkCodec.of(
+                (os, optional) -> {
+                    BuiltInCodecs.BOOLEAN_CODEC.write(os, optional.isPresent());
+                    optional.ifPresent(t -> this.write(os, t));
+                },
+                is -> BuiltInCodecs.BOOLEAN_CODEC.read(is) ? Optional.of(this.read(is)) : Optional.empty()
+        );
+    }
+
+    public NetworkCodec<List<T>> list() {
+        return NetworkCodec.of(
+                (os, list) -> {
+                    BuiltInCodecs.INT_CODEC.write(os, list.size());
+                    for (T entry : list) {
+                        this.write(os, entry);
+                    }
+                },
+                is -> {
+                    int size = BuiltInCodecs.INT_CODEC.read(is);
+                    List<T> list = new ArrayList<>(size);
+                    for (int i = 0; i < size; i++) {
+                        list.add(this.read(is));
+                    }
+
+                    return list;
+                }
+        );
+    }
+
+    public <V> NetworkCodec<Map<T, V>> mappedTo(NetworkCodec<V> valueCodec) {
+        return NetworkCodec.of(
+                (os, map) -> {
+                    BuiltInCodecs.INT_CODEC.write(os, map.size());
+                    for (Map.Entry<T, V> entry : map.entrySet()) {
+                        this.write(os, entry.getKey());
+                        valueCodec.write(os, entry.getValue());
+                    }
+                },
+                is -> {
+                    int size = BuiltInCodecs.INT_CODEC.read(is);
+                    Map<T, V> map = new LinkedHashMap<>(size);
+                    for (int i = 0; i < size; i++) {
+                        T key = this.read(is);
+                        V value = valueCodec.read(is);
+                        map.put(key, value);
+                    }
+
+                    return map;
+                }
         );
     }
 

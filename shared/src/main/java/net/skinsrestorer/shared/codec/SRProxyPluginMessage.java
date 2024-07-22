@@ -35,7 +35,7 @@ public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
     public enum ChannelType implements NetworkId {
         GUI_ACTION("guiAction", GUIActionChannelPayload.CODEC);
 
-        public static final NetworkCodec<ChannelType> CODEC = CodecHelpers.createEnumCodec(ChannelType.class);
+        public static final NetworkCodec<ChannelType> CODEC = NetworkCodec.ofEnum(ChannelType.class);
         private final String channelName;
         private final NetworkCodec<? extends ChannelPayload<?>> codec;
 
@@ -89,7 +89,7 @@ public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
             CLEAR_SKIN("clearSkin", ClearSkinPayload.CODEC),
             SET_SKIN("setSkin", SetSkinPayload.CODEC);
 
-            public static final NetworkCodec<GUIActionType> CODEC = CodecHelpers.createEnumCodec(GUIActionType.class);
+            public static final NetworkCodec<GUIActionType> CODEC = NetworkCodec.ofEnum(GUIActionType.class);
             private final String channelName;
             private final NetworkCodec<? extends GUIActionPayload<?>> codec;
 
@@ -114,10 +114,10 @@ public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
         public record OpenPagePayload(int page, PageType type) implements GUIActionPayload<OpenPagePayload> {
             public static final NetworkCodec<OpenPagePayload> CODEC = NetworkCodec.of(
                     (out, msg) -> {
-                        CodecHelpers.INT_CODEC.write(out, msg.page());
+                        BuiltInCodecs.INT_CODEC.write(out, msg.page());
                         PageType.CODEC.write(out, msg.type());
                     },
-                    in -> new OpenPagePayload(CodecHelpers.INT_CODEC.read(in), PageType.CODEC.read(in))
+                    in -> new OpenPagePayload(BuiltInCodecs.INT_CODEC.read(in), PageType.CODEC.read(in))
             );
 
             @Override
@@ -161,8 +161,8 @@ public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
 
         public record SetSkinPayload(String skin) implements GUIActionPayload<SetSkinPayload> {
             public static final NetworkCodec<SetSkinPayload> CODEC = NetworkCodec.of(
-                    (out, msg) -> CodecHelpers.STRING_CODEC.write(out, msg.skin()),
-                    in -> new SetSkinPayload(CodecHelpers.STRING_CODEC.read(in))
+                    (out, msg) -> BuiltInCodecs.STRING_CODEC.write(out, msg.skin()),
+                    in -> new SetSkinPayload(BuiltInCodecs.STRING_CODEC.read(in))
             );
 
             @Override

@@ -37,7 +37,7 @@ public record SRServerPluginMessage(ChannelPayload<?> channelPayload) {
         OPEN_GUI("openGUI", GUIPageChannelPayload.CODEC),
         SKIN_UPDATE("SkinUpdateV2", GUIPageChannelPayload.CODEC);
 
-        public static final NetworkCodec<ChannelType> CODEC = CodecHelpers.createEnumCodec(ChannelType.class);
+        public static final NetworkCodec<ChannelType> CODEC = NetworkCodec.ofEnum(ChannelType.class);
         private final String channelName;
         private final NetworkCodec<? extends ChannelPayload<?>> codec;
 
@@ -84,8 +84,8 @@ public record SRServerPluginMessage(ChannelPayload<?> channelPayload) {
     public record SkinUpdateChannelPayload(
             SkinProperty skinProperty) implements ChannelPayload<SkinUpdateChannelPayload> {
         public static final NetworkCodec<SkinUpdateChannelPayload> CODEC = NetworkCodec.of(
-                (out, msg) -> CodecHelpers.SKIN_PROPERTY_CODEC.write(out, msg.skinProperty()),
-                in -> new SkinUpdateChannelPayload(CodecHelpers.SKIN_PROPERTY_CODEC.read(in))
+                (out, msg) -> BuiltInCodecs.SKIN_PROPERTY_CODEC.write(out, msg.skinProperty()),
+                in -> new SkinUpdateChannelPayload(BuiltInCodecs.SKIN_PROPERTY_CODEC.read(in))
         );
 
         @Override

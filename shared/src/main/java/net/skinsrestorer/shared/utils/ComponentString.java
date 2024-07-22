@@ -17,7 +17,7 @@
  */
 package net.skinsrestorer.shared.utils;
 
-import net.skinsrestorer.shared.codec.CodecHelpers;
+import net.skinsrestorer.shared.codec.BuiltInCodecs;
 import net.skinsrestorer.shared.codec.NetworkCodec;
 
 /**
@@ -27,5 +27,5 @@ import net.skinsrestorer.shared.codec.NetworkCodec;
  * @param jsonString The json string.
  */
 public record ComponentString(String jsonString) {
-    public static final NetworkCodec<ComponentString> CODEC = CodecHelpers.STRING_CODEC.map(ComponentString::jsonString, ComponentString::new);
+    public static final NetworkCodec<ComponentString> CODEC = BuiltInCodecs.STRING_CODEC.map(ComponentString::jsonString, ComponentString::new);
 }

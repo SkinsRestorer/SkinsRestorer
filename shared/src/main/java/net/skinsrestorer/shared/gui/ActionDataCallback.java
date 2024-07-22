@@ -32,11 +32,13 @@ public class ActionDataCallback {
     private final SRServerPlugin plugin;
 
     public void handle(SRServerPlayer player, SRInventory.ClickEventAction action) {
-        if (plugin.isProxyMode()) {
-            player.sendToMessageChannel(SRProxyPluginMessage.CODEC, new SRProxyPluginMessage(action.actionChannelPayload()));
-        } else {
-            injector.getSingleton(GUIActionListener.class).handle(player, action.actionChannelPayload());
-        }
+        action.actionChannelPayload().ifPresent(p -> {
+            if (plugin.isProxyMode()) {
+                player.sendToMessageChannel(SRProxyPluginMessage.CODEC, new SRProxyPluginMessage(p));
+            } else {
+                injector.getSingleton(GUIActionListener.class).handle(player, p);
+            }
+        });
 
         if (action.closeInventory()) {
             player.closeInventory();

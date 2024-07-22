@@ -17,7 +17,6 @@
  */
 package net.skinsrestorer.shared.gui;
 
-import net.skinsrestorer.shared.codec.CodecHelpers;
 import net.skinsrestorer.shared.codec.NetworkCodec;
 import net.skinsrestorer.shared.codec.NetworkId;
 
@@ -29,7 +28,7 @@ public enum ClickEventType implements NetworkId {
     RIGHT,
     OTHER;
 
-    public static final NetworkCodec<ClickEventType> CODEC = CodecHelpers.createEnumCodec(ClickEventType.class);
+    public static final NetworkCodec<ClickEventType> CODEC = NetworkCodec.ofEnum(ClickEventType.class);
 
     @Override
     public String getId() {

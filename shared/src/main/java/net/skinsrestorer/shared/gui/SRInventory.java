@@ -18,7 +18,7 @@
 package net.skinsrestorer.shared.gui;
 
 import lombok.Getter;
-import net.skinsrestorer.shared.codec.CodecHelpers;
+import net.skinsrestorer.shared.codec.BuiltInCodecs;
 import net.skinsrestorer.shared.codec.NetworkCodec;
 import net.skinsrestorer.shared.codec.NetworkId;
 import net.skinsrestorer.shared.codec.SRProxyPluginMessage;
@@ -32,14 +32,14 @@ import java.util.Optional;
 public record SRInventory(int rows, ComponentString title, Map<Integer, Item> items) {
     public static final NetworkCodec<SRInventory> CODEC = NetworkCodec.of(
             (stream, inventory) -> {
-                CodecHelpers.INT_CODEC.write(stream, inventory.rows());
+                BuiltInCodecs.INT_CODEC.write(stream, inventory.rows());
                 ComponentString.CODEC.write(stream, inventory.title());
-                CodecHelpers.createMapCodec(CodecHelpers.INT_CODEC, Item.CODEC).write(stream, inventory.items());
+                BuiltInCodecs.INT_CODEC.mappedTo(Item.CODEC).write(stream, inventory.items());
             },
             stream -> new SRInventory(
-                    CodecHelpers.INT_CODEC.read(stream),
+                    BuiltInCodecs.INT_CODEC.read(stream),
                     ComponentString.CODEC.read(stream),
-                    CodecHelpers.createMapCodec(CodecHelpers.INT_CODEC, Item.CODEC).read(stream)
+                    BuiltInCodecs.INT_CODEC.mappedTo(Item.CODEC).read(stream)
             )
     ).compressed();
 
@@ -49,7 +49,7 @@ public record SRInventory(int rows, ComponentString title, Map<Integer, Item> it
         ARROW,
         BARRIER;
 
-        public static final NetworkCodec<MaterialType> CODEC = CodecHelpers.createEnumCodec(MaterialType.class);
+        public static final NetworkCodec<MaterialType> CODEC = NetworkCodec.ofEnum(MaterialType.class);
 
         @Override
         public String getId() {
@@ -69,33 +69,38 @@ public record SRInventory(int rows, ComponentString title, Map<Integer, Item> it
                 (stream, item) -> {
                     MaterialType.CODEC.write(stream, item.materialType());
                     ComponentString.CODEC.write(stream, item.displayName());
-                    CodecHelpers.createListCodec(ComponentString.CODEC).write(stream, item.lore());
-                    CodecHelpers.createOptionalCodec(CodecHelpers.STRING_CODEC).write(stream, item.textureHash());
-                    CodecHelpers.BOOLEAN_CODEC.write(stream, item.enchantmentGlow());
-                    CodecHelpers.createMapCodec(ClickEventType.CODEC, ClickEventAction.CODEC).write(stream, item.clickHandlers());
+                    ComponentString.CODEC.list().write(stream, item.lore());
+                    BuiltInCodecs.STRING_CODEC.optional().write(stream, item.textureHash());
+                    BuiltInCodecs.BOOLEAN_CODEC.write(stream, item.enchantmentGlow());
+                    ClickEventType.CODEC.mappedTo(ClickEventAction.CODEC).write(stream, item.clickHandlers());
                 },
                 stream -> new Item(
                         MaterialType.CODEC.read(stream),
                         ComponentString.CODEC.read(stream),
-                        CodecHelpers.createListCodec(ComponentString.CODEC).read(stream),
-                        CodecHelpers.createOptionalCodec(CodecHelpers.STRING_CODEC).read(stream),
-                        CodecHelpers.BOOLEAN_CODEC.read(stream),
-                        CodecHelpers.createMapCodec(ClickEventType.CODEC, ClickEventAction.CODEC).read(stream)
+                        ComponentString.CODEC.list().read(stream),
+                        BuiltInCodecs.STRING_CODEC.optional().read(stream),
+                        BuiltInCodecs.BOOLEAN_CODEC.read(stream),
+                        ClickEventType.CODEC.mappedTo(ClickEventAction.CODEC).read(stream)
                 )
         );
     }
 
-    public record ClickEventAction(SRProxyPluginMessage.GUIActionChannelPayload actionChannelPayload,
+    public record ClickEventAction(Optional<SRProxyPluginMessage.GUIActionChannelPayload> actionChannelPayload,
                                    boolean closeInventory) {
         public static final NetworkCodec<ClickEventAction> CODEC = NetworkCodec.of(
                 (stream, action) -> {
-                    SRProxyPluginMessage.GUIActionChannelPayload.CODEC.write(stream, action.actionChannelPayload());
-                    CodecHelpers.BOOLEAN_CODEC.write(stream, action.closeInventory());
+                    SRProxyPluginMessage.GUIActionChannelPayload.CODEC.optional().write(stream, action.actionChannelPayload());
+                    BuiltInCodecs.BOOLEAN_CODEC.write(stream, action.closeInventory());
                 },
                 stream -> new ClickEventAction(
-                        SRProxyPluginMessage.GUIActionChannelPayload.CODEC.read(stream),
-                        CodecHelpers.BOOLEAN_CODEC.read(stream)
+                        SRProxyPluginMessage.GUIActionChannelPayload.CODEC.optional().read(stream),
+                        BuiltInCodecs.BOOLEAN_CODEC.read(stream)
                 )
         );
+
+        public ClickEventAction(SRProxyPluginMessage.GUIActionChannelPayload actionChannelPayload,
+                                boolean closeInventory) {
+            this(Optional.of(actionChannelPayload), closeInventory);
+        }
     }
 }

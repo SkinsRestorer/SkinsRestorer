@@ -18,7 +18,6 @@
 package net.skinsrestorer.shared.gui;
 
 import lombok.Getter;
-import net.skinsrestorer.shared.codec.CodecHelpers;
 import net.skinsrestorer.shared.codec.NetworkCodec;
 import net.skinsrestorer.shared.codec.NetworkId;
 
@@ -28,7 +27,7 @@ import java.util.Locale;
 public enum PageType implements NetworkId {
     MAIN;
 
-    public static final NetworkCodec<PageType> CODEC = CodecHelpers.createEnumCodec(PageType.class);
+    public static final NetworkCodec<PageType> CODEC = NetworkCodec.ofEnum(PageType.class);
 
     @Override
     public String getId() {
