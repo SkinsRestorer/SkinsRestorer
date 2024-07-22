@@ -43,7 +43,6 @@
   "skinsrestorer.only_allowed_on_console": "<dark_red>Хата<dark_gray>: <red>Консоль генә бу боерыкны кабыза ала!",
   "skinsrestorer.only_allowed_on_player": "<dark_red>Хата<dark_gray>: <red>Уенчылар гына бу боерыкны кабыза ала!",
   "skinsrestorer.invalid_player": "<dark_red>Хата<dark_gray>: <red><input> кулланучы исеме яки сылтама түгел.",
-  "skinsrestorer.skin_cooldown": "<dark_red>Хата<dark_gray>: <red>Сез кыяфәтне <yellow><time></yellow> секундтан соң яңадан үзгәртә алачаксыз.",
   "skinsrestorer.ms_uploading_skin": "<dark_green>Кыяфәтне йөкләтү, көтегезче... (Бу беркадәр вакытны алырга мөмкин)",
   "skinsrestorer.wait_a_minute": "<dark_red>Хата<dark_gray>: <red>Бу кыяфәтне яңадан сорау алдыннан минутны көтегезче. (Тизлек чикле)",
   "skinsrestorer.skinsmenu_open": "<dark_green>Кыяфәт менюсын ачу...",

@@ -76,7 +76,6 @@
   "skinsrestorer.only_allowed_on_console": "<dark_red>Помилка<dark_gray>: <red>Тільки консоль може виконувати цю команду!",
   "skinsrestorer.only_allowed_on_player": "<dark_red>Помилка<dark_gray>: <red>Тільки гравці можуть виконувати цю команду!",
   "skinsrestorer.invalid_player": "<dark_red>Помилка<dark_gray>: <red><input> не є дійсним іменем користувача чи URL-адресою.",
-  "skinsrestorer.skin_cooldown": "<dark_red>Помилка<dark_gray>: <red>Ви можете знову змінити оформлення через <yellow><time></yellow> секунди.",
   "skinsrestorer.ms_uploading_skin": "<dark_green>Завантаження скіна, зачекайте.. (Це може зайняти деякий час)",
   "skinsrestorer.wait_a_minute": "<dark_red>Помилка<dark_gray>: <red>Зачекайте хвилину, перш ніж знову запитувати цю тему. (Ліміт обмежений)",
   "skinsrestorer.skinsmenu_open": "<dark_green>Відкриття меню скінів...",

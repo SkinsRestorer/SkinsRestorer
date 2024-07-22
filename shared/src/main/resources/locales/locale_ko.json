@@ -86,7 +86,6 @@
   "skinsrestorer.only_allowed_on_console": "<dark_red>오류<dark_gray>: <red>콘솔에서만 이 명령어를 사용할 수 있어요!",
   "skinsrestorer.only_allowed_on_player": "<dark_red>오류<dark_gray>: <red>플레이어만 이 명령어를 사용할 수 있어요!",
   "skinsrestorer.invalid_player": "<dark_red>오류<dark_gray>: <red><input>은(는) 올바르지 않은 사용자 이름이거나 URL이에요.",
-  "skinsrestorer.skin_cooldown": "<dark_red>오류<dark_gray>: <red>스킨을 <yellow><time></yellow><red>초 뒤 다시 변경할 수 있어요.",
   "skinsrestorer.ms_uploading_skin": "<dark_green>스킨을 업로드하는 중이에요. 기다려주세요...(잠시 시간이 걸릴 수 있어요)",
   "skinsrestorer.wait_a_minute": "<dark_red>오류<dark_gray>: <red>그 스킨을 다시 요청하기 전 1분을 기다려주세요.(속도 제한)",
   "skinsrestorer.skinsmenu_open": "<dark_green>스킨 메뉴를 여는 중이에요...",

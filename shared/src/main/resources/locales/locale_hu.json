@@ -88,7 +88,7 @@
   "skinsrestorer.only_allowed_on_console": "<dark_red>Hiba<dark_gray>: <red>Ezt a parancsot csak konzolból lehet futtatni!",
   "skinsrestorer.only_allowed_on_player": "<dark_red>Hiba<dark_gray>: <red>Ezt a parancsot csak játékosként lehet futtatni!",
   "skinsrestorer.invalid_player": "<dark_red>Hiba<dark_gray>: <red><input> nem egy érvényes játékosnév vagy URL.",
-  "skinsrestorer.skin_cooldown": "<dark_red>Hiba<dark_gray>: <red>A kinézetedet legkorábban <yellow><time></yellow> másodperc múlva változtathatod meg.",
+  "skinsrestorer.skin_cooldown": "<dark_red>Hiba<dark_gray>: <red>A kinézeted legkorábban <yellow><time></yellow> <red>múlva változtathatod meg.",
   "skinsrestorer.ms_uploading_skin": "<dark_green>Kinézeted feltöltése, kérlek várj... (Ez lehet eltart egy ideig)",
   "skinsrestorer.wait_a_minute": "<dark_red>Hiba<dark_gray>: <red>Kérlek, vérj egy percet, mielőtt újra lekéred azt a kinézetet. (Rate Limited)",
   "skinsrestorer.skinsmenu_open": "<dark_green>Kinézetek menüjének megnyitása...",
@@ -128,5 +128,13 @@
   "skinsrestorer.permission_admincommand_dump": "Engedélyezi a szerver információk feltöltését az \"/sr dump\" paranccsal.",
   "skinsrestorer.permission_bypasscooldown": "Megkerüli a konfigurációban beállított várakozási időt bármely parancsra.",
   "skinsrestorer.permission_bypassdisabled": "Megkerüli a konfigurációban letiltott kinézetek beállítását.",
-  "skinsrestorer.permission_ownskin": "Engedélyezi, hogy beállítsd a saját kinézeted."
+  "skinsrestorer.permission_ownskin": "Engedélyezi, hogy beállítsd a saját kinézeted.",
+  "skinsrestorer.duration_day": "nap",
+  "skinsrestorer.duration_days": "nap",
+  "skinsrestorer.duration_hour": "óra",
+  "skinsrestorer.duration_hours": "óra",
+  "skinsrestorer.duration_minute": "perc",
+  "skinsrestorer.duration_minutes": "perc",
+  "skinsrestorer.duration_second": "másodperc",
+  "skinsrestorer.duration_seconds": "másodperc"
 }
