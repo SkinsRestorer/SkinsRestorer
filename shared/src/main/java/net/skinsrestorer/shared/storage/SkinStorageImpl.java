@@ -36,7 +36,6 @@ import net.skinsrestorer.shared.storage.adapter.AdapterReference;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.storage.model.cache.MojangCacheData;
 import net.skinsrestorer.shared.storage.model.skin.*;
-import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.utils.SRHelpers;
 import net.skinsrestorer.shared.utils.UUIDUtils;
 import net.skinsrestorer.shared.utils.ValidationUtil;
@@ -54,7 +53,6 @@ import java.util.concurrent.TimeUnit;
 public class SkinStorageImpl implements SkinStorage {
     public static final String RECOMMENDATION_PREFIX = "sr-recommendation-";
     private final SRLogger logger;
-    private final SkinsRestorerLocale locale;
     private final CacheStorageImpl cacheStorage;
     private final MojangAPIImpl mojangAPI;
     private final MineSkinAPIImpl mineSkinAPI;
@@ -267,7 +265,17 @@ public class SkinStorageImpl implements SkinStorage {
                     yield Optional.empty();
                 }
             }
-            case URL, CUSTOM, LEGACY -> identifier.getIdentifier().describeConstable();
+            case URL, LEGACY -> identifier.getIdentifier().describeConstable();
+            case CUSTOM -> {
+                if (identifier.getIdentifier().startsWith(RECOMMENDATION_PREFIX)) {
+                    RecommenationResponse.SkinInfo skinInfo = recommendationsState.getRecommendation(identifier.getIdentifier().substring(RECOMMENDATION_PREFIX.length()));
+                    if (skinInfo != null) {
+                        yield Optional.of(skinInfo.getSkinName());
+                    }
+                }
+
+                yield identifier.getIdentifier().describeConstable();
+            }
         };
     }
 
