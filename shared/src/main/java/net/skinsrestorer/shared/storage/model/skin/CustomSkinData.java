@@ -21,6 +21,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.shared.utils.ComponentString;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
 
@@ -28,10 +30,11 @@ import java.util.Locale;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class CustomSkinData {
     private final String skinName;
+    private final @Nullable ComponentString displayName;
     private final SkinProperty property;
 
-    public static CustomSkinData of(String skinName, SkinProperty property) {
-        return new CustomSkinData(sanitizeCustomSkinName(skinName), property);
+    public static CustomSkinData of(String skinName, @Nullable ComponentString displayName, SkinProperty property) {
+        return new CustomSkinData(sanitizeCustomSkinName(skinName), displayName, property);
     }
 
     public static String sanitizeCustomSkinName(String skinName) {

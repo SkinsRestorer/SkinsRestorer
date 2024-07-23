@@ -30,6 +30,7 @@ import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
+import net.skinsrestorer.shared.utils.ComponentHelper;
 import net.skinsrestorer.shared.utils.GUIUtils;
 import net.skinsrestorer.shared.utils.SRHelpers;
 
@@ -124,7 +125,7 @@ public class GUIStorage {
                 return Arrays.stream(recommendationsState.getRecommendationsOffset(offset, limit))
                         .map(r -> new GUIUtils.GUIRawSkinEntry(
                                 RECOMMENDATION_PREFIX + r.getSkinId(),
-                                r.getSkinName(),
+                                ComponentHelper.convertPlainToJson(r.getSkinName()),
                                 PropertyUtils.getSkinTextureHash(r.getValue()),
                                 List.of()
                         ))
@@ -156,7 +157,7 @@ public class GUIStorage {
                 return playerStorage.getHistoryEntries(player.getUniqueId(), offset, limit).stream()
                         .map(h -> new GUIUtils.GUIRawSkinEntry(
                                 h.getSkinIdentifier().getIdentifier(),
-                                skinStorage.resolveSkinName(h.getSkinIdentifier()).orElseThrow(),
+                                skinStorage.resolveSkinName(h.getSkinIdentifier()),
                                 PropertyUtils.getSkinTextureHash(skinStorage.getSkinDataByIdentifier(h.getSkinIdentifier()).orElseThrow()),
                                 List.of(locale.getMessageRequired(player, Message.SKINSMENU_HISTORY_LORE,
                                         Placeholder.unparsed("time", SRHelpers.formatEpochSeconds(h.getTimestamp(), player.getLocale()))))

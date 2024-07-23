@@ -21,12 +21,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.storage.model.skin.CustomSkinData;
+import net.skinsrestorer.shared.utils.ComponentString;
+import org.jetbrains.annotations.Nullable;
 
 @Getter
 @NoArgsConstructor
 public class CustomSkinFile {
     private static final int CURRENT_DATA_VERSION = 1;
     private String skinName;
+    private @Nullable ComponentString displayName;
     private String value;
     private String signature;
     private int dataVersion;
@@ -34,6 +37,7 @@ public class CustomSkinFile {
     public static CustomSkinFile fromCustomSkinData(CustomSkinData customSkinData) {
         CustomSkinFile customSkinFile = new CustomSkinFile();
         customSkinFile.skinName = customSkinData.getSkinName();
+        customSkinFile.displayName = customSkinData.getDisplayName();
         customSkinFile.value = customSkinData.getProperty().getValue();
         customSkinFile.signature = customSkinData.getProperty().getSignature();
         customSkinFile.dataVersion = CURRENT_DATA_VERSION;
@@ -41,6 +45,6 @@ public class CustomSkinFile {
     }
 
     public CustomSkinData toCustomSkinData() {
-        return CustomSkinData.of(skinName, SkinProperty.of(value, signature));
+        return CustomSkinData.of(skinName, displayName, SkinProperty.of(value, signature));
     }
 }

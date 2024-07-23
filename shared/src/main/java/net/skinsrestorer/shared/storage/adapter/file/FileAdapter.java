@@ -18,8 +18,7 @@
 package net.skinsrestorer.shared.storage.adapter.file;
 
 import ch.jalu.configme.SettingsManager;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.*;
 import net.skinsrestorer.api.PropertyUtils;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.property.SkinVariant;
@@ -37,12 +36,11 @@ import net.skinsrestorer.shared.storage.model.cache.MojangCacheData;
 import net.skinsrestorer.shared.storage.model.player.LegacyPlayerData;
 import net.skinsrestorer.shared.storage.model.player.PlayerData;
 import net.skinsrestorer.shared.storage.model.skin.*;
-import net.skinsrestorer.shared.utils.GUIUtils;
-import net.skinsrestorer.shared.utils.SRHelpers;
-import net.skinsrestorer.shared.utils.UUIDUtils;
+import net.skinsrestorer.shared.utils.*;
 
 import javax.inject.Inject;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -59,7 +57,10 @@ public class FileAdapter implements StorageAdapter {
     private final Path cacheFolder;
     private final Path legacyFolder;
     private final SettingsManager settings;
-    private final Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+    private final Gson gson = new GsonBuilder()
+            .disableHtmlEscaping()
+            .registerTypeAdapter(ComponentString.class, new ComponentStringSerializer())
+            .create();
     private final SRLogger logger;
 
     @Inject
@@ -179,7 +180,7 @@ public class FileAdapter implements StorageAdapter {
 
                     // Remove this logic in like 50 years ;)
                     if (lines.length == 2 || isLegacyCustomSkinTimestamp(Long.parseLong(lines[2].trim()))) {
-                        setCustomSkinData(skinName, CustomSkinData.of(skinName, skinProperty));
+                        setCustomSkinData(skinName, CustomSkinData.of(skinName, null, skinProperty));
                     } else {
                         LegacySkinData legacySkinData = LegacySkinData.of(skinName, skinProperty);
 
@@ -486,7 +487,7 @@ public class FileAdapter implements StorageAdapter {
                 CustomSkinData customSkinData = getCustomSkinData(fileName).orElseThrow();
                 list.add(new GUIUtils.GUIRawSkinEntry(
                         fileName,
-                        fileName,
+                        customSkinData.getDisplayName() == null ? ComponentHelper.convertPlainToJson(fileName) : customSkinData.getDisplayName(),
                         PropertyUtils.getSkinTextureHash(customSkinData.getProperty()),
                         List.of()
                 ));
@@ -566,7 +567,7 @@ public class FileAdapter implements StorageAdapter {
                 PlayerSkinData playerSkinData = getPlayerSkinData(UUID.fromString(fileName)).orElseThrow();
                 list.add(new GUIUtils.GUIRawSkinEntry(
                         fileName,
-                        playerSkinData.getLastKnownName(),
+                        ComponentHelper.convertPlainToJson(playerSkinData.getLastKnownName()),
                         PropertyUtils.getSkinTextureHash(playerSkinData.getProperty()),
                         List.of()
                 ));
@@ -816,5 +817,17 @@ public class FileAdapter implements StorageAdapter {
     }
 
     private record GUIFileData(String fileName, Path path) {
+    }
+
+    private record ComponentStringSerializer() implements JsonSerializer<ComponentString>, JsonDeserializer<ComponentString> {
+        @Override
+        public ComponentString deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            return new ComponentString(json.getAsString());
+        }
+
+        @Override
+        public JsonElement serialize(ComponentString src, Type typeOfSrc, JsonSerializationContext context) {
+            return new JsonPrimitive(src.jsonString());
+        }
     }
 }

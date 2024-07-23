@@ -24,7 +24,6 @@ import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
-import net.skinsrestorer.shared.utils.ComponentHelper;
 
 import javax.inject.Inject;
 import java.util.HashMap;
@@ -50,7 +49,7 @@ public class SharedGUI {
 
             items.put(skinCount, new SRInventory.Item(
                     SRInventory.MaterialType.SKULL,
-                    ComponentHelper.convertPlainToJson(entry.base().skinName()),
+                    entry.base().skinName(),
                     entry.lore(),
                     Optional.of(entry.base().textureHash()),
                     false,

@@ -36,9 +36,7 @@ import net.skinsrestorer.shared.storage.adapter.AdapterReference;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.storage.model.cache.MojangCacheData;
 import net.skinsrestorer.shared.storage.model.skin.*;
-import net.skinsrestorer.shared.utils.SRHelpers;
-import net.skinsrestorer.shared.utils.UUIDUtils;
-import net.skinsrestorer.shared.utils.ValidationUtil;
+import net.skinsrestorer.shared.utils.*;
 
 import javax.inject.Inject;
 import java.time.Instant;
@@ -196,7 +194,7 @@ public class SkinStorageImpl implements SkinStorage {
 
     @Override
     public void setCustomSkinData(String skinName, SkinProperty property) {
-        adapterReference.get().setCustomSkinData(skinName, CustomSkinData.of(skinName, property));
+        adapterReference.get().setCustomSkinData(skinName, CustomSkinData.of(skinName, null, property));
     }
 
     @Override
@@ -254,27 +252,35 @@ public class SkinStorageImpl implements SkinStorage {
         return Optional.empty();
     }
 
-    public Optional<String> resolveSkinName(SkinIdentifier identifier) {
+    public ComponentString resolveSkinName(SkinIdentifier identifier) {
         return switch (identifier.getSkinType()) {
             case PLAYER -> {
                 try {
-                    yield adapterReference.get().getPlayerSkinData(UUID.fromString(identifier.getIdentifier()))
-                            .map(PlayerSkinData::getLastKnownName);
+                    yield ComponentHelper.convertPlainToJson(adapterReference.get().getPlayerSkinData(UUID.fromString(identifier.getIdentifier()))
+                            .map(PlayerSkinData::getLastKnownName)
+                            .orElse(identifier.getIdentifier()));
                 } catch (StorageAdapter.StorageException e) {
                     logger.warning("Failed to get skin data for %s".formatted(identifier), e);
-                    yield Optional.empty();
+                    yield ComponentHelper.convertPlainToJson(identifier.getIdentifier());
                 }
             }
-            case URL, LEGACY -> identifier.getIdentifier().describeConstable();
+            case URL, LEGACY -> ComponentHelper.convertPlainToJson(identifier.getIdentifier());
             case CUSTOM -> {
                 if (identifier.getIdentifier().startsWith(RECOMMENDATION_PREFIX)) {
                     RecommenationResponse.SkinInfo skinInfo = recommendationsState.getRecommendation(identifier.getIdentifier().substring(RECOMMENDATION_PREFIX.length()));
                     if (skinInfo != null) {
-                        yield Optional.of(skinInfo.getSkinName());
+                        yield ComponentHelper.convertPlainToJson(skinInfo.getSkinName());
                     }
                 }
 
-                yield identifier.getIdentifier().describeConstable();
+                try {
+                    yield adapterReference.get().getCustomSkinData(identifier.getIdentifier())
+                            .flatMap(c -> Optional.ofNullable(c.getDisplayName()))
+                            .orElse(ComponentHelper.convertPlainToJson(identifier.getIdentifier()));
+                } catch (StorageAdapter.StorageException e) {
+                    logger.warning("Failed to get skin data for %s".formatted(identifier), e);
+                    yield ComponentHelper.convertPlainToJson(identifier.getIdentifier());
+                }
             }
         };
     }

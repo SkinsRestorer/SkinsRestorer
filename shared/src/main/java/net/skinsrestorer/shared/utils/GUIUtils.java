@@ -93,6 +93,7 @@ public class GUIUtils {
         List<GUIUtils.GUIRawSkinEntry> getGUISkins(int offset, int limit);
     }
 
-    public record GUIRawSkinEntry(String skinId, String skinName, String textureHash, List<ComponentString> extraLore) {
+    public record GUIRawSkinEntry(String skinId, ComponentString skinName, String textureHash,
+                                  List<ComponentString> extraLore) {
     }
 }

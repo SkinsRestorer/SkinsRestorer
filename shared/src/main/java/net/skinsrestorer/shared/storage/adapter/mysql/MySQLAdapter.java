@@ -35,6 +35,8 @@ import net.skinsrestorer.shared.storage.model.player.HistoryData;
 import net.skinsrestorer.shared.storage.model.player.LegacyPlayerData;
 import net.skinsrestorer.shared.storage.model.player.PlayerData;
 import net.skinsrestorer.shared.storage.model.skin.*;
+import net.skinsrestorer.shared.utils.ComponentHelper;
+import net.skinsrestorer.shared.utils.ComponentString;
 import net.skinsrestorer.shared.utils.GUIUtils;
 
 import javax.inject.Inject;
@@ -108,6 +110,7 @@ public class MySQLAdapter implements StorageAdapter {
 
         mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolveCustomSkinTable() + "` ("
                 + "`name` VARCHAR(36) NOT NULL,"
+                + "`display_name` TEXT,"
                 + "`value` TEXT NOT NULL,"
                 + "`signature` TEXT NOT NULL,"
                 + "PRIMARY KEY (`name`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
@@ -128,6 +131,10 @@ public class MySQLAdapter implements StorageAdapter {
         // Now fully replaced by missing uuid column
         if (columnExists(resolveCacheTable(), "is_premium")) {
             mysql.execute("ALTER TABLE `" + resolveCacheTable() + "` DROP COLUMN `is_premium`");
+        }
+
+        if (!columnExists(resolveCustomSkinTable(), "display_name")) {
+            mysql.execute("ALTER TABLE `" + resolveCustomSkinTable() + "` ADD COLUMN `display_name` TEXT");
         }
     }
 
@@ -195,7 +202,7 @@ public class MySQLAdapter implements StorageAdapter {
 
                 // Remove this logic in like 50 years ;)
                 if (timestampString == null || isLegacyCustomSkinTimestamp(Long.parseLong(timestampString))) {
-                    setCustomSkinData(name, CustomSkinData.of(name, SkinProperty.of(value, signature)));
+                    setCustomSkinData(name, CustomSkinData.of(name, null, SkinProperty.of(value, signature)));
                 } else {
                     mysql.execute("INSERT INTO " + resolveLegacySkinTable() + " (name, value, signature) VALUES (?, ?, ?)",
                             name, value, signature);
@@ -415,10 +422,11 @@ public class MySQLAdapter implements StorageAdapter {
                 return Optional.empty();
             }
 
+            String displayName = crs.getString("display_name");
             String value = crs.getString("value");
             String signature = crs.getString("signature");
 
-            return Optional.of(CustomSkinData.of(skinName, SkinProperty.of(value, signature)));
+            return Optional.of(CustomSkinData.of(skinName, displayName == null ? null : new ComponentString(displayName), SkinProperty.of(value, signature)));
         } catch (SQLException e) {
             throw new StorageException(e);
         }
@@ -433,10 +441,12 @@ public class MySQLAdapter implements StorageAdapter {
     @Override
     public void setCustomSkinData(String skinName, CustomSkinData skinData) {
         skinName = CustomSkinData.sanitizeCustomSkinName(skinName);
-        mysql.execute("INSERT INTO " + resolveCustomSkinTable() + " (name, value, signature) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE value=?, signature=?",
+        mysql.execute("INSERT INTO " + resolveCustomSkinTable() + " (name, display_name, value, signature) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE display_name=?, value=?, signature=?",
                 skinName,
+                skinData.getDisplayName() == null ? null : skinData.getDisplayName().jsonString(),
                 skinData.getProperty().getValue(),
                 skinData.getProperty().getSignature(),
+                skinData.getDisplayName() == null ? null : skinData.getDisplayName().jsonString(),
                 skinData.getProperty().getValue(),
                 skinData.getProperty().getSignature());
     }
@@ -513,11 +523,12 @@ public class MySQLAdapter implements StorageAdapter {
         try (ResultSet crs = mysql.query(getCustomSkinQuery(offset, limit))) {
             while (crs.next()) {
                 String name = crs.getString("name");
+                String displayName = crs.getString("display_name");
                 String value = crs.getString("value");
 
                 skins.add(new GUIUtils.GUIRawSkinEntry(
                         name,
-                        name,
+                        displayName == null ? ComponentHelper.convertPlainToJson(name) : new ComponentString(displayName),
                         PropertyUtils.getSkinTextureHash(value),
                         List.of()
                 ));
@@ -577,7 +588,7 @@ public class MySQLAdapter implements StorageAdapter {
 
                 skins.add(new GUIUtils.GUIRawSkinEntry(
                         uuid,
-                        lastKnownName,
+                        ComponentHelper.convertPlainToJson(lastKnownName),
                         PropertyUtils.getSkinTextureHash(value),
                         List.of()
                 ));
