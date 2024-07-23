@@ -34,6 +34,7 @@
   "skinsrestorer.success_updating_skin_other": "玩家 <name> 皮肤已更新。",
   "skinsrestorer.success_admin_applyskin": "玩家皮肤已刷新！",
   "skinsrestorer.success_admin_createcustom": "皮肤 <skin> 已创建！",
+  "skinsrestorer.success_admin_setcustomname": "皮肤 <skin> 的名称已设置为 <display_name>",
   "skinsrestorer.success_admin_drop": "<type> 数据已丢失到 <target>",
   "skinsrestorer.success_admin_reload": "配置文件和区域设置已重新加载。",
   "skinsrestorer.error_generic": "<dark_red>错误<dark_gray>: <red><message>",
