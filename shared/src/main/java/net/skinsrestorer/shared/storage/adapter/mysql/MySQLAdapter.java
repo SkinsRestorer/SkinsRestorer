@@ -31,6 +31,7 @@ import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.storage.model.cache.MojangCacheData;
+import net.skinsrestorer.shared.storage.model.player.FavouriteData;
 import net.skinsrestorer.shared.storage.model.player.HistoryData;
 import net.skinsrestorer.shared.storage.model.player.LegacyPlayerData;
 import net.skinsrestorer.shared.storage.model.player.PlayerData;
@@ -80,6 +81,14 @@ public class MySQLAdapter implements StorageAdapter {
                 + "PRIMARY KEY (`uuid`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
 
         mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolvePlayerHistoryTable() + "` ("
+                + "`uuid` VARCHAR(36) NOT NULL,"
+                + "`timestamp` BIGINT(20) NOT NULL,"
+                + "`skin_identifier` VARCHAR(2083) NOT NULL,"
+                + "`skin_variant` VARCHAR(20),"
+                + "`skin_type` VARCHAR(20) NOT NULL,"
+                + "PRIMARY KEY (`uuid`, `timestamp`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+
+        mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolvePlayerFavouritesTable() + "` ("
                 + "`uuid` VARCHAR(36) NOT NULL,"
                 + "`timestamp` BIGINT(20) NOT NULL,"
                 + "`skin_identifier` VARCHAR(2083) NOT NULL,"
@@ -239,7 +248,8 @@ public class MySQLAdapter implements StorageAdapter {
     @Override
     public Optional<PlayerData> getPlayerData(UUID uuid) throws StorageException {
         try (ResultSet crs = mysql.query("SELECT * FROM " + resolvePlayerTable() + " WHERE uuid=?", uuid.toString());
-             ResultSet historyCrs = mysql.query("SELECT * FROM " + resolvePlayerHistoryTable() + " WHERE uuid=?", uuid.toString())) {
+             ResultSet historyCrs = mysql.query("SELECT * FROM " + resolvePlayerHistoryTable() + " WHERE uuid=?", uuid.toString());
+             ResultSet favouritesCrs = mysql.query("SELECT * FROM " + resolvePlayerFavouritesTable() + " WHERE uuid=?", uuid.toString())) {
             if (!crs.next()) {
                 return Optional.empty();
             }
@@ -267,7 +277,22 @@ public class MySQLAdapter implements StorageAdapter {
                 history.add(HistoryData.of(historyCrs.getLong("timestamp"), historyIdentifier));
             }
 
-            return Optional.of(PlayerData.of(uuid, identifier, history));
+            List<FavouriteData> favourites = new ArrayList<>();
+            while (favouritesCrs.next()) {
+                String favouriteSkinIdentifier = favouritesCrs.getString("skin_identifier");
+                String favouriteSkinType = favouritesCrs.getString("skin_type");
+                String favouriteSkinVariant = favouritesCrs.getString("skin_variant");
+
+                SkinIdentifier favouriteIdentifier = SkinIdentifier.of(
+                        favouriteSkinIdentifier,
+                        favouriteSkinVariant == null ? null : SkinVariant.valueOf(favouriteSkinVariant),
+                        SkinType.valueOf(favouriteSkinType)
+                );
+
+                favourites.add(FavouriteData.of(favouritesCrs.getLong("timestamp"), favouriteIdentifier));
+            }
+
+            return Optional.of(PlayerData.of(uuid, identifier, history, favourites));
         } catch (SQLException e) {
             throw new StorageException(e);
         }
@@ -726,6 +751,10 @@ public class MySQLAdapter implements StorageAdapter {
 
     private String resolvePlayerHistoryTable() {
         return settings.getProperty(DatabaseConfig.MYSQL_TABLE_PREFIX) + "player_history";
+    }
+
+    private String resolvePlayerFavouritesTable() {
+        return settings.getProperty(DatabaseConfig.MYSQL_TABLE_PREFIX) + "player_favourites";
     }
 
     private String resolveCooldownTable() {

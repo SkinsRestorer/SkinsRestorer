@@ -74,6 +74,12 @@ public class CommandConfig implements SettingsHolder {
     })
     public static final Property<Integer> MAX_HISTORY_LENGTH = newProperty("commands.maxHistoryLength", SharedGUI.HEAD_COUNT_PER_PAGE);
     @Comment({
+            "How many favourites a player may have.",
+            "This is used for the /skin favourite command.",
+            "Use 0 to disable storing favourites."
+    })
+    public static final Property<Integer> MAX_FAVOURITE_LENGTH = newProperty("commands.maxFavouriteLength", SharedGUI.HEAD_COUNT_PER_PAGE * 5);
+    @Comment({
             "Override the automatically generated translated help message with a custom one.",
             "This is useful if you want to have a custom help message for your server.",
             "This only affects the base help message when running /skin with no parameters, not the error/subcommand help messages."

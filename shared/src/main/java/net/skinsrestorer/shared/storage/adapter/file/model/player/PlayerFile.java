@@ -23,10 +23,10 @@ import lombok.NoArgsConstructor;
 import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.api.property.SkinType;
 import net.skinsrestorer.api.property.SkinVariant;
+import net.skinsrestorer.shared.storage.model.player.FavouriteData;
 import net.skinsrestorer.shared.storage.model.player.HistoryData;
 import net.skinsrestorer.shared.storage.model.player.PlayerData;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,6 +37,7 @@ public class PlayerFile {
     private UUID uniqueId;
     private IdentifierFile skinIdentifier;
     private List<HistoryFile> history;
+    private List<FavouritesFile> favourites;
     private int dataVersion;
 
     public static PlayerFile fromPlayerData(PlayerData playerData) {
@@ -45,6 +46,7 @@ public class PlayerFile {
         playerFile.skinIdentifier = IdentifierFile.of(playerData.getSkinIdentifier());
         playerFile.dataVersion = CURRENT_DATA_VERSION;
         playerFile.history = playerData.getHistory().stream().map(HistoryFile::of).toList();
+        playerFile.favourites = playerData.getFavourites().stream().map(FavouritesFile::of).toList();
         return playerFile;
     }
 
@@ -52,7 +54,8 @@ public class PlayerFile {
         return PlayerData.of(
                 uniqueId,
                 skinIdentifier == null ? null : skinIdentifier.toIdentifier(),
-                history == null ? Collections.emptyList() : history.stream().map(HistoryFile::toHistoryData).toList()
+                history == null ? List.of() : history.stream().map(HistoryFile::toHistoryData).toList(),
+                favourites == null ? List.of() : favourites.stream().map(FavouritesFile::toFavouritesData).toList()
         );
     }
 
@@ -94,6 +97,26 @@ public class PlayerFile {
 
         public HistoryData toHistoryData() {
             return HistoryData.of(timestamp, skinIdentifier.toIdentifier());
+        }
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor(staticName = "of")
+    public static class FavouritesFile {
+        private long timestamp;
+        private IdentifierFile skinIdentifier;
+
+        public static FavouritesFile of(FavouriteData favouriteData) {
+            if (favouriteData == null) {
+                return null;
+            }
+
+            return new FavouritesFile(favouriteData.getTimestamp(), IdentifierFile.of(favouriteData.getSkinIdentifier()));
+        }
+
+        public FavouriteData toFavouritesData() {
+            return FavouriteData.of(timestamp, skinIdentifier.toIdentifier());
         }
     }
 }

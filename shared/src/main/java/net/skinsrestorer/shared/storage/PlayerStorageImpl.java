@@ -31,6 +31,7 @@ import net.skinsrestorer.shared.floodgate.FloodgateUtil;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.storage.adapter.AdapterReference;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
+import net.skinsrestorer.shared.storage.model.player.FavouriteData;
 import net.skinsrestorer.shared.storage.model.player.HistoryData;
 import net.skinsrestorer.shared.storage.model.player.PlayerData;
 import net.skinsrestorer.shared.utils.SRHelpers;
@@ -75,7 +76,7 @@ public class PlayerStorageImpl implements PlayerStorage {
                 playerData.setSkinIdentifier(identifier);
                 adapterReference.get().setPlayerData(uuid, playerData);
             } else {
-                adapterReference.get().setPlayerData(uuid, PlayerData.of(uuid, identifier, List.of()));
+                adapterReference.get().setPlayerData(uuid, PlayerData.of(uuid, identifier, List.of(), List.of()));
             }
         } catch (StorageAdapter.StorageException e) {
             logger.severe("Failed to set skin data of player %s".formatted(uuid), e);
@@ -146,7 +147,7 @@ public class PlayerStorageImpl implements PlayerStorage {
 
                 adapterReference.get().setPlayerData(uuid, playerData);
             } else {
-                adapterReference.get().setPlayerData(uuid, PlayerData.of(uuid, null, List.of(historyData)));
+                adapterReference.get().setPlayerData(uuid, PlayerData.of(uuid, null, List.of(historyData), List.of()));
             }
         } catch (StorageAdapter.StorageException e) {
             logger.severe("Failed to push skin data of player %s".formatted(uuid), e);
@@ -160,6 +161,74 @@ public class PlayerStorageImpl implements PlayerStorage {
             if (optional.isPresent()) {
                 PlayerData playerData = optional.get();
                 playerData.setHistory(playerData.getHistory().stream().filter(data -> !data.equals(historyData)).toList());
+
+                adapterReference.get().setPlayerData(uuid, playerData);
+            }
+        } catch (StorageAdapter.StorageException e) {
+            logger.severe("Failed to remove skin data of player %s".formatted(uuid), e);
+        }
+    }
+
+    public int getFavouriteCount(UUID uuid) {
+        return getHistoryEntries(uuid, 0, Integer.MAX_VALUE).size();
+    }
+
+    public List<FavouriteData> getFavouriteEntries(UUID uuid, int skip, int limit) {
+        try {
+            Optional<PlayerData> optional = adapterReference.get().getPlayerData(uuid);
+
+            if (optional.isPresent()) {
+                PlayerData playerData = optional.get();
+                return playerData.getFavourites().stream()
+                        .sorted(Comparator.comparing(FavouriteData::getTimestamp).reversed())
+                        .skip(skip)
+                        .limit(limit)
+                        .toList();
+            }
+        } catch (StorageAdapter.StorageException e) {
+            logger.severe("Failed to get skin data of player %s".formatted(uuid), e);
+        }
+
+        return List.of();
+    }
+
+    public void addFavourite(UUID uuid, FavouriteData favouriteData) {
+        int maxFavourites = settings.getProperty(CommandConfig.MAX_FAVOURITE_LENGTH);
+        if (maxFavourites <= 0) {
+            return;
+        }
+
+        try {
+            Optional<PlayerData> optional = adapterReference.get().getPlayerData(uuid);
+            if (optional.isPresent()) {
+                PlayerData playerData = optional.get();
+                boolean alreadyIsFavourite = playerData.getFavourites().stream().anyMatch(data -> data.getSkinIdentifier().equals(favouriteData.getSkinIdentifier()));
+                if (alreadyIsFavourite) {
+                    // don't add the same skin to the favourites
+                    return;
+                }
+
+                playerData.setFavourites(Stream.concat(playerData.getFavourites().stream(), Stream.of(favouriteData))
+                        .sorted(Comparator.comparing(FavouriteData::getTimestamp))
+                        .skip(Math.max(0, playerData.getHistory().size() + 1 - maxFavourites))
+                        .toList());
+
+                adapterReference.get().setPlayerData(uuid, playerData);
+            } else {
+                adapterReference.get().setPlayerData(uuid, PlayerData.of(uuid, null, List.of(), List.of(favouriteData)));
+            }
+        } catch (StorageAdapter.StorageException e) {
+            logger.severe("Failed to push skin data of player %s".formatted(uuid), e);
+        }
+    }
+
+    public void removeFavourite(UUID uuid, FavouriteData favouriteData) {
+        try {
+            Optional<PlayerData> optional = adapterReference.get().getPlayerData(uuid);
+
+            if (optional.isPresent()) {
+                PlayerData playerData = optional.get();
+                playerData.setFavourites(playerData.getFavourites().stream().filter(data -> !data.getSkinIdentifier().equals(favouriteData.getSkinIdentifier())).toList());
 
                 adapterReference.get().setPlayerData(uuid, playerData);
             }

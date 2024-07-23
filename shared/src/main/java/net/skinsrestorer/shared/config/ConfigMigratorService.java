@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Collections;
+import java.util.List;
 
 import static ch.jalu.configme.properties.PropertyInitializer.newListProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
@@ -73,22 +73,22 @@ public class ConfigMigratorService implements MigrationService {
         migrated |= moveProperty(newProperty("DisablePrefix", false), MessageConfig.DISABLE_PREFIX, reader, configData);
         migrated |= moveProperty(newProperty("DefaultSkins.Enabled", false), StorageConfig.DEFAULT_SKINS_ENABLED, reader, configData);
         migrated |= moveProperty(newProperty("DefaultSkins.ApplyForPremium", false), StorageConfig.DEFAULT_SKINS_PREMIUM, reader, configData);
-        migrated |= moveProperty(newListProperty("DefaultSkins.Names", Collections.emptyList()), StorageConfig.DEFAULT_SKINS, reader, configData);
+        migrated |= moveProperty(newListProperty("DefaultSkins.Names", List.of()), StorageConfig.DEFAULT_SKINS, reader, configData);
         migrated |= moveProperty(newProperty("DisabledSkins.Enabled", false), CommandConfig.DISABLED_SKINS_ENABLED, reader, configData);
-        migrated |= moveProperty(newListProperty("DisabledSkins.Names", Collections.emptyList()), CommandConfig.DISABLED_SKINS, reader, configData);
+        migrated |= moveProperty(newListProperty("DisabledSkins.Names", List.of()), CommandConfig.DISABLED_SKINS, reader, configData);
         migrated |= moveProperty(newProperty("NotAllowedCommandServers.Enabled", true), ProxyConfig.NOT_ALLOWED_COMMAND_SERVERS_ENABLED, reader, configData);
         migrated |= moveProperty(newProperty("NotAllowedCommandServers.AllowList", false), ProxyConfig.NOT_ALLOWED_COMMAND_SERVERS_ALLOWLIST, reader, configData);
         migrated |= moveProperty(newProperty("NotAllowedCommandServers.IfNoServerBlockCommand", false), ProxyConfig.NOT_ALLOWED_COMMAND_SERVERS_IF_NONE_BLOCK_COMMAND, reader, configData);
-        migrated |= moveProperty(newListProperty("NotAllowedCommandServers.List", Collections.emptyList()), ProxyConfig.NOT_ALLOWED_COMMAND_SERVERS, reader, configData);
+        migrated |= moveProperty(newListProperty("NotAllowedCommandServers.List", List.of()), ProxyConfig.NOT_ALLOWED_COMMAND_SERVERS, reader, configData);
         migrated |= moveProperty(newProperty("CustomGUI.Enabled", false), GUIConfig.CUSTOM_GUI_ENABLED, reader, configData);
         migrated |= moveProperty(newProperty("CustomGUI.ShowOnlyCustomGUI", true), GUIConfig.CUSTOM_GUI_ONLY_LIST, reader, configData);
-        migrated |= moveProperty(newListProperty("CustomGUI.Names", Collections.emptyList()), GUIConfig.CUSTOM_GUI_LIST, reader, configData);
+        migrated |= moveProperty(newListProperty("CustomGUI.Names", List.of()), GUIConfig.CUSTOM_GUI_LIST, reader, configData);
         migrated |= moveProperty(newProperty("PerSkinPermissions", false), CommandConfig.PER_SKIN_PERMISSIONS, reader, configData);
         migrated |= moveProperty(newProperty("SkinExpiresAfter", 15), StorageConfig.SKIN_EXPIRES_AFTER, reader, configData);
         migrated |= moveProperty(newProperty("NoSkinIfLoginCanceled", true), LoginConfig.NO_SKIN_IF_LOGIN_CANCELED, reader, configData);
         migrated |= moveProperty(newProperty("AlwaysApplyPremium", false), LoginConfig.ALWAYS_APPLY_PREMIUM, reader, configData);
         migrated |= moveProperty(newProperty("RestrictSkinUrls.Enabled", false), CommandConfig.RESTRICT_SKIN_URLS_ENABLED, reader, configData);
-        migrated |= moveProperty(newListProperty("RestrictSkinUrls.List", Collections.emptyList()), CommandConfig.RESTRICT_SKIN_URLS_LIST, reader, configData);
+        migrated |= moveProperty(newListProperty("RestrictSkinUrls.List", List.of()), CommandConfig.RESTRICT_SKIN_URLS_LIST, reader, configData);
         migrated |= moveProperty(newProperty("MineskinAPIKey", "key"), APIConfig.MINESKIN_API_KEY, reader, configData);
         migrated |= moveProperty(newProperty("ResourcePackFix", true), ServerConfig.RESOURCE_PACK_FIX, reader, configData);
         migrated |= moveProperty(newProperty("DismountPlayerOnSkinUpdate", true), ServerConfig.DISMOUNT_PLAYER_ON_UPDATE, reader, configData);
@@ -128,7 +128,7 @@ public class ConfigMigratorService implements MigrationService {
         boolean migrated = false;
         migrated |= moveProperty(newProperty("customGUI.enabled", true), GUIConfig.CUSTOM_GUI_ENABLED, reader, configData);
         migrated |= moveProperty(newProperty("customGUI.showOnlyCustomGUI", false), GUIConfig.CUSTOM_GUI_ONLY_LIST, reader, configData);
-        migrated |= moveProperty(newListProperty("customGUI.list", Collections.emptyList()), GUIConfig.CUSTOM_GUI_LIST, reader, configData);
+        migrated |= moveProperty(newListProperty("customGUI.list", List.of()), GUIConfig.CUSTOM_GUI_LIST, reader, configData);
 
         return migrated;
     }

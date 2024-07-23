@@ -102,8 +102,8 @@ public interface StorageAdapter {
 
         // Handle migrated or new custom skins
         Optional<CustomSkinData> customSkinData = getCustomSkinData(legacyPlayerData.get().getSkinName());
-        setPlayerData(uuid, customSkinData.map(skinData -> PlayerData.of(uuid, SkinIdentifier.ofCustom(skinData.getSkinName()), Collections.emptyList()))
-                .orElseGet(() -> PlayerData.of(uuid, SkinIdentifier.of(legacyPlayerData.get().getSkinName(), null, SkinType.LEGACY), Collections.emptyList())));
+        setPlayerData(uuid, customSkinData.map(skinData -> PlayerData.of(uuid, SkinIdentifier.ofCustom(skinData.getSkinName()), List.of(), List.of()))
+                .orElseGet(() -> PlayerData.of(uuid, SkinIdentifier.of(legacyPlayerData.get().getSkinName(), null, SkinType.LEGACY), List.of(), List.of())));
 
         removeLegacyPlayerData(playerName);
     }
