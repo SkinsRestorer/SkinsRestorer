@@ -30,7 +30,8 @@ import java.util.Locale;
 public enum PageType implements NetworkId {
     SELECT(Message.SKINSMENU_TITLE_SELECT),
     MAIN(Message.SKINSMENU_TITLE_MAIN),
-    HISTORY(Message.SKINSMENU_TITLE_HISTORY);
+    HISTORY(Message.SKINSMENU_TITLE_HISTORY),
+    FAVOURITES(Message.SKINSMENU_TITLE_FAVOURITES);
 
     public static final NetworkCodec<PageType> CODEC = NetworkCodec.ofEnum(PageType.class);
     private final Message title;

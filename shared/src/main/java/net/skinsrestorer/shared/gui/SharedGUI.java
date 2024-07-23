@@ -141,6 +141,18 @@ public class SharedGUI {
                             )), false))
                     )
             ));
+            items.put(24, new SRInventory.Item(
+                    SRInventory.MaterialType.ENCHANTING_TABLE,
+                    locale.getMessageRequired(player, Message.SKINSMENU_FAVOURITES_BUTTON),
+                    List.of(),
+                    Optional.empty(),
+                    false,
+                    Map.ofEntries(
+                            Map.entry(ClickEventType.LEFT, new SRInventory.ClickEventAction(new SRProxyPluginMessage.GUIActionChannelPayload(new SRProxyPluginMessage.GUIActionChannelPayload.OpenPagePayload(
+                                    0, PageType.FAVOURITES
+                            )), false))
+                    )
+            ));
         }
 
         return new SRInventory(

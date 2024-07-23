@@ -164,6 +164,39 @@ public class GUIStorage {
                         ))
                         .toList();
             }
+        }, new GUIUtils.GUIDataSource() {
+            @Override
+            public boolean isEnabled() {
+                return player.hasPermission(PermissionRegistry.SKIN_FAVOURITE);
+            }
+
+            @Override
+            public PageType getPageType() {
+                return PageType.FAVOURITES;
+            }
+
+            @Override
+            public int getIndex() {
+                return 0;
+            }
+
+            @Override
+            public int getTotalSkins() {
+                return playerStorage.getFavouriteCount(player.getUniqueId());
+            }
+
+            @Override
+            public List<GUIUtils.GUIRawSkinEntry> getGUISkins(int offset, int limit) {
+                return playerStorage.getFavouriteEntries(player.getUniqueId(), offset, limit).stream()
+                        .map(h -> new GUIUtils.GUIRawSkinEntry(
+                                h.getSkinIdentifier().getIdentifier(),
+                                skinStorage.resolveSkinName(h.getSkinIdentifier()),
+                                PropertyUtils.getSkinTextureHash(skinStorage.getSkinDataByIdentifier(h.getSkinIdentifier()).orElseThrow()),
+                                List.of(locale.getMessageRequired(player, Message.SKINSMENU_FAVOURITES_LORE,
+                                        Placeholder.unparsed("time", SRHelpers.formatEpochSeconds(h.getTimestamp(), player.getLocale()))))
+                        ))
+                        .toList();
+            }
         });
     }
 }
