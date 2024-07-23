@@ -394,12 +394,14 @@ public final class SkinCommand {
                 return;
             }
 
+            sender.sendMessage(Message.DIVIDER);
             for (HistoryData historyData : historyDataList) {
                 sender.sendMessage(Message.SUCCESS_HISTORY_LINE,
                         Placeholder.parsed("timestamp", SRHelpers.formatEpochSeconds(historyData.getTimestamp(), sender.getLocale())),
                         Placeholder.parsed("skin_id", historyData.getSkinIdentifier().getIdentifier()),
                         Placeholder.component("skin", ComponentHelper.convertJsonToComponent(skinStorage.resolveSkinName(historyData.getSkinIdentifier()))));
             }
+            sender.sendMessage(Message.DIVIDER);
         }
     }
 
@@ -470,12 +472,14 @@ public final class SkinCommand {
                 return;
             }
 
+            sender.sendMessage(Message.DIVIDER);
             for (FavouriteData favouriteData : favouriteDataList) {
                 sender.sendMessage(Message.SUCCESS_HISTORY_LINE,
                         Placeholder.parsed("timestamp", SRHelpers.formatEpochSeconds(favouriteData.getTimestamp(), sender.getLocale())),
                         Placeholder.parsed("skin_id", favouriteData.getSkinIdentifier().getIdentifier()),
                         Placeholder.component("skin", ComponentHelper.convertJsonToComponent(skinStorage.resolveSkinName(favouriteData.getSkinIdentifier()))));
             }
+            sender.sendMessage(Message.DIVIDER);
         }
     }
 
