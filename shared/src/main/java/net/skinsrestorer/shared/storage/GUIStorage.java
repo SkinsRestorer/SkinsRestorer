@@ -21,6 +21,7 @@ import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.skinsrestorer.api.PropertyUtils;
+import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.shared.config.GUIConfig;
 import net.skinsrestorer.shared.connections.RecommendationsState;
 import net.skinsrestorer.shared.gui.PageInfo;
@@ -49,7 +50,7 @@ public class GUIStorage {
     private final RecommendationsState recommendationsState;
 
     public PageInfo getGUIPage(SRPlayer player, int page, PageType pageType) {
-        return GUIUtils.getGUIPage(player, locale, page, pageType, new GUIUtils.GUIDataSource() {
+        return GUIUtils.getGUIPage(player, locale, playerStorage, page, pageType, new GUIUtils.GUIDataSource() {
             @Override
             public boolean isEnabled() {
                 return settings.getProperty(GUIConfig.CUSTOM_GUI_ENABLED);
@@ -124,7 +125,7 @@ public class GUIStorage {
             public List<GUIUtils.GUIRawSkinEntry> getGUISkins(int offset, int limit) {
                 return Arrays.stream(recommendationsState.getRecommendationsOffset(offset, limit))
                         .map(r -> new GUIUtils.GUIRawSkinEntry(
-                                RECOMMENDATION_PREFIX + r.getSkinId(),
+                                SkinIdentifier.ofCustom(RECOMMENDATION_PREFIX + r.getSkinId()),
                                 ComponentHelper.convertPlainToJson(r.getSkinName()),
                                 PropertyUtils.getSkinTextureHash(r.getValue()),
                                 List.of()
@@ -156,11 +157,11 @@ public class GUIStorage {
             public List<GUIUtils.GUIRawSkinEntry> getGUISkins(int offset, int limit) {
                 return playerStorage.getHistoryEntries(player.getUniqueId(), offset, limit).stream()
                         .map(h -> new GUIUtils.GUIRawSkinEntry(
-                                h.getSkinIdentifier().getIdentifier(),
+                                h.getSkinIdentifier(),
                                 skinStorage.resolveSkinName(h.getSkinIdentifier()),
                                 PropertyUtils.getSkinTextureHash(skinStorage.getSkinDataByIdentifier(h.getSkinIdentifier()).orElseThrow()),
                                 List.of(locale.getMessageRequired(player, Message.SKINSMENU_HISTORY_LORE,
-                                        Placeholder.unparsed("time", SRHelpers.formatEpochSeconds(h.getTimestamp(), player.getLocale()))))
+                                        Placeholder.parsed("time", SRHelpers.formatEpochSeconds(h.getTimestamp(), player.getLocale()))))
                         ))
                         .toList();
             }
@@ -189,11 +190,11 @@ public class GUIStorage {
             public List<GUIUtils.GUIRawSkinEntry> getGUISkins(int offset, int limit) {
                 return playerStorage.getFavouriteEntries(player.getUniqueId(), offset, limit).stream()
                         .map(h -> new GUIUtils.GUIRawSkinEntry(
-                                h.getSkinIdentifier().getIdentifier(),
+                                h.getSkinIdentifier(),
                                 skinStorage.resolveSkinName(h.getSkinIdentifier()),
                                 PropertyUtils.getSkinTextureHash(skinStorage.getSkinDataByIdentifier(h.getSkinIdentifier()).orElseThrow()),
                                 List.of(locale.getMessageRequired(player, Message.SKINSMENU_FAVOURITES_LORE,
-                                        Placeholder.unparsed("time", SRHelpers.formatEpochSeconds(h.getTimestamp(), player.getLocale()))))
+                                        Placeholder.parsed("time", SRHelpers.formatEpochSeconds(h.getTimestamp(), player.getLocale()))))
                         ))
                         .toList();
             }

@@ -17,22 +17,22 @@
  */
 package net.skinsrestorer.shared.utils;
 
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.shared.gui.GUISkinEntry;
 import net.skinsrestorer.shared.gui.PageInfo;
 import net.skinsrestorer.shared.gui.PageType;
 import net.skinsrestorer.shared.gui.SharedGUI;
+import net.skinsrestorer.shared.storage.PlayerStorageImpl;
+import net.skinsrestorer.shared.storage.model.player.FavouriteData;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Stream;
+import java.util.*;
 
 public class GUIUtils {
-    public static PageInfo getGUIPage(SRPlayer player, SkinsRestorerLocale locale, int page, PageType pageType, GUIDataSource... sources) {
+    public static PageInfo getGUIPage(SRPlayer player, SkinsRestorerLocale locale, PlayerStorageImpl playerStorage, int page, PageType pageType, GUIDataSource... sources) {
         if (page < 0) {
             page = 0;
         }
@@ -63,7 +63,24 @@ public class GUIUtils {
 
             List<GUIUtils.GUIRawSkinEntry> sourceSkins = source.getGUISkins(sourceOffset, sourceLimit);
             sourceSkins.stream()
-                    .map(base -> new GUISkinEntry(base, Stream.concat(Stream.of(locale.getMessageRequired(player, Message.SKINSMENU_SELECT_SKIN)), base.extraLore().stream()).toList()))
+                    .map(base -> {
+                        List<ComponentString> lore = new ArrayList<>();
+                        lore.add(locale.getMessageRequired(player, Message.SKINSMENU_SELECT_SKIN));
+                        Optional<FavouriteData> favouriteData = playerStorage.getFavouriteData(player.getUniqueId(), base.skinIdentifier());
+                        if (pageType == PageType.FAVOURITES) {
+                            favouriteData.ifPresent(data -> lore.add(locale.getMessageRequired(player, Message.SKINSMENU_FAVOURITE_SINCE_LORE,
+                                    Placeholder.unparsed("time", SRHelpers.formatEpochSeconds(data.getTimestamp(), player.getLocale())))));
+                        } else {
+                            if (favouriteData.isPresent()) {
+                                lore.add(locale.getMessageRequired(player, Message.SKINSMENU_REMOVE_FAVOURITE_LORE));
+                            } else {
+                                lore.add(locale.getMessageRequired(player, Message.SKINSMENU_SET_FAVOURITE_LORE));
+                            }
+                        }
+
+                        lore.addAll(base.extraLore());
+                        return new GUISkinEntry(base, lore, favouriteData.isPresent());
+                    })
                     .forEach(skinPage::add);
 
             if (sourceTotal > 0 && sourceSkins.size() < sourceTotal - sourceOffset) {
@@ -93,7 +110,7 @@ public class GUIUtils {
         List<GUIUtils.GUIRawSkinEntry> getGUISkins(int offset, int limit);
     }
 
-    public record GUIRawSkinEntry(String skinId, ComponentString skinName, String textureHash,
+    public record GUIRawSkinEntry(SkinIdentifier skinIdentifier, ComponentString skinName, String textureHash,
                                   List<ComponentString> extraLore) {
     }
 }

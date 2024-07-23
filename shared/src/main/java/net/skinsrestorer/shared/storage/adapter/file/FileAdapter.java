@@ -20,6 +20,7 @@ package net.skinsrestorer.shared.storage.adapter.file;
 import ch.jalu.configme.SettingsManager;
 import com.google.gson.*;
 import net.skinsrestorer.api.PropertyUtils;
+import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.property.SkinVariant;
 import net.skinsrestorer.shared.config.GUIConfig;
@@ -486,7 +487,7 @@ public class FileAdapter implements StorageAdapter {
             try {
                 CustomSkinData customSkinData = getCustomSkinData(fileName).orElseThrow();
                 list.add(new GUIUtils.GUIRawSkinEntry(
-                        fileName,
+                        SkinIdentifier.ofCustom(fileName),
                         customSkinData.getDisplayName() == null ? ComponentHelper.convertPlainToJson(fileName) : customSkinData.getDisplayName(),
                         PropertyUtils.getSkinTextureHash(customSkinData.getProperty()),
                         List.of()
@@ -566,7 +567,7 @@ public class FileAdapter implements StorageAdapter {
             try {
                 PlayerSkinData playerSkinData = getPlayerSkinData(UUID.fromString(fileName)).orElseThrow();
                 list.add(new GUIUtils.GUIRawSkinEntry(
-                        fileName,
+                        SkinIdentifier.ofPlayer(UUID.fromString(fileName)),
                         ComponentHelper.convertPlainToJson(playerSkinData.getLastKnownName()),
                         PropertyUtils.getSkinTextureHash(playerSkinData.getProperty()),
                         List.of()

@@ -52,10 +52,10 @@ public class SharedGUI {
                     entry.base().skinName(),
                     entry.lore(),
                     Optional.of(entry.base().textureHash()),
-                    false,
+                    entry.enchantmentGlow(),
                     Map.ofEntries(
                             Map.entry(ClickEventType.LEFT, new SRInventory.ClickEventAction(new SRProxyPluginMessage.GUIActionChannelPayload(new SRProxyPluginMessage.GUIActionChannelPayload.SetSkinPayload(
-                                    entry.base().skinId()
+                                    entry.base().skinIdentifier().getIdentifier()
                             )), true))
                     )
             ));

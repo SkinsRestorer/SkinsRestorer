@@ -22,5 +22,5 @@ import net.skinsrestorer.shared.utils.GUIUtils;
 
 import java.util.List;
 
-public record GUISkinEntry(GUIUtils.GUIRawSkinEntry base, List<ComponentString> lore) {
+public record GUISkinEntry(GUIUtils.GUIRawSkinEntry base, List<ComponentString> lore, boolean enchantmentGlow) {
 }

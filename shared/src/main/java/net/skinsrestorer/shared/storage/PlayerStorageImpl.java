@@ -169,6 +169,12 @@ public class PlayerStorageImpl implements PlayerStorage {
         }
     }
 
+    public Optional<FavouriteData> getFavouriteData(UUID uuid, SkinIdentifier skinIdentifier) {
+        return getFavouriteEntries(uuid, 0, Integer.MAX_VALUE).stream()
+                .filter(data -> data.getSkinIdentifier().equals(skinIdentifier))
+                .findFirst();
+    }
+
     public int getFavouriteCount(UUID uuid) {
         return getHistoryEntries(uuid, 0, Integer.MAX_VALUE).size();
     }

@@ -552,7 +552,7 @@ public class MySQLAdapter implements StorageAdapter {
                 String value = crs.getString("value");
 
                 skins.add(new GUIUtils.GUIRawSkinEntry(
-                        name,
+                        SkinIdentifier.ofCustom(name),
                         displayName == null ? ComponentHelper.convertPlainToJson(name) : new ComponentString(displayName),
                         PropertyUtils.getSkinTextureHash(value),
                         List.of()
@@ -612,7 +612,7 @@ public class MySQLAdapter implements StorageAdapter {
                 String value = crs.getString("value");
 
                 skins.add(new GUIUtils.GUIRawSkinEntry(
-                        uuid,
+                        SkinIdentifier.ofPlayer(UUID.fromString(uuid)),
                         ComponentHelper.convertPlainToJson(lastKnownName),
                         PropertyUtils.getSkinTextureHash(value),
                         List.of()
