@@ -100,6 +100,29 @@ public class PlayerStorageImpl implements PlayerStorage {
         return Optional.empty();
     }
 
+    public int getHistoryCount(UUID uuid) {
+        return getHistoryEntries(uuid, 0, Integer.MAX_VALUE).size();
+    }
+
+    public List<HistoryData> getHistoryEntries(UUID uuid, int skip, int limit) {
+        try {
+            Optional<PlayerData> optional = adapterReference.get().getPlayerData(uuid);
+
+            if (optional.isPresent()) {
+                PlayerData playerData = optional.get();
+                return playerData.getHistory().stream()
+                        .sorted(Comparator.comparing(HistoryData::getTimestamp).reversed())
+                        .skip(skip)
+                        .limit(limit)
+                        .toList();
+            }
+        } catch (StorageAdapter.StorageException e) {
+            logger.severe("Failed to get skin data of player %s".formatted(uuid), e);
+        }
+
+        return List.of();
+    }
+
     public void pushToHistory(UUID uuid, HistoryData historyData) {
         int maxHistoryLength = settings.getProperty(CommandConfig.MAX_HISTORY_LENGTH);
         if (maxHistoryLength <= 0) {

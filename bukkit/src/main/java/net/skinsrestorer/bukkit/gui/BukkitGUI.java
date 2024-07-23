@@ -48,6 +48,9 @@ public class BukkitGUI implements GUIManager<Inventory> {
             case SKULL -> XMaterial.PLAYER_HEAD;
             case ARROW -> XMaterial.ARROW;
             case BARRIER -> XMaterial.BARRIER.or(XMaterial.RED_WOOL);
+            case BOOKSHELF -> XMaterial.BOOKSHELF;
+            case ENDER_EYE -> XMaterial.ENDER_EYE;
+            case ENCHANTING_TABLE -> XMaterial.ENCHANTING_TABLE;
         };
         ItemStack itemStack = Objects.requireNonNull(material.parseItem());
         entry.textureHash().ifPresent(hash -> {

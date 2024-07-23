@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class GUIUtils {
     public static PageInfo getGUIPage(SRPlayer player, SkinsRestorerLocale locale, int page, PageType pageType, GUIDataSource... sources) {
@@ -62,7 +63,7 @@ public class GUIUtils {
 
             List<GUIUtils.GUIRawSkinEntry> sourceSkins = source.getGUISkins(sourceOffset, sourceLimit);
             sourceSkins.stream()
-                    .map(base -> new GUISkinEntry(base, List.of(locale.getMessageRequired(player, Message.SKINSMENU_SELECT_SKIN))))
+                    .map(base -> new GUISkinEntry(base, Stream.concat(Stream.of(locale.getMessageRequired(player, Message.SKINSMENU_SELECT_SKIN)), base.extraLore().stream()).toList()))
                     .forEach(skinPage::add);
 
             if (sourceSkins.size() < sourceTotal - sourceOffset) {
@@ -92,6 +93,6 @@ public class GUIUtils {
         List<GUIUtils.GUIRawSkinEntry> getGUISkins(int offset, int limit);
     }
 
-    public record GUIRawSkinEntry(String skinId, String skinName, String textureHash) {
+    public record GUIRawSkinEntry(String skinId, String skinName, String textureHash, List<ComponentString> extraLore) {
     }
 }

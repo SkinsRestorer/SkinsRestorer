@@ -18,16 +18,22 @@
 package net.skinsrestorer.shared.gui;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.codec.NetworkCodec;
 import net.skinsrestorer.shared.codec.NetworkId;
+import net.skinsrestorer.shared.subjects.messages.Message;
 
 import java.util.Locale;
 
 @Getter
+@RequiredArgsConstructor
 public enum PageType implements NetworkId {
-    MAIN;
+    SELECT(Message.SKINSMENU_TITLE_SELECT),
+    MAIN(Message.SKINSMENU_TITLE_MAIN),
+    HISTORY(Message.SKINSMENU_TITLE_HISTORY);
 
     public static final NetworkCodec<PageType> CODEC = NetworkCodec.ofEnum(PageType.class);
+    private final Message title;
 
     @Override
     public String getId() {

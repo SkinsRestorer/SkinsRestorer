@@ -25,7 +25,7 @@ import net.skinsrestorer.shared.commands.library.annotations.RootDescription;
 import net.skinsrestorer.shared.gui.PageType;
 import net.skinsrestorer.shared.gui.SharedGUI;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
-import net.skinsrestorer.shared.storage.SkinStorageImpl;
+import net.skinsrestorer.shared.storage.GUIStorage;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
@@ -37,7 +37,7 @@ import javax.inject.Inject;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class GUICommand {
     private final SRPlatformAdapter platformAdapter;
-    private final SkinStorageImpl skinStorage;
+    private final GUIStorage guiStorage;
     private final SharedGUI sharedGUI;
     private final Injector injector;
 
@@ -48,6 +48,6 @@ public final class GUICommand {
     private void onDefault(SRPlayer player) {
         player.sendMessage(Message.SKINSMENU_OPEN);
 
-        platformAdapter.openGUI(player, sharedGUI.createGUIPage(player, skinStorage.getGUIPage(player, 0, PageType.MAIN)));
+        platformAdapter.openGUI(player, sharedGUI.createGUIPage(player, guiStorage.getGUIPage(player, 0, PageType.SELECT)));
     }
 }

@@ -26,22 +26,17 @@ import net.skinsrestorer.api.exception.MineSkinException;
 import net.skinsrestorer.api.model.MojangProfileResponse;
 import net.skinsrestorer.api.property.*;
 import net.skinsrestorer.api.storage.SkinStorage;
-import net.skinsrestorer.shared.config.GUIConfig;
 import net.skinsrestorer.shared.config.StorageConfig;
 import net.skinsrestorer.shared.connections.MineSkinAPIImpl;
 import net.skinsrestorer.shared.connections.MojangAPIImpl;
 import net.skinsrestorer.shared.connections.RecommendationsState;
 import net.skinsrestorer.shared.connections.responses.RecommenationResponse;
-import net.skinsrestorer.shared.gui.PageInfo;
-import net.skinsrestorer.shared.gui.PageType;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.storage.adapter.AdapterReference;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.storage.model.cache.MojangCacheData;
 import net.skinsrestorer.shared.storage.model.skin.*;
-import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
-import net.skinsrestorer.shared.utils.GUIUtils;
 import net.skinsrestorer.shared.utils.SRHelpers;
 import net.skinsrestorer.shared.utils.UUIDUtils;
 import net.skinsrestorer.shared.utils.ValidationUtil;
@@ -49,7 +44,10 @@ import net.skinsrestorer.shared.utils.ValidationUtil;
 import javax.inject.Inject;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
@@ -203,91 +201,6 @@ public class SkinStorageImpl implements SkinStorage {
         adapterReference.get().setCustomSkinData(skinName, CustomSkinData.of(skinName, property));
     }
 
-    public PageInfo getGUIPage(SRPlayer player, int page, PageType pageType) {
-        return GUIUtils.getGUIPage(player, locale, page, pageType, new GUIUtils.GUIDataSource() {
-            @Override
-            public boolean isEnabled() {
-                return settings.getProperty(GUIConfig.CUSTOM_GUI_ENABLED);
-            }
-
-            @Override
-            public PageType getPageType() {
-                return PageType.MAIN;
-            }
-
-            @Override
-            public int getIndex() {
-                return settings.getProperty(GUIConfig.CUSTOM_GUI_INDEX);
-            }
-
-            @Override
-            public int getTotalSkins() {
-                return adapterReference.get().getTotalCustomSkins();
-            }
-
-            @Override
-            public List<GUIUtils.GUIRawSkinEntry> getGUISkins(int offset, int limit) {
-                return adapterReference.get().getCustomGUISkins(offset, limit);
-            }
-        }, new GUIUtils.GUIDataSource() {
-            @Override
-            public boolean isEnabled() {
-                return settings.getProperty(GUIConfig.PLAYERS_GUI_ENABLED);
-            }
-
-            @Override
-            public PageType getPageType() {
-                return PageType.MAIN;
-            }
-
-            @Override
-            public int getIndex() {
-                return settings.getProperty(GUIConfig.PLAYERS_GUI_INDEX);
-            }
-
-            @Override
-            public int getTotalSkins() {
-                return adapterReference.get().getTotalPlayerSkins();
-            }
-
-            @Override
-            public List<GUIUtils.GUIRawSkinEntry> getGUISkins(int offset, int limit) {
-                return adapterReference.get().getPlayerGUISkins(offset, limit);
-            }
-        }, new GUIUtils.GUIDataSource() {
-            @Override
-            public boolean isEnabled() {
-                return settings.getProperty(GUIConfig.RECOMMENDATIONS_GUI_ENABLED);
-            }
-
-            @Override
-            public PageType getPageType() {
-                return PageType.MAIN;
-            }
-
-            @Override
-            public int getIndex() {
-                return settings.getProperty(GUIConfig.RECOMMENDATIONS_GUI_INDEX);
-            }
-
-            @Override
-            public int getTotalSkins() {
-                return recommendationsState.getRecommendationsCount();
-            }
-
-            @Override
-            public List<GUIUtils.GUIRawSkinEntry> getGUISkins(int offset, int limit) {
-                return Arrays.stream(recommendationsState.getRecommendationsOffset(offset, limit))
-                        .map(r -> new GUIUtils.GUIRawSkinEntry(
-                                RECOMMENDATION_PREFIX + r.getSkinId(),
-                                r.getSkinName(),
-                                PropertyUtils.getSkinTextureHash(r.getValue())
-                        ))
-                        .toList();
-            }
-        });
-    }
-
     @Override
     public Optional<InputDataResult> findSkinData(String input, SkinVariant skinVariantHint) {
         input = SRHelpers.sanitizeSkinInput(input);
@@ -341,6 +254,21 @@ public class SkinStorageImpl implements SkinStorage {
         }
 
         return Optional.empty();
+    }
+
+    public Optional<String> resolveSkinName(SkinIdentifier identifier) {
+        return switch (identifier.getSkinType()) {
+            case PLAYER -> {
+                try {
+                    yield adapterReference.get().getPlayerSkinData(UUID.fromString(identifier.getIdentifier()))
+                            .map(PlayerSkinData::getLastKnownName);
+                } catch (StorageAdapter.StorageException e) {
+                    logger.warning("Failed to get skin data for %s".formatted(identifier), e);
+                    yield Optional.empty();
+                }
+            }
+            case URL, CUSTOM, LEGACY -> identifier.getIdentifier().describeConstable();
+        };
     }
 
     @Override

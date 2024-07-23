@@ -47,7 +47,10 @@ public record SRInventory(int rows, ComponentString title, Map<Integer, Item> it
     public enum MaterialType implements NetworkId {
         SKULL,
         ARROW,
-        BARRIER;
+        BARRIER,
+        BOOKSHELF,
+        ENDER_EYE,
+        ENCHANTING_TABLE;
 
         public static final NetworkCodec<MaterialType> CODEC = NetworkCodec.ofEnum(MaterialType.class);
 

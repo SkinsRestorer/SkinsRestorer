@@ -515,7 +515,12 @@ public class MySQLAdapter implements StorageAdapter {
                 String name = crs.getString("name");
                 String value = crs.getString("value");
 
-                skins.add(new GUIUtils.GUIRawSkinEntry(name, name, PropertyUtils.getSkinTextureHash(value)));
+                skins.add(new GUIUtils.GUIRawSkinEntry(
+                        name,
+                        name,
+                        PropertyUtils.getSkinTextureHash(value),
+                        List.of()
+                ));
             }
         } catch (SQLException e) {
             logger.warning("Failed to get stored skins", e);
@@ -573,8 +578,9 @@ public class MySQLAdapter implements StorageAdapter {
                 skins.add(new GUIUtils.GUIRawSkinEntry(
                         uuid,
                         lastKnownName,
-                        PropertyUtils.getSkinTextureHash(value))
-                );
+                        PropertyUtils.getSkinTextureHash(value),
+                        List.of()
+                ));
             }
         } catch (SQLException e) {
             logger.warning("Failed to get stored skins", e);

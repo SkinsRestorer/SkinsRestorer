@@ -487,8 +487,9 @@ public class FileAdapter implements StorageAdapter {
                 list.add(new GUIUtils.GUIRawSkinEntry(
                         fileName,
                         fileName,
-                        PropertyUtils.getSkinTextureHash(customSkinData.getProperty()))
-                );
+                        PropertyUtils.getSkinTextureHash(customSkinData.getProperty()),
+                        List.of()
+                ));
             } catch (StorageException e) {
                 logger.warning("Failed to load skin data for " + fileName, e);
             }
@@ -566,8 +567,9 @@ public class FileAdapter implements StorageAdapter {
                 list.add(new GUIUtils.GUIRawSkinEntry(
                         fileName,
                         playerSkinData.getLastKnownName(),
-                        PropertyUtils.getSkinTextureHash(playerSkinData.getProperty()))
-                );
+                        PropertyUtils.getSkinTextureHash(playerSkinData.getProperty()),
+                        List.of()
+                ));
             } catch (StorageException e) {
                 logger.warning("Failed to load skin data for " + fileName, e);
             }

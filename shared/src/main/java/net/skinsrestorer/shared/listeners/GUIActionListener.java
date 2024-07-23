@@ -22,7 +22,7 @@ import net.skinsrestorer.shared.codec.SRProxyPluginMessage;
 import net.skinsrestorer.shared.commands.library.SRCommandManager;
 import net.skinsrestorer.shared.gui.SharedGUI;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
-import net.skinsrestorer.shared.storage.SkinStorageImpl;
+import net.skinsrestorer.shared.storage.GUIStorage;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 
 import javax.inject.Inject;
@@ -30,14 +30,14 @@ import javax.inject.Inject;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class GUIActionListener {
     private final SRPlatformAdapter adapter;
-    private final SkinStorageImpl skinStorage;
+    private final GUIStorage guiStorage;
     private final SharedGUI sharedGUI;
     private final SRCommandManager commandManager;
 
     public void handle(SRPlayer player, SRProxyPluginMessage.GUIActionChannelPayload actionChannelPayload) {
         SRProxyPluginMessage.GUIActionChannelPayload.GUIActionPayload<?> actionPayload = actionChannelPayload.payload();
         if (actionPayload instanceof SRProxyPluginMessage.GUIActionChannelPayload.OpenPagePayload openPagePayload) {
-            adapter.openGUI(player, sharedGUI.createGUIPage(player, skinStorage.getGUIPage(player, openPagePayload.page(), openPagePayload.type())));
+            adapter.openGUI(player, sharedGUI.createGUIPage(player, guiStorage.getGUIPage(player, openPagePayload.page(), openPagePayload.type())));
         } else if (actionPayload instanceof SRProxyPluginMessage.GUIActionChannelPayload.ClearSkinPayload) {
             commandManager.execute(player, "skin clear");
         } else if (actionPayload instanceof SRProxyPluginMessage.GUIActionChannelPayload.SetSkinPayload setSkinPayload) {
