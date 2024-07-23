@@ -82,7 +82,6 @@
   "skinsrestorer.ms_uploading_skin": "<dark_green>Skin yükleniyor, lütfen bekleyin... (Bu biraz zaman alabilir)",
   "skinsrestorer.wait_a_minute": "<dark_red>Hata<dark_gray>: <red>Lütfen bu skin'i tekrar istemeden önce bir dakika bekleyin. (Saat sınırlı)",
   "skinsrestorer.skinsmenu_open": "<dark_green>Skin menüsü açılıyor...",
-  "skinsrestorer.skinsmenu_title_new": "<blue>Skin Menüsü - Sayfa <page_number>",
   "skinsrestorer.skinsmenu_next_page": "<green><bold>»</bold> <gray>Sonraki Sayfa</gray> <bold>»</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[</bold> <gray>Skin'i Kaldır</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_select_skin": "<dark_green>Bu skin'i seçmek için tıklayın",
