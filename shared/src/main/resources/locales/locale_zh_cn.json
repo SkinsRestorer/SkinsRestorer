@@ -24,6 +24,7 @@
   "skinsrestorer.help_sr_purge_old_data": "清除超过 x 天前的旧皮肤数据。",
   "skinsrestorer.help_sr_dump": "上传支持数据到 bytebin.lucko.me。",
   "skinsrestorer.success_generic": "<dark_green><message>",
+  "skinsrestorer.info_use_quotes": "必须引用URL。例如： <yellow>/skin set \"https://example.com/skin.png\"</yellow> (您可以按Tab键自动填写)",
   "skinsrestorer.success_skin_change": "你的皮肤已改变。",
   "skinsrestorer.success_skin_change_other": "你改变了 <name> 的皮肤。",
   "skinsrestorer.success_skin_undo": "您的皮肤已从 <timestamp> 还原。",
