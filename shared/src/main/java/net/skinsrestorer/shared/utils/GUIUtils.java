@@ -66,7 +66,7 @@ public class GUIUtils {
                     .map(base -> new GUISkinEntry(base, Stream.concat(Stream.of(locale.getMessageRequired(player, Message.SKINSMENU_SELECT_SKIN)), base.extraLore().stream()).toList()))
                     .forEach(skinPage::add);
 
-            if (sourceSkins.size() < sourceTotal - sourceOffset) {
+            if (sourceTotal > 0 && sourceSkins.size() < sourceTotal - sourceOffset) {
                 hasNextPage = true;
                 break;
             }
