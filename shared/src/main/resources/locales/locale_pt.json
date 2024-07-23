@@ -19,11 +19,8 @@
   "skinsrestorer.help_sr_dump": "Enviar dados de suporte para bytebin.lucko.me.",
   "skinsrestorer.success_generic": "<dark_green><message>",
   "skinsrestorer.success_skin_clear": "A sua skin foi removida.",
-  "skinsrestorer.success_skin_clear_other": "Skin limpa para o jogador <name>.",
   "skinsrestorer.success_updating_skin": "A sua skin foi atualizada.",
-  "skinsrestorer.success_updating_skin_other": "Skin atualizada para o jogador <name>.",
   "skinsrestorer.success_admin_applyskin": "O skin do jogador foi atualizada!",
-  "skinsrestorer.success_admin_createcustom": "A skin <skin> foi criada!",
   "skinsrestorer.success_admin_drop": "<type> dados descartados para <target>.",
   "skinsrestorer.success_admin_reload": "A configuração e as traduções foram recarregadas!",
   "skinsrestorer.error_generic": "<dark_red>Erro<dark_gray>: <red><message>",
@@ -33,6 +30,5 @@
   "skinsrestorer.error_updating_skin": "Ocorreu um erro ao atualizar a skin. Tenta de novo mais tarde!",
   "skinsrestorer.error_ms_unknown": "Erro desconhecido do MineSkin!",
   "skinsrestorer.not_connected_to_server": "<red>Não estás conectado a nenhum servidor.",
-  "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[</bold> <gray>Remover Skin</gray> <bold>]</bold>",
-  "skinsrestorer.skinsmenu_select_skin": "<dark_green>Clica para usar esta skin"
+  "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[</bold> <gray>Remover Skin</gray> <bold>]</bold>"
 }
