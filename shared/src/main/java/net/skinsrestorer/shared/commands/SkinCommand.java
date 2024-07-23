@@ -25,7 +25,6 @@ import net.skinsrestorer.api.connections.MineSkinAPI;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.exception.MineSkinException;
 import net.skinsrestorer.api.property.*;
-import net.skinsrestorer.api.storage.SkinStorage;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
 import net.skinsrestorer.shared.commands.library.PlayerSelector;
 import net.skinsrestorer.shared.commands.library.SRCommandManager;
@@ -41,6 +40,7 @@ import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.storage.PlayerStorageImpl;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
+import net.skinsrestorer.shared.storage.model.player.FavouriteData;
 import net.skinsrestorer.shared.storage.model.player.HistoryData;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
@@ -81,7 +81,7 @@ public final class SkinCommand {
     private final SRPlatformAdapter adapter;
     private final SRPlugin plugin;
     private final SettingsManager settings;
-    private final SkinStorage skinStorage;
+    private final SkinStorageImpl skinStorage;
     private final PlayerStorageImpl playerStorage;
     private final SkinsRestorerLocale locale;
     private final SRLogger logger;
@@ -363,13 +363,60 @@ public final class SkinCommand {
 
             if (senderEqual(sender, target)) {
                 sender.sendMessage(Message.SUCCESS_SKIN_UNDO,
-                        Placeholder.unparsed("skin", historyData.get().getSkinIdentifier().getIdentifier()),
+                        Placeholder.component("skin", ComponentHelper.convertJsonToComponent(skinStorage.resolveSkinName(historyData.get().getSkinIdentifier()))),
                         Placeholder.parsed("timestamp", SRHelpers.formatEpochSeconds(historyData.get().getTimestamp(), sender.getLocale())));
             } else {
                 sender.sendMessage(Message.SUCCESS_SKIN_UNDO_OTHER,
                         Placeholder.unparsed("name", target.getName()),
-                        Placeholder.unparsed("skin", historyData.get().getSkinIdentifier().getIdentifier()),
+                        Placeholder.component("skin", ComponentHelper.convertJsonToComponent(skinStorage.resolveSkinName(historyData.get().getSkinIdentifier()))),
                         Placeholder.parsed("timestamp", SRHelpers.formatEpochSeconds(historyData.get().getTimestamp(), sender.getLocale())));
+            }
+        }
+    }
+
+    @Command("favourite")
+    @CommandPermission(PermissionRegistry.SKIN_FAVOURITE)
+    @CommandDescription(Message.HELP_SKIN_FAVOURITE)
+    @SRCooldownGroup(COOLDOWN_GROUP_ID)
+    private void onSkinFavourite(SRPlayer player) {
+        onSkinFavouriteOther(player, PlayerSelector.singleton(player));
+    }
+
+    @Command("favourite <selector>")
+    @CommandPermission(PermissionRegistry.SKIN_FAVOURITE_OTHER)
+    @CommandDescription(Message.HELP_SKIN_FAVOURITE_OTHER)
+    @SRCooldownGroup(COOLDOWN_GROUP_ID)
+    private void onSkinFavouriteOther(SRCommandSender sender, PlayerSelector selector) {
+        for (SRPlayer target : selector.resolve(sender)) {
+            Optional<SkinIdentifier> currentSkin = playerStorage.getSkinIdOfPlayer(target.getUniqueId());
+            if (currentSkin.isEmpty()) {
+                sender.sendMessage(Message.ERROR_NO_SKIN_TO_FAVOURITE);
+                return;
+            }
+
+            Optional<FavouriteData> favouriteData = playerStorage.getFavouriteData(target.getUniqueId(), currentSkin.get());
+            if (favouriteData.isPresent()) {
+                playerStorage.removeFavourite(target.getUniqueId(), favouriteData.get().getSkinIdentifier());
+                if (senderEqual(sender, target)) {
+                    sender.sendMessage(Message.SUCCESS_SKIN_UNFAVOURITE,
+                            Placeholder.component("skin", ComponentHelper.convertJsonToComponent(skinStorage.resolveSkinName(currentSkin.get()))),
+                            Placeholder.parsed("timestamp", SRHelpers.formatEpochSeconds(favouriteData.get().getTimestamp(), sender.getLocale())));
+                } else {
+                    sender.sendMessage(Message.SUCCESS_SKIN_UNFAVOURITE_OTHER,
+                            Placeholder.unparsed("name", target.getName()),
+                            Placeholder.component("skin", ComponentHelper.convertJsonToComponent(skinStorage.resolveSkinName(currentSkin.get()))),
+                            Placeholder.parsed("timestamp", SRHelpers.formatEpochSeconds(favouriteData.get().getTimestamp(), sender.getLocale())));
+                }
+            } else {
+                playerStorage.addFavourite(target.getUniqueId(), FavouriteData.of(SRHelpers.getEpochSecond(), currentSkin.get()));
+                if (senderEqual(sender, target)) {
+                    sender.sendMessage(Message.SUCCESS_SKIN_FAVOURITE,
+                            Placeholder.component("skin", ComponentHelper.convertJsonToComponent(skinStorage.resolveSkinName(currentSkin.get()))));
+                } else {
+                    sender.sendMessage(Message.SUCCESS_SKIN_FAVOURITE_OTHER,
+                            Placeholder.unparsed("name", target.getName()),
+                            Placeholder.component("skin", ComponentHelper.convertJsonToComponent(skinStorage.resolveSkinName(currentSkin.get()))));
+                }
             }
         }
     }
