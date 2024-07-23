@@ -43,6 +43,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -60,6 +62,13 @@ public class MySQLAdapter implements StorageAdapter {
                 + "`uuid` VARCHAR(36),"
                 + "`timestamp` BIGINT(20) NOT NULL,"
                 + "PRIMARY KEY (`name`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+
+        mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolveCooldownTable() + "` ("
+                + "`uuid` VARCHAR(36),"
+                + "`group_name` VARCHAR(36) NOT NULL,"
+                + "`creation_time` BIGINT(20) NOT NULL,"
+                + "`duration` BIGINT(20) NOT NULL,"
+                + "PRIMARY KEY (`uuid`, `group_name`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
 
         mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolvePlayerTable() + "` ("
                 + "`uuid` VARCHAR(36) NOT NULL,"
@@ -630,6 +639,54 @@ public class MySQLAdapter implements StorageAdapter {
                 mojangCacheData.getTimestamp());
     }
 
+    @Override
+    public List<UUID> getAllCooldownProfiles() throws StorageException {
+        List<UUID> profiles = new ArrayList<>();
+        try (ResultSet crs = mysql.query("SELECT DISTINCT `uuid` FROM " + resolveCooldownTable())) {
+            while (crs.next()) {
+                profiles.add(UUID.fromString(crs.getString("uuid")));
+            }
+        } catch (SQLException e) {
+            throw new StorageException(e);
+        }
+
+        return profiles;
+    }
+
+    @Override
+    public List<StorageCooldown> getCooldowns(UUID owner) throws StorageException {
+        List<StorageCooldown> cooldowns = new ArrayList<>();
+        try (ResultSet crs = mysql.query("SELECT * FROM " + resolveCooldownTable() + " WHERE uuid=?", owner.toString())) {
+            while (crs.next()) {
+                String groupName = crs.getString("group_name");
+                Instant creationTime = Instant.ofEpochSecond(crs.getLong("creation_time"));
+                Duration duration = Duration.ofSeconds(crs.getLong("duration"));
+
+                cooldowns.add(new StorageCooldown(owner, groupName, creationTime, duration));
+            }
+        } catch (SQLException e) {
+            throw new StorageException(e);
+        }
+
+        return cooldowns;
+    }
+
+    @Override
+    public void setCooldown(UUID owner, String groupName, Instant creationTime, Duration duration) {
+        mysql.execute("INSERT INTO " + resolveCooldownTable() + " (uuid, group_name, creation_time, duration) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE creation_time=?, duration=?",
+                owner.toString(),
+                groupName,
+                creationTime.getEpochSecond(),
+                duration.getSeconds(),
+                creationTime.getEpochSecond(),
+                duration.getSeconds());
+    }
+
+    @Override
+    public void removeCooldown(UUID owner, String groupName) {
+        mysql.execute("DELETE FROM " + resolveCooldownTable() + " WHERE uuid=? AND group_name=?", owner.toString(), groupName);
+    }
+
     private String resolveCustomSkinTable() {
         return settings.getProperty(DatabaseConfig.MYSQL_TABLE_PREFIX) + "custom_skins";
     }
@@ -652,6 +709,10 @@ public class MySQLAdapter implements StorageAdapter {
 
     private String resolvePlayerHistoryTable() {
         return settings.getProperty(DatabaseConfig.MYSQL_TABLE_PREFIX) + "player_history";
+    }
+
+    private String resolveCooldownTable() {
+        return settings.getProperty(DatabaseConfig.MYSQL_TABLE_PREFIX) + "cooldowns";
     }
 
     private String resolveCacheTable() {

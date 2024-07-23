@@ -96,7 +96,7 @@ public class SRHelpers {
     }
 
     public static long getEpochSecond() {
-        return System.currentTimeMillis() / 1000L;
+        return TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
     }
 
     public static void renameFile(Path parent, String oldName, String newName) throws IOException {

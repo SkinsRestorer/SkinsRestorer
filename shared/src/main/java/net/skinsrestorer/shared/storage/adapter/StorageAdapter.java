@@ -26,6 +26,8 @@ import net.skinsrestorer.shared.storage.model.player.PlayerData;
 import net.skinsrestorer.shared.storage.model.skin.*;
 import net.skinsrestorer.shared.utils.GUIUtils;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -84,6 +86,14 @@ public interface StorageAdapter {
 
     void setCachedUUID(String playerName, MojangCacheData mojangCacheData);
 
+    List<UUID> getAllCooldownProfiles() throws StorageException;
+
+    List<StorageCooldown> getCooldowns(UUID owner) throws StorageException;
+
+    void setCooldown(UUID owner, String groupName, Instant creationTime, Duration duration);
+
+    void removeCooldown(UUID owner, String groupName);
+
     default void migrateLegacyPlayer(String playerName, UUID uuid) throws StorageException {
         Optional<LegacyPlayerData> legacyPlayerData = getLegacyPlayerData(playerName);
         if (legacyPlayerData.isEmpty()) {
@@ -108,5 +118,8 @@ public interface StorageAdapter {
         public StorageException(Throwable cause) {
             super(cause);
         }
+    }
+
+    record StorageCooldown(UUID owner, String groupName, Instant creationTime, Duration duration) {
     }
 }

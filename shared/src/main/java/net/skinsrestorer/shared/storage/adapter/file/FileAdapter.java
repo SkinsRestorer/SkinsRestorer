@@ -29,6 +29,7 @@ import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.storage.adapter.file.model.cache.MojangCacheFile;
+import net.skinsrestorer.shared.storage.adapter.file.model.cooldown.CooldownFile;
 import net.skinsrestorer.shared.storage.adapter.file.model.player.LegacyPlayerFile;
 import net.skinsrestorer.shared.storage.adapter.file.model.player.PlayerFile;
 import net.skinsrestorer.shared.storage.adapter.file.model.skin.*;
@@ -45,6 +46,8 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -52,6 +55,7 @@ import java.util.stream.Stream;
 public class FileAdapter implements StorageAdapter {
     private final Path skinsFolder;
     private final Path playersFolder;
+    private final Path cooldownsFolder;
     private final Path cacheFolder;
     private final Path legacyFolder;
     private final SettingsManager settings;
@@ -63,6 +67,7 @@ public class FileAdapter implements StorageAdapter {
         Path dataFolder = plugin.getDataFolder();
         this.skinsFolder = dataFolder.resolve("skins");
         this.playersFolder = dataFolder.resolve("players");
+        this.cooldownsFolder = dataFolder.resolve("cooldowns");
         this.cacheFolder = dataFolder.resolve("cache");
         this.legacyFolder = dataFolder.resolve("legacy");
         this.settings = settings;
@@ -80,6 +85,7 @@ public class FileAdapter implements StorageAdapter {
         try {
             Files.createDirectories(skinsFolder);
             Files.createDirectories(playersFolder);
+            Files.createDirectories(cooldownsFolder);
             Files.createDirectories(cacheFolder);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -678,6 +684,87 @@ public class FileAdapter implements StorageAdapter {
         }
     }
 
+    @Override
+    public List<UUID> getAllCooldownProfiles() throws StorageException {
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(cooldownsFolder)) {
+            List<UUID> list = new ArrayList<>();
+            for (Path path : stream) {
+                String fileName = path.getFileName().toString();
+                String[] parts = fileName.split("_");
+
+                if (parts.length != 2) {
+                    continue;
+                }
+
+                UUID uuid = UUID.fromString(parts[0]);
+
+                list.add(uuid);
+            }
+
+            return list;
+        } catch (IOException e) {
+            throw new StorageException(e);
+        }
+    }
+
+    @Override
+    public List<StorageCooldown> getCooldowns(UUID owner) throws StorageException {
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(cooldownsFolder)) {
+            List<StorageCooldown> list = new ArrayList<>();
+            for (Path path : stream) {
+                String fileName = path.getFileName().toString();
+                String[] parts = fileName.split("_");
+
+                if (parts.length != 2) {
+                    continue;
+                }
+
+                UUID uuid = UUID.fromString(parts[0]);
+                if (!uuid.equals(owner)) {
+                    continue;
+                }
+
+                try {
+                    String json = Files.readString(path);
+
+                    CooldownFile file = gson.fromJson(json, CooldownFile.class);
+
+                    list.add(file.toCooldownData());
+                } catch (Exception e) {
+                    throw new StorageException(e);
+                }
+            }
+
+            return list;
+        } catch (IOException e) {
+            throw new StorageException(e);
+        }
+    }
+
+    @Override
+    public void setCooldown(UUID owner, String groupName, Instant creationTime, Duration duration) {
+        Path cooldownFile = resolveCooldownFile(owner, groupName);
+
+        try {
+            CooldownFile file = CooldownFile.fromCooldownData(new StorageCooldown(owner, groupName, creationTime, duration));
+
+            Files.writeString(cooldownFile, gson.toJson(file));
+        } catch (IOException e) {
+            logger.warning("Failed to save cooldown data for " + owner, e);
+        }
+    }
+
+    @Override
+    public void removeCooldown(UUID owner, String groupName) {
+        Path cooldownFile = resolveCooldownFile(owner, groupName);
+
+        try {
+            Files.deleteIfExists(cooldownFile);
+        } catch (IOException e) {
+            logger.warning("Failed to remove cooldown data for " + owner, e);
+        }
+    }
+
     private Path resolveCustomSkinFile(String skinName) {
         return skinsFolder.resolve(skinName + ".customskin");
     }
@@ -704,6 +791,10 @@ public class FileAdapter implements StorageAdapter {
 
     private Path resolveLegacyPlayerFile(String name) {
         return legacyFolder.resolve("players").resolve(name + ".legacyplayer");
+    }
+
+    private Path resolveCooldownFile(UUID uuid, String groupName) {
+        return cooldownsFolder.resolve(uuid + "_" + groupName + ".cooldown");
     }
 
     private Path resolveCacheFile(String name) {
