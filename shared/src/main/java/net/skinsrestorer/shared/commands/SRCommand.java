@@ -88,6 +88,7 @@ import java.util.stream.Stream;
 @SuppressWarnings("unused")
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class SRCommand {
+    private final ExpiringSet<UUID> quotesHelpCache = new ExpiringSet<>(1, TimeUnit.MINUTES);
     private final SRPlugin plugin;
     private final SRPlatformAdapter adapter;
     private final ServiceCheckerService serviceCheckerService;
@@ -165,6 +166,11 @@ public final class SRCommand {
         String withoutEndQuote = endsWithQuote ? withoutStartQuote.substring(0, withoutStartQuote.length() - 1) : withoutStartQuote;
 
         if (!startsWithQuote && !endsWithQuote && SRHelpers.isNotAllowedUnquotedString(withoutEndQuote)) {
+            if (ctx.sender() instanceof SRPlayer player && !quotesHelpCache.contains(player.getUniqueId())) {
+                ctx.sender().sendMessage(Message.INFO_USE_QUOTES);
+                quotesHelpCache.add(player.getUniqueId());
+            }
+
             return List.of("\"%s\"".formatted(input));
         } else if (startsWithQuote && !endsWithQuote) {
             return List.of("%s\"".formatted(input));

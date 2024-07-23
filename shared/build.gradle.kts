@@ -10,6 +10,7 @@ dependencies {
     implementation("org.mariadb.jdbc:mariadb-java-client:3.4.1") {
         exclude("com.github.waffle", "waffle-jna")
     }
+    api("com.github.ben-manes.caffeine:caffeine:3.1.8")
 
     implementation("net.kyori:adventure-api:4.17.0")
     implementation("net.kyori:adventure-text-serializer-gson:4.17.0")
