@@ -64,7 +64,6 @@
   "skinsrestorer.ms_uploading_skin": "<dark_green>Učitavanje skina, pričekajte... (Ovo može potrajati neko vrijeme)",
   "skinsrestorer.wait_a_minute": "<dark_red>Greška<dark_gray>: <red>Pričekajte minutu prije ponovnog traženja tog skina. (Stopa Ograničena)",
   "skinsrestorer.skinsmenu_open": "<dark_green>Otvaranje izbornika skinova...",
-  "skinsrestorer.skinsmenu_title_new": "<blue>Izbornik Skinova - Stranica <page_number>",
   "skinsrestorer.skinsmenu_next_page": "<green><bold>»</bold> <gray>Sljedeća Stranica</gray> <bold>»</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[</bold> <gray>Ukloni skin</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_select_skin": "<dark_green>Kliknite za odabir ovog skina",
