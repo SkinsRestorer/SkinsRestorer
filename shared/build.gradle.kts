@@ -22,6 +22,7 @@ dependencies {
     api("ch.jalu:injector:1.0")
 
     api("org.incendo:cloud-annotations:2.0.0-SNAPSHOT")
+    annotationProcessor("org.incendo:cloud-annotations:2.0.0-SNAPSHOT")
     api("org.incendo:cloud-processors-requirements:1.0.0-SNAPSHOT")
     api("org.incendo:cloud-processors-cooldown:1.0.0-SNAPSHOT")
     api("org.incendo:cloud-brigadier:2.0.0-SNAPSHOT")
