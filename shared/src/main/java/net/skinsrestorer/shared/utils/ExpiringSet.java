@@ -20,25 +20,29 @@ package net.skinsrestorer.shared.utils;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class ExpiringSet<E> {
-    private final Cache<E, Long> cache;
+    private final Map<E, Long> cache = new HashMap<>();
     private final long lifetime;
 
     public ExpiringSet(long duration, TimeUnit unit) {
-        this.cache = Caffeine.newBuilder().expireAfterWrite(duration, unit).build();
         this.lifetime = unit.toSeconds(duration);
     }
 
-    public boolean add(E item) {
-        boolean present = contains(item);
+    public void add(E item) {
+        cleanup();
         this.cache.put(item, SRHelpers.getEpochSecond() + this.lifetime);
-        return !present;
     }
 
     public boolean contains(E item) {
-        Long timeout = this.cache.getIfPresent(item);
-        return timeout != null && timeout > SRHelpers.getEpochSecond();
+        cleanup();
+        return this.cache.containsKey(item);
+    }
+
+    public void cleanup() {
+        this.cache.entrySet().removeIf(entry -> entry.getValue() < SRHelpers.getEpochSecond());
     }
 }

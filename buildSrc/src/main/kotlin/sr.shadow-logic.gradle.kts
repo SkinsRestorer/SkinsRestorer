@@ -101,7 +101,6 @@ tasks {
     shadowJar {
         minimize {
             exclude(dependency("org.mariadb.jdbc:mariadb-java-client"))
-            exclude(dependency("com.github.ben-manes.caffeine:caffeine"))
             exclude(project(":skinsrestorer-api"))
         }
         configureRelocations()
