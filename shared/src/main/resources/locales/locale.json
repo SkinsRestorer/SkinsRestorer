@@ -35,6 +35,7 @@
   "skinsrestorer.success_updating_skin_other": "Skin updated for player <name>.",
   "skinsrestorer.success_admin_applyskin": "Player skin has been refreshed!",
   "skinsrestorer.success_admin_createcustom": "Skin <skin> has been created!",
+  "skinsrestorer.success_admin_setcustomname": "The name of skin <skin> has been set to <display_name>.",
   "skinsrestorer.success_admin_drop": "<type> data dropped for <target>.",
   "skinsrestorer.success_admin_reload": "Config and Locale has been reloaded!",
   "skinsrestorer.error_generic": "<dark_red>Error<dark_gray>: <red><message>",

@@ -454,6 +454,21 @@ public final class SRCommand {
         }
     }
 
+    @Command("setcustomname <skinName> <displayName>")
+    @CommandPermission(PermissionRegistry.SR_CREATE_CUSTOM)
+    @CommandDescription(Message.HELP_SR_CREATE_CUSTOM)
+    private void onSetCustomName(SRCommandSender sender, String skinName, @Greedy String displayName) {
+        try {
+            ComponentString componentString = ComponentHelper.parseMiniMessageToJsonString(displayName);
+            skinStorage.setCustomSkinDisplayName(skinName, componentString);
+            sender.sendMessage(Message.SUCCESS_ADMIN_SETCUSTOMNAME,
+                    Placeholder.unparsed("skin", skinName),
+                    Placeholder.component("display_name", ComponentHelper.convertJsonToComponent(componentString)));
+        } catch (StorageAdapter.StorageException e) {
+            ComponentHelper.sendException(e, sender, locale, logger);
+        }
+    }
+
     @ConsoleOnly
     @Command("purgeolddata <days>")
     @CommandPermission(PermissionRegistry.SR_PURGE_OLD_DATA)

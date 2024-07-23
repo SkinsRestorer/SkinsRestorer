@@ -194,7 +194,18 @@ public class SkinStorageImpl implements SkinStorage {
 
     @Override
     public void setCustomSkinData(String skinName, SkinProperty property) {
+        skinName = CustomSkinData.sanitizeCustomSkinName(skinName);
+
         adapterReference.get().setCustomSkinData(skinName, CustomSkinData.of(skinName, null, property));
+    }
+
+    public void setCustomSkinDisplayName(String skinName, ComponentString displayName) throws StorageAdapter.StorageException {
+        skinName = CustomSkinData.sanitizeCustomSkinName(skinName);
+
+        CustomSkinData customSkinData = adapterReference.get().getCustomSkinData(skinName)
+                .orElseThrow(() -> new IllegalArgumentException("Skin not found"));
+
+        adapterReference.get().setCustomSkinData(skinName, CustomSkinData.of(skinName, displayName, customSkinData.getProperty()));
     }
 
     @Override

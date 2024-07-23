@@ -43,9 +43,9 @@ public class AdapterHelper {
         adapter.setURLSkinData("test", URLSkinData.of("https://test.com", "test",
                 HardcodedSkins.getHardcodedSkin("steve").orElseThrow().getProperty(), SkinVariant.CLASSIC));
         adapter.setCustomSkinData("test-skin", CustomSkinData.of("test-skin",
-                HardcodedSkins.getHardcodedSkin("steve").orElseThrow().getProperty()));
+                null, HardcodedSkins.getHardcodedSkin("steve").orElseThrow().getProperty()));
         adapter.setCustomSkinData("test-skin2", CustomSkinData.of("test-skin2",
-                HardcodedSkins.getHardcodedSkin("alex").orElseThrow().getProperty()));
+                null, HardcodedSkins.getHardcodedSkin("alex").orElseThrow().getProperty()));
 
         Assert.assertEquals(2, adapter.getTotalCustomSkins());
         Assert.assertEquals(2, adapter.getCustomGUISkins(0, Integer.MAX_VALUE).size());
