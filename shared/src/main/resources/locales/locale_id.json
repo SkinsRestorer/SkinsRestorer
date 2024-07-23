@@ -86,7 +86,6 @@
   "skinsrestorer.skinsmenu_open": "<dark_green>Membuka menu skin...",
   "skinsrestorer.skinsmenu_next_page": "<green><bold>»</bold> <gray>Halaman Selanjutnya</gray> <bold>»</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[</bold> <gray>Hapus Skin</gray> <bold>]</bold>",
-  "skinsrestorer.skinsmenu_select_skin": "<dark_green>Klik untuk memilih skin ini",
   "skinsrestorer.skin_search_message": "<dark_green>Kamu bisa menemukan skin yang cocok <green><search></green> disini:<newline><green>https://namemc.com/minecraft-skins/tag/<search><newline><newline><dark_green>Jika tidak ada skin yang ditemukan, kamu selalu dapat menemukan beberapa skin di https://namemc.com/minecraft-skins/tag <newline>Kamu bisa mengatur skin menggunakan link skin:<newline>/skin https://namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>Kesalahan<dark_gray>: <red>Tidak ada data skin ditemukan! Apakah pemain ini memiliki skin?",
   "skinsrestorer.outdated": "<dark_red>Kamu menjalankan versi usang SkinsRestorer di <platform> mu!<newline><red>Mohon perbarui ke versi terbaru di Spigot:\n<newline><yellow>https://www.spigotmc.org/resources/skinsrestorer.2124/",
