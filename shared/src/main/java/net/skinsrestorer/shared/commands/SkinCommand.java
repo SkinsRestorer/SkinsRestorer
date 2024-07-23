@@ -374,6 +374,35 @@ public final class SkinCommand {
         }
     }
 
+    @Command("history")
+    @CommandPermission(PermissionRegistry.SKIN_UNDO)
+    @CommandDescription(Message.HELP_SKIN_UNDO)
+    @SRCooldownGroup(COOLDOWN_GROUP_ID)
+    private void onSkinHistory(SRPlayer player) {
+        onSkinHistoryOther(player, PlayerSelector.singleton(player));
+    }
+
+    @Command("history <selector>")
+    @CommandPermission(PermissionRegistry.SKIN_UNDO_OTHER)
+    @CommandDescription(Message.HELP_SKIN_UNDO_OTHER)
+    @SRCooldownGroup(COOLDOWN_GROUP_ID)
+    private void onSkinHistoryOther(SRCommandSender sender, PlayerSelector selector) {
+        for (SRPlayer target : selector.resolve(sender)) {
+            List<HistoryData> historyDataList = playerStorage.getHistoryEntries(target.getUniqueId(), 0, Integer.MAX_VALUE);
+            if (historyDataList.isEmpty()) {
+                sender.sendMessage(Message.ERROR_NO_HISTORY);
+                return;
+            }
+
+            for (HistoryData historyData : historyDataList) {
+                sender.sendMessage(Message.SUCCESS_HISTORY_LINE,
+                        Placeholder.parsed("timestamp", SRHelpers.formatEpochSeconds(historyData.getTimestamp(), sender.getLocale())),
+                        Placeholder.parsed("skin_id", historyData.getSkinIdentifier().getIdentifier()),
+                        Placeholder.component("skin", ComponentHelper.convertJsonToComponent(skinStorage.resolveSkinName(historyData.getSkinIdentifier()))));
+            }
+        }
+    }
+
     @Command("favourite")
     @CommandPermission(PermissionRegistry.SKIN_FAVOURITE)
     @CommandDescription(Message.HELP_SKIN_FAVOURITE)
@@ -417,6 +446,35 @@ public final class SkinCommand {
                             Placeholder.unparsed("name", target.getName()),
                             Placeholder.component("skin", ComponentHelper.convertJsonToComponent(skinStorage.resolveSkinName(currentSkin.get()))));
                 }
+            }
+        }
+    }
+
+    @Command("favourites")
+    @CommandPermission(PermissionRegistry.SKIN_FAVOURITE)
+    @CommandDescription(Message.HELP_SKIN_FAVOURITE)
+    @SRCooldownGroup(COOLDOWN_GROUP_ID)
+    private void onSkinFavourites(SRPlayer player) {
+        onSkinFavouritesOther(player, PlayerSelector.singleton(player));
+    }
+
+    @Command("favourites <selector>")
+    @CommandPermission(PermissionRegistry.SKIN_FAVOURITE_OTHER)
+    @CommandDescription(Message.HELP_SKIN_FAVOURITE_OTHER)
+    @SRCooldownGroup(COOLDOWN_GROUP_ID)
+    private void onSkinFavouritesOther(SRCommandSender sender, PlayerSelector selector) {
+        for (SRPlayer target : selector.resolve(sender)) {
+            List<FavouriteData> favouriteDataList = playerStorage.getFavouriteEntries(target.getUniqueId(), 0, Integer.MAX_VALUE);
+            if (favouriteDataList.isEmpty()) {
+                sender.sendMessage(Message.ERROR_NO_HISTORY);
+                return;
+            }
+
+            for (FavouriteData favouriteData : favouriteDataList) {
+                sender.sendMessage(Message.SUCCESS_HISTORY_LINE,
+                        Placeholder.parsed("timestamp", SRHelpers.formatEpochSeconds(favouriteData.getTimestamp(), sender.getLocale())),
+                        Placeholder.parsed("skin_id", favouriteData.getSkinIdentifier().getIdentifier()),
+                        Placeholder.component("skin", ComponentHelper.convertJsonToComponent(skinStorage.resolveSkinName(favouriteData.getSkinIdentifier()))));
             }
         }
     }
