@@ -88,7 +88,6 @@
   "skinsrestorer.only_allowed_on_console": "<dark_red>Kesalahan<dark_gray>: <red>Hanya konsol yang dapat menjalankan perintah ini!",
   "skinsrestorer.only_allowed_on_player": "<dark_red>Kesalahan<dark_gray>: <red>Hanya pemain yang dapat menjalankan perintah ini!",
   "skinsrestorer.invalid_player": "<dark_red>Kesalahan<dark_gray>: <red><input> bukan sebuah username atau URL yang valid.",
-  "skinsrestorer.skin_cooldown": "<dark_red>Kesalahan<dark_gray>: <red>Kamu bisa mengubah skin mu kembali dalam <yellow><time></yellow> detik.",
   "skinsrestorer.ms_uploading_skin": "<dark_green>Mengunggah skin, harap tunggu... (Ini mungkin memakan waktu)",
   "skinsrestorer.wait_a_minute": "<dark_red>Kesalahan<dark_gray>: <red>Mohon tunggu sebentar sebelum meminta skin itu lagi. (Tarif terbatas)",
   "skinsrestorer.skinsmenu_open": "<dark_green>Membuka menu skin...",

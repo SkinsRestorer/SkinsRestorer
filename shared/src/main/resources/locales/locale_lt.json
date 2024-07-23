@@ -39,7 +39,6 @@
   "skinsrestorer.only_allowed_on_console": "<dark_red>Klaida<dark_gray>: <red>Tik konsolė gali vykdyti šią komandą!",
   "skinsrestorer.only_allowed_on_player": "<dark_red>Klaida<dark_gray>: <red>Tik žaidėjai gali vykdyti šią komandą!",
   "skinsrestorer.invalid_player": "<dark_red>Klaida<dark_gray>: <red><input> nėra galiojantis vartotojo vardas arba URL.",
-  "skinsrestorer.skin_cooldown": "<dark_red>Klaida<dark_gray>: <red>Galėsite vėl pasikeisti savo išvaizdą už <yellow><time></yellow> sekundžių.",
   "skinsrestorer.wait_a_minute": "<dark_red>Klaida<dark_gray>: <red>Palaukite minutę prieš vėl prašydami tos išvaizdos. (Pasiektas veiksmų limitas)",
   "skinsrestorer.skinsmenu_open": "<dark_green>Atidaromas išvaizdų meniu...",
   "skinsrestorer.skinsmenu_title_new": "<blue>Išvaizdų Meniu - Puslapis <page_number>",

@@ -61,7 +61,6 @@
   "skinsrestorer.only_allowed_on_console": "<dark_red>Chyba<dark_gray>: <red>Tento príkaz je možné vykonať len na konzole!",
   "skinsrestorer.only_allowed_on_player": "<dark_red>Chyba<dark_gray>: <red>Tento príkaz môžu vykonať len hráči!",
   "skinsrestorer.invalid_player": "<dark_red>Chyba<dark_gray>: <red><input> nie je platné používateľské meno ani adresa URL.",
-  "skinsrestorer.skin_cooldown": "<dark_red>Chyba<dark_gray>: <red>Svoj skin môžeš opäť zmeniť o <yellow><time></yellow> sekúnd.",
   "skinsrestorer.ms_uploading_skin": "<dark_green>Nahrávanie skinu, počkajte prosím... (Môže to chvíľu trvať)",
   "skinsrestorer.wait_a_minute": "<dark_red>Chyba<dark_gray>: <red>Pred opätovným požiadaním o tento skin chvíľu počkajte. (Obmedzená rýchlosť)",
   "skinsrestorer.skinsmenu_open": "<dark_green>Otvorenie ponuky skinov...",

@@ -39,7 +39,6 @@
   "skinsrestorer.only_allowed_on_console": "<dark_red>Erreur<dark_gray> : <red>Seulement la console peut exécuter cette commande !",
   "skinsrestorer.only_allowed_on_player": "<dark_red>Erreur<dark_gray> : <red>Seulement les joueurs peuvent exécuter cette commande !",
   "skinsrestorer.invalid_player": "<dark_red>Erreur<dark_gray> : <red><input> n'est pas un URL ou identifiant valide.",
-  "skinsrestorer.skin_cooldown": "<dark_red>Erreur<dark_gray> : <red>Vous pourrez changer votre skin dans <yellow><time></yellow> secondes.",
   "skinsrestorer.wait_a_minute": "<dark_red>Erreur<dark_gray> : <red>S'il vous plait, attendez une minute avant de réessayer de nouveau. (Taux Limité)",
   "skinsrestorer.skinsmenu_open": "<dark_green>Ouverture du menu des skins...",
   "skinsrestorer.skinsmenu_title_new": "<blue>Menu des Skins - Page <page_number>",

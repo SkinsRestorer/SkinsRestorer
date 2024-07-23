@@ -61,7 +61,6 @@
   "skinsrestorer.only_allowed_on_console": "<dark_red>Napaka<dark_gray>: <red>Samo v konzoli se lahko uporablja ta komanda!",
   "skinsrestorer.only_allowed_on_player": "<dark_red>Napaka<dark_gray>: <red>Samo igralci lahko izvedejo to komando!",
   "skinsrestorer.invalid_player": "<dark_red>Napaka<dark_gray>: <red><input> ni validno uporabnisko ime ali URL.",
-  "skinsrestorer.skin_cooldown": "<dark_red>Napaka<dark_gray>: <red>Skin lakho spremenis cez <yellow><time></yellow> sekund.",
   "skinsrestorer.ms_uploading_skin": "<dark_green>Nalaganje skina, prosim pocakaj... (To lahko traja nekaj casa)",
   "skinsrestorer.wait_a_minute": "<dark_red>Napaka<dark_gray>: <red>Pocakaj minuto, preden znova zahtevas ta skin. (Rate Limited)",
   "skinsrestorer.skinsmenu_open": "<dark_green>Odperas skin menu...",
