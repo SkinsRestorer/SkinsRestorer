@@ -67,15 +67,12 @@ public class GUIUtils {
                         List<ComponentString> lore = new ArrayList<>();
                         lore.add(locale.getMessageRequired(player, Message.SKINSMENU_SELECT_SKIN));
                         Optional<FavouriteData> favouriteData = playerStorage.getFavouriteData(player.getUniqueId(), base.skinIdentifier());
-                        if (pageType == PageType.FAVOURITES) {
-                            favouriteData.ifPresent(data -> lore.add(locale.getMessageRequired(player, Message.SKINSMENU_FAVOURITE_SINCE_LORE,
-                                    Placeholder.unparsed("time", SRHelpers.formatEpochSeconds(data.getTimestamp(), player.getLocale())))));
+                        favouriteData.ifPresent(data -> lore.add(locale.getMessageRequired(player, Message.SKINSMENU_FAVOURITE_SINCE_LORE,
+                                Placeholder.unparsed("time", SRHelpers.formatEpochSeconds(data.getTimestamp(), player.getLocale())))));
+                        if (favouriteData.isPresent()) {
+                            lore.add(locale.getMessageRequired(player, Message.SKINSMENU_REMOVE_FAVOURITE_LORE));
                         } else {
-                            if (favouriteData.isPresent()) {
-                                lore.add(locale.getMessageRequired(player, Message.SKINSMENU_REMOVE_FAVOURITE_LORE));
-                            } else {
-                                lore.add(locale.getMessageRequired(player, Message.SKINSMENU_SET_FAVOURITE_LORE));
-                            }
+                            lore.add(locale.getMessageRequired(player, Message.SKINSMENU_SET_FAVOURITE_LORE));
                         }
 
                         lore.addAll(base.extraLore());
@@ -83,7 +80,7 @@ public class GUIUtils {
                     })
                     .forEach(skinPage::add);
 
-            if (sourceTotal > 0 && sourceSkins.size() < sourceTotal - sourceOffset) {
+            if (sourceSkins.size() < sourceTotal - sourceOffset) {
                 hasNextPage = true;
                 break;
             }

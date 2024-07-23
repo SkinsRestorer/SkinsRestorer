@@ -52,7 +52,7 @@ public class BukkitGUIHolder implements InventoryHolder {
             SRInventory.ClickEventAction action = handlers.get(switch (event.getClick()) {
                 case LEFT -> ClickEventType.LEFT;
                 case RIGHT -> ClickEventType.RIGHT;
-                case MIDDLE -> ClickEventType.MIDDLE;
+                case SHIFT_LEFT -> ClickEventType.SHIFT_LEFT;
                 default -> ClickEventType.OTHER;
             });
             if (action != null) {

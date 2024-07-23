@@ -24,8 +24,8 @@ import java.util.Locale;
 
 public enum ClickEventType implements NetworkId {
     LEFT,
-    MIDDLE,
     RIGHT,
+    SHIFT_LEFT,
     OTHER;
 
     public static final NetworkCodec<ClickEventType> CODEC = NetworkCodec.ofEnum(ClickEventType.class);

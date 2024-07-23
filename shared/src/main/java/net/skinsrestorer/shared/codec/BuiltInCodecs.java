@@ -17,7 +17,13 @@
  */
 package net.skinsrestorer.shared.codec;
 
+import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.api.property.SkinType;
+import net.skinsrestorer.api.property.SkinVariant;
+
+import java.util.Locale;
+import java.util.Optional;
 
 public class BuiltInCodecs {
     public static final NetworkCodec<String> STRING_CODEC = NetworkCodec.of(
@@ -40,6 +46,20 @@ public class BuiltInCodecs {
             is -> SkinProperty.of(
                     STRING_CODEC.read(is),
                     STRING_CODEC.read(is)
+            )
+    );
+    public static final NetworkCodec<SkinVariant> SKIN_VARIANT_CODEC = NetworkCodec.ofEnumDynamic(SkinVariant.class, t -> t.name().toLowerCase(Locale.ROOT));
+    public static final NetworkCodec<SkinType> SKIN_TYPE_CODEC = NetworkCodec.ofEnumDynamic(SkinType.class, t -> t.name().toLowerCase(Locale.ROOT));
+    public static final NetworkCodec<SkinIdentifier> SKIN_IDENTIFIER_CODEC = NetworkCodec.of(
+            (os, s) -> {
+                STRING_CODEC.write(os, s.getIdentifier());
+                SKIN_VARIANT_CODEC.optional().write(os, Optional.ofNullable(s.getSkinVariant()));
+                SKIN_TYPE_CODEC.write(os, s.getSkinType());
+            },
+            is -> SkinIdentifier.of(
+                    STRING_CODEC.read(is),
+                    SKIN_VARIANT_CODEC.optional().read(is).orElse(null),
+                    SKIN_TYPE_CODEC.read(is)
             )
     );
 }

@@ -228,13 +228,13 @@ public class PlayerStorageImpl implements PlayerStorage {
         }
     }
 
-    public void removeFavourite(UUID uuid, FavouriteData favouriteData) {
+    public void removeFavourite(UUID uuid, SkinIdentifier skinIdentifier) {
         try {
             Optional<PlayerData> optional = adapterReference.get().getPlayerData(uuid);
 
             if (optional.isPresent()) {
                 PlayerData playerData = optional.get();
-                playerData.setFavourites(playerData.getFavourites().stream().filter(data -> !data.getSkinIdentifier().equals(favouriteData.getSkinIdentifier())).toList());
+                playerData.setFavourites(playerData.getFavourites().stream().filter(data -> !data.getSkinIdentifier().equals(skinIdentifier)).toList());
 
                 adapterReference.get().setPlayerData(uuid, playerData);
             }

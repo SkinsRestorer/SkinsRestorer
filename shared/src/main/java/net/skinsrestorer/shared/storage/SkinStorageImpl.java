@@ -341,6 +341,17 @@ public class SkinStorageImpl implements SkinStorage {
                         adapterReference.get().getURLSkinData(identifier.getIdentifier(), identifier.getSkinVariant())
                                 .map(URLSkinData::getProperty);
                 case CUSTOM -> {
+                    if (identifier.getIdentifier().startsWith(RECOMMENDATION_PREFIX)) {
+                        String skinId = identifier.getIdentifier().substring(RECOMMENDATION_PREFIX.length());
+                        RecommenationResponse.SkinInfo skinInfo = recommendationsState.getRecommendation(skinId);
+
+                        if (skinInfo == null) {
+                            yield Optional.empty();
+                        }
+
+                        yield Optional.of(skinInfo.getSkinProperty());
+                    }
+
                     Optional<SkinProperty> skinProperty = adapterReference.get().getCustomSkinData(identifier.getIdentifier())
                             .map(CustomSkinData::getProperty);
                     if (skinProperty.isPresent()) {

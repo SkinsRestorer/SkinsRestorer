@@ -47,17 +47,24 @@ public class SharedGUI {
                 break;
             }
 
+            Map<ClickEventType, SRInventory.ClickEventAction> actions = new HashMap<>();
+            actions.put(ClickEventType.LEFT, new SRInventory.ClickEventAction(new SRProxyPluginMessage.GUIActionChannelPayload(new SRProxyPluginMessage.GUIActionChannelPayload.SetSkinPayload(
+                    entry.base().skinIdentifier().getIdentifier()
+            )), true));
+            actions.put(ClickEventType.SHIFT_LEFT, new SRInventory.ClickEventAction(List.of(new SRProxyPluginMessage.GUIActionChannelPayload(entry.isFavourite() ? new SRProxyPluginMessage.GUIActionChannelPayload.RemoveFavouritePayload(
+                    entry.base().skinIdentifier()
+            ) : new SRProxyPluginMessage.GUIActionChannelPayload.AddFavouritePayload(
+                    entry.base().skinIdentifier()
+            )), new SRProxyPluginMessage.GUIActionChannelPayload(new SRProxyPluginMessage.GUIActionChannelPayload.OpenPagePayload(
+                    pageInfo.page(), pageInfo.pageType()
+            ))), false));
             items.put(skinCount, new SRInventory.Item(
                     SRInventory.MaterialType.SKULL,
                     entry.base().skinName(),
                     entry.lore(),
                     Optional.of(entry.base().textureHash()),
-                    entry.enchantmentGlow(),
-                    Map.ofEntries(
-                            Map.entry(ClickEventType.LEFT, new SRInventory.ClickEventAction(new SRProxyPluginMessage.GUIActionChannelPayload(new SRProxyPluginMessage.GUIActionChannelPayload.SetSkinPayload(
-                                    entry.base().skinIdentifier().getIdentifier()
-                            )), true))
-                    )
+                    entry.isFavourite(),
+                    actions
             ));
             skinCount++;
         }

@@ -88,22 +88,22 @@ public record SRInventory(int rows, ComponentString title, Map<Integer, Item> it
         );
     }
 
-    public record ClickEventAction(Optional<SRProxyPluginMessage.GUIActionChannelPayload> actionChannelPayload,
+    public record ClickEventAction(List<SRProxyPluginMessage.GUIActionChannelPayload> actionChannelPayload,
                                    boolean closeInventory) {
         public static final NetworkCodec<ClickEventAction> CODEC = NetworkCodec.of(
                 (stream, action) -> {
-                    SRProxyPluginMessage.GUIActionChannelPayload.CODEC.optional().write(stream, action.actionChannelPayload());
+                    SRProxyPluginMessage.GUIActionChannelPayload.CODEC.list().write(stream, action.actionChannelPayload());
                     BuiltInCodecs.BOOLEAN_CODEC.write(stream, action.closeInventory());
                 },
                 stream -> new ClickEventAction(
-                        SRProxyPluginMessage.GUIActionChannelPayload.CODEC.optional().read(stream),
+                        SRProxyPluginMessage.GUIActionChannelPayload.CODEC.list().read(stream),
                         BuiltInCodecs.BOOLEAN_CODEC.read(stream)
                 )
         );
 
         public ClickEventAction(SRProxyPluginMessage.GUIActionChannelPayload actionChannelPayload,
                                 boolean closeInventory) {
-            this(Optional.of(actionChannelPayload), closeInventory);
+            this(List.of(actionChannelPayload), closeInventory);
         }
     }
 }

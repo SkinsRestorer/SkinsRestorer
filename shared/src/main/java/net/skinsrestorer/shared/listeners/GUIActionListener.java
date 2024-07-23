@@ -23,9 +23,13 @@ import net.skinsrestorer.shared.commands.library.SRCommandManager;
 import net.skinsrestorer.shared.gui.SharedGUI;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.storage.GUIStorage;
+import net.skinsrestorer.shared.storage.PlayerStorageImpl;
+import net.skinsrestorer.shared.storage.model.player.FavouriteData;
 import net.skinsrestorer.shared.subjects.SRPlayer;
+import net.skinsrestorer.shared.utils.SRHelpers;
 
 import javax.inject.Inject;
+import java.util.List;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class GUIActionListener {
@@ -33,15 +37,22 @@ public class GUIActionListener {
     private final GUIStorage guiStorage;
     private final SharedGUI sharedGUI;
     private final SRCommandManager commandManager;
+    private final PlayerStorageImpl playerStorage;
 
-    public void handle(SRPlayer player, SRProxyPluginMessage.GUIActionChannelPayload actionChannelPayload) {
-        SRProxyPluginMessage.GUIActionChannelPayload.GUIActionPayload<?> actionPayload = actionChannelPayload.payload();
-        if (actionPayload instanceof SRProxyPluginMessage.GUIActionChannelPayload.OpenPagePayload openPagePayload) {
-            adapter.openGUI(player, sharedGUI.createGUIPage(player, guiStorage.getGUIPage(player, openPagePayload.page(), openPagePayload.type())));
-        } else if (actionPayload instanceof SRProxyPluginMessage.GUIActionChannelPayload.ClearSkinPayload) {
-            commandManager.execute(player, "skin clear");
-        } else if (actionPayload instanceof SRProxyPluginMessage.GUIActionChannelPayload.SetSkinPayload setSkinPayload) {
-            commandManager.execute(player, "skin set %s".formatted(setSkinPayload.skin()));
+    public void handle(SRPlayer player, List<SRProxyPluginMessage.GUIActionChannelPayload> actionChannelPayload) {
+        for (SRProxyPluginMessage.GUIActionChannelPayload payload : actionChannelPayload) {
+            SRProxyPluginMessage.GUIActionChannelPayload.GUIActionPayload<?> actionPayload = payload.payload();
+            if (actionPayload instanceof SRProxyPluginMessage.GUIActionChannelPayload.OpenPagePayload openPagePayload) {
+                adapter.openGUI(player, sharedGUI.createGUIPage(player, guiStorage.getGUIPage(player, openPagePayload.page(), openPagePayload.type())));
+            } else if (actionPayload instanceof SRProxyPluginMessage.GUIActionChannelPayload.ClearSkinPayload) {
+                commandManager.execute(player, "skin clear");
+            } else if (actionPayload instanceof SRProxyPluginMessage.GUIActionChannelPayload.SetSkinPayload setSkinPayload) {
+                commandManager.execute(player, "skin set %s".formatted(setSkinPayload.skin()));
+            } else if (actionPayload instanceof SRProxyPluginMessage.GUIActionChannelPayload.AddFavouritePayload addFavouritePayload) {
+                playerStorage.addFavourite(player.getUniqueId(), FavouriteData.of(SRHelpers.getEpochSecond(), addFavouritePayload.skinIdentifier()));
+            } else if (actionPayload instanceof SRProxyPluginMessage.GUIActionChannelPayload.RemoveFavouritePayload removeFavouritePayload) {
+                playerStorage.removeFavourite(player.getUniqueId(), removeFavouritePayload.skinIdentifier());
+            }
         }
     }
 }

@@ -17,6 +17,8 @@
  */
 package net.skinsrestorer.shared.codec;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -30,19 +32,28 @@ public record NetworkCodec<T>(Writer<T> writer, Reader<T> reader) {
         return new NetworkCodec<>(writer, reader);
     }
 
-    public static <T extends Enum<T> & NetworkId> NetworkCodec<T> ofEnum(Class<T> clazz) {
-        return ofEnum(clazz, id -> "Unknown %s id: %s".formatted(clazz.getSimpleName(), id));
+    public static <T extends Enum<T>> NetworkCodec<T> ofEnumDynamic(Class<T> clazz, Function<T, String> dynamicMapper) {
+        return ofEnumDynamic(clazz, dynamicMapper, null);
     }
 
-    public static <T extends Enum<T> & NetworkId> NetworkCodec<T> ofEnum(Class<T> clazz, Function<String, String> messageSupplier) {
+    public static <T extends Enum<T>> NetworkCodec<T> ofEnumDynamic(Class<T> clazz, Function<T, String> dynamicMapper, @Nullable Function<String, String> messageSupplier) {
+        Function<String, String> actualMessageSupplier = Objects.requireNonNullElse(messageSupplier, id -> "Unknown %s id: %s".formatted(clazz.getSimpleName(), id));
         Map<String, T> idToValue = new HashMap<>();
         for (T value : clazz.getEnumConstants()) {
-            idToValue.put(value.getId(), value);
+            idToValue.put(dynamicMapper.apply(value), value);
         }
 
-        return BuiltInCodecs.STRING_CODEC.map(NetworkId::getId, id -> idToValue.computeIfAbsent(id, i -> {
-            throw new IllegalArgumentException(messageSupplier.apply(i));
+        return BuiltInCodecs.STRING_CODEC.map(dynamicMapper, id -> idToValue.computeIfAbsent(id, i -> {
+            throw new IllegalArgumentException(actualMessageSupplier.apply(i));
         }));
+    }
+
+    public static <T extends Enum<T> & NetworkId> NetworkCodec<T> ofEnum(Class<T> clazz) {
+        return ofEnum(clazz, null);
+    }
+
+    public static <T extends Enum<T> & NetworkId> NetworkCodec<T> ofEnum(Class<T> clazz, @Nullable Function<String, String> messageSupplier) {
+        return ofEnumDynamic(clazz, NetworkId::getId, messageSupplier);
     }
 
     public void write(SROutputWriter buf, T t) {

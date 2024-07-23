@@ -45,8 +45,8 @@ public final class SRProxyMessageAdapter {
 
         SRInputReader in = new SRInputReader(event.getData());
         SRProxyPluginMessage.ChannelPayload<?> msg = SRProxyPluginMessage.CODEC.read(in).channelPayload();
-        if (msg instanceof SRProxyPluginMessage.GUIActionChannelPayload actionChannelPayload) {
-            guiActionListener.handle(event.getPlayer(), actionChannelPayload);
+        if (msg instanceof SRProxyPluginMessage.GUIActionChannelPayloadList actionChannelPayload) {
+            guiActionListener.handle(event.getPlayer(), actionChannelPayload.actions());
         }
     }
 }
