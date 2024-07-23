@@ -82,7 +82,6 @@
   "skinsrestorer.ms_uploading_skin": "<dark_green>Subiendo skin, por favor espera... (Esto puede tardar un poco)",
   "skinsrestorer.wait_a_minute": "<dark_red>Error<dark_gray>: <red>Espere un minuto antes de volver a solicitar ese aspecto. (Tarifa limitada)",
   "skinsrestorer.skinsmenu_open": "<dark_green>Abriendo el menu de skins...",
-  "skinsrestorer.skinsmenu_title_new": "<blue>Menu de Skins- Página <page_number>",
   "skinsrestorer.skinsmenu_next_page": "<green><bold>»<gray> Próxima pagina</gray><bold> »</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[ <gray>Eliminar Skin</gray><bold> ]</bold>",
   "skinsrestorer.skinsmenu_select_skin": "<dark_green>Clic para seleccionar esta skin.",

@@ -64,7 +64,6 @@
   "skinsrestorer.ms_uploading_skin": "<dark_green>Nalaganje skina, prosim pocakaj... (To lahko traja nekaj casa)",
   "skinsrestorer.wait_a_minute": "<dark_red>Napaka<dark_gray>: <red>Pocakaj minuto, preden znova zahtevas ta skin. (Rate Limited)",
   "skinsrestorer.skinsmenu_open": "<dark_green>Odperas skin menu...",
-  "skinsrestorer.skinsmenu_title_new": "<blue>Skin menu – stran <page_number>",
   "skinsrestorer.skinsmenu_next_page": "<green><bold>»</bold> <gray>Naslednja stran</gray> <bold>»</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[</bold> <gray>Odstrani skin</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_select_skin": "<dark_green>Klikni, da izberes ta skin",

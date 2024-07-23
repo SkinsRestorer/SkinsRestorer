@@ -41,7 +41,6 @@
   "skinsrestorer.invalid_player": "<dark_red>Klaida<dark_gray>: <red><input> nėra galiojantis vartotojo vardas arba URL.",
   "skinsrestorer.wait_a_minute": "<dark_red>Klaida<dark_gray>: <red>Palaukite minutę prieš vėl prašydami tos išvaizdos. (Pasiektas veiksmų limitas)",
   "skinsrestorer.skinsmenu_open": "<dark_green>Atidaromas išvaizdų meniu...",
-  "skinsrestorer.skinsmenu_title_new": "<blue>Išvaizdų Meniu - Puslapis <page_number>",
   "skinsrestorer.skinsmenu_next_page": "<green><bold>»</bold> <gray>Kitas puslapis</gray> <bold>»</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[</bold> <gray>Pašalinti išvaizdą</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_select_skin": "<dark_green>Spustelėkite, kad pasirinktumėte šią išvaizdą",

@@ -91,7 +91,6 @@
   "skinsrestorer.ms_uploading_skin": "<dark_green>Загрузка скина, пожалуйста подождите... (Это может занять некоторое время)",
   "skinsrestorer.wait_a_minute": "<dark_red>Ошибка<dark_gray>: <red>Пожалуйста, подождите минуту перед повторным запросом этого скина. (Лимит Ограничен)",
   "skinsrestorer.skinsmenu_open": "<dark_green>Открытие меню скинов...",
-  "skinsrestorer.skinsmenu_title_new": "<blue>Меню скинов - Страница <page_number>",
   "skinsrestorer.skinsmenu_next_page": "<green><bold>»<gray> Следующая страница</gray><bold> »</bold>",
   "skinsrestorer.skinsmenu_previous_page": "<yellow><bold>«</bold> <gray>Предыдущая страница</gray> <bold>«</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[ <gray> Удалить скин</gray><bold> ]</bold>",

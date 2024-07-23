@@ -33,7 +33,6 @@
   "skinsrestorer.invalid_player": "<dark_red>Fout<dark_gray>: <red><input> is geen geldige gebruikersnaam of URL.",
   "skinsrestorer.wait_a_minute": "<dark_red>Fout<dark_gray>: <red>Wacht alstublieft een minuut voordat je die skin opnieuw aanvraagt (rate limted)",
   "skinsrestorer.skinsmenu_open": "<dark_green>Open het skins menu...",
-  "skinsrestorer.skinsmenu_title_new": "<blue>Skins Menu - Pagina <page_number>",
   "skinsrestorer.skinsmenu_next_page": "<green><bold>»</bold> <gray>Volgende pagina</gray> <bold>»</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[</bold> <gray>Verwijder Skin</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_select_skin": "<dark_green>Klik om deze skin te selecteren",

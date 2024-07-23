@@ -18,7 +18,6 @@
   "skinsrestorer.admincommand_status_summary_server": "<gray>Server: <gold><version>",
   "skinsrestorer.admincommand_status_summary_proxymode": "<gray>ProxyMode: <gold><proxy_mode>",
   "skinsrestorer.skinsmenu_open": "{prefix} &2Apertura del menù delle skin...",
-  "skinsrestorer.skinsmenu_title_new": "<blue>Menu Skin - Pagina <page_number>",
   "skinsrestorer.skinsmenu_next_page": "<green><bold>»</bold> <gray>Prossima Pagina</gray> <bold>»</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[</bold> <gray>Rimuovi Skin</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_select_skin": "<dark_green>Clicca per selezionare questa skin",

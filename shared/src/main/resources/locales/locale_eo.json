@@ -16,6 +16,5 @@
   "skinsrestorer.admincommand_status_summary_commit": "<gray>Enmeto: <gold><hash>",
   "skinsrestorer.admincommand_drop_player_not_found": "<red>Ludanto <yellow><player></yellow> ne estas trovebla.",
   "skinsrestorer.admincommand_drop_skin_not_found": "<red>Haŭto <yellow><skin></yellow> ne estas trovebla.",
-  "skinsrestorer.skinsmenu_title_new": "<blue>Menuo de haŭtoj — Paĝo <page_number>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[</bold> <gray>Forigi la haŭton</gray> <bold>]</bold>"
 }

@@ -90,7 +90,6 @@
   "skinsrestorer.ms_uploading_skin": "<dark_green>스킨을 업로드하는 중이에요. 기다려주세요...(잠시 시간이 걸릴 수 있어요)",
   "skinsrestorer.wait_a_minute": "<dark_red>오류<dark_gray>: <red>그 스킨을 다시 요청하기 전 1분을 기다려주세요.(속도 제한)",
   "skinsrestorer.skinsmenu_open": "<dark_green>스킨 메뉴를 여는 중이에요...",
-  "skinsrestorer.skinsmenu_title_new": "<blue>스킨 메뉴 - <page_number>페이지",
   "skinsrestorer.skinsmenu_next_page": "<green><bold>»</bold> <gray>다음 페이지</gray> <bold>»</bold>",
   "skinsrestorer.skinsmenu_previous_page": "<yellow><bold>«</bold> <gray>이전 페이지</gray> <bold>«</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[</bold> <gray>스킨 제거</gray> <bold>]</bold>",

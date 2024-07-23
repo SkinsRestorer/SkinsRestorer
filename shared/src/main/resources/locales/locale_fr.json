@@ -41,7 +41,6 @@
   "skinsrestorer.invalid_player": "<dark_red>Erreur<dark_gray> : <red><input> n'est pas un URL ou identifiant valide.",
   "skinsrestorer.wait_a_minute": "<dark_red>Erreur<dark_gray> : <red>S'il vous plait, attendez une minute avant de réessayer de nouveau. (Taux Limité)",
   "skinsrestorer.skinsmenu_open": "<dark_green>Ouverture du menu des skins...",
-  "skinsrestorer.skinsmenu_title_new": "<blue>Menu des Skins - Page <page_number>",
   "skinsrestorer.skinsmenu_next_page": "<green><bold>»</bold> <gray>Prochaine Page</gray> <bold>»</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[</bold> <gray>Retirer le Skin</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_select_skin": "<dark_green>Clique pour choisir ce skin",
