@@ -35,7 +35,6 @@
   "skinsrestorer.skinsmenu_open": "<dark_green>Open het skins menu...",
   "skinsrestorer.skinsmenu_next_page": "<green><bold>»</bold> <gray>Volgende pagina</gray> <bold>»</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[</bold> <gray>Verwijder Skin</gray> <bold>]</bold>",
-  "skinsrestorer.skinsmenu_select_skin": "<dark_green>Klik om deze skin te selecteren",
   "skinsrestorer.permission_player_wildcard": "Toestemming met jokertekens voor spelers",
   "skinsrestorer.permission_command": "Geeft toegang tot de \"/skin\" hub commando.",
   "skinsrestorer.permission_command_set": "Sta toegang toe om je skin te wijzigen.",
