@@ -88,6 +88,7 @@
   "skinsrestorer.only_allowed_on_console": "<dark_red>错误: <red>此命令只能在控制台执行。",
   "skinsrestorer.only_allowed_on_player": "<dark_red>错误: <red>此命令只能由玩家执行。",
   "skinsrestorer.invalid_player": "<dark_red>错误<dark_gray>: <red><input> 不是有效的用户名或链接。",
+  "skinsrestorer.skin_cooldown": "<dark_red>错误<dark_gray>: <red>你需等候 <yellow><time></yellow> 秒后才能更换皮肤。",
   "skinsrestorer.ms_uploading_skin": "<dark_green>正在上传皮肤，请稍候...（这可能需要一些时间）",
   "skinsrestorer.wait_a_minute": "<dark_red>错误<dark_gray>: <red>请稍等一分钟后再请求皮肤 (访问频率限制)",
   "skinsrestorer.skinsmenu_open": "<dark_green>正在打开皮肤菜单",
@@ -127,5 +128,13 @@
   "skinsrestorer.permission_admincommand_dump": "允许通过\"/sr dump\"上传服务器信息。",
   "skinsrestorer.permission_bypasscooldown": "绕过配置中设置的任何命令冷却时间。",
   "skinsrestorer.permission_bypassdisabled": "绕过配置中设置的任何禁用皮肤。",
-  "skinsrestorer.permission_ownskin": "允许设置自己的皮肤。"
+  "skinsrestorer.permission_ownskin": "允许设置自己的皮肤。",
+  "skinsrestorer.duration_day": "天",
+  "skinsrestorer.duration_days": "天",
+  "skinsrestorer.duration_hour": "小时",
+  "skinsrestorer.duration_hours": "小时",
+  "skinsrestorer.duration_minute": "分钟",
+  "skinsrestorer.duration_minutes": "分钟",
+  "skinsrestorer.duration_second": "秒",
+  "skinsrestorer.duration_seconds": "秒"
 }
