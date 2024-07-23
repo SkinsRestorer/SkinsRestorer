@@ -82,7 +82,6 @@
   "skinsrestorer.ms_uploading_skin": "<dark_green>スキンをアップロードしています。しばらくお待ちください…（しばらく時間がかかる可能性があります）",
   "skinsrestorer.wait_a_minute": "<dark_red>エラー<dark_gray>：<red>しばらく待ってからスキンをリクエストしてください。（レート制限あり）",
   "skinsrestorer.skinsmenu_open": "<dark_green>スキンメニューを開いています…",
-  "skinsrestorer.skinsmenu_title_new": "<blue>スキンメニュー - <page_number>ページ",
   "skinsrestorer.skinsmenu_next_page": "<green><bold>»</bold> <gray>次のページへ</gray> <bold>»</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red>［ <gray>スキンを削除</gray> ］",
   "skinsrestorer.skinsmenu_select_skin": "<dark_green>クリックしてスキンを選択します",
