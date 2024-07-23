@@ -16,6 +16,8 @@
   "skinsrestorer.help_skin_update_other": "Updates the skin of a target player.",
   "skinsrestorer.help_skin_undo": "Reverts your skin back to the previous skin.",
   "skinsrestorer.help_skin_undo_other": "Reverts the skin of a target player back to the previous skin.",
+  "skinsrestorer.help_skin_favourite": "Saves your skin as a favourite.",
+  "skinsrestorer.help_skin_favourite_other": "Saves the skin of a target player as a favourite.",
   "skinsrestorer.help_sr_reload": "Reloads the configuration file.",
   "skinsrestorer.help_sr_status": "Checks required plugin API services.",
   "skinsrestorer.help_sr_drop": "Removes player or skin data from the database.",
