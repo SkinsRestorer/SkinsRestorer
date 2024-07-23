@@ -108,6 +108,11 @@ public class PlayerStorageImpl implements PlayerStorage {
 
         try {
             Optional<PlayerData> optional = adapterReference.get().getPlayerData(uuid);
+            boolean topIsSame = getTopOfHistory(uuid, 0).map(data -> data.getSkinIdentifier().equals(historyData.getSkinIdentifier())).orElse(false);
+            if (topIsSame) {
+                // don't push the same skin to the top of the history
+                return;
+            }
 
             if (optional.isPresent()) {
                 PlayerData playerData = optional.get();
