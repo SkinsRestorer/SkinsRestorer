@@ -67,13 +67,13 @@ public class GUIUtils {
                         List<ComponentString> lore = new ArrayList<>();
                         lore.add(locale.getMessageRequired(player, Message.SKINSMENU_SELECT_SKIN));
                         Optional<FavouriteData> favouriteData = playerStorage.getFavouriteData(player.getUniqueId(), base.skinIdentifier());
-                        favouriteData.ifPresent(data -> lore.add(locale.getMessageRequired(player, Message.SKINSMENU_FAVOURITE_SINCE_LORE,
-                                Placeholder.unparsed("time", SRHelpers.formatEpochSeconds(data.getTimestamp(), player.getLocale())))));
                         if (favouriteData.isPresent()) {
                             lore.add(locale.getMessageRequired(player, Message.SKINSMENU_REMOVE_FAVOURITE_LORE));
                         } else {
                             lore.add(locale.getMessageRequired(player, Message.SKINSMENU_SET_FAVOURITE_LORE));
                         }
+                        favouriteData.ifPresent(data -> lore.add(locale.getMessageRequired(player, Message.SKINSMENU_FAVOURITE_SINCE_LORE,
+                                Placeholder.unparsed("time", SRHelpers.formatEpochSeconds(data.getTimestamp(), player.getLocale())))));
 
                         lore.addAll(base.extraLore());
                         return new GUISkinEntry(base, lore, favouriteData.isPresent());
