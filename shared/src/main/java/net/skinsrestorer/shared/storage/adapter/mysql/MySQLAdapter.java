@@ -541,7 +541,7 @@ public class MySQLAdapter implements StorageAdapter {
     }
 
     private String getCustomSkinQuery(int offset, int limit) {
-        StringBuilder query = new StringBuilder("SELECT `name`, `value`")
+        StringBuilder query = new StringBuilder("SELECT `name`, `display_name`, `value`")
                 .append(" FROM ")
                 .append(resolveCustomSkinTable())
                 .append(" WHERE `name` NOT LIKE '" + SkinStorageImpl.RECOMMENDATION_PREFIX + "%'");
