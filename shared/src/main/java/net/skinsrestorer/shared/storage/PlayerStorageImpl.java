@@ -176,7 +176,7 @@ public class PlayerStorageImpl implements PlayerStorage {
     }
 
     public int getFavouriteCount(UUID uuid) {
-        return getHistoryEntries(uuid, 0, Integer.MAX_VALUE).size();
+        return getFavouriteEntries(uuid, 0, Integer.MAX_VALUE).size();
     }
 
     public List<FavouriteData> getFavouriteEntries(UUID uuid, int skip, int limit) {
