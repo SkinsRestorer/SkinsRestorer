@@ -86,7 +86,6 @@
   "skinsrestorer.skinsmenu_next_page": "<green><bold>»</bold> <gray>다음 페이지</gray> <bold>»</bold>",
   "skinsrestorer.skinsmenu_previous_page": "<yellow><bold>«</bold> <gray>이전 페이지</gray> <bold>«</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[</bold> <gray>스킨 제거</gray> <bold>]</bold>",
-  "skinsrestorer.skinsmenu_select_skin": "<dark_green>이 스킨을 선택하려면 누르세요",
   "skinsrestorer.skin_search_message": "<green><search></green><dark_green>와(과) 일치하는 스킨을 아래에서 찾아보세요.<newline><green>https://https://namemc.com/minecraft-skins/tag/<search><newline><newline><dark_green>어떠한 스킨도 찾지 못한 경우, https://namemc.com/minecraft-skins/tag 에서 언제든지 스킨을 찾을 수 있어요.<newline>스킨의 링크를 사용해서 스킨을 설정할 수도 있어요.<newline>/skin https://namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>오류<dark_gray>: <red>스킨 데이터를 찾지 못했어요!",
   "skinsrestorer.outdated": "<dark_red><platform>에서 이전 버전의 SkinsRestorer를 사용 중이에요!<newline><red>Spigot에서 최신 버전으로 업데이트해 주세요.\n<newline<yellow>https://www.spigotmc.org/resources/skinsrestorer.2124/",
