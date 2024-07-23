@@ -64,7 +64,6 @@
   "skinsrestorer.ms_uploading_skin": "<dark_green>Nahrávanie skinu, počkajte prosím... (Môže to chvíľu trvať)",
   "skinsrestorer.wait_a_minute": "<dark_red>Chyba<dark_gray>: <red>Pred opätovným požiadaním o tento skin chvíľu počkajte. (Obmedzená rýchlosť)",
   "skinsrestorer.skinsmenu_open": "<dark_green>Otvorenie ponuky skinov...",
-  "skinsrestorer.skinsmenu_title_new": "<blue>Ponuka skinov - strana <page_number>",
   "skinsrestorer.skinsmenu_next_page": "<green><bold>»</bold> <gray>Ďalšia strana</gray> <bold>»</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[</bold> <gray>Odstrániť skin</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_select_skin": "<dark_green>Kliknutím vyber tento skin",
