@@ -28,6 +28,7 @@ import static ch.jalu.configme.properties.PropertyInitializer.newListProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 
 public class ProxyConfig implements SettingsHolder {
+    @Comment("Whether to enable the backend server command blocking feature.")
     public static final Property<Boolean> NOT_ALLOWED_COMMAND_SERVERS_ENABLED = newProperty("proxy.notAllowedCommandServers.enabled", true);
     @Comment("Block players from executing SkinsRestorer commands before having joined a server.")
     public static final Property<Boolean> NOT_ALLOWED_COMMAND_SERVERS_IF_NONE_BLOCK_COMMAND = newProperty("proxy.notAllowedCommandServers.ifNoServerBlockCommand", true);
@@ -48,7 +49,7 @@ public class ProxyConfig implements SettingsHolder {
         );
         conf.setComment("proxy.notAllowedCommandServers",
                 "Disable all SkinsRestorer commands on specific backend servers.",
-                "[!] This only works & is relevant if you're using proxies like bungee / waterfall"
+                "[!] This only works & is relevant if you're using proxies like BungeeCord / Velocity"
         );
     }
 }
