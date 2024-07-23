@@ -171,10 +171,10 @@ public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
             }
         }
 
-        public record SetSkinPayload(String skin) implements GUIActionPayload<SetSkinPayload> {
+        public record SetSkinPayload(SkinIdentifier skinIdentifier) implements GUIActionPayload<SetSkinPayload> {
             public static final NetworkCodec<SetSkinPayload> CODEC = NetworkCodec.of(
-                    (out, msg) -> BuiltInCodecs.STRING_CODEC.write(out, msg.skin()),
-                    in -> new SetSkinPayload(BuiltInCodecs.STRING_CODEC.read(in))
+                    (out, msg) -> BuiltInCodecs.SKIN_IDENTIFIER_CODEC.write(out, msg.skinIdentifier()),
+                    in -> new SetSkinPayload(BuiltInCodecs.SKIN_IDENTIFIER_CODEC.read(in))
             );
 
             @Override

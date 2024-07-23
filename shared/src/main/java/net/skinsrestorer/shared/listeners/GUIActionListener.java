@@ -47,7 +47,7 @@ public class GUIActionListener {
             } else if (actionPayload instanceof SRProxyPluginMessage.GUIActionChannelPayload.ClearSkinPayload) {
                 commandManager.execute(player, "skin clear");
             } else if (actionPayload instanceof SRProxyPluginMessage.GUIActionChannelPayload.SetSkinPayload setSkinPayload) {
-                commandManager.execute(player, "skin set %s".formatted(setSkinPayload.skin()));
+                commandManager.execute(player, "skin set \"%s\"".formatted(setSkinPayload.skinIdentifier().getIdentifier()));
             } else if (actionPayload instanceof SRProxyPluginMessage.GUIActionChannelPayload.AddFavouritePayload addFavouritePayload) {
                 playerStorage.addFavourite(player.getUniqueId(), FavouriteData.of(SRHelpers.getEpochSecond(), addFavouritePayload.skinIdentifier()));
             } else if (actionPayload instanceof SRProxyPluginMessage.GUIActionChannelPayload.RemoveFavouritePayload removeFavouritePayload) {
