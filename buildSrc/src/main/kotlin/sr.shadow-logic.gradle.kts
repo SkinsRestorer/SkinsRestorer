@@ -12,7 +12,7 @@ plugins {
     id("com.github.johnrengelman.shadow")
 }
 
-val packages = mapOf<String, String>(
+val packages = mapOf(
     "org.mariadb.jdbc" to "net.skinsrestorer.shadow.mariadb"
 )
 

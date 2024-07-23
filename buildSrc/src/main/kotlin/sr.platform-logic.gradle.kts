@@ -45,7 +45,7 @@ tasks {
 configurations.create("downgraded")
 
 artifacts {
-    add("downgraded", downgradePlatformShadow.get().archiveFile) {
-        builtBy(downgradePlatformShadow)
+    add("downgraded", downgradePlatformBase.get().archiveFile) {
+        builtBy(downgradePlatformBase)
     }
 }
