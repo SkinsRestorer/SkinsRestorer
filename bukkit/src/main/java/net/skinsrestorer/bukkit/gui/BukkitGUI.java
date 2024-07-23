@@ -23,9 +23,9 @@ import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.profiles.objects.ProfileInputType;
 import com.cryptomorin.xseries.profiles.objects.Profileable;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.bukkit.wrapper.BukkitComponentHelper;
 import net.skinsrestorer.shared.gui.GUIManager;
 import net.skinsrestorer.shared.gui.SRInventory;
-import net.skinsrestorer.shared.utils.ComponentHelper;
 import org.bukkit.Server;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
@@ -68,8 +68,8 @@ public class BukkitGUI implements GUIManager<Inventory> {
         });
 
         ItemMeta skullMeta = Objects.requireNonNull(itemStack.getItemMeta());
-        skullMeta.setDisplayName(ComponentHelper.convertJsonToLegacy(entry.displayName()));
-        skullMeta.setLore(entry.lore().stream().map(ComponentHelper::convertJsonToLegacy).toList());
+        skullMeta.setDisplayName(BukkitComponentHelper.toStupidHex(entry.displayName()));
+        skullMeta.setLore(entry.lore().stream().map(BukkitComponentHelper::toStupidHex).toList());
         if (entry.enchantmentGlow()) {
             skullMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             skullMeta.addEnchant(Objects.requireNonNull(XEnchantment.LURE.getEnchant()), 1, true);
@@ -83,7 +83,7 @@ public class BukkitGUI implements GUIManager<Inventory> {
     public Inventory createGUI(SRInventory srInventory) {
         BukkitGUIHolder instance = injector.newInstance(BukkitGUIHolder.class);
         Inventory inventory = server.createInventory(instance, srInventory.rows() * 9,
-                ComponentHelper.convertJsonToLegacy(srInventory.title()));
+                BukkitComponentHelper.toStupidHex(srInventory.title()));
         instance.setInventory(inventory);
 
         for (Map.Entry<Integer, SRInventory.Item> entry : srInventory.items().entrySet()) {
