@@ -79,7 +79,6 @@
   "skinsrestorer.ms_uploading_skin": "<dark_green>Завантаження скіна, зачекайте.. (Це може зайняти деякий час)",
   "skinsrestorer.wait_a_minute": "<dark_red>Помилка<dark_gray>: <red>Зачекайте хвилину, перш ніж знову запитувати цю тему. (Ліміт обмежений)",
   "skinsrestorer.skinsmenu_open": "<dark_green>Відкриття меню скінів...",
-  "skinsrestorer.skinsmenu_title_new": "<blue>Меню скінів - Сторінка <page_number>",
   "skinsrestorer.skinsmenu_next_page": "<green><bold>»<gray> Наступна сторінка</gray><bold> »</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[ <gray>Видалити скін</gray><bold> ]</bold>",
   "skinsrestorer.skinsmenu_select_skin": "<dark_green>Натисніть, щоб вибрати цей скін",
