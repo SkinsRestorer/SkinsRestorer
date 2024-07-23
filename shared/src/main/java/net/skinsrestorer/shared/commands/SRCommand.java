@@ -88,7 +88,7 @@ import java.util.stream.Stream;
 @SuppressWarnings("unused")
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class SRCommand {
-    private final ExpiringSet<UUID> quotesHelpCache = new ExpiringSet<>(1, TimeUnit.MINUTES);
+    private final ExpiringSet<UUID> quotesHelpCache = new ExpiringSet<>(5, TimeUnit.MINUTES);
     private final SRPlugin plugin;
     private final SRPlatformAdapter adapter;
     private final ServiceCheckerService serviceCheckerService;
