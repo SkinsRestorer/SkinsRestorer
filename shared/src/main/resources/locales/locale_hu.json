@@ -92,7 +92,6 @@
   "skinsrestorer.ms_uploading_skin": "<dark_green>Kinézeted feltöltése, kérlek várj... (Ez lehet eltart egy ideig)",
   "skinsrestorer.wait_a_minute": "<dark_red>Hiba<dark_gray>: <red>Kérlek, vérj egy percet, mielőtt újra lekéred azt a kinézetet. (Rate Limited)",
   "skinsrestorer.skinsmenu_open": "<dark_green>Kinézetek menüjének megnyitása...",
-  "skinsrestorer.skinsmenu_title_new": "<blue>Kinézetek Menü - <page_number> Oldal",
   "skinsrestorer.skinsmenu_next_page": "<green>»</bold> <gray>Következő oldal</gray> <bold>»</bold>",
   "skinsrestorer.skinsmenu_previous_page": "<yellow><bold>«</bold> <gray>Előző oldal</gray> <bold>«</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[</bold> <gray>Kinézet eltávolítása</gray> <bold>]</bold>",
