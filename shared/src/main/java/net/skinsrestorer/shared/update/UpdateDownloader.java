@@ -17,6 +17,8 @@
  */
 package net.skinsrestorer.shared.update;
 
+import org.jetbrains.annotations.Nullable;
+
 public interface UpdateDownloader {
-    boolean downloadUpdate(String downloadUrl);
+    boolean downloadUpdate(String downloadUrl, @Nullable String verificationAssetUrl);
 }

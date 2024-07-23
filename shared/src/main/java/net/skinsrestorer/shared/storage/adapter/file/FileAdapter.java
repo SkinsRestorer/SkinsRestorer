@@ -777,11 +777,11 @@ public class FileAdapter implements StorageAdapter {
     }
 
     private Path resolveURLSkinFile(String url, SkinVariant skinVariant) {
-        return skinsFolder.resolve(SRHelpers.hashSHA256ToHex(url) + "_" + skinVariant.name() + ".urlskin");
+        return skinsFolder.resolve(SRHelpers.hashSha256ToHex(url) + "_" + skinVariant.name() + ".urlskin");
     }
 
     private Path resolveURLSkinIndexFile(String url) {
-        return skinsFolder.resolve(SRHelpers.hashSHA256ToHex(url) + ".urlindex");
+        return skinsFolder.resolve(SRHelpers.hashSha256ToHex(url) + ".urlindex");
     }
 
     private Path resolvePlayerSkinFile(UUID uuid) {

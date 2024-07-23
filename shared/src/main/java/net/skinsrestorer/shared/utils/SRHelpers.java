@@ -52,47 +52,39 @@ public class SRHelpers {
         return throwable;
     }
 
-    public static String hashSHA256ToHex(String input) {
+    public static byte[] hashSHA256ToBytes(byte[] input) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(input.getBytes(StandardCharsets.UTF_8));
-            return bytesToHex(hash);
+            return digest.digest(input);
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static long hashSha256ToLong(byte[] bytes) {
+        return ByteBuffer.wrap(hashSHA256ToBytes(bytes)).getLong();
     }
 
     public static long hashSha256ToLong(String str) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            md.update(str.getBytes(StandardCharsets.UTF_8));
-            byte[] digest = md.digest();
-            return ByteBuffer.wrap(digest).getLong();
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("Failed to get SHA-256 hash algorithm", e);
-        }
+        return hashSha256ToLong(str.getBytes(StandardCharsets.UTF_8));
     }
 
-    private static String bytesToHex(byte[] hash) {
-        StringBuilder hexString = new StringBuilder(2 * hash.length);
-        for (byte b : hash) {
+    public static String hashSha256ToHex(byte[] bytes) {
+        return bytesToHex(hashSHA256ToBytes(bytes));
+    }
+
+    public static String hashSha256ToHex(String str) {
+        return hashSha256ToHex(str.getBytes(StandardCharsets.UTF_8));
+    }
+
+    private static String bytesToHex(byte[] bytes) {
+        StringBuilder hexString = new StringBuilder();
+        for (byte b : bytes) {
             String hex = Integer.toHexString(0xff & b);
-            if (hex.length() == 1) {
-                hexString.append('0');
-            }
+            if (hex.length() == 1) hexString.append('0');
             hexString.append(hex);
         }
         return hexString.toString();
-    }
-
-    public static byte[] md5(byte[] input) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            md.update(input);
-            return md.digest();
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public static long getEpochSecond() {

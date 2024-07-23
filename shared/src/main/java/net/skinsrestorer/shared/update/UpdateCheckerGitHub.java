@@ -44,6 +44,7 @@ import java.util.Optional;
 public class UpdateCheckerGitHub {
     private static final URI RELEASES_URL_LATEST = URI.create("https://api.github.com/repos/SkinsRestorer/SkinsRestorer/releases/latest");
     private static final String JAR_ASSET_NAME = "SkinsRestorer.jar";
+    private static final String VERIFICATION_ASSET_NAME = "verification-hash.txt";
     private static final String LOG_ROW = "§a----------------------------------------------";
     private final SRLogger logger;
     private final SRPlugin plugin;
@@ -80,6 +81,11 @@ public class UpdateCheckerGitHub {
                     .map(GitHubAssetInfo::getBrowserDownloadUrl)
                     .findFirst();
 
+            Optional<String> verificationAssetUrl = releaseInfo.getAssets().stream()
+                    .filter(asset -> asset.getName().equals(VERIFICATION_ASSET_NAME))
+                    .map(GitHubAssetInfo::getBrowserDownloadUrl)
+                    .findFirst();
+
             if (jarAssetUrl.isEmpty()) {
                 throw new DataRequestExceptionShared("No jar asset found in release");
             }
@@ -94,7 +100,7 @@ public class UpdateCheckerGitHub {
 
                 String downloadUrl = jarAssetUrl.get();
                 printUpdateAvailable(cause, releaseInfo.getTagName(), downloadUrl, downloader != null);
-                if (downloader != null && downloader.downloadUpdate(downloadUrl)) {
+                if (downloader != null && downloader.downloadUpdate(downloadUrl, verificationAssetUrl.orElse(null))) {
                     updateDownloaded = true;
                 }
             } else {

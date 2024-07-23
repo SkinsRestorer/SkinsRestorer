@@ -25,16 +25,16 @@ import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.update.UpdateDownloader;
 import net.skinsrestorer.shared.utils.SRHelpers;
 import org.bukkit.Server;
+import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Base64;
 
 /**
  * Parts taken from <a href="https://github.com/InventivetalentDev/SpigetUpdater">SpigetUpdater</a>
@@ -46,7 +46,7 @@ public class UpdateDownloaderGithub implements UpdateDownloader {
     private final Server server;
     private final PluginJarProvider jarProvider;
 
-    private void download(String downloadUrl, Path targetFile) throws UpdateException {
+    private void download(String downloadUrl, Path targetFile, @Nullable String expectedHash) throws UpdateException {
         try {
             // We don't use HttpClient because this writes to a file directly
             HttpsURLConnection connection = (HttpsURLConnection) new URL(downloadUrl).openConnection();
@@ -62,13 +62,12 @@ public class UpdateDownloaderGithub implements UpdateDownloader {
                 }
 
                 fileData = is.readAllBytes();
-                String hash = connection.getHeaderField("content-md5");
-                if (hash != null && !Arrays.equals(Base64.getDecoder().decode(hash), SRHelpers.md5(fileData))) {
-                    throw new UpdateException("Downloaded file is corrupted");
-                } else if (hash == null) {
-                    logger.warning("[GitHubUpdate] MD5 header not found, cannot verify integrity");
+                if (expectedHash != null && !expectedHash.equals(SRHelpers.hashSha256ToHex(fileData))) {
+                    throw new UpdateException("Downloaded file is corrupted. SHA256 hash does not match.");
+                } else if (expectedHash == null) {
+                    logger.warning("[GitHubUpdate] SHA256 hash not found, cannot verify integrity");
                 } else {
-                    logger.debug("[GitHubUpdate] MD5 hash successfully verified");
+                    logger.debug("[GitHubUpdate] SHA256 hash successfully verified");
                 }
             }
 
@@ -78,8 +77,28 @@ public class UpdateDownloaderGithub implements UpdateDownloader {
         }
     }
 
+    private String readStringFromUrl(String url) throws UpdateException {
+        try {
+            HttpsURLConnection connection = (HttpsURLConnection) new URL(url).openConnection();
+            connection.setRequestProperty("User-Agent", plugin.getUserAgent());
+            if (connection.getResponseCode() != 200) {
+                throw new UpdateException("Download returned status code %d".formatted(connection.getResponseCode()));
+            }
+
+            try (InputStream is = connection.getInputStream()) {
+                if (is == null) {
+                    throw new IOException("Failed to open input stream");
+                }
+
+                return new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            }
+        } catch (IOException e) {
+            throw new UpdateException("Download failed", e);
+        }
+    }
+
     @Override
-    public boolean downloadUpdate(String downloadUrl) {
+    public boolean downloadUpdate(String downloadUrl, @Nullable String verificationAssetUrl) {
         Path pluginFile = jarProvider.get(); // /plugins/XXX.jar
         Path updateFolder = server.getUpdateFolderFile().toPath();
         try {
@@ -94,7 +113,8 @@ public class UpdateDownloaderGithub implements UpdateDownloader {
         logger.info("[GitHubUpdate] Downloading update...");
         try {
             long start = System.currentTimeMillis();
-            download(downloadUrl, updateFile);
+            String expectedHash = verificationAssetUrl == null ? null : readStringFromUrl(verificationAssetUrl).lines().findFirst().orElse(null);
+            download(downloadUrl, updateFile, expectedHash);
 
             logger.info("[GitHubUpdate] Downloaded update in %dms".formatted(System.currentTimeMillis() - start));
             logger.info("[GitHubUpdate] Update saved as %s".formatted(updateFile.getFileName()));
