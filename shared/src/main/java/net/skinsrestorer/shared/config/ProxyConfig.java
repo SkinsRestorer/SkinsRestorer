@@ -29,10 +29,11 @@ import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 
 public class ProxyConfig implements SettingsHolder {
     public static final Property<Boolean> NOT_ALLOWED_COMMAND_SERVERS_ENABLED = newProperty("proxy.notAllowedCommandServers.enabled", true);
-    @Comment("Whether ONLY servers from the list below are allowed to use SkinsRestorer commands.")
+    @Comment("Block players from executing SkinsRestorer commands before having joined a server.")
+    public static final Property<Boolean> NOT_ALLOWED_COMMAND_SERVERS_IF_NONE_BLOCK_COMMAND = newProperty("proxy.notAllowedCommandServers.ifNoServerBlockCommand", true);
+    @Comment("When false means servers in the list are NOT allowed to execute SkinsRestorer commands, true means ONLY servers in the list are allowed to execute SkinsRestorer commands.")
     public static final Property<Boolean> NOT_ALLOWED_COMMAND_SERVERS_ALLOWLIST = newProperty("proxy.notAllowedCommandServers.allowList", false);
-    @Comment("Block players from executing SkinsRestorer commands before having joined a server. (RECOMMENDED)")
-    public static final Property<Boolean> NOT_ALLOWED_COMMAND_SERVERS_IF_NONE_BLOCK_COMMAND = newProperty("proxy.notAllowedCommandServers.ifNoServerBlockCommand", false);
+    @Comment("List of servers where SkinsRestorer commands are allowed/disallowed depending on the 'allowList' setting.")
     public static final Property<List<String>> NOT_ALLOWED_COMMAND_SERVERS = newListProperty("proxy.notAllowedCommandServers.list", List.of("auth"));
 
     @Override
