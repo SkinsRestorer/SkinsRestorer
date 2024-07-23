@@ -441,7 +441,7 @@ public class MySQLAdapter implements StorageAdapter {
     @Override
     public void setCustomSkinData(String skinName, CustomSkinData skinData) {
         skinName = CustomSkinData.sanitizeCustomSkinName(skinName);
-        mysql.execute("INSERT INTO " + resolveCustomSkinTable() + " (name, display_name, value, signature) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE display_name=?, value=?, signature=?",
+        mysql.execute("INSERT INTO " + resolveCustomSkinTable() + " (name, display_name, value, signature) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE display_name=?, value=?, signature=?",
                 skinName,
                 skinData.getDisplayName() == null ? null : skinData.getDisplayName().jsonString(),
                 skinData.getProperty().getValue(),
