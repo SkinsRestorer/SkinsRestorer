@@ -154,6 +154,7 @@ public class SRCommandManager {
             Optional<String> currentServer = proxyPlayer.getCurrentServer();
             if (currentServer.isEmpty()) {
                 if (!settingsManager.getProperty(ProxyConfig.NOT_ALLOWED_COMMAND_SERVERS_IF_NONE_BLOCK_COMMAND)) {
+                    logger.debug("Player %s is not connected to any server, so the command will be blocked.".formatted(proxyPlayer.getName()));
                     proxyPlayer.sendMessage(Message.NOT_CONNECTED_TO_SERVER);
                     ConsumerService.interrupt();
                 }
