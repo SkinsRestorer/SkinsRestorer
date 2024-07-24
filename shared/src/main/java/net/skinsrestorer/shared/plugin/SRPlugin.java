@@ -76,6 +76,7 @@ import java.util.List;
 public class SRPlugin {
     @Getter
     private static final boolean unitTest = System.getProperty("sr.unit.test") != null;
+    private static final String LOADED_PROPERTY = "sr.jvm.loaded";
     private final SRPlatformAdapter adapter;
     private final SRLogger logger;
     @Getter
@@ -284,6 +285,12 @@ public class SRPlugin {
     }
 
     public void startup(Class<? extends SRPlatformInit> initClass) throws Exception {
+        if (Boolean.getBoolean(LOADED_PROPERTY)) {
+            logger.warning("SkinsRestorer was already loaded in this JVM. You must've used a plugin like PlugMan to reload it. This is not supported and will cause issues with the plugin! Please restart your server to reload the plugin properly.");
+        } else {
+            System.setProperty(LOADED_PROPERTY, "true");
+        }
+
         SRServerPlugin serverPlugin = injector.getIfAvailable(SRServerPlugin.class);
         SRProxyPlugin proxyPlugin = injector.getIfAvailable(SRProxyPlugin.class);
 
