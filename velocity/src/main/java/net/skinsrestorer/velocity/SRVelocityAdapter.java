@@ -129,7 +129,7 @@ public record SRVelocityAdapter(Injector injector, SRVelocityBootstrap pluginIns
                 p.getInstance().isPresent(),
                 p.getDescription().getName().orElseGet(() -> p.getDescription().getId()),
                 p.getDescription().getVersion().orElse("Unknown"),
-                "N/A",
+                p.getInstance().map(i -> i.getClass().getCanonicalName()).orElse("N/A"),
                 p.getDescription().getAuthors().toArray(new String[0])
         )).collect(Collectors.toList());
     }
