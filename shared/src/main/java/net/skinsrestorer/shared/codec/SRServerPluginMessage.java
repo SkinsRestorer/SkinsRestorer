@@ -17,10 +17,11 @@
  */
 package net.skinsrestorer.shared.codec;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.gui.SRInventory;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public record SRServerPluginMessage(ChannelPayload<?> channelPayload) {
     public static final NetworkCodec<SRServerPluginMessage> CODEC = NetworkCodec.of(
@@ -28,19 +29,22 @@ public record SRServerPluginMessage(ChannelPayload<?> channelPayload) {
                 ChannelType.CODEC.write(out, msg.channelPayload().getType());
                 msg.channelPayload().writeCodec(out);
             },
-            in -> new SRServerPluginMessage(ChannelType.CODEC.read(in).getCodec().read(in))
+            in -> new SRServerPluginMessage(ChannelType.CODEC.read(in).codec().read(in))
     );
 
-    @Getter
-    @RequiredArgsConstructor
-    public enum ChannelType implements NetworkId {
-        OPEN_GUI("openGUI", GUIPageChannelPayload.CODEC),
-        SKIN_UPDATE("SkinUpdateV2", SkinUpdateChannelPayload.CODEC);
+    public record ChannelType<T extends ChannelPayload<T>>(String channelName, NetworkCodec<T> codec) implements NetworkId {
+        private static final Map<String,ChannelType<?>> ID_TO_VALUE = new HashMap<>();
 
-        public static final NetworkCodec<ChannelType> CODEC = NetworkCodec.ofEnum(ChannelType.class,
+        public static final ChannelType<GUIPageChannelPayload> OPEN_GUI = register(new ChannelType<>("openGUI", GUIPageChannelPayload.CODEC));
+        public static final ChannelType<SkinUpdateChannelPayload> SKIN_UPDATE = register(new ChannelType<>("SkinUpdateV2", SkinUpdateChannelPayload.CODEC));
+
+        public static final NetworkCodec<ChannelType<?>> CODEC = NetworkCodec.ofMapBackedDynamic(ID_TO_VALUE, NetworkId::getId,
                 "Unknown channel type: %s (Make sure the server and proxy are running the same version of SkinsRestorer)"::formatted);
-        private final String channelName;
-        private final NetworkCodec<? extends ChannelPayload<?>> codec;
+
+        private static <T extends ChannelPayload<T>> ChannelType<T> register(ChannelType<T> channelType) {
+            ID_TO_VALUE.put(channelType.getId(), channelType);
+            return channelType;
+        }
 
         @Override
         public String getId() {
@@ -49,14 +53,12 @@ public record SRServerPluginMessage(ChannelPayload<?> channelPayload) {
     }
 
     public interface ChannelPayload<T extends ChannelPayload<T>> {
-        ChannelType getType();
-
-        NetworkCodec<T> getCodec();
+        ChannelType<T> getType();
 
         T cast();
 
         default void writeCodec(SROutputWriter out) {
-            getCodec().write(out, cast());
+            getType().codec().write(out, cast());
         }
     }
 
@@ -67,13 +69,8 @@ public record SRServerPluginMessage(ChannelPayload<?> channelPayload) {
         );
 
         @Override
-        public ChannelType getType() {
+        public ChannelType<GUIPageChannelPayload> getType() {
             return ChannelType.OPEN_GUI;
-        }
-
-        @Override
-        public NetworkCodec<GUIPageChannelPayload> getCodec() {
-            return CODEC;
         }
 
         @Override
@@ -90,13 +87,8 @@ public record SRServerPluginMessage(ChannelPayload<?> channelPayload) {
         );
 
         @Override
-        public ChannelType getType() {
+        public ChannelType<SkinUpdateChannelPayload> getType() {
             return ChannelType.SKIN_UPDATE;
-        }
-
-        @Override
-        public NetworkCodec<SkinUpdateChannelPayload> getCodec() {
-            return CODEC;
         }
 
         @Override

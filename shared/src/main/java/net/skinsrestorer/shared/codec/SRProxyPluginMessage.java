@@ -17,12 +17,12 @@
  */
 package net.skinsrestorer.shared.codec;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.shared.gui.PageType;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
     public static final NetworkCodec<SRProxyPluginMessage> CODEC = NetworkCodec.of(
@@ -30,18 +30,22 @@ public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
                 ChannelType.CODEC.write(out, msg.channelPayload().getType());
                 msg.channelPayload().writeCodec(out);
             },
-            in -> new SRProxyPluginMessage(ChannelType.CODEC.read(in).getCodec().read(in))
+            in -> new SRProxyPluginMessage(ChannelType.CODEC.read(in).codec().read(in))
     );
 
-    @Getter
-    @RequiredArgsConstructor
-    public enum ChannelType implements NetworkId {
-        GUI_ACTION_LIST("guiActionList", GUIActionChannelPayloadList.CODEC);
+    public record ChannelType<T extends ChannelPayload<T>>(String channelName,
+                                                           NetworkCodec<T> codec) implements NetworkId {
+        private static final Map<String, ChannelType<?>> ID_TO_VALUE = new HashMap<>();
 
-        public static final NetworkCodec<ChannelType> CODEC = NetworkCodec.ofEnum(ChannelType.class,
+        public static final ChannelType<GUIActionChannelPayloadList> GUI_ACTION_LIST = register(new ChannelType<>("guiActionList", GUIActionChannelPayloadList.CODEC));
+
+        public static final NetworkCodec<ChannelType<?>> CODEC = NetworkCodec.ofMapBackedDynamic(ID_TO_VALUE, NetworkId::getId,
                 "Unknown channel type: %s (Make sure the server and proxy are running the same version of SkinsRestorer)"::formatted);
-        private final String channelName;
-        private final NetworkCodec<? extends ChannelPayload<?>> codec;
+
+        private static <T extends ChannelPayload<T>> ChannelType<T> register(ChannelType<T> channelType) {
+            ID_TO_VALUE.put(channelType.getId(), channelType);
+            return channelType;
+        }
 
         @Override
         public String getId() {
@@ -50,14 +54,12 @@ public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
     }
 
     public interface ChannelPayload<T extends ChannelPayload<T>> {
-        ChannelType getType();
-
-        NetworkCodec<T> getCodec();
+        ChannelType<T> getType();
 
         T cast();
 
         default void writeCodec(SROutputWriter out) {
-            getCodec().write(out, cast());
+            getType().codec().write(out, cast());
         }
     }
 
@@ -68,13 +70,8 @@ public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
         );
 
         @Override
-        public ChannelType getType() {
+        public ChannelType<GUIActionChannelPayloadList> getType() {
             return ChannelType.GUI_ACTION_LIST;
-        }
-
-        @Override
-        public NetworkCodec<GUIActionChannelPayloadList> getCodec() {
-            return CODEC;
         }
 
         @Override
@@ -89,21 +86,26 @@ public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
                     GUIActionType.CODEC.write(out, msg.payload().getType());
                     msg.payload().writeCodec(out);
                 },
-                in -> new GUIActionChannelPayload(GUIActionType.CODEC.read(in).getCodec().read(in))
+                in -> new GUIActionChannelPayload(GUIActionType.CODEC.read(in).codec().read(in))
         );
 
-        @Getter
-        @RequiredArgsConstructor
-        public enum GUIActionType implements NetworkId {
-            OPEN_PAGE("openPage", OpenPagePayload.CODEC),
-            CLEAR_SKIN("clearSkin", ClearSkinPayload.CODEC),
-            SET_SKIN("setSkin", SetSkinPayload.CODEC),
-            ADD_FAVOURITE("addFavourite", AddFavouritePayload.CODEC),
-            REMOVE_FAVOURITE("removeFavourite", RemoveFavouritePayload.CODEC);
+        public record GUIActionType<T extends GUIActionPayload<T>>(String channelName,
+                                                                   NetworkCodec<T> codec) implements NetworkId {
+            private static final Map<String, GUIActionType<?>> ID_TO_VALUE = new HashMap<>();
 
-            public static final NetworkCodec<GUIActionType> CODEC = NetworkCodec.ofEnum(GUIActionType.class);
-            private final String channelName;
-            private final NetworkCodec<? extends GUIActionPayload<?>> codec;
+            public static final GUIActionType<OpenPagePayload> OPEN_PAGE = register(new GUIActionType<>("openPage", OpenPagePayload.CODEC));
+            public static final GUIActionType<ClearSkinPayload> CLEAR_SKIN = new GUIActionType<>("clearSkin", ClearSkinPayload.CODEC);
+            public static final GUIActionType<SetSkinPayload> SET_SKIN = new GUIActionType<>("setSkin", SetSkinPayload.CODEC);
+            public static final GUIActionType<AddFavouritePayload> ADD_FAVOURITE = new GUIActionType<>("addFavourite", AddFavouritePayload.CODEC);
+            public static final GUIActionType<RemoveFavouritePayload> REMOVE_FAVOURITE = new GUIActionType<>("removeFavourite", RemoveFavouritePayload.CODEC);
+
+            public static final NetworkCodec<GUIActionType<?>> CODEC = NetworkCodec.ofMapBackedDynamic(ID_TO_VALUE, NetworkId::getId,
+                    "Unknown GUI action type: %s (Make sure the server and proxy are running the same version of SkinsRestorer)"::formatted);
+
+            private static <T extends GUIActionPayload<T>> GUIActionType<T> register(GUIActionType<T> guiActionType) {
+                ID_TO_VALUE.put(guiActionType.getId(), guiActionType);
+                return guiActionType;
+            }
 
             @Override
             public String getId() {
@@ -112,14 +114,12 @@ public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
         }
 
         public interface GUIActionPayload<T extends GUIActionPayload<T>> {
-            GUIActionType getType();
-
-            NetworkCodec<T> getCodec();
+            GUIActionType<T> getType();
 
             T cast();
 
             default void writeCodec(SROutputWriter out) {
-                getCodec().write(out, cast());
+                getType().codec().write(out, cast());
             }
         }
 
@@ -133,13 +133,8 @@ public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
             );
 
             @Override
-            public GUIActionType getType() {
+            public GUIActionType<OpenPagePayload> getType() {
                 return GUIActionType.OPEN_PAGE;
-            }
-
-            @Override
-            public NetworkCodec<OpenPagePayload> getCodec() {
-                return CODEC;
             }
 
             @Override
@@ -156,13 +151,8 @@ public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
             );
 
             @Override
-            public GUIActionType getType() {
+            public GUIActionType<ClearSkinPayload> getType() {
                 return GUIActionType.CLEAR_SKIN;
-            }
-
-            @Override
-            public NetworkCodec<ClearSkinPayload> getCodec() {
-                return CODEC;
             }
 
             @Override
@@ -178,13 +168,8 @@ public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
             );
 
             @Override
-            public GUIActionType getType() {
+            public GUIActionType<SetSkinPayload> getType() {
                 return GUIActionType.SET_SKIN;
-            }
-
-            @Override
-            public NetworkCodec<SetSkinPayload> getCodec() {
-                return CODEC;
             }
 
             @Override
@@ -201,13 +186,8 @@ public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
             );
 
             @Override
-            public GUIActionType getType() {
+            public GUIActionType<AddFavouritePayload> getType() {
                 return GUIActionType.ADD_FAVOURITE;
-            }
-
-            @Override
-            public NetworkCodec<AddFavouritePayload> getCodec() {
-                return CODEC;
             }
 
             @Override
@@ -224,13 +204,8 @@ public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
             );
 
             @Override
-            public GUIActionType getType() {
+            public GUIActionType<RemoveFavouritePayload> getType() {
                 return GUIActionType.REMOVE_FAVOURITE;
-            }
-
-            @Override
-            public NetworkCodec<RemoveFavouritePayload> getCodec() {
-                return CODEC;
             }
 
             @Override

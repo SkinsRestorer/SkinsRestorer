@@ -27,9 +27,21 @@ import java.util.function.Function;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+@SuppressWarnings("unused")
 public record NetworkCodec<T>(Writer<T> writer, Reader<T> reader) {
     public static <T> NetworkCodec<T> of(Writer<T> writer, Reader<T> reader) {
         return new NetworkCodec<>(writer, reader);
+    }
+
+    public static <T> NetworkCodec<T> ofMapBackedDynamic(Map<String, T> idToValue, Function<T, String> dynamicMapper) {
+        return ofMapBackedDynamic(idToValue, dynamicMapper, null);
+    }
+
+    public static <T> NetworkCodec<T> ofMapBackedDynamic(Map<String, T> idToValue, Function<T, String> dynamicMapper, @Nullable Function<String, String> messageSupplier) {
+        Function<String, String> actualMessageSupplier = Objects.requireNonNullElse(messageSupplier, "Unknown id: %s"::formatted);
+        return BuiltInCodecs.STRING_CODEC.map(dynamicMapper, id -> idToValue.computeIfAbsent(id, i -> {
+            throw new IllegalArgumentException(actualMessageSupplier.apply(i));
+        }));
     }
 
     public static <T extends Enum<T>> NetworkCodec<T> ofEnumDynamic(Class<T> clazz, Function<T, String> dynamicMapper) {
@@ -37,15 +49,12 @@ public record NetworkCodec<T>(Writer<T> writer, Reader<T> reader) {
     }
 
     public static <T extends Enum<T>> NetworkCodec<T> ofEnumDynamic(Class<T> clazz, Function<T, String> dynamicMapper, @Nullable Function<String, String> messageSupplier) {
-        Function<String, String> actualMessageSupplier = Objects.requireNonNullElse(messageSupplier, id -> "Unknown %s id: %s".formatted(clazz.getSimpleName(), id));
         Map<String, T> idToValue = new HashMap<>();
         for (T value : clazz.getEnumConstants()) {
             idToValue.put(dynamicMapper.apply(value), value);
         }
 
-        return BuiltInCodecs.STRING_CODEC.map(dynamicMapper, id -> idToValue.computeIfAbsent(id, i -> {
-            throw new IllegalArgumentException(actualMessageSupplier.apply(i));
-        }));
+        return ofMapBackedDynamic(idToValue, dynamicMapper, messageSupplier);
     }
 
     public static <T extends Enum<T> & NetworkId> NetworkCodec<T> ofEnum(Class<T> clazz) {
