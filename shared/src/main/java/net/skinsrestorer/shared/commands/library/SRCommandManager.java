@@ -22,7 +22,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.skinsrestorer.api.property.SkinVariant;
-import net.skinsrestorer.shared.commands.SRCommand;
 import net.skinsrestorer.shared.commands.library.annotations.*;
 import net.skinsrestorer.shared.commands.library.types.PlayerSelectorArgumentParser;
 import net.skinsrestorer.shared.config.ProxyConfig;
@@ -172,7 +171,6 @@ public class SRCommandManager {
         });
         commandManager.registerCommandPostProcessor(new CustomCooldownProcessor<>(cooldownManager));
 
-        commandManager.parserRegistry().registerParser(EnumParser.enumParser(SRCommand.PlayerOrSkin.class));
         commandManager.parserRegistry().registerParser(EnumParser.enumParser(SkinVariant.class));
         commandManager.parserRegistry().registerParser(ParserDescriptor.of(new PlayerSelectorArgumentParser(platform), PlayerSelector.class));
         annotationParser.registerBuilderModifier(

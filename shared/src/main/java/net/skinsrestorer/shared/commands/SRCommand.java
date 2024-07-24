@@ -272,54 +272,63 @@ public final class SRCommand {
         sender.sendMessage(Message.DIVIDER);
     }
 
-    @Command("drop|remove <playerOrSkin> <target>")
+    @Command("drop|remove player <target>")
     @CommandPermission(PermissionRegistry.SR_DROP)
     @CommandDescription(Message.HELP_SR_DROP)
-    private void onDrop(SRCommandSender sender, PlayerOrSkin playerOrSkin, String target) {
-        switch (playerOrSkin) {
-            case PLAYER -> {
-                try {
-                    Optional<UUID> targetId = cacheStorage.getUUID(target, false);
+    private void onDropPlayer(SRCommandSender sender, String target) {
+        try {
+            Optional<UUID> targetId = cacheStorage.getUUID(target, false);
 
-                    if (targetId.isEmpty()) {
-                        sender.sendMessage(Message.ADMINCOMMAND_DROP_PLAYER_NOT_FOUND, Placeholder.unparsed("player", target));
-                        return;
-                    }
-
-                    playerStorage.removeSkinIdOfPlayer(targetId.get());
-                } catch (DataRequestException e) {
-                    sender.sendMessage(Message.ADMINCOMMAND_DROP_UUID_ERROR);
-                    return;
-                }
+            if (targetId.isEmpty()) {
+                sender.sendMessage(Message.ADMINCOMMAND_DROP_PLAYER_NOT_FOUND, Placeholder.unparsed("player", target));
+                return;
             }
-            case SKIN -> {
-                Optional<InputDataResult> optional = skinStorage.findSkinData(target);
 
-                if (optional.isEmpty()) {
-                    sender.sendMessage(Message.ADMINCOMMAND_DROP_SKIN_NOT_FOUND, Placeholder.unparsed("skin", target));
-                    return;
-                }
-
-                InputDataResult result = optional.get();
-
-                skinStorage.removeSkinData(result.getIdentifier());
-            }
+            playerStorage.removeSkinIdOfPlayer(targetId.get());
+        } catch (DataRequestException e) {
+            sender.sendMessage(Message.ADMINCOMMAND_DROP_UUID_ERROR);
+            return;
         }
 
-        sender.sendMessage(Message.SUCCESS_ADMIN_DROP, Placeholder.unparsed("type", playerOrSkin.toString()), Placeholder.unparsed("target", target));
+        sender.sendMessage(Message.SUCCESS_ADMIN_DROP, Placeholder.unparsed("type", "player"), Placeholder.unparsed("target", target));
     }
 
-    @Command("info|props|lookup <playerOrSkin> <input>")
+    @Command("drop|remove skin <target>")
+    @CommandPermission(PermissionRegistry.SR_DROP)
+    @CommandDescription(Message.HELP_SR_DROP)
+    private void onDropSkin(SRCommandSender sender, String target) {
+        Optional<InputDataResult> optional = skinStorage.findSkinData(target);
+
+        if (optional.isEmpty()) {
+            sender.sendMessage(Message.ADMINCOMMAND_DROP_SKIN_NOT_FOUND, Placeholder.unparsed("skin", target));
+            return;
+        }
+
+        InputDataResult result = optional.get();
+
+        skinStorage.removeSkinData(result.getIdentifier());
+
+        sender.sendMessage(Message.SUCCESS_ADMIN_DROP, Placeholder.unparsed("type", "skin"), Placeholder.unparsed("target", target));
+    }
+
+    @Command("info|props|lookup player <input>")
     @CommandPermission(PermissionRegistry.SR_INFO)
     @CommandDescription(Message.HELP_SR_INFO)
-    private void onInfo(SRCommandSender sender, PlayerOrSkin playerOrSkin, String input) {
-        try {
-            sender.sendMessage(Message.ADMINCOMMAND_INFO_CHECKING);
-            var message = switch (playerOrSkin) {
-                case PLAYER -> getPlayerInfoMessage(input);
-                case SKIN -> getSkinInfoMessage(input);
-            };
+    private void onInfoPlayer(SRCommandSender sender, String input) {
+        sender.sendMessage(Message.ADMINCOMMAND_INFO_CHECKING);
+        sender.sendMessage(Message.DIVIDER);
+        getPlayerInfoMessage(input).accept(sender);
+        sender.sendMessage(Message.DIVIDER);
+    }
 
+    @Command("info|props|lookup skin <input>")
+    @CommandPermission(PermissionRegistry.SR_INFO)
+    @CommandDescription(Message.HELP_SR_INFO)
+    private void onInfoSkin(SRCommandSender sender, String input) {
+        try {
+            Consumer<SRCommandSender> message = getSkinInfoMessage(input);
+
+            sender.sendMessage(Message.ADMINCOMMAND_INFO_CHECKING);
             sender.sendMessage(Message.DIVIDER);
             message.accept(sender);
             sender.sendMessage(Message.DIVIDER);
@@ -503,10 +512,5 @@ public final class SRCommand {
             logger.severe("Failed to dump data", e);
             sender.sendMessage(Message.ADMINCOMMAND_DUMP_ERROR);
         }
-    }
-
-    public enum PlayerOrSkin {
-        PLAYER,
-        SKIN,
     }
 }
