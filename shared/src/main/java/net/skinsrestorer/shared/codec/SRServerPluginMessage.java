@@ -35,7 +35,7 @@ public record SRServerPluginMessage(ChannelPayload<?> channelPayload) {
     @RequiredArgsConstructor
     public enum ChannelType implements NetworkId {
         OPEN_GUI("openGUI", GUIPageChannelPayload.CODEC),
-        SKIN_UPDATE("SkinUpdateV2", GUIPageChannelPayload.CODEC);
+        SKIN_UPDATE("SkinUpdateV2", SkinUpdateChannelPayload.CODEC);
 
         public static final NetworkCodec<ChannelType> CODEC = NetworkCodec.ofEnum(ChannelType.class,
                 "Unknown channel type: %s (Make sure the server and proxy are running the same version of SkinsRestorer)"::formatted);
@@ -91,7 +91,7 @@ public record SRServerPluginMessage(ChannelPayload<?> channelPayload) {
 
         @Override
         public ChannelType getType() {
-            return ChannelType.OPEN_GUI;
+            return ChannelType.SKIN_UPDATE;
         }
 
         @Override

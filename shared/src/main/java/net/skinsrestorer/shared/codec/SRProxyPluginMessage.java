@@ -202,7 +202,7 @@ public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
 
             @Override
             public GUIActionType getType() {
-                return GUIActionType.SET_SKIN;
+                return GUIActionType.ADD_FAVOURITE;
             }
 
             @Override
@@ -225,7 +225,7 @@ public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
 
             @Override
             public GUIActionType getType() {
-                return GUIActionType.SET_SKIN;
+                return GUIActionType.REMOVE_FAVOURITE;
             }
 
             @Override
