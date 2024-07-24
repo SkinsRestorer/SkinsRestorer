@@ -117,7 +117,6 @@ fun ShadowJar.configureRelocations() {
     relocate("com.google.gson", "net.skinsrestorer.shadow.gson")
     relocate("com.google.errorprone", "net.skinsrestorer.shadow.errorprone")
 
-    relocate("com.github.benmanes.caffeine", "net.skinsrestorer.shadow.caffeine")
     relocate("com.cryptomorin.xseries", "net.skinsrestorer.shadow.xseries")
     relocate("org.bstats", "net.skinsrestorer.shadow.bstats")
 
