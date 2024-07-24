@@ -286,7 +286,7 @@ public class SRPlugin {
 
     public void startup(Class<? extends SRPlatformInit> initClass) throws Exception {
         if (Boolean.getBoolean(LOADED_PROPERTY)) {
-            logger.warning("SkinsRestorer was already loaded in this JVM. You must've used a plugin like PlugMan to reload it. This is not supported and will cause issues with the plugin! Please restart your server to reload the plugin properly.");
+            logger.severe("SkinsRestorer was already loaded in this JVM. You must've used a plugin like PlugMan to reload it. This is not supported and will cause issues with the plugin! Please restart your server to reload the plugin properly.");
         } else {
             System.setProperty(LOADED_PROPERTY, "true");
         }
