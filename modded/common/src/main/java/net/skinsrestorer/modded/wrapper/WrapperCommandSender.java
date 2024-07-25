@@ -15,23 +15,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package net.skinsrestorer.bukkit.wrapper;
+package net.skinsrestorer.modded.wrapper;
 
 import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
-import net.kyori.adventure.text.Component;
-import net.skinsrestorer.bukkit.SRBukkitAdapter;
+import net.minecraft.commands.CommandSourceStack;
+import net.skinsrestorer.modded.MinecraftKyoriSerializer;
+import net.skinsrestorer.modded.SRModAdapter;
+import net.skinsrestorer.modded.SRModPlatform;
 import net.skinsrestorer.shared.subjects.AbstractSRCommandSender;
 import net.skinsrestorer.shared.subjects.permissions.Permission;
 import net.skinsrestorer.shared.utils.ComponentString;
-import net.skinsrestorer.shared.utils.Tristate;
-import org.bukkit.command.BlockCommandSender;
-import org.bukkit.command.CommandSender;
 
 @SuperBuilder
 public class WrapperCommandSender extends AbstractSRCommandSender {
-    protected final @NonNull SRBukkitAdapter adapter;
-    private final @NonNull CommandSender sender;
+    protected final @NonNull SRModAdapter adapter;
+    private final @NonNull CommandSourceStack sender;
 
     @Override
     public <S> S getAs(Class<S> senderClass) {
@@ -40,25 +39,11 @@ public class WrapperCommandSender extends AbstractSRCommandSender {
 
     @Override
     public void sendMessage(ComponentString messageJson) {
-        Component message = BukkitComponentHelper.deserialize(messageJson);
-
-        Runnable runnable = () -> adapter.getAdventure().get().sender(sender).sendMessage(message);
-        if (sender instanceof BlockCommandSender) {
-            // Command blocks require messages to be sent synchronously in Bukkit
-            adapter.runSync(this, runnable);
-        } else {
-            runnable.run();
-        }
+        sender.sendSystemMessage(MinecraftKyoriSerializer.toNative(messageJson));
     }
 
     @Override
     public boolean hasPermission(Permission permission) {
-        return permission.checkPermission(settings, p -> {
-            boolean hasPermission = sender.hasPermission(p);
-
-            // If a platform makes a permission false or true, return that value
-            boolean explicit = hasPermission || sender.isPermissionSet(p);
-            return explicit ? Tristate.fromBoolean(hasPermission) : Tristate.UNDEFINED;
-        });
+        return permission.checkPermission(settings, p -> SRModPlatform.test(sender, permission));
     }
 }

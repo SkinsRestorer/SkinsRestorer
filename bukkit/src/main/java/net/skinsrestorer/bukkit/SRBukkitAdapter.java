@@ -127,7 +127,7 @@ public class SRBukkitAdapter implements SRServerAdapter {
     }
 
     @Override
-    public void runSync(Runnable runnable) {
+    public void runSync(SRCommandSender sender, Runnable runnable) {
         schedulerProvider.runSync(runnable);
     }
 
@@ -223,12 +223,12 @@ public class SRBukkitAdapter implements SRServerAdapter {
     }
 
     @Override
-    public Collection<SRPlayer> getOnlinePlayers() {
+    public Collection<SRPlayer> getOnlinePlayers(SRCommandSender sender) {
         return server.getOnlinePlayers().stream().map(injector.getSingleton(WrapperBukkit.class)::player).collect(Collectors.toList());
     }
 
     @Override
-    public Optional<SRPlayer> getPlayer(UUID uniqueId) {
+    public Optional<SRPlayer> getPlayer(SRCommandSender sender, UUID uniqueId) {
         return Optional.ofNullable(server.getPlayer(uniqueId)).map(injector.getSingleton(WrapperBukkit.class)::player);
     }
 

@@ -15,17 +15,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package net.skinsrestorer.modded.neoforge;
+package net.skinsrestorer.modded.utils;
 
-import net.minecraft.server.dedicated.DedicatedServer;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.fml.common.Mod;
+import ch.jalu.injector.Injector;
+import net.skinsrestorer.shared.subjects.SRPlayer;
+import net.skinsrestorer.shared.utils.SoundProvider;
 
-import net.skinsrestorer.modded.SRMod;
-
-@Mod(value = SRMod.MOD_ID, dist = Dist.DEDICATED_SERVER)
-public final class SRNeoForgeMod {
-    public SRNeoForgeMod() {
-        SRMod.init();
+public class ModSoundProvider implements SoundProvider {
+    @Override
+    public void accept(Injector injector, SRPlayer player) {
+        // TODO: Implement sound provider
     }
 }

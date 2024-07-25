@@ -174,7 +174,7 @@ public final class SkinCommand {
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinClearOther(SRCommandSender sender, PlayerSelector selector) {
         for (UUID target : selector.resolve(sender)) {
-            Optional<SRPlayer> targetPlayer = adapter.getPlayer(target);
+            Optional<SRPlayer> targetPlayer = adapter.getPlayer(sender, target);
             String targetName = targetPlayer.map(SRPlayer::getName).orElseGet(target::toString);
 
             // Remove the targets defined skin from database
@@ -236,7 +236,7 @@ public final class SkinCommand {
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinUpdateOther(SRCommandSender sender, PlayerSelector selector) {
         for (UUID target : selector.resolve(sender)) {
-            Optional<SRPlayer> targetPlayer = adapter.getPlayer(target);
+            Optional<SRPlayer> targetPlayer = adapter.getPlayer(sender, target);
             String targetName = targetPlayer.map(SRPlayer::getName).orElseGet(target::toString);
 
             try {
@@ -292,7 +292,7 @@ public final class SkinCommand {
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinSetOther(SRCommandSender sender, @Argument(suggestions = "skin_input_quote") @Quoted String skinName, PlayerSelector selector, SkinVariant skinVariant) {
         for (UUID target : selector.resolve(sender)) {
-            Optional<SRPlayer> targetPlayer = adapter.getPlayer(target);
+            Optional<SRPlayer> targetPlayer = adapter.getPlayer(sender, target);
             String targetName = targetPlayer.map(SRPlayer::getName).orElseGet(target::toString);
 
             if (!setSkin(sender, target, skinName, skinVariant, true)) {
@@ -350,7 +350,7 @@ public final class SkinCommand {
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinUndoOther(SRCommandSender sender, PlayerSelector selector) {
         for (UUID target : selector.resolve(sender)) {
-            Optional<SRPlayer> targetPlayer = adapter.getPlayer(target);
+            Optional<SRPlayer> targetPlayer = adapter.getPlayer(sender, target);
             String targetName = targetPlayer.map(SRPlayer::getName).orElseGet(target::toString);
 
             Optional<HistoryData> historyData = playerStorage.getTopOfHistory(target, 0);
@@ -436,7 +436,7 @@ public final class SkinCommand {
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinFavouriteOther(SRCommandSender sender, PlayerSelector selector) {
         for (UUID target : selector.resolve(sender)) {
-            Optional<SRPlayer> targetPlayer = adapter.getPlayer(target);
+            Optional<SRPlayer> targetPlayer = adapter.getPlayer(sender, target);
             String targetName = targetPlayer.map(SRPlayer::getName).orElseGet(target::toString);
 
             Optional<SkinIdentifier> currentSkin = playerStorage.getSkinIdOfPlayer(target);
@@ -524,7 +524,7 @@ public final class SkinCommand {
                 return false;
             }
 
-            Optional<SRPlayer> targetPlayer = adapter.getPlayer(target);
+            Optional<SRPlayer> targetPlayer = adapter.getPlayer(sender, target);
             playerStorage.setSkinIdOfPlayer(target, optional.get().getIdentifier());
             targetPlayer.ifPresent(player -> skinApplier.applySkin(player.getAs(Object.class), optional.get().getProperty()));
 

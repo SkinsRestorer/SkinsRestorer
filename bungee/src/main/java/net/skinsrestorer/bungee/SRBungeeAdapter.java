@@ -141,12 +141,12 @@ public class SRBungeeAdapter implements SRProxyAdapter {
     }
 
     @Override
-    public Collection<SRPlayer> getOnlinePlayers() {
+    public Collection<SRPlayer> getOnlinePlayers(SRCommandSender sender) {
         return proxy.getPlayers().stream().map(injector.getSingleton(WrapperBungee.class)::player).collect(Collectors.toList());
     }
 
     @Override
-    public Optional<SRPlayer> getPlayer(UUID uniqueId) {
+    public Optional<SRPlayer> getPlayer(SRCommandSender sender, UUID uniqueId) {
         return Optional.ofNullable(proxy.getPlayer(uniqueId)).map(injector.getSingleton(WrapperBungee.class)::player);
     }
 }

@@ -1,6 +1,7 @@
 plugins {
     id("dev.architectury.loom") version "1.6-SNAPSHOT"
     id("architectury-plugin") version "3.4-SNAPSHOT"
+    id("sr.base-logic")
 }
 
 architectury {
@@ -10,6 +11,12 @@ architectury {
 
 loom {
     silentMojangMappingsLicense()
+}
+
+repositories {
+    maven("https://maven.neoforged.net/releases") {
+        name = "NeoForged"
+    }
 }
 
 val common = configurations.create("common") {
@@ -26,19 +33,15 @@ configurations {
     }
 }
 
-repositories {
-    maven("https://maven.neoforged.net/releases") {
-        name = "NeoForged"
-    }
-}
-
 dependencies {
     neoForge("net.neoforged:neoforge:21.0.42-beta")
-
-    // Architectury API. This is optional, and you can comment it out if you don't need it.
     modImplementation("dev.architectury:architectury-neoforge:13.0.2")
 
-    common(project(":modded:common", "namedElements")) { isTransitive = false }
+    val cloudNeoForge = "org.incendo:cloud-neoforge:2.0.0-SNAPSHOT"
+    modImplementation(cloudNeoForge)
+    include(cloudNeoForge)
+
+    common(project(":modded:common", "namedElements"))
 
     minecraft("net.minecraft:minecraft:1.21")
     mappings(loom.officialMojangMappings())

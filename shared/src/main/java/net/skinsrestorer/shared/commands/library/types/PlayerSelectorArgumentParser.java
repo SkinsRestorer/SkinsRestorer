@@ -47,7 +47,7 @@ public class PlayerSelectorArgumentParser implements ArgumentParser<SRCommandSen
         final String string = commandInput.readString();
 
         int current = commandInput.cursor();
-        final Collection<SRPlayer> players = platform.getOnlinePlayers();
+        final Collection<SRPlayer> players = platform.getOnlinePlayers(commandContext.sender());
         final List<PlayerSelector.Resolvable> toResolve = new ArrayList<>();
 
         boolean isFirst = true;
@@ -110,7 +110,7 @@ public class PlayerSelectorArgumentParser implements ArgumentParser<SRCommandSen
     public @NonNull Iterable<? extends @NonNull Suggestion> suggestions(@NonNull CommandContext<SRCommandSender> context, @NonNull CommandInput input) {
         final Collection<String> usableNames = Stream.concat(
                 Stream.of("-all", "-random"),
-                platform.getOnlinePlayers().stream()
+                platform.getOnlinePlayers(context.sender()).stream()
                         .filter(player -> !(context.sender() instanceof SRPlayer sourcePlayer) || sourcePlayer.canSee(player))
                         .map(SRPlayer::getName)
         ).toList();

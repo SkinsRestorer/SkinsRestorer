@@ -28,6 +28,7 @@
     "minecraft": "~1.21",
     "java": ">=21",
     "architectury": ">=13.0.2",
-    "fabric-api": "*"
+    "fabric-api": "*",
+    "cloud": "*"
   }
 }
