@@ -22,11 +22,7 @@ import net.skinsrestorer.shared.gui.SRInventory;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.SRProxyPlayer;
 
-import java.util.Optional;
-
 public interface SRProxyAdapter extends SRPlatformAdapter {
-    Optional<SRProxyPlayer> getPlayer(String name);
-
     @Override
     default void openGUI(SRPlayer player, SRInventory srInventory) {
         SRProxyPlayer proxyPlayer = (SRProxyPlayer) player;

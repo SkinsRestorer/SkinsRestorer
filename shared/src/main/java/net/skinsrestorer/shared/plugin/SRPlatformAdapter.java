@@ -29,12 +29,15 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public interface SRPlatformAdapter {
     CommandManager<SRCommandSender> createCommandManager();
 
     Collection<SRPlayer> getOnlinePlayers();
+
+    Optional<SRPlayer> getPlayer(UUID uniqueId);
 
     InputStream getResource(String resource);
 

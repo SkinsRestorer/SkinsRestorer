@@ -36,7 +36,6 @@ import net.skinsrestorer.shared.info.PluginInfo;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
-import net.skinsrestorer.shared.subjects.SRServerPlayer;
 import net.skinsrestorer.shared.utils.ProviderSelector;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Server;
@@ -55,10 +54,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -175,11 +171,6 @@ public class SRBukkitAdapter implements SRServerAdapter {
     }
 
     @Override
-    public Optional<SRServerPlayer> getPlayer(String name) {
-        return Optional.ofNullable(server.getPlayer(name)).map(p -> injector.getSingleton(WrapperBukkit.class).player(p));
-    }
-
-    @Override
     public void runRepeatAsync(Runnable runnable, int delay, int interval, TimeUnit timeUnit) {
         schedulerProvider.runRepeatAsync(runnable, delay, interval, timeUnit);
     }
@@ -233,8 +224,12 @@ public class SRBukkitAdapter implements SRServerAdapter {
 
     @Override
     public Collection<SRPlayer> getOnlinePlayers() {
-        WrapperBukkit wrapper = injector.getSingleton(WrapperBukkit.class);
-        return server.getOnlinePlayers().stream().map(wrapper::player).collect(Collectors.toList());
+        return server.getOnlinePlayers().stream().map(injector.getSingleton(WrapperBukkit.class)::player).collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<SRPlayer> getPlayer(UUID uniqueId) {
+        return Optional.ofNullable(server.getPlayer(uniqueId)).map(injector.getSingleton(WrapperBukkit.class)::player);
     }
 
     @Override

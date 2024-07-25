@@ -18,9 +18,6 @@
 package net.skinsrestorer.shared.plugin;
 
 import net.skinsrestorer.shared.subjects.SRPlayer;
-import net.skinsrestorer.shared.subjects.SRServerPlayer;
-
-import java.util.Optional;
 
 public interface SRServerAdapter extends SRPlatformAdapter {
     void runSync(Runnable runnable);
@@ -28,6 +25,4 @@ public interface SRServerAdapter extends SRPlatformAdapter {
     void runSyncToPlayer(SRPlayer player, Runnable runnable);
 
     boolean determineProxy();
-
-    Optional<SRServerPlayer> getPlayer(String name);
 }

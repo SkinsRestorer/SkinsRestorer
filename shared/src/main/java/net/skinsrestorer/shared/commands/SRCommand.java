@@ -430,10 +430,15 @@ public final class SRCommand {
     @CommandPermission(PermissionRegistry.SR_APPLY_SKIN)
     @CommandDescription(Message.HELP_SR_APPLY_SKIN)
     private void onApplySkin(SRCommandSender sender, PlayerSelector selector) {
-        for (SRPlayer target : selector.resolve(sender)) {
+        for (UUID target : selector.resolve(sender)) {
+            Optional<SRPlayer> targetPlayer = adapter.getPlayer(target);
+            if (targetPlayer.isEmpty()) {
+                continue;
+            }
+
             try {
-                skinApplier.applySkin(target.getAs(Object.class));
-                sender.sendMessage(Message.SUCCESS_ADMIN_APPLYSKIN, Placeholder.unparsed("player", target.getName()));
+                skinApplier.applySkin(targetPlayer.get().getAs(Object.class));
+                sender.sendMessage(Message.SUCCESS_ADMIN_APPLYSKIN, Placeholder.unparsed("player", targetPlayer.get().getName()));
             } catch (DataRequestException e) {
                 ComponentHelper.sendException(e, sender, locale, logger);
             }

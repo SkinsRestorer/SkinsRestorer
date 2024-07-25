@@ -31,7 +31,6 @@ import net.skinsrestorer.shared.info.PluginInfo;
 import net.skinsrestorer.shared.plugin.SRProxyAdapter;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
-import net.skinsrestorer.shared.subjects.SRProxyPlayer;
 import org.bstats.bungeecord.Metrics;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.SenderMapper;
@@ -43,6 +42,7 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -142,12 +142,11 @@ public class SRBungeeAdapter implements SRProxyAdapter {
 
     @Override
     public Collection<SRPlayer> getOnlinePlayers() {
-        WrapperBungee wrapper = injector.getSingleton(WrapperBungee.class);
-        return proxy.getPlayers().stream().map(wrapper::player).collect(Collectors.toList());
+        return proxy.getPlayers().stream().map(injector.getSingleton(WrapperBungee.class)::player).collect(Collectors.toList());
     }
 
     @Override
-    public Optional<SRProxyPlayer> getPlayer(String name) {
-        return Optional.ofNullable(proxy.getPlayer(name)).map(p -> injector.getSingleton(WrapperBungee.class).player(p));
+    public Optional<SRPlayer> getPlayer(UUID uniqueId) {
+        return Optional.ofNullable(proxy.getPlayer(uniqueId)).map(injector.getSingleton(WrapperBungee.class)::player);
     }
 }

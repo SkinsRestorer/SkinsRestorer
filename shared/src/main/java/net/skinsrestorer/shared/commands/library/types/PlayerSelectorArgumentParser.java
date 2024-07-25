@@ -25,6 +25,7 @@ import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.messages.Message;
+import net.skinsrestorer.shared.utils.UUIDUtils;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.context.CommandInput;
@@ -64,6 +65,12 @@ public class PlayerSelectorArgumentParser implements ArgumentParser<SRCommandSen
                 continue;
             } else if (requestedPlayer.equalsIgnoreCase("-random")) {
                 toResolve.add(new PlayerSelector.Selector(platform, PlayerSelector.SelectorType.RANDOM_PLAYER));
+                continue;
+            }
+
+            Optional<UUID> parsedUniqueId = UUIDUtils.tryParseUniqueId(requestedPlayer);
+            if (parsedUniqueId.isPresent()) {
+                toResolve.add(new PlayerSelector.UniqueId(parsedUniqueId.get()));
                 continue;
             }
 

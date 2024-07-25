@@ -22,18 +22,15 @@ import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.utils.SRHelpers;
 
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public record PlayerSelector(Collection<Resolvable> toResolve) {
     public static PlayerSelector singleton(SRPlayer player) {
         return new PlayerSelector(List.of(new Player(player)));
     }
 
-    public Collection<SRPlayer> resolve(SRCommandSender commandSender) {
-        Set<SRPlayer> resolvedPlayers = new LinkedHashSet<>();
+    public Collection<UUID> resolve(SRCommandSender commandSender) {
+        Set<UUID> resolvedPlayers = new LinkedHashSet<>();
         for (Resolvable resolvable : toResolve) {
             resolvedPlayers.addAll(resolvable.resolve(commandSender));
         }
@@ -47,22 +44,29 @@ public record PlayerSelector(Collection<Resolvable> toResolve) {
     }
 
     public interface Resolvable {
-        Collection<SRPlayer> resolve(SRCommandSender commandSender);
+        Collection<UUID> resolve(SRCommandSender commandSender);
     }
 
     public record Player(SRPlayer player) implements Resolvable {
         @Override
-        public Collection<SRPlayer> resolve(SRCommandSender commandSender) {
-            return List.of(player);
+        public Collection<UUID> resolve(SRCommandSender commandSender) {
+            return List.of(player.getUniqueId());
+        }
+    }
+
+    public record UniqueId(UUID uniqueId) implements Resolvable {
+        @Override
+        public Collection<UUID> resolve(SRCommandSender commandSender) {
+            return List.of(uniqueId);
         }
     }
 
     public record Selector(SRPlatformAdapter platform, SelectorType type) implements Resolvable {
         @Override
-        public Collection<SRPlayer> resolve(SRCommandSender commandSender) {
+        public Collection<UUID> resolve(SRCommandSender commandSender) {
             return switch (type) {
-                case ALL_PLAYERS -> platform.getOnlinePlayers();
-                case RANDOM_PLAYER -> List.of(SRHelpers.getRandomEntry(platform.getOnlinePlayers()));
+                case ALL_PLAYERS -> platform.getOnlinePlayers().stream().map(SRPlayer::getUniqueId).toList();
+                case RANDOM_PLAYER -> List.of(SRHelpers.getRandomEntry(platform.getOnlinePlayers()).getUniqueId());
             };
         }
     }

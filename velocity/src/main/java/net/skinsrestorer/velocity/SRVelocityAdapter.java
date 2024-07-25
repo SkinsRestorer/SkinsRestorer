@@ -29,7 +29,6 @@ import net.skinsrestorer.shared.info.PluginInfo;
 import net.skinsrestorer.shared.plugin.SRProxyAdapter;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
-import net.skinsrestorer.shared.subjects.SRProxyPlayer;
 import net.skinsrestorer.velocity.listener.ForceAliveListener;
 import net.skinsrestorer.velocity.wrapper.WrapperVelocity;
 import org.bstats.velocity.Metrics;
@@ -43,6 +42,7 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -144,12 +144,11 @@ public record SRVelocityAdapter(Injector injector, SRVelocityBootstrap pluginIns
 
     @Override
     public Collection<SRPlayer> getOnlinePlayers() {
-        WrapperVelocity wrapper = injector.getSingleton(WrapperVelocity.class);
-        return proxy.getAllPlayers().stream().map(wrapper::player).collect(Collectors.toList());
+        return proxy.getAllPlayers().stream().map(injector.getSingleton(WrapperVelocity.class)::player).collect(Collectors.toList());
     }
 
     @Override
-    public Optional<SRProxyPlayer> getPlayer(String name) {
-        return proxy.getPlayer(name).map(injector.getSingleton(WrapperVelocity.class)::player);
+    public Optional<SRPlayer> getPlayer(UUID uniqueId) {
+        return proxy.getPlayer(uniqueId).map(injector.getSingleton(WrapperVelocity.class)::player);
     }
 }
