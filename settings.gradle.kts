@@ -2,6 +2,9 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
     repositories {
+        maven("https://maven.fabricmc.net/")
+        maven("https://maven.architectury.dev/")
+        maven("https://files.minecraftforge.net/maven/")
         gradlePluginPortal()
     }
 }
@@ -14,8 +17,6 @@ plugins {
 rootProject.name = "skinsrestorer-parent"
 
 dependencyResolutionManagement {
-    @Suppress("UnstableApiUsage")
-    repositoriesMode = RepositoriesMode.PREFER_SETTINGS
     @Suppress("UnstableApiUsage")
     repositories {
         maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") {
@@ -91,6 +92,14 @@ setOf(
     "1-21"
 ).forEach {
     include("mappings:mc-$it")
+}
+
+setOf(
+    "common",
+    "fabric",
+    "neoforge"
+).forEach {
+    include("modded:$it")
 }
 
 setupSRSubproject("build-data")
