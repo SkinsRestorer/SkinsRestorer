@@ -50,7 +50,7 @@ public class PlayerSelectorArgumentParser implements ArgumentParser<SRCommandSen
         final List<PlayerSelector.Resolvable> toResolve = new ArrayList<>();
 
         boolean isFirst = true;
-        for (String requestedPlayer : string.split(",")) {
+        for (String requestedPlayer : string.split("\\+")) {
             if (isFirst) {
                 current += requestedPlayer.length();
             } else {
@@ -109,9 +109,9 @@ public class PlayerSelectorArgumentParser implements ArgumentParser<SRCommandSen
         ).toList();
 
         List<Suggestion> suggestions = new ArrayList<>();
-        int lastComma = input.remainingInput().lastIndexOf(',');
-        String lastInput = lastComma == -1 ? input.remainingInput() : input.remainingInput().substring(lastComma + 1);
-        String otherInput = lastComma == -1 ? "" : input.remainingInput().substring(0, lastComma + 1);
+        int lastSeparator = input.remainingInput().lastIndexOf('+');
+        String lastInput = lastSeparator == -1 ? input.remainingInput() : input.remainingInput().substring(lastSeparator + 1);
+        String otherInput = lastSeparator == -1 ? "" : input.remainingInput().substring(0, lastSeparator + 1);
         for (String name : usableNames) {
             if (!name.toLowerCase(Locale.ROOT).startsWith(lastInput.toLowerCase(Locale.ROOT))) {
                 continue;
