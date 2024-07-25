@@ -94,10 +94,10 @@ public record SRProxyPluginMessage(ChannelPayload<?> channelPayload) {
             private static final Map<String, GUIActionType<?>> ID_TO_VALUE = new HashMap<>();
 
             public static final GUIActionType<OpenPagePayload> OPEN_PAGE = register(new GUIActionType<>("openPage", OpenPagePayload.CODEC));
-            public static final GUIActionType<ClearSkinPayload> CLEAR_SKIN = new GUIActionType<>("clearSkin", ClearSkinPayload.CODEC);
-            public static final GUIActionType<SetSkinPayload> SET_SKIN = new GUIActionType<>("setSkin", SetSkinPayload.CODEC);
-            public static final GUIActionType<AddFavouritePayload> ADD_FAVOURITE = new GUIActionType<>("addFavourite", AddFavouritePayload.CODEC);
-            public static final GUIActionType<RemoveFavouritePayload> REMOVE_FAVOURITE = new GUIActionType<>("removeFavourite", RemoveFavouritePayload.CODEC);
+            public static final GUIActionType<ClearSkinPayload> CLEAR_SKIN = register(new GUIActionType<>("clearSkin", ClearSkinPayload.CODEC));
+            public static final GUIActionType<SetSkinPayload> SET_SKIN = register(new GUIActionType<>("setSkin", SetSkinPayload.CODEC));
+            public static final GUIActionType<AddFavouritePayload> ADD_FAVOURITE = register(new GUIActionType<>("addFavourite", AddFavouritePayload.CODEC));
+            public static final GUIActionType<RemoveFavouritePayload> REMOVE_FAVOURITE = register(new GUIActionType<>("removeFavourite", RemoveFavouritePayload.CODEC));
 
             public static final NetworkCodec<GUIActionType<?>> CODEC = NetworkCodec.ofMapBackedDynamic(ID_TO_VALUE, NetworkId::getId,
                     "Unknown GUI action type: %s (Make sure the server and proxy are running the same version of SkinsRestorer)"::formatted);
