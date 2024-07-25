@@ -17,7 +17,6 @@
  */
 package net.skinsrestorer.modded;
 
-import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
@@ -27,21 +26,16 @@ import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.SenderMapper;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 
+import java.util.ServiceLoader;
+
 @SuppressWarnings("unused")
-public class SRModPlatform {
-    @ExpectPlatform
-    public static CommandManager<SRCommandSender> createCommandManager(ExecutionCoordinator<SRCommandSender> executionCoordinator,
-                                                                       final SenderMapper<CommandSourceStack, SRCommandSender> senderMapper) {
-        throw new AssertionError();
-    }
+public interface SRModPlatform {
+    SRModPlatform INSTANCE = ServiceLoader.load(SRModPlatform.class).findFirst().orElseThrow();
 
-    @ExpectPlatform
-    public static Tristate test(CommandSourceStack stack, Permission permission) {
-        throw new AssertionError();
-    }
+    CommandManager<SRCommandSender> createCommandManager(ExecutionCoordinator<SRCommandSender> executionCoordinator,
+                                                         final SenderMapper<CommandSourceStack, SRCommandSender> senderMapper);
 
-    @ExpectPlatform
-    public static void registerPermission(Permission permission, Component description) {
-        throw new AssertionError();
-    }
+    Tristate test(CommandSourceStack stack, Permission permission);
+
+    void registerPermission(Permission permission, Component description);
 }

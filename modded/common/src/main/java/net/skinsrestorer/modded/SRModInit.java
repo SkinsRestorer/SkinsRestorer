@@ -96,14 +96,14 @@ public class SRModInit implements SRServerPlatformInit {
         for (PermissionRegistry permission : PermissionRegistry.values()) {
             Component description = MinecraftKyoriSerializer.toNative(locale.getMessageRequired(locale.getDefaultForeign(), permission.getDescription()));
 
-            SRModPlatform.registerPermission(permission.getPermission(), description);
+            SRModPlatform.INSTANCE.registerPermission(permission.getPermission(), description);
         }
 
         for (PermissionGroup group : PermissionGroup.values()) {
             Component description = MinecraftKyoriSerializer.toNative(locale.getMessageRequired(locale.getDefaultForeign(), group.getDescription()));
 
-            SRModPlatform.registerPermission(group.getBasePermission(), description);
-            SRModPlatform.registerPermission(group.getWildcard(), description);
+            SRModPlatform.INSTANCE.registerPermission(group.getBasePermission(), description);
+            SRModPlatform.INSTANCE.registerPermission(group.getWildcard(), description);
         }
     }
 

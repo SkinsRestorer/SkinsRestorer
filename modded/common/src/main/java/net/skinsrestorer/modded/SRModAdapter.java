@@ -71,7 +71,7 @@ public class SRModAdapter implements SRServerAdapter {
     @Override
     public CommandManager<SRCommandSender> createCommandManager() {
         WrapperMod wrapper = injector.getSingleton(WrapperMod.class);
-        return SRModPlatform.createCommandManager(
+        return SRModPlatform.INSTANCE.createCommandManager(
                 ExecutionCoordinator.asyncCoordinator(),
                 SenderMapper.create(
                         wrapper::commandSender,

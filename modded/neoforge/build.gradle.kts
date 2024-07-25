@@ -1,4 +1,5 @@
 plugins {
+    id("com.github.johnrengelman.shadow")
     id("dev.architectury.loom") version "1.6-SNAPSHOT"
     id("architectury-plugin") version "3.4-SNAPSHOT"
     id("sr.base-logic")
@@ -7,6 +8,7 @@ plugins {
 architectury {
     platformSetupLoomIde()
     neoForge()
+    injectInjectables = false
 }
 
 loom {
@@ -19,7 +21,12 @@ repositories {
     }
 }
 
-val common = configurations.create("common") {
+val common: Configuration by configurations.creating {
+    isCanBeResolved = true
+    isCanBeConsumed = false
+}
+val developmentNeoForge: Configuration = configurations.getByName("developmentNeoForge")
+val shadowBundle: Configuration by configurations.creating {
     isCanBeResolved = true
     isCanBeConsumed = false
 }
@@ -31,6 +38,7 @@ configurations {
     runtimeClasspath {
         extendsFrom(common)
     }
+    developmentNeoForge.extendsFrom(common)
 }
 
 dependencies {
@@ -42,6 +50,7 @@ dependencies {
     include(cloudNeoForge)
 
     common(project(":modded:common", "namedElements"))
+    shadowBundle(project(":modded:common", "transformProductionNeoForge"))
 
     minecraft("net.minecraft:minecraft:1.21")
     mappings(loom.officialMojangMappings())
@@ -54,5 +63,14 @@ tasks {
         filesMatching("META-INF/neoforge.mods.toml") {
             expand(mapOf(Pair("version", project.version)))
         }
+    }
+
+    shadowJar {
+        configurations = listOf(shadowBundle)
+        archiveClassifier = "dev-shadow"
+    }
+
+    remapJar {
+        inputs.files(shadowJar.get().archiveFile)
     }
 }

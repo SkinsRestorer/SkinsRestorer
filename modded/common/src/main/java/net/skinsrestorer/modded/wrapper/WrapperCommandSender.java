@@ -44,6 +44,6 @@ public class WrapperCommandSender extends AbstractSRCommandSender {
 
     @Override
     public boolean hasPermission(Permission permission) {
-        return permission.checkPermission(settings, p -> SRModPlatform.test(sender, permission));
+        return permission.checkPermission(settings, p -> SRModPlatform.INSTANCE.test(sender, permission));
     }
 }

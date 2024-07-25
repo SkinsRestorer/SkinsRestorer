@@ -6,6 +6,7 @@ plugins {
 
 architectury {
     common(listOf("fabric", "neoforge"))
+    injectInjectables = false
 }
 
 loom {

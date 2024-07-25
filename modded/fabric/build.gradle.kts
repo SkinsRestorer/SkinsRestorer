@@ -1,4 +1,5 @@
 plugins {
+    id("com.github.johnrengelman.shadow")
     id("dev.architectury.loom") version "1.6-SNAPSHOT"
     id("architectury-plugin") version "3.4-SNAPSHOT"
     id("sr.base-logic")
@@ -7,13 +8,19 @@ plugins {
 architectury {
     platformSetupLoomIde()
     fabric()
+    injectInjectables = false
 }
 
 loom {
     silentMojangMappingsLicense()
 }
 
-val common = configurations.create("common") {
+val common: Configuration by configurations.creating {
+    isCanBeResolved = true
+    isCanBeConsumed = false
+}
+val developmentFabric: Configuration = configurations.getByName("developmentFabric")
+val shadowBundle: Configuration by configurations.creating {
     isCanBeResolved = true
     isCanBeConsumed = false
 }
@@ -25,6 +32,7 @@ configurations {
     runtimeClasspath {
         extendsFrom(common)
     }
+    developmentFabric.extendsFrom(common)
 }
 
 dependencies {
@@ -37,6 +45,7 @@ dependencies {
     include(cloudFabric)
 
     common(project(":modded:common", "namedElements"))
+    shadowBundle(project(":modded:common", "transformProductionFabric"))
 
     minecraft("net.minecraft:minecraft:1.21")
     mappings(loom.officialMojangMappings())
@@ -49,5 +58,14 @@ tasks {
         filesMatching("fabric.mod.json") {
             expand(mapOf(Pair("version", project.version)))
         }
+    }
+
+    shadowJar {
+        configurations = listOf(shadowBundle)
+        archiveClassifier = "dev-shadow"
+    }
+
+    remapJar {
+        inputs.files(shadowJar.get().archiveFile)
     }
 }
