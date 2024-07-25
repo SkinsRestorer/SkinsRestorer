@@ -52,7 +52,14 @@ public class DumpInfo {
     @SuppressFBWarnings({"UWF_UNWRITTEN_FIELD", "URF_UNREAD_FIELD"})
     public static class PluginInfo {
         private final Boolean proxyMode;
+        private final StorageType storageType;
         private final JsonObject configData;
+
+        public enum StorageType {
+            NONE,
+            FILE,
+            MYSQL
+        }
     }
 
     // Helps to figure out OS-specific issues
