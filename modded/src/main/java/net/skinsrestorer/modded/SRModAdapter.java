@@ -18,7 +18,6 @@
 package net.skinsrestorer.modded;
 
 import ch.jalu.injector.Injector;
-import dev.architectury.injectables.targets.ArchitecturyTarget;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;

@@ -2,9 +2,8 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
     repositories {
-        maven("https://maven.fabricmc.net/")
-        maven("https://maven.architectury.dev/")
-        maven("https://files.minecraftforge.net/maven/")
+        maven("https://maven.wagyourtail.xyz/releases")
+        maven("https://maven.wagyourtail.xyz/snapshots")
         gradlePluginPortal()
     }
 }
@@ -45,14 +44,7 @@ setOf(
     include("mappings:mc-$it")
 }
 
-setOf(
-    "common",
-    "fabric",
-    "neoforge"
-).forEach {
-    include("modded:$it")
-}
-
+include("modded")
 setupSRSubproject("build-data")
 setupSRSubproject("api")
 setupSRSubproject("shared")

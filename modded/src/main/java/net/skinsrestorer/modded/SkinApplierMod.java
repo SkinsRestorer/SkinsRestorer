@@ -23,7 +23,6 @@ import com.mojang.authlib.properties.PropertyMap;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.*;
-import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
