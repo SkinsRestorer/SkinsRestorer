@@ -25,8 +25,6 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.skinsrestorer.shared.config.MessageConfig;
 import net.skinsrestorer.shared.subjects.SRForeign;
-import net.skinsrestorer.shared.utils.ComponentHelper;
-import net.skinsrestorer.shared.utils.ComponentString;
 
 import javax.inject.Inject;
 import java.util.Locale;

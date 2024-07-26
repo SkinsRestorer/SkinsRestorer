@@ -44,11 +44,10 @@ import net.skinsrestorer.shared.storage.model.player.FavouriteData;
 import net.skinsrestorer.shared.storage.model.player.HistoryData;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
+import net.skinsrestorer.shared.subjects.messages.ComponentHelper;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
-import net.skinsrestorer.shared.utils.ComponentHelper;
-import net.skinsrestorer.shared.utils.SRConstants;
 import net.skinsrestorer.shared.utils.SRHelpers;
 import net.skinsrestorer.shared.utils.ValidationUtil;
 import org.incendo.cloud.annotation.specifier.Greedy;
@@ -183,7 +182,7 @@ public final class SkinCommand {
             try {
                 if (targetPlayer.isPresent()) {
                     Optional<SkinProperty> property = playerStorage.getSkinForPlayer(target, targetPlayer.get().getName());
-                    skinApplier.applySkin(targetPlayer.get().getAs(Object.class), property.orElse(SRConstants.EMPTY_SKIN));
+                    skinApplier.applySkin(targetPlayer.get().getAs(Object.class), property.orElse(SRHelpers.EMPTY_SKIN));
                 }
 
                 if (senderEqual(sender, target)) {
@@ -253,7 +252,7 @@ public final class SkinCommand {
                     Optional<SkinProperty> newSkin = currentSkin.isEmpty() ?
                             Optional.empty() : playerStorage.getSkinForPlayer(target, targetPlayer.get().getName());
 
-                    skinApplier.applySkin(targetPlayer.get().getAs(Object.class), newSkin.orElse(SRConstants.EMPTY_SKIN));
+                    skinApplier.applySkin(targetPlayer.get().getAs(Object.class), newSkin.orElse(SRHelpers.EMPTY_SKIN));
                 }
 
                 if (senderEqual(sender, target)) {

@@ -37,12 +37,12 @@ import net.skinsrestorer.shared.log.SRLogLevel;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.plugin.SRServerPlatformInit;
+import net.skinsrestorer.shared.subjects.messages.ComponentHelper;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.PermissionGroup;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
-import net.skinsrestorer.shared.utils.ComponentHelper;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
-import net.skinsrestorer.shared.utils.SRConstants;
+import net.skinsrestorer.shared.utils.SRHelpers;
 import org.bukkit.Server;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -285,8 +285,8 @@ public class SRBukkitInit implements SRServerPlatformInit {
 
     @Override
     public void initMessageChannel() {
-        server.getMessenger().registerOutgoingPluginChannel(adapter.getPluginInstance(), SRConstants.MESSAGE_CHANNEL);
-        server.getMessenger().registerIncomingPluginChannel(adapter.getPluginInstance(), SRConstants.MESSAGE_CHANNEL,
+        server.getMessenger().registerOutgoingPluginChannel(adapter.getPluginInstance(), SRHelpers.MESSAGE_CHANNEL);
+        server.getMessenger().registerIncomingPluginChannel(adapter.getPluginInstance(), SRHelpers.MESSAGE_CHANNEL,
                 injector.getSingleton(ServerMessageListener.class));
     }
 

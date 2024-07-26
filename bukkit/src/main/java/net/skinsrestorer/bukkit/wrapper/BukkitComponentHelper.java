@@ -19,7 +19,7 @@ package net.skinsrestorer.bukkit.wrapper;
 
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import net.kyori.adventure.text.Component;
-import net.skinsrestorer.shared.utils.ComponentString;
+import net.skinsrestorer.shared.subjects.messages.ComponentString;
 
 public class BukkitComponentHelper {
     public static Component deserialize(ComponentString messageJson) {

@@ -17,7 +17,9 @@
  */
 package net.skinsrestorer.shared.utils;
 
+import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
+import net.skinsrestorer.shared.subjects.messages.ComponentHelper;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 
@@ -39,6 +41,9 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 public class SRHelpers {
+    public static final SkinProperty EMPTY_SKIN = SkinProperty.of("", "");
+    public static final String MESSAGE_CHANNEL = "sr:messagechannel";
+    public static final String DATE_FORMAT = "dd MMMM yyyy";
     private static final String NAMEMC_IMG_URL = "https://s.namemc.com/i/%s.png";
 
     private SRHelpers() {
@@ -216,8 +221,12 @@ public class SRHelpers {
     }
 
     public static String formatEpochSeconds(long epochSeconds, Locale locale) {
-        return new SimpleDateFormat(SRConstants.DATE_FORMAT, locale)
-                .format(new Date(TimeUnit.SECONDS.toMillis(epochSeconds)));
+        return formatEpochMillis(TimeUnit.SECONDS.toMillis(epochSeconds), locale);
+    }
+
+    public static String formatEpochMillis(long epochMillis, Locale locale) {
+        return new SimpleDateFormat(DATE_FORMAT, locale)
+                .format(new Date(epochMillis));
     }
 
     public static <E extends Enum<E>, V> Map<E, V> suppliedMap(Class<E> clazz, Function<E, V> mapper) {

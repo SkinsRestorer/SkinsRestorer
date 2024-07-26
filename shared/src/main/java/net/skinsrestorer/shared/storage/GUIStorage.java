@@ -24,15 +24,15 @@ import net.skinsrestorer.api.PropertyUtils;
 import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.shared.config.GUIConfig;
 import net.skinsrestorer.shared.connections.RecommendationsState;
+import net.skinsrestorer.shared.gui.GUIUtils;
 import net.skinsrestorer.shared.gui.PageInfo;
 import net.skinsrestorer.shared.gui.PageType;
 import net.skinsrestorer.shared.storage.adapter.AdapterReference;
 import net.skinsrestorer.shared.subjects.SRPlayer;
+import net.skinsrestorer.shared.subjects.messages.ComponentHelper;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
-import net.skinsrestorer.shared.utils.ComponentHelper;
-import net.skinsrestorer.shared.utils.GUIUtils;
 import net.skinsrestorer.shared.utils.SRHelpers;
 
 import javax.inject.Inject;

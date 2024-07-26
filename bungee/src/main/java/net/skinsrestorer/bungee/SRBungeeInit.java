@@ -27,7 +27,7 @@ import net.skinsrestorer.bungee.listeners.ProxyMessageListener;
 import net.skinsrestorer.bungee.wrapper.WrapperBungee;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.plugin.SRProxyPlatformInit;
-import net.skinsrestorer.shared.utils.SRConstants;
+import net.skinsrestorer.shared.utils.SRHelpers;
 
 import javax.inject.Inject;
 
@@ -62,7 +62,7 @@ public class SRBungeeInit implements SRProxyPlatformInit {
 
     @Override
     public void initMessageChannel() {
-        proxy.registerChannel(SRConstants.MESSAGE_CHANNEL);
+        proxy.registerChannel(SRHelpers.MESSAGE_CHANNEL);
         proxy.getPluginManager().registerListener(adapter.getPluginInstance(), injector.getSingleton(ProxyMessageListener.class));
     }
 }

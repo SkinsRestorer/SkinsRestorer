@@ -17,8 +17,7 @@
  */
 package net.skinsrestorer.shared.gui;
 
-import net.skinsrestorer.shared.utils.ComponentString;
-import net.skinsrestorer.shared.utils.GUIUtils;
+import net.skinsrestorer.shared.subjects.messages.ComponentString;
 
 import java.util.List;
 

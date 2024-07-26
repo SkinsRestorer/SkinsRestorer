@@ -22,7 +22,7 @@ import net.skinsrestorer.shared.codec.BuiltInCodecs;
 import net.skinsrestorer.shared.codec.NetworkCodec;
 import net.skinsrestorer.shared.codec.NetworkId;
 import net.skinsrestorer.shared.codec.SRProxyPluginMessage;
-import net.skinsrestorer.shared.utils.ComponentString;
+import net.skinsrestorer.shared.subjects.messages.ComponentString;
 
 import java.util.List;
 import java.util.Locale;

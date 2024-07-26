@@ -23,7 +23,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.skinsrestorer.shared.config.MessageConfig;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.SRProxyPlayer;
-import net.skinsrestorer.shared.utils.SRConstants;
+import net.skinsrestorer.shared.utils.SRHelpers;
 
 import java.util.Locale;
 import java.util.Objects;
@@ -51,7 +51,7 @@ public class WrapperPlayer extends WrapperCommandSender implements SRProxyPlayer
 
     @Override
     public void sendToMessageChannel(byte[] data) {
-        player.getServer().sendData(SRConstants.MESSAGE_CHANNEL, data);
+        player.getServer().sendData(SRHelpers.MESSAGE_CHANNEL, data);
     }
 
     @Override

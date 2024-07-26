@@ -21,7 +21,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinProperty;
-import net.skinsrestorer.shared.utils.ComponentString;
+import net.skinsrestorer.shared.subjects.messages.ComponentString;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;

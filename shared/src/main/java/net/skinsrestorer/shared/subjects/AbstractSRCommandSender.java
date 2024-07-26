@@ -22,9 +22,9 @@ import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.skinsrestorer.shared.config.MessageConfig;
+import net.skinsrestorer.shared.subjects.messages.ComponentString;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
-import net.skinsrestorer.shared.utils.ComponentString;
 
 import java.util.Locale;
 import java.util.Optional;
