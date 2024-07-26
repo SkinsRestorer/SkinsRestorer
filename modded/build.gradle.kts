@@ -3,7 +3,7 @@ plugins {
     java
     id("sr.formatting-logic")
     id("io.freefair.lombok")
-    id("xyz.wagyourtail.unimined") version "1.3.3"
+    id("xyz.wagyourtail.unimined") version "1.3.4-SNAPSHOT"
 }
 
 val main: SourceSet by sourceSets.getting
@@ -38,7 +38,7 @@ unimined.minecraft(fabric) {
     combineWith(main)
 
     fabric {
-        loader("0.15.11")
+        loader("0.16.0")
     }
 
     defaultRemapJar = true
@@ -48,7 +48,7 @@ unimined.minecraft(neoforge) {
     combineWith(main)
 
     neoForge {
-        loader("0-beta")
+        loader("139-beta")
     }
 
     minecraftRemapper.config {
@@ -65,30 +65,28 @@ unimined.minecraft(neoforge) {
 val modImplementation: Configuration by configurations.getting
 val fabricModImplementation: Configuration by configurations.getting
 val neoforgeModImplementation: Configuration by configurations.getting
-val fabricImplementation: Configuration by configurations.getting
-val neoforgeImplementation: Configuration by configurations.getting
+val fabricImplementation: Configuration by configurations.getting {
+    extendsFrom(configurations.implementation.get())
+}
+val neoforgeImplementation: Configuration by configurations.getting {
+    extendsFrom(configurations.implementation.get())
+}
 
 dependencies {
     implementation(projects.skinsrestorerApi)
     implementation(projects.skinsrestorerShared)
-    fabricImplementation(projects.skinsrestorerApi)
-    fabricImplementation(projects.skinsrestorerShared)
-    neoforgeImplementation(projects.skinsrestorerApi)
-    neoforgeImplementation(projects.skinsrestorerShared)
 
     implementation("net.lenni0451.mcstructs:text:2.5.1")
-    implementation("org.spongepowered:mixin:0.8.5-SNAPSHOT")
+    compileOnly("org.spongepowered:mixin:0.8.5-SNAPSHOT")
 
     modImplementation("dev.architectury:architectury:13.0.6")
 
     fabricModImplementation(fabricApi.fabric("0.100.7+1.21"))
     fabricModImplementation("dev.architectury:architectury-fabric:13.0.6")
-    val cloudFabric = "org.incendo:cloud-fabric:2.0.0-SNAPSHOT"
-    fabricModImplementation(cloudFabric)
+    fabricModImplementation("org.incendo:cloud-fabric:2.0.0-SNAPSHOT")
 
     neoforgeModImplementation("dev.architectury:architectury-neoforge:13.0.6")
-    val cloudNeoForge = "org.incendo:cloud-neoforge:2.0.0-SNAPSHOT"
-    neoforgeModImplementation(cloudNeoForge)
+    neoforgeModImplementation("org.incendo:cloud-neoforge:2.0.0-SNAPSHOT")
 }
 
 tasks.getByName<ProcessResources>("processFabricResources") {
