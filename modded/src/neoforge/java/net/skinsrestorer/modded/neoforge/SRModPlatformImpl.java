@@ -19,13 +19,12 @@ package net.skinsrestorer.modded.neoforge;
 
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.server.permission.PermissionAPI;
 import net.neoforged.neoforge.server.permission.events.PermissionGatherEvent;
-import net.neoforged.neoforge.server.permission.nodes.PermissionDynamicContext;
 import net.neoforged.neoforge.server.permission.nodes.PermissionNode;
 import net.neoforged.neoforge.server.permission.nodes.PermissionTypes;
+import net.skinsrestorer.modded.SRModPlatform;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.permissions.Permission;
 import net.skinsrestorer.shared.utils.Tristate;
@@ -33,24 +32,28 @@ import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.SenderMapper;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.neoforge.NeoForgeServerCommandManager;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
 
 @SuppressWarnings("unused")
-public class SRModPlatformImpl {
+public class SRModPlatformImpl implements SRModPlatform {
     private static final Map<String, PermissionNode<Boolean>> PERMISSIONS = new HashMap<>();
 
-    public static CommandManager<SRCommandSender> createCommandManager(ExecutionCoordinator<SRCommandSender> executionCoordinator,
+    @Override
+    public String getPlatformName() {
+        return "NeoForge";
+    }
+
+    @Override
+    public CommandManager<SRCommandSender> createCommandManager(ExecutionCoordinator<SRCommandSender> executionCoordinator,
                                                                        final SenderMapper<CommandSourceStack, SRCommandSender> senderMapper) {
         return new NeoForgeServerCommandManager<>(executionCoordinator, senderMapper);
     }
 
-
-    public static Tristate test(CommandSourceStack stack, Permission permission) {
+    @Override
+    public Tristate test(CommandSourceStack stack, Permission permission) {
         if (!stack.isPlayer()) {
             if (permission.isInDefaultGroup()) {
                 return Tristate.TRUE;
@@ -62,7 +65,8 @@ public class SRModPlatformImpl {
         return PermissionAPI.getPermission(Objects.requireNonNull(stack.getPlayer()), PERMISSIONS.get(permission.getPermissionString())) ? Tristate.TRUE : Tristate.FALSE;
     }
 
-    public static void registerPermission(Permission permission, Component description) {
+    @Override
+    public void registerPermission(Permission permission, Component description) {
         int dotIndex = permission.getPermissionString().indexOf('.');
         String beforeDot = permission.getPermissionString().substring(0, dotIndex);
         String afterDot = permission.getPermissionString().substring(dotIndex + 1);

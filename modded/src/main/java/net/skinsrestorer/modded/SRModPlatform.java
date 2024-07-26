@@ -32,6 +32,8 @@ import java.util.ServiceLoader;
 public interface SRModPlatform {
     SRModPlatform INSTANCE = ServiceLoader.load(SRModPlatform.class).findFirst().orElseThrow();
 
+    String getPlatformName();
+
     CommandManager<SRCommandSender> createCommandManager(ExecutionCoordinator<SRCommandSender> executionCoordinator,
                                                          final SenderMapper<CommandSourceStack, SRCommandSender> senderMapper);
 

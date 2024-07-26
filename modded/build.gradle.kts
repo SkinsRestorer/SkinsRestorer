@@ -20,9 +20,14 @@ unimined.minecraft {
         devFallbackNamespace("official")
     }
 
-    mods {
-        modImplementation {
-            namespace("intermediary")
+    if (sourceSet == main) {
+        mods {
+            modImplementation {
+                namespace("intermediary")
+            }
+        }
+        runs {
+            off = true
         }
     }
 
@@ -60,10 +65,16 @@ unimined.minecraft(neoforge) {
 val modImplementation: Configuration by configurations.getting
 val fabricModImplementation: Configuration by configurations.getting
 val neoforgeModImplementation: Configuration by configurations.getting
+val fabricImplementation: Configuration by configurations.getting
+val neoforgeImplementation: Configuration by configurations.getting
 
 dependencies {
     implementation(projects.skinsrestorerApi)
     implementation(projects.skinsrestorerShared)
+    fabricImplementation(projects.skinsrestorerApi)
+    fabricImplementation(projects.skinsrestorerShared)
+    neoforgeImplementation(projects.skinsrestorerApi)
+    neoforgeImplementation(projects.skinsrestorerShared)
 
     implementation("net.lenni0451.mcstructs:text:2.5.1")
     implementation("org.spongepowered:mixin:0.8.5-SNAPSHOT")

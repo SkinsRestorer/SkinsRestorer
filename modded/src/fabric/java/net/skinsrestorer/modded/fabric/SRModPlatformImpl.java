@@ -20,6 +20,7 @@ package net.skinsrestorer.modded.fabric;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
+import net.skinsrestorer.modded.SRModPlatform;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.permissions.Permission;
 import net.skinsrestorer.shared.utils.Tristate;
@@ -29,13 +30,20 @@ import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.fabric.FabricServerCommandManager;
 
 @SuppressWarnings("unused")
-public class SRModPlatformImpl {
-    public static CommandManager<SRCommandSender> createCommandManager(ExecutionCoordinator<SRCommandSender> executionCoordinator,
+public class SRModPlatformImpl implements SRModPlatform {
+    @Override
+    public String getPlatformName() {
+        return "Fabric";
+    }
+
+    @Override
+    public CommandManager<SRCommandSender> createCommandManager(ExecutionCoordinator<SRCommandSender> executionCoordinator,
                                                                        final SenderMapper<CommandSourceStack, SRCommandSender> senderMapper) {
         return new FabricServerCommandManager<>(executionCoordinator, senderMapper);
     }
 
-    public static Tristate test(CommandSourceStack stack, Permission permission) {
+    @Override
+    public Tristate test(CommandSourceStack stack, Permission permission) {
         return switch (Permissions.getPermissionValue(stack, permission.getPermissionString())) {
             case TRUE -> Tristate.TRUE;
             case FALSE -> Tristate.FALSE;
@@ -43,7 +51,8 @@ public class SRModPlatformImpl {
         };
     }
 
-    public static void registerPermission(Permission permission, Component description) {
+    @Override
+    public void registerPermission(Permission permission, Component description) {
         // NO-OP
     }
 }

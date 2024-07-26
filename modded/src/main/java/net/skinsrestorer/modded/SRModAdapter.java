@@ -135,12 +135,12 @@ public class SRModAdapter implements SRServerAdapter {
 
     @Override
     public String getPlatformName() {
-        return ArchitecturyTarget.getCurrentTarget();
+        return SRModPlatform.INSTANCE.getPlatformName();
     }
 
     @Override
     public String getPlatformVendor() {
-        return ArchitecturyTarget.getCurrentTarget();
+        return "N/A";
     }
 
     @Override
