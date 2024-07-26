@@ -49,20 +49,20 @@ public class SharedGUI {
 
             Map<ClickEventType, SRInventory.ClickEventAction> actions = new HashMap<>();
             actions.put(ClickEventType.LEFT, new SRInventory.ClickEventAction(new SRProxyPluginMessage.GUIActionChannelPayload(new SRProxyPluginMessage.GUIActionChannelPayload.SetSkinPayload(
-                    entry.base().skinIdentifier()
+                    entry.skinIdentifier()
             )), true));
             actions.put(ClickEventType.SHIFT_LEFT, new SRInventory.ClickEventAction(List.of(new SRProxyPluginMessage.GUIActionChannelPayload(entry.isFavourite() ? new SRProxyPluginMessage.GUIActionChannelPayload.RemoveFavouritePayload(
-                    entry.base().skinIdentifier()
+                    entry.skinIdentifier()
             ) : new SRProxyPluginMessage.GUIActionChannelPayload.AddFavouritePayload(
-                    entry.base().skinIdentifier()
+                    entry.skinIdentifier()
             )), new SRProxyPluginMessage.GUIActionChannelPayload(new SRProxyPluginMessage.GUIActionChannelPayload.OpenPagePayload(
                     pageInfo.page(), pageInfo.pageType()
             ))), false));
             items.put(skinCount, new SRInventory.Item(
                     SRInventory.MaterialType.SKULL,
-                    entry.base().skinName(),
+                    entry.skinName(),
                     entry.lore(),
-                    Optional.of(entry.base().textureHash()),
+                    Optional.of(entry.textureHash()),
                     entry.isFavourite(),
                     actions
             ));

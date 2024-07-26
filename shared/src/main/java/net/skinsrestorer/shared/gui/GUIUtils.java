@@ -17,20 +17,28 @@
  */
 package net.skinsrestorer.shared.gui;
 
+import ch.jalu.configme.SettingsManager;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.skinsrestorer.api.property.SkinIdentifier;
+import net.skinsrestorer.shared.config.GUIConfig;
 import net.skinsrestorer.shared.storage.PlayerStorageImpl;
 import net.skinsrestorer.shared.storage.model.player.FavouriteData;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.messages.ComponentString;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
+import net.skinsrestorer.shared.subjects.permissions.SkinPermissionManager;
 import net.skinsrestorer.shared.utils.SRHelpers;
 
 import java.util.*;
 
 public class GUIUtils {
-    public static PageInfo getGUIPage(SRPlayer player, SkinsRestorerLocale locale, PlayerStorageImpl playerStorage, int page, PageType pageType, GUIDataSource... sources) {
+    public static PageInfo getGUIPage(SRPlayer player,
+                                      SkinsRestorerLocale locale,
+                                      SettingsManager settings,
+                                      PlayerStorageImpl playerStorage,
+                                      SkinPermissionManager permissionManager,
+                                      int page, PageType pageType, GUIDataSource... sources) {
         if (page < 0) {
             page = 0;
         }
@@ -63,18 +71,33 @@ public class GUIUtils {
             sourceSkins.stream()
                     .map(base -> {
                         List<ComponentString> lore = new ArrayList<>();
-                        lore.add(locale.getMessageRequired(player, Message.SKINSMENU_SELECT_SKIN));
-                        Optional<FavouriteData> favouriteData = playerStorage.getFavouriteData(player.getUniqueId(), base.skinIdentifier());
-                        if (favouriteData.isPresent()) {
-                            lore.add(locale.getMessageRequired(player, Message.SKINSMENU_REMOVE_FAVOURITE_LORE));
+                        String textureHash;
+                        boolean canSetSkin = permissionManager.canSetSkin(player, base.skinIdentifier().getIdentifier()).isEmpty();
+                        if (canSetSkin) {
+                            textureHash = base.textureHash();
                         } else {
-                            lore.add(locale.getMessageRequired(player, Message.SKINSMENU_SET_FAVOURITE_LORE));
+                            textureHash = settings.getProperty(GUIConfig.NOT_UNLOCKED_SKIN);
                         }
-                        favouriteData.ifPresent(data -> lore.add(locale.getMessageRequired(player, Message.SKINSMENU_FAVOURITE_SINCE_LORE,
-                                Placeholder.unparsed("time", SRHelpers.formatEpochSeconds(data.getTimestamp(), player.getLocale())))));
 
-                        lore.addAll(base.extraLore());
-                        return new GUISkinEntry(base, lore, favouriteData.isPresent());
+                        Optional<FavouriteData> favouriteData;
+                        if (canSetSkin) {
+                            lore.add(locale.getMessageRequired(player, Message.SKINSMENU_SELECT_SKIN));
+                            favouriteData = playerStorage.getFavouriteData(player.getUniqueId(), base.skinIdentifier());
+                            if (favouriteData.isPresent()) {
+                                lore.add(locale.getMessageRequired(player, Message.SKINSMENU_REMOVE_FAVOURITE_LORE));
+                            } else {
+                                lore.add(locale.getMessageRequired(player, Message.SKINSMENU_SET_FAVOURITE_LORE));
+                            }
+                            favouriteData.ifPresent(data -> lore.add(locale.getMessageRequired(player, Message.SKINSMENU_FAVOURITE_SINCE_LORE,
+                                    Placeholder.unparsed("time", SRHelpers.formatEpochSeconds(data.getTimestamp(), player.getLocale())))));
+
+                            lore.addAll(base.extraLore());
+                        } else {
+                            favouriteData = Optional.empty();
+                            lore.add(locale.getMessageRequired(player, Message.SKINSMENU_NO_PERMISSION));
+                        }
+
+                        return new GUISkinEntry(base.skinIdentifier(), base.skinName(), textureHash, lore, favouriteData.isPresent());
                     })
                     .forEach(skinPage::add);
 

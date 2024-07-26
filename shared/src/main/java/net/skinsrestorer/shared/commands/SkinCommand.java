@@ -48,6 +48,7 @@ import net.skinsrestorer.shared.subjects.messages.ComponentHelper;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
+import net.skinsrestorer.shared.subjects.permissions.SkinPermissionManager;
 import net.skinsrestorer.shared.utils.SRHelpers;
 import net.skinsrestorer.shared.utils.ValidationUtil;
 import org.incendo.cloud.annotation.specifier.Greedy;
@@ -64,7 +65,6 @@ import org.incendo.cloud.processors.cooldown.CooldownGroup;
 import javax.inject.Inject;
 import java.time.Duration;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -88,6 +88,7 @@ public final class SkinCommand {
     private final MineSkinAPI mineSkinAPI;
     private final SRCommandManager commandManager;
     private final RecommendationsState recommendationsState;
+    private final SkinPermissionManager permissionManager;
 
     @Command("")
     @CommandPermission(PermissionRegistry.SKIN)
@@ -510,11 +511,17 @@ public final class SkinCommand {
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean setSkin(SRCommandSender sender, UUID target, String skinInput, SkinVariant skinVariant, boolean insertHistory) {
-        if (!canSetSkin(sender, skinInput)) {
+        Optional<Runnable> noPermissionMessage = permissionManager.canSetSkin(sender, skinInput);
+        if (noPermissionMessage.isPresent()) {
+            noPermissionMessage.get().run();
             return false;
         }
 
         try {
+            if (ValidationUtil.validSkinUrl(skinInput)) {
+                sender.sendMessage(Message.MS_UPLOADING_SKIN);
+            }
+
             // Perform skin lookup, which causes a second url regex check, but we don't care
             Optional<InputDataResult> optional = skinStorage.findOrCreateSkinData(skinInput, skinVariant);
 
@@ -546,54 +553,10 @@ public final class SkinCommand {
         return false;
     }
 
-    private boolean canSetSkin(SRCommandSender sender, String skinInput) {
-        if (settings.getProperty(CommandConfig.PER_SKIN_PERMISSIONS)
-                && !sender.hasPermission(PermissionRegistry.forSkin(skinInput.toLowerCase(Locale.ROOT)))
-                && (!sender.hasPermission(PermissionRegistry.OWN_SKIN)
-                || !(sender instanceof SRPlayer player)
-                || !skinInput.equalsIgnoreCase(player.getName()))) {
-            sender.sendMessage(Message.PLAYER_HAS_NO_PERMISSION_SKIN);
-            return false;
-        }
-
-        if (isDisabledSkin(skinInput) && !sender.hasPermission(PermissionRegistry.BYPASS_DISABLED)) {
-            sender.sendMessage(Message.ERROR_SKIN_DISABLED);
-            return false;
-        }
-
-        if (ValidationUtil.validSkinUrl(skinInput)) {
-            if (!sender.hasPermission(PermissionRegistry.SKIN_SET_URL)) {
-                sender.sendMessage(Message.PLAYER_HAS_NO_PERMISSION_URL);
-                return false;
-            }
-
-            if (!allowedSkinUrl(skinInput)) {
-                sender.sendMessage(Message.ERROR_SKINURL_DISALLOWED);
-                return false;
-            }
-
-            sender.sendMessage(Message.MS_UPLOADING_SKIN);
-        }
-
-        return true;
-    }
-
     private void setCoolDown(SRCommandSender sender, Property<Integer> time) {
         if (sender instanceof SRPlayer player) {
             commandManager.setCooldown(player, COOLDOWN_GROUP, Duration.of(settings.getProperty(time), TimeUnit.SECONDS.toChronoUnit()));
         }
-    }
-
-    private boolean isDisabledSkin(String skinName) {
-        return settings.getProperty(CommandConfig.DISABLED_SKINS_ENABLED)
-                && settings.getProperty(CommandConfig.DISABLED_SKINS).stream().anyMatch(skinName::equalsIgnoreCase);
-    }
-
-    private boolean allowedSkinUrl(String url) {
-        return !settings.getProperty(CommandConfig.RESTRICT_SKIN_URLS_ENABLED)
-                || settings.getProperty(CommandConfig.RESTRICT_SKIN_URLS_LIST)
-                .stream()
-                .anyMatch(url::startsWith);
     }
 
     private boolean senderEqual(SRCommandSender sender, SRCommandSender other) {

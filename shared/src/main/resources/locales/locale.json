@@ -119,6 +119,7 @@
   "skinsrestorer.skinsmenu_set_favourite_lore": "<gray>Shift + click to set as favourite",
   "skinsrestorer.skinsmenu_remove_favourite_lore": "<gray>Shift + click to remove from favourites",
   "skinsrestorer.skinsmenu_favourite_since_lore": "<blue>Favourite since <time>",
+  "skinsrestorer.skinsmenu_no_permission": "<red>You don't have permission to use this skin.",
   "skinsrestorer.skinsmenu_main_button": "<aqua><bold>[</bold> <gray>Skins Menu</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_history_button": "<aqua><bold>[</bold> <gray>History Menu</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_favourites_button": "<aqua><bold>[</bold> <gray>Favourites Menu</gray> <bold>]</bold>",

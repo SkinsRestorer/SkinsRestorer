@@ -17,9 +17,11 @@
  */
 package net.skinsrestorer.shared.gui;
 
+import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.shared.subjects.messages.ComponentString;
 
 import java.util.List;
 
-public record GUISkinEntry(GUIUtils.GUIRawSkinEntry base, List<ComponentString> lore, boolean isFavourite) {
+public record GUISkinEntry(SkinIdentifier skinIdentifier, ComponentString skinName, String textureHash,
+                           List<ComponentString> lore, boolean isFavourite) {
 }

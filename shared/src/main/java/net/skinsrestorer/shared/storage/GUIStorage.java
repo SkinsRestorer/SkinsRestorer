@@ -33,6 +33,7 @@ import net.skinsrestorer.shared.subjects.messages.ComponentHelper;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
+import net.skinsrestorer.shared.subjects.permissions.SkinPermissionManager;
 import net.skinsrestorer.shared.utils.SRHelpers;
 
 import javax.inject.Inject;
@@ -48,9 +49,10 @@ public class GUIStorage {
     private final SettingsManager settings;
     private final AdapterReference adapterReference;
     private final RecommendationsState recommendationsState;
+    private final SkinPermissionManager permissionManager;
 
     public PageInfo getGUIPage(SRPlayer player, int page, PageType pageType) {
-        return GUIUtils.getGUIPage(player, locale, playerStorage, page, pageType, new GUIUtils.GUIDataSource() {
+        return GUIUtils.getGUIPage(player, locale, settings, playerStorage, permissionManager, page, pageType, new GUIUtils.GUIDataSource() {
             @Override
             public boolean isEnabled() {
                 return settings.getProperty(GUIConfig.CUSTOM_GUI_ENABLED);

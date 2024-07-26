@@ -28,6 +28,12 @@ import static ch.jalu.configme.properties.PropertyInitializer.newListProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 
 public class GUIConfig implements SettingsHolder {
+    @Comment({
+            "Control what skin is displayed when a player does not have permission for a skin.",
+            "This is the end part of the skin texture URL.",
+            "You can obtain the texture URL from /sr info skin <skinName>"
+    })
+    public static final Property<String> NOT_UNLOCKED_SKIN = newProperty("gui.notUnlockedSkin", "c10591e6909e6a281b371836e462d67a2c78fa0952e910f32b41a26c48c1757c");
     @Comment("Whether custom skins are enabled in the /skins GUI")
     public static final Property<Boolean> CUSTOM_GUI_ENABLED = newProperty("gui.custom.enabled", true);
     @Comment("Order of custom skins relative to the other skin types")
