@@ -34,7 +34,7 @@ public class SkinPermissionManager {
     private final SettingsManager settings;
 
     public Optional<Runnable> canSetSkin(SRCommandSender sender, String skinInput) {
-        if (settings.getProperty(CommandConfig.PER_SKIN_PERMISSIONS)
+        if (isPerSkinPermissions()
                 && !sender.hasPermission(PermissionRegistry.forSkin(skinInput.toLowerCase(Locale.ROOT)))
                 && (!sender.hasPermission(PermissionRegistry.OWN_SKIN)
                 || !(sender instanceof SRPlayer player)
@@ -57,6 +57,14 @@ public class SkinPermissionManager {
         }
 
         return Optional.empty();
+    }
+
+    private boolean isPerSkinPermissions() {
+        if (settings.getProperty(CommandConfig.PER_SKIN_PERMISSIONS)) {
+            return settings.getProperty(CommandConfig.PER_SKIN_PERMISSIONS_CONSENT).equalsIgnoreCase(CommandConfig.CONSENT_MESSAGE);
+        } else {
+            return false;
+        }
     }
 
     private boolean isDisabledSkin(String skinName) {
