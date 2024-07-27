@@ -48,7 +48,7 @@ public class SRModPlatformImpl implements SRModPlatform {
 
     @Override
     public CommandManager<SRCommandSender> createCommandManager(ExecutionCoordinator<SRCommandSender> executionCoordinator,
-                                                                       final SenderMapper<CommandSourceStack, SRCommandSender> senderMapper) {
+                                                                SenderMapper<CommandSourceStack, SRCommandSender> senderMapper) {
         return new NeoForgeServerCommandManager<>(executionCoordinator, senderMapper);
     }
 

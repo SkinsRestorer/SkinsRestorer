@@ -35,7 +35,7 @@ public interface SRModPlatform {
     String getPlatformName();
 
     CommandManager<SRCommandSender> createCommandManager(ExecutionCoordinator<SRCommandSender> executionCoordinator,
-                                                         final SenderMapper<CommandSourceStack, SRCommandSender> senderMapper);
+                                                         SenderMapper<CommandSourceStack, SRCommandSender> senderMapper);
 
     Tristate test(CommandSourceStack stack, Permission permission);
 

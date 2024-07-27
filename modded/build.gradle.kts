@@ -31,6 +31,12 @@ unimined.minecraft {
         }
     }
 
+    runs {
+        config("server") {
+            standardInput = System.`in`
+        }
+    }
+
     defaultRemapJar = false
 }
 
