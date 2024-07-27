@@ -115,7 +115,7 @@ public class DumpService {
             jsonObject.add(keyName, gson.toJsonTree(configurationData.getValue(key)));
         }
 
-        DumpInfo.PluginInfo.StorageType storageType = proxyMode == null ? DumpInfo.PluginInfo.StorageType.NONE :
+        DumpInfo.PluginInfo.StorageType storageType = proxyMode != null && proxyMode ? DumpInfo.PluginInfo.StorageType.NONE :
                 (settingsManager.getProperty(DatabaseConfig.MYSQL_ENABLED) ?
                         DumpInfo.PluginInfo.StorageType.MYSQL : DumpInfo.PluginInfo.StorageType.FILE);
 
