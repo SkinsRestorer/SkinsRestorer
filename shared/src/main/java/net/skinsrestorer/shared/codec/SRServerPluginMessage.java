@@ -37,6 +37,7 @@ public record SRServerPluginMessage(ChannelPayload<?> channelPayload) {
 
         public static final ChannelType<GUIPageChannelPayload> OPEN_GUI = register(new ChannelType<>("openGUI", GUIPageChannelPayload.CODEC));
         public static final ChannelType<SkinUpdateChannelPayload> SKIN_UPDATE = register(new ChannelType<>("SkinUpdateV2", SkinUpdateChannelPayload.CODEC));
+        public static final ChannelType<GiveSkullChannelPayload> GIVE_SKULL = register(new ChannelType<>("giveSkull", GiveSkullChannelPayload.CODEC));
 
         public static final NetworkCodec<ChannelType<?>> CODEC = NetworkCodec.ofMapBackedDynamic(ID_TO_VALUE, NetworkId::getId,
                 "Unknown channel type: %s (Make sure the server and proxy are running the same version of SkinsRestorer)"::formatted);
@@ -93,6 +94,24 @@ public record SRServerPluginMessage(ChannelPayload<?> channelPayload) {
 
         @Override
         public SkinUpdateChannelPayload cast() {
+            return this;
+        }
+    }
+
+    public record GiveSkullChannelPayload(
+            String textureHash) implements ChannelPayload<GiveSkullChannelPayload> {
+        public static final NetworkCodec<GiveSkullChannelPayload> CODEC = NetworkCodec.of(
+                (out, msg) -> BuiltInCodecs.STRING_CODEC.write(out, msg.textureHash()),
+                in -> new GiveSkullChannelPayload(BuiltInCodecs.STRING_CODEC.read(in))
+        );
+
+        @Override
+        public ChannelType<GiveSkullChannelPayload> getType() {
+            return ChannelType.GIVE_SKULL;
+        }
+
+        @Override
+        public GiveSkullChannelPayload cast() {
             return this;
         }
     }

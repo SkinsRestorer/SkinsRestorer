@@ -547,16 +547,6 @@ public final class SkinCommand {
         }
     }
 
-    private boolean senderEqual(SRCommandSender sender, SRCommandSender other) {
-        if (sender instanceof SRPlayer player && other instanceof SRPlayer otherPlayer) {
-            // Player == Player
-            return player.getUniqueId().equals(otherPlayer.getUniqueId());
-        } else {
-            // Console == Console
-            return !(sender instanceof SRPlayer) && !(other instanceof SRPlayer);
-        }
-    }
-
     private boolean senderEqual(SRCommandSender sender, UUID other) {
         if (sender instanceof SRPlayer player) {
             // Player == Player

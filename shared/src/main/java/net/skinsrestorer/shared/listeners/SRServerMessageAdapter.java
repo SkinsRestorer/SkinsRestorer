@@ -29,7 +29,7 @@ import javax.inject.Inject;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class SRServerMessageAdapter {
-    private final SRServerAdapter plugin;
+    private final SRServerAdapter adapter;
     private final SharedSkinApplier<Object> skinApplier;
 
     public void handlePluginMessage(SRServerMessageEvent event) {
@@ -40,9 +40,11 @@ public final class SRServerMessageAdapter {
         SRServerPluginMessage message = SRServerPluginMessage.CODEC.read(new SRInputReader(event.getData()));
         SRServerPluginMessage.ChannelPayload<?> channelPayload = message.channelPayload();
         if (channelPayload instanceof SRServerPluginMessage.GUIPageChannelPayload payload) {
-            plugin.openGUI(event.getPlayer(), payload.srInventory());
+            adapter.openGUI(event.getPlayer(), payload.srInventory());
         } else if (channelPayload instanceof SRServerPluginMessage.SkinUpdateChannelPayload payload) {
             skinApplier.applySkin(event.getPlayer().getAs(Object.class), payload.skinProperty());
+        } else if (channelPayload instanceof SRServerPluginMessage.GiveSkullChannelPayload payload) {
+            adapter.giveSkullItem(event.getPlayer(), payload);
         }
     }
 }

@@ -37,6 +37,7 @@ import net.skinsrestorer.shared.api.event.EventBusImpl;
 import net.skinsrestorer.shared.commands.GUICommand;
 import net.skinsrestorer.shared.commands.SRCommand;
 import net.skinsrestorer.shared.commands.SkinCommand;
+import net.skinsrestorer.shared.commands.SkullCommand;
 import net.skinsrestorer.shared.commands.library.SRCommandManager;
 import net.skinsrestorer.shared.config.*;
 import net.skinsrestorer.shared.connections.MineSkinAPIImpl;
@@ -105,6 +106,10 @@ public class SRPlugin {
         SettingsManager settings = injector.getSingleton(SettingsManager.class);
         if (!settings.getProperty(CommandConfig.DISABLE_SKIN_COMMAND)) {
             manager.registerCommand(injector.newInstance(SkinCommand.class));
+        }
+
+        if (!settings.getProperty(CommandConfig.DISABLE_SKULL_COMMAND)) {
+            manager.registerCommand(injector.newInstance(SkullCommand.class));
         }
 
         if (!settings.getProperty(CommandConfig.DISABLE_GUI_COMMAND)) {
