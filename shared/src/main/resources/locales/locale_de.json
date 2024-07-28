@@ -91,5 +91,6 @@
   "skinsrestorer.admincommand_dump_success": "<green>Hochladen erfolgreich! <yellow><url>",
   "skinsrestorer.admincommand_dump_error": "<red>Fehler beim Hochladen der Daten auf bytebin.lucko.me",
   "skinsrestorer.command_server_not_allowed_message": "<red>Befehle wurden für den Server <server> deaktiviert.",
-  "skinsrestorer.command_unknown_player": "Unbekannter Spieler: <name>"
+  "skinsrestorer.command_unknown_player": "Unbekannter Spieler: <name>",
+  "skinsrestorer.command_no_targets_supplied": "Keine Zielspieler bereitgestellt."
 }
