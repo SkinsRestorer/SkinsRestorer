@@ -324,9 +324,9 @@ public class SRPlugin {
         injector.register(PlayerStorage.class, injector.getSingleton(PlayerStorageImpl.class));
 
         SRPlatformInit platformInit = injector.newInstance(initClass);
-        platformInit.initSkinApplier();
-
         platformInit.checkPluginSupport();
+
+        platformInit.initSkinApplier();
 
         platformInit.prePlatformInit();
 

@@ -88,7 +88,9 @@ public class LoadTest {
         when(server.getVersion()).thenReturn("1.19.2-R0.1-SNAPSHOT");
         when(server.getName()).thenReturn("TestServer");
         when(server.getCommandMap()).thenReturn(new SimpleCommandMap(server));
-        when(server.getPluginManager()).thenReturn(mock(SimplePluginManager.class));
+        SimplePluginManager pluginManager = mock(SimplePluginManager.class);
+        when(pluginManager.getPlugins()).thenReturn(new JavaPlugin[0]);
+        when(server.getPluginManager()).thenReturn(pluginManager);
         when(server.getUpdateFolderFile()).thenReturn(tempDir.toFile());
 
         Bukkit.setServer(server);
