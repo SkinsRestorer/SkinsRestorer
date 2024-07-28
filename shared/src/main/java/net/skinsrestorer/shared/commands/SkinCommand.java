@@ -61,6 +61,7 @@ import org.incendo.cloud.help.result.CommandEntry;
 import org.incendo.cloud.minecraft.extras.MinecraftHelp;
 import org.incendo.cloud.minecraft.extras.caption.ComponentCaptionFormatter;
 import org.incendo.cloud.processors.cooldown.CooldownGroup;
+import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
 import java.time.Duration;
@@ -310,24 +311,11 @@ public final class SkinCommand {
         }
     }
 
-    @Command("url <url>")
+    @Command("url <url> [skinVariant]")
     @CommandPermission(PermissionRegistry.SKIN_SET_URL)
     @CommandDescription(Message.HELP_SKIN_SET_URL)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
-    private void onSkinSetUrlShort(SRPlayer player, @Argument(suggestions = "skin_input_quote") @Quoted String url) {
-        if (!ValidationUtil.validSkinUrl(url)) {
-            player.sendMessage(Message.ERROR_INVALID_URLSKIN);
-            return;
-        }
-
-        onSkinSetOther(player, url, PlayerSelector.singleton(player), null);
-    }
-
-    @Command("url <url> <skinVariant>")
-    @CommandPermission(PermissionRegistry.SKIN_SET_URL)
-    @CommandDescription(Message.HELP_SKIN_SET_URL)
-    @SRCooldownGroup(COOLDOWN_GROUP_ID)
-    private void onSkinSetUrl(SRPlayer player, @Argument(suggestions = "skin_input_quote") @Quoted String url, SkinVariant skinVariant) {
+    private void onSkinSetUrl(SRPlayer player, @Argument(suggestions = "skin_input_quote") @Quoted String url, @Nullable SkinVariant skinVariant) {
         if (!ValidationUtil.validSkinUrl(url)) {
             player.sendMessage(Message.ERROR_INVALID_URLSKIN);
             return;
