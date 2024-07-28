@@ -211,7 +211,7 @@ public class SRBukkitInit implements SRServerPlatformInit {
         SemanticVersion viaVersionVersion = viaVersion.get().parsedVersion();
         SemanticVersion viaBackwardsVersion = viaBackwards.get().parsedVersion();
         SemanticVersion requiredVersion = new SemanticVersion(5, 0, 0);
-        if (viaVersionVersion.isNewerThan(requiredVersion) && viaBackwardsVersion.isNewerThan(requiredVersion)) {
+        if (!viaVersionVersion.isOlderThan(requiredVersion) && !viaBackwardsVersion.isOlderThan(requiredVersion)) {
             return;
         }
 
