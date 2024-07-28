@@ -17,12 +17,14 @@
  */
 package net.skinsrestorer.api.semver;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Arrays;
 
 @Getter
+@EqualsAndHashCode
 @ApiStatus.Internal
 public class SemanticVersion {
     // Requires at least three parts
