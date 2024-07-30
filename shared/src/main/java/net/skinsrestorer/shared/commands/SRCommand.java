@@ -364,7 +364,7 @@ public final class SRCommand {
         MojangProfileTextureMeta skinMetadata = profile.getTextures().getSKIN().getMetadata();
 
         long timestamp = profile.getTimestamp();
-        String requestTime = SRHelpers.formatEpochMillis(timestamp, sender.getLocale());
+        String requestTime = SRHelpers.formatEpochMillis(settings, timestamp, sender.getLocale());
 
         sender.sendMessage(Message.ADMINCOMMAND_INFO_GENERIC,
                 Placeholder.parsed("url", texturesUrl),
@@ -421,8 +421,8 @@ public final class SRCommand {
             return playerSkinData.<Consumer<SRCommandSender>>map(skinData -> sender -> {
                 sender.sendMessage(Message.ADMINCOMMAND_INFO_PLAYER_SKIN,
                         Placeholder.parsed("skin", input),
-                        Placeholder.parsed("timestamp", SRHelpers.formatEpochSeconds(playerSkinData.get().getTimestamp(), sender.getLocale())),
-                        Placeholder.parsed("expires", SRHelpers.formatEpochSeconds(playerSkinData.get().getTimestamp()
+                        Placeholder.parsed("timestamp", SRHelpers.formatEpochSeconds(settings, playerSkinData.get().getTimestamp(), sender.getLocale())),
+                        Placeholder.parsed("expires", SRHelpers.formatEpochSeconds(settings, playerSkinData.get().getTimestamp()
                                 + TimeUnit.MINUTES.toSeconds(settings.getProperty(StorageConfig.SKIN_EXPIRES_AFTER)), sender.getLocale())));
                 sendGenericSkinInfoMessage(sender, skinData.getProperty());
             }).orElseGet(() -> sender -> sender.sendMessage(Message.NO_SKIN_DATA));

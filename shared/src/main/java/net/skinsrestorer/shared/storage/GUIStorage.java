@@ -163,7 +163,7 @@ public class GUIStorage {
                                 skinStorage.resolveSkinName(h.getSkinIdentifier()),
                                 PropertyUtils.getSkinTextureHash(skinStorage.getSkinDataByIdentifier(h.getSkinIdentifier()).orElseThrow()),
                                 List.of(locale.getMessageRequired(player, Message.SKINSMENU_HISTORY_LORE,
-                                        Placeholder.parsed("time", SRHelpers.formatEpochSeconds(h.getTimestamp(), player.getLocale()))))
+                                        Placeholder.parsed("time", SRHelpers.formatEpochSeconds(settings, h.getTimestamp(), player.getLocale()))))
                         ))
                         .toList();
             }
