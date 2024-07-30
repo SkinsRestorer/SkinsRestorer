@@ -155,12 +155,12 @@
   "skinsrestorer.permission_bypasscooldown": "Ohittaa minkä tahansa komennon jäähtymisen asetuksissa.",
   "skinsrestorer.permission_bypassdisabled": "Ohittaa kaikki lukitut asut joita on asetustiedostoissa.",
   "skinsrestorer.permission_ownskin": "Mahdollistaa pääsyn oman asusi asettamiseen.",
-  "skinsrestorer.duration_day": "päivä",
-  "skinsrestorer.duration_days": "päivää",
-  "skinsrestorer.duration_hour": "tunti",
-  "skinsrestorer.duration_hours": "tuntia",
-  "skinsrestorer.duration_minute": "minuutti",
-  "skinsrestorer.duration_minutes": "minuuttia",
-  "skinsrestorer.duration_second": "sekuntti",
-  "skinsrestorer.duration_seconds": "sekunttia"
+  "skinsrestorer.duration_day": " päivä",
+  "skinsrestorer.duration_days": " päivää",
+  "skinsrestorer.duration_hour": " tunti",
+  "skinsrestorer.duration_hours": " tuntia",
+  "skinsrestorer.duration_minute": " minuutti",
+  "skinsrestorer.duration_minutes": " minuuttia",
+  "skinsrestorer.duration_second": " sekuntti",
+  "skinsrestorer.duration_seconds": " sekunttia"
 }

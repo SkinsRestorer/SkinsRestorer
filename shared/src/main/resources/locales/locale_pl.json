@@ -156,12 +156,12 @@
   "skinsrestorer.permission_bypasscooldown": "Pomija wszelkie czasy odnowienia poleceń ustawione w konfiguracji.",
   "skinsrestorer.permission_bypassdisabled": "Pomija wszystkie wyłączone skórki ustawione w konfiguracji.",
   "skinsrestorer.permission_ownskin": "Umożliwia dostęp do ustawienia własnej skórki.",
-  "skinsrestorer.duration_day": "dzień",
-  "skinsrestorer.duration_days": "dni",
-  "skinsrestorer.duration_hour": "godzina",
-  "skinsrestorer.duration_hours": "godzin",
-  "skinsrestorer.duration_minute": "minuta",
-  "skinsrestorer.duration_minutes": "minut",
-  "skinsrestorer.duration_second": "sekunda",
-  "skinsrestorer.duration_seconds": "sekund"
+  "skinsrestorer.duration_day": " dzień",
+  "skinsrestorer.duration_days": " dni",
+  "skinsrestorer.duration_hour": " godzina",
+  "skinsrestorer.duration_hours": " godzin",
+  "skinsrestorer.duration_minute": " minuta",
+  "skinsrestorer.duration_minutes": " minut",
+  "skinsrestorer.duration_second": " sekunda",
+  "skinsrestorer.duration_seconds": " sekund"
 }

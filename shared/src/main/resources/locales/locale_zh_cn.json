@@ -155,12 +155,12 @@
   "skinsrestorer.permission_bypasscooldown": "绕过配置中设置的任何命令冷却时间。",
   "skinsrestorer.permission_bypassdisabled": "绕过配置中设置的任何禁用皮肤。",
   "skinsrestorer.permission_ownskin": "允许设置自己的皮肤。",
-  "skinsrestorer.duration_day": "天",
-  "skinsrestorer.duration_days": "天",
-  "skinsrestorer.duration_hour": "小时",
-  "skinsrestorer.duration_hours": "小时",
-  "skinsrestorer.duration_minute": "分钟",
-  "skinsrestorer.duration_minutes": "分钟",
-  "skinsrestorer.duration_second": "秒",
-  "skinsrestorer.duration_seconds": "秒"
+  "skinsrestorer.duration_day": " 天",
+  "skinsrestorer.duration_days": " 天",
+  "skinsrestorer.duration_hour": " 小时",
+  "skinsrestorer.duration_hours": " 小时",
+  "skinsrestorer.duration_minute": " 分钟",
+  "skinsrestorer.duration_minutes": " 分钟",
+  "skinsrestorer.duration_second": " 秒",
+  "skinsrestorer.duration_seconds": " 秒"
 }
