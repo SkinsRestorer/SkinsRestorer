@@ -95,6 +95,10 @@
   "skinsrestorer.skinsmenu_next_page": "<green><bold>»<gray> Следующая страница</gray><bold> »</bold>",
   "skinsrestorer.skinsmenu_previous_page": "<yellow><bold>«</bold> <gray>Предыдущая страница</gray> <bold>«</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[ <gray> Удалить скин</gray><bold> ]</bold>",
+  "skinsrestorer.skinsmenu_no_permission": "<red>У Вас не прав на установку этого скина.",
+  "skinsrestorer.skinsmenu_main_button": "<aqua><bold>[</bold> <gray>Меню скинов</gray> <bold>]</bold>",
+  "skinsrestorer.skinsmenu_history_button": "<aqua><bold>[</bold> <gray>Меню истории</gray> <bold>]</bold>",
+  "skinsrestorer.skinsmenu_favourites_button": "<aqua><bold>[</bold> <gray>Меню Избранное</gray> <bold>]</bold>",
   "skinsrestorer.skin_search_message": "<dark_green>Вы можете найти скины по запросу <green><search></green> здесь: <newline><green>https://namemc.com/minecraft-skins/tag/<search> <newline><newline><dark_green>Если скинов не найдено, вы всегда можете найти некоторые скины по адресу https://namemc.com/minecraft-skins/tag <newline>Вы можете установить скин по ссылке скина:<newline> /skin https://namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>Ошибка<dark_gray>: <red>Не найдены данные скина! Имеет ли этот игрок скин?",
   "skinsrestorer.outdated": "<dark_red>Вы используете устаревшую версию SkinsRestorer на своём <platform>!<newline><red>Обновите Spigot до последней версии: <newline><yellow>https://www.spigotmc.org/resources/skinsrestorer.2124/",
@@ -126,5 +130,7 @@
   "skinsrestorer.permission_admincommand_dump": "Разрешает загрузку информации сервера через \"/sr dump\".",
   "skinsrestorer.permission_bypasscooldown": "Обходит любые задержки для команд в файле конфигураций.",
   "skinsrestorer.permission_bypassdisabled": "Обходит выключенные скины в файле конфигураций.",
-  "skinsrestorer.permission_ownskin": "Разрешает установить ваш собственный скин."
+  "skinsrestorer.permission_ownskin": "Разрешает установить ваш собственный скин.",
+  "skinsrestorer.duration_second": " секунда",
+  "skinsrestorer.duration_seconds": " секунд"
 }
