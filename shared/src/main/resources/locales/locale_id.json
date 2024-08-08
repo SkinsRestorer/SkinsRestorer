@@ -15,6 +15,8 @@
   "skinsrestorer.help_skin_update_other": "Memperbarui skin pemain yang ditarget.",
   "skinsrestorer.help_skin_undo": "Mengembalikan skin-mu ke skin sebelumnya.",
   "skinsrestorer.help_skin_undo_other": "Mengembalikan skin pemain yang ditarget ke skin sebelumnya.",
+  "skinsrestorer.help_skin_favourite": "Simpan skin mu sebagai favorit.",
+  "skinsrestorer.help_skin_favourite_other": "Simpan skin pemain yang ditarget sebagai favorit.",
   "skinsrestorer.help_sr_reload": "Menyegarkan file konfigurasi.",
   "skinsrestorer.help_sr_status": "Mengecek layanan API yang dibutuhkan plugin.",
   "skinsrestorer.help_sr_drop": "Menghapus data pemain atau skin dari database.",
