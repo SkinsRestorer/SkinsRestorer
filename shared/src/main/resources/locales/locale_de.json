@@ -128,5 +128,21 @@
   "skinsrestorer.permission_command": "Erlaubt den Zugriff auf die Haupt-\"/skin\"-Befehle.",
   "skinsrestorer.permission_command_set": "Ermöglicht den Zugriff auf das Ändern des Skins.",
   "skinsrestorer.permission_command_set_url": "Ermöglicht den Zugriff auf das Ändern des Skins via URL.",
-  "skinsrestorer.permission_command_clear": "Ermöglicht den Zugriff auf das Löschen deines Skins."
+  "skinsrestorer.permission_command_clear": "Ermöglicht den Zugriff auf das Löschen deines Skins.",
+  "skinsrestorer.permission_command_random": "Erlaubt den Zugriff einen zufälligen Skin zu setzen.",
+  "skinsrestorer.permission_command_update": "Ermöglicht den Zugriff auf das Ändern des Skins.",
+  "skinsrestorer.permission_command_undo": "Ermöglicht den Zugriff auf das Zurücksetzen des Skins auf den vorherigen Skin.",
+  "skinsrestorer.permission_command_search": "Ermöglicht Zugriff auf die Suche nach Ihrem Skin.",
+  "skinsrestorer.permission_admincommand_reload": "Erlaubt den Zugriff auf \"/sr reload\".",
+  "skinsrestorer.permission_admincommand_status": "Erlaubt den Zugriff auf \"/sr status\".",
+  "skinsrestorer.permission_admincommand_drop": "Ermöglicht den Zugriff eine .SKIN Datei zu entfernen.",
+  "skinsrestorer.permission_ownskin": "Ermöglicht den Zugriff den eigenen Skin zu setzen.",
+  "skinsrestorer.duration_day": "Tag",
+  "skinsrestorer.duration_days": " Tage",
+  "skinsrestorer.duration_hour": " Stunde",
+  "skinsrestorer.duration_hours": " Stunden",
+  "skinsrestorer.duration_minute": " Minute ",
+  "skinsrestorer.duration_minutes": " Minuten",
+  "skinsrestorer.duration_second": " Sekunde",
+  "skinsrestorer.duration_seconds": " Sekunden"
 }
