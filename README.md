@@ -1,3 +1,8 @@
+# This version is a hotfix for the 1.21.1 MC release.
+# Please use dev builds for the latest bugfixes.
+
+---
+
 # SkinsRestorer
 
 <p align="center">
@@ -31,7 +36,7 @@ Restoring offline mode skins & changing skins for Bukkit/Spigot/Paper/Purpur/etc
 **WE DO NOT SUPPORT FORGE / FABRIC**
 
 - Java 17+ ([Get Adoptium](https://adoptium.net/))
-- Minecraft 1.8.0 - 1.21
+- Minecraft 1.8.0 - 1.21.1
 
 Implementation:
 - Proxy: BungeeCord (Waterfall) & Velocity
