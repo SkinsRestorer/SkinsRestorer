@@ -45,6 +45,7 @@ import net.skinsrestorer.shared.gui.ActionDataCallback;
 import net.skinsrestorer.shared.gui.ClickEventType;
 import net.skinsrestorer.shared.gui.GUIManager;
 import net.skinsrestorer.shared.gui.SRInventory;
+import net.skinsrestorer.shared.utils.SRHelpers;
 import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
@@ -70,7 +71,7 @@ public class ModGUI implements GUIManager<MenuProvider> {
         PatchedDataComponentMap dataComponentMap = new PatchedDataComponentMap(item.components());
         entry.textureHash().ifPresent(hash -> {
             PropertyMap propertyMap = new PropertyMap();
-            propertyMap.put(SkinProperty.TEXTURES_NAME, new Property(SkinProperty.TEXTURES_NAME, hash));
+            propertyMap.put(SkinProperty.TEXTURES_NAME, new Property(SkinProperty.TEXTURES_NAME, SRHelpers.encodeHashToTexturesValue(hash)));
 
             dataComponentMap.set(DataComponents.PROFILE, new ResolvableProfile(Optional.empty(), Optional.empty(), propertyMap));
         });

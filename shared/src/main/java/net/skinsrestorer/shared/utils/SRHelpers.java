@@ -18,6 +18,7 @@
 package net.skinsrestorer.shared.utils;
 
 import ch.jalu.configme.SettingsManager;
+import net.skinsrestorer.api.Base64Utils;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.config.MessageConfig;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
@@ -26,6 +27,7 @@ import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -155,7 +157,7 @@ public class SRHelpers {
 
     public static Optional<URL> parseURL(String str) {
         try {
-            return Optional.of(new URL(str));
+            return Optional.of(URI.create(str).toURL());
         } catch (Exception e) {
             return Optional.empty();
         }
@@ -280,5 +282,10 @@ public class SRHelpers {
         }
 
         return result.toString().trim();
+    }
+
+    @SuppressWarnings("HttpUrlsUsage")
+    public static String encodeHashToTexturesValue(String textureHash) {
+        return Base64Utils.encode("{\"textures\":{\"SKIN\":{\"url\":\"http://textures.minecraft.net/texture/%s\"}}}".formatted(textureHash));
     }
 }
