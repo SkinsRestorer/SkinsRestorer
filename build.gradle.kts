@@ -50,10 +50,10 @@ allprojects {
             name = "OpenCollab Release Repository"
         }
         maven("https://maven.wagyourtail.xyz/releases") {
-            name = "PaperMC Repository"
+            name = "WagYourTail Release Repository"
         }
         maven("https://maven.wagyourtail.xyz/snapshots") {
-            name = "PaperMC Repository"
+            name = "WagYourTail Snapshot Repository"
         }
         mavenCentral()
     }
