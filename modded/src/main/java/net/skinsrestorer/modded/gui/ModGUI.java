@@ -23,7 +23,6 @@ import com.mojang.authlib.properties.PropertyMap;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.component.PatchedDataComponentMap;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
@@ -39,6 +38,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.component.ResolvableProfile;
+import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.modded.MinecraftKyoriSerializer;
 import net.skinsrestorer.modded.wrapper.WrapperMod;
 import net.skinsrestorer.shared.gui.ActionDataCallback;
@@ -57,6 +57,7 @@ import java.util.Optional;
 public class ModGUI implements GUIManager<MenuProvider> {
     private final Injector injector;
 
+    @SuppressWarnings("deprecation")
     private ItemStack createItem(SRInventory.Item entry) {
         Item item = switch (entry.materialType()) {
             case SKULL -> Items.PLAYER_HEAD;
@@ -69,15 +70,17 @@ public class ModGUI implements GUIManager<MenuProvider> {
         PatchedDataComponentMap dataComponentMap = new PatchedDataComponentMap(item.components());
         entry.textureHash().ifPresent(hash -> {
             PropertyMap propertyMap = new PropertyMap();
-            propertyMap.put("textures", new Property("textures", hash));
+            propertyMap.put(SkinProperty.TEXTURES_NAME, new Property(SkinProperty.TEXTURES_NAME, hash));
 
             dataComponentMap.set(DataComponents.PROFILE, new ResolvableProfile(Optional.empty(), Optional.empty(), propertyMap));
         });
         dataComponentMap.set(DataComponents.ITEM_NAME, MinecraftKyoriSerializer.toNative(entry.displayName()));
         dataComponentMap.set(DataComponents.LORE, new ItemLore(List.of(), entry.lore().stream().map(MinecraftKyoriSerializer::toNative).toList()));
-        dataComponentMap.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
+        if (entry.enchantmentGlow()) {
+            dataComponentMap.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
+        }
 
-        return new ItemStack(BuiltInRegistries.ITEM.createIntrusiveHolder(item), 1, dataComponentMap.asPatch());
+        return new ItemStack(item.builtInRegistryHolder(), 1, dataComponentMap.asPatch());
     }
 
     public MenuProvider createGUI(SRInventory srInventory) {
