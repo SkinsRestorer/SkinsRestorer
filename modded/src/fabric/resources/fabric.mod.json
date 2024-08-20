@@ -29,6 +29,7 @@
     "java": ">=21",
     "architectury": ">=13.0.2",
     "fabric-api": "*",
-    "cloud": "*"
+    "cloud": "*",
+    "fabric-permissions-api-v0": "*"
   }
 }
