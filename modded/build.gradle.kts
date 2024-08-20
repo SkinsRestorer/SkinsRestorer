@@ -16,6 +16,7 @@ unimined.minecraft {
     mappings {
         intermediary()
         mojmap()
+        parchment("1.21", "2024.07.28")
 
         devFallbackNamespace("official")
     }

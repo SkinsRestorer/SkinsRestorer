@@ -18,10 +18,13 @@
 package net.skinsrestorer.modded;
 
 import ch.jalu.injector.Injector;
+import dev.architectury.registry.menu.MenuRegistry;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.MenuProvider;
 import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.modded.gui.ModGUI;
 import net.skinsrestorer.modded.wrapper.WrapperMod;
 import net.skinsrestorer.shared.gui.SRInventory;
 import net.skinsrestorer.shared.info.Platform;
@@ -99,7 +102,9 @@ public class SRModAdapter implements SRServerAdapter {
 
     @Override
     public void openGUI(SRPlayer player, SRInventory srInventory) {
-        // TODO: Add GUI support
+        MenuProvider inventory = injector.getSingleton(ModGUI.class).createGUI(srInventory);
+
+        runSyncToPlayer(player, () -> MenuRegistry.openMenu(player.getAs(ServerPlayer.class), inventory));
     }
 
     @Override
