@@ -50,7 +50,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -76,7 +75,7 @@ public class ModGUI implements GUIManager<MenuProvider> {
             dataComponentMap.set(DataComponents.PROFILE, new ResolvableProfile(Optional.empty(), Optional.empty(), propertyMap));
         });
         dataComponentMap.set(DataComponents.ITEM_NAME, MinecraftKyoriSerializer.toNative(entry.displayName()));
-        dataComponentMap.set(DataComponents.LORE, new ItemLore(List.of(), entry.lore().stream().map(MinecraftKyoriSerializer::toNative).toList()));
+        dataComponentMap.set(DataComponents.LORE, new ItemLore(entry.lore().stream().map(MinecraftKyoriSerializer::toNative).toList()));
         if (entry.enchantmentGlow()) {
             dataComponentMap.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
         }
