@@ -30,19 +30,19 @@ dependencies {
     api("org.incendo:cloud-translations-core:1.0.0-SNAPSHOT")
     api("org.incendo:cloud-translations-minecraft-extras:1.0.0-SNAPSHOT")
 
-    implementation("org.bstats:bstats-base:3.0.2") {
+    implementation("org.bstats:bstats-base:3.0.3") {
         isTransitive = false
     }
 
     compileOnly("org.geysermc.floodgate:api:2.2.2-SNAPSHOT")
 
-    testImplementation("org.bstats:bstats-base:3.0.2")
+    testImplementation("org.bstats:bstats-base:3.0.3")
 
-    testImplementation("org.testcontainers:testcontainers:1.20.0")
-    testImplementation("org.testcontainers:mariadb:1.20.0")
-    testImplementation("org.testcontainers:junit-jupiter:1.20.0")
+    testImplementation("org.testcontainers:testcontainers:1.20.1")
+    testImplementation("org.testcontainers:mariadb:1.20.1")
+    testImplementation("org.testcontainers:junit-jupiter:1.20.1")
 
-    testRuntimeOnly("org.slf4j:slf4j-simple:2.0.13")
+    testRuntimeOnly("org.slf4j:slf4j-simple:2.0.16")
 }
 
 tasks {

@@ -15,12 +15,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package net.skinsrestorer.shared.utils;
+package net.skinsrestorer.shared.subjects.messages;
 
-import ch.jalu.injector.Injector;
-import net.skinsrestorer.shared.subjects.SRPlayer;
+import net.skinsrestorer.shared.codec.BuiltInCodecs;
+import net.skinsrestorer.shared.codec.NetworkCodec;
 
-import java.util.function.BiConsumer;
-
-public interface SoundProvider extends BiConsumer<Injector, SRPlayer> {
+/**
+ * Represents a json string that can safely be shared across platforms.
+ * This prevents coding errors like passing a json string to a component that expects a legacy string.
+ *
+ * @param jsonString The json string.
+ */
+public record ComponentString(String jsonString) {
+    public static final NetworkCodec<ComponentString> CODEC = BuiltInCodecs.STRING_CODEC.map(ComponentString::jsonString, ComponentString::new);
 }

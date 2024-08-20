@@ -80,15 +80,19 @@ public class SRLogger {
     }
 
     private void log(SRLogLevel level, String message) {
-        logger.log(level, formatMessage(message));
+        logger.log(level, formatMessage(level, message));
     }
 
     private void log(SRLogLevel level, String message, Throwable thrown) {
-        logger.log(level, formatMessage(message), thrown);
+        logger.log(level, formatMessage(level, message), thrown);
     }
 
-    private String formatMessage(String message) {
-        message = color ? "§e[§2SkinsRestorer§e] §r%s".formatted(message) : message;
+    private String formatMessage(SRLogLevel level, String message) {
+        message = color ? "§e[§2SkinsRestorer§e] §r%s%s".formatted(switch (level) {
+            case INFO -> "";
+            case WARNING -> "§e";
+            case SEVERE -> "§c";
+        }, message) : message;
         message += "§r";
         message = ANSIConverter.convertToAnsi(message);
         return message;

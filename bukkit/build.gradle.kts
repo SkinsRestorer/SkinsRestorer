@@ -26,8 +26,8 @@ dependencies {
         isTransitive = false
     }
 
-    implementation("org.bstats:bstats-bukkit:3.0.2")
-    implementation("com.github.cryptomorin:XSeries:11.2.0.1")
+    implementation("org.bstats:bstats-bukkit:3.0.3")
+    implementation("com.github.cryptomorin:XSeries:11.2.1")
 
     // MultiPaper support
     implementation("com.github.puregero:multilib:1.2.3")
@@ -39,7 +39,7 @@ dependencies {
         isTransitive = false
     }
 
-    compileOnly("com.viaversion:viabackwards-common:5.0.1") {
+    compileOnly("com.viaversion:viabackwards-common:5.0.3") {
         isTransitive = false
     }
     compileOnly("com.viaversion:viaversion:5.0.0") {

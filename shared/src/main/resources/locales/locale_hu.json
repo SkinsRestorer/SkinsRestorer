@@ -117,6 +117,7 @@
   "skinsrestorer.skinsmenu_set_favourite_lore": "<gray>Shift + katt, hogy beállítsd kedvencnek",
   "skinsrestorer.skinsmenu_remove_favourite_lore": "<gray>Shift + katt, hogy eltávolítsd a kedvencekből",
   "skinsrestorer.skinsmenu_favourite_since_lore": "<blue>Kedvencnek jelölve <time> óta",
+  "skinsrestorer.skinsmenu_no_permission": "<red>Nincs engedélyed használni ezt a kinézetet.",
   "skinsrestorer.skinsmenu_main_button": "<aqua><bold>[</bold> <gray>Kinézetek menü</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_history_button": "<aqua><bold>[</bold> <gray>Előzmények menü</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_favourites_button": "<aqua><bold>[</bold> <gray>Kedvencek menü</gray> <bold>]</bold>",
@@ -155,12 +156,12 @@
   "skinsrestorer.permission_bypasscooldown": "Megkerüli a konfigurációban beállított várakozási időt bármely parancsra.",
   "skinsrestorer.permission_bypassdisabled": "Megkerüli a konfigurációban letiltott kinézetek beállítását.",
   "skinsrestorer.permission_ownskin": "Engedélyezi, hogy beállítsd a saját kinézeted.",
-  "skinsrestorer.duration_day": "nap",
-  "skinsrestorer.duration_days": "nap",
-  "skinsrestorer.duration_hour": "óra",
-  "skinsrestorer.duration_hours": "óra",
-  "skinsrestorer.duration_minute": "perc",
-  "skinsrestorer.duration_minutes": "perc",
-  "skinsrestorer.duration_second": "másodperc",
-  "skinsrestorer.duration_seconds": "másodperc"
+  "skinsrestorer.duration_day": " nap",
+  "skinsrestorer.duration_days": " nap",
+  "skinsrestorer.duration_hour": " óra",
+  "skinsrestorer.duration_hours": " óra",
+  "skinsrestorer.duration_minute": " perc",
+  "skinsrestorer.duration_minutes": " perc",
+  "skinsrestorer.duration_second": " másodperc",
+  "skinsrestorer.duration_seconds": " másodperc"
 }

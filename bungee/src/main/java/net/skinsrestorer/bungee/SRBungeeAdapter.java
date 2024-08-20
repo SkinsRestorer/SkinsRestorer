@@ -61,11 +61,6 @@ public class SRBungeeAdapter implements SRProxyAdapter {
     }
 
     @Override
-    public boolean isPluginEnabled(String pluginName) {
-        return proxy.getPluginManager().getPlugin(pluginName) != null;
-    }
-
-    @Override
     public InputStream getResource(String resource) {
         return getClass().getClassLoader().getResourceAsStream(resource);
     }

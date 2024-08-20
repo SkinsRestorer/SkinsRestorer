@@ -25,7 +25,7 @@ import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.plugin.SRProxyPlatformInit;
-import net.skinsrestorer.shared.utils.SRConstants;
+import net.skinsrestorer.shared.utils.SRHelpers;
 import net.skinsrestorer.velocity.listener.AdminInfoListener;
 import net.skinsrestorer.velocity.listener.GameProfileRequest;
 import net.skinsrestorer.velocity.listener.ProxyMessageListener;
@@ -59,7 +59,7 @@ public class SRVelocityInit implements SRProxyPlatformInit {
 
     @Override
     public void initMessageChannel() {
-        proxy.getChannelRegistrar().register(MinecraftChannelIdentifier.from(SRConstants.MESSAGE_CHANNEL));
+        proxy.getChannelRegistrar().register(MinecraftChannelIdentifier.from(SRHelpers.MESSAGE_CHANNEL));
         proxy.getEventManager().register(adapter.pluginInstance(), PluginMessageEvent.class, injector.getSingleton(ProxyMessageListener.class));
     }
 }

@@ -168,6 +168,10 @@ public class SRPlugin {
             }
         }
 
+        if (!settings.getProperty(CommandConfig.PER_SKIN_PERMISSIONS_CONSENT).equalsIgnoreCase(CommandConfig.CONSENT_MESSAGE)) {
+            logger.warning("You must agree to the rules at '%s' in the config to use per skin permissions.".formatted(CommandConfig.PER_SKIN_PERMISSIONS_CONSENT.getPath()));
+        }
+
         if (!settings.getProperty(ServerConfig.DISMOUNT_PLAYER_ON_UPDATE)) {
             settings.setProperty(ServerConfig.REMOUNT_PLAYER_ON_UPDATE, false);
         }
@@ -324,9 +328,9 @@ public class SRPlugin {
         injector.register(PlayerStorage.class, injector.getSingleton(PlayerStorageImpl.class));
 
         SRPlatformInit platformInit = injector.newInstance(initClass);
-        platformInit.initSkinApplier();
-
         platformInit.checkPluginSupport();
+
+        platformInit.initSkinApplier();
 
         platformInit.prePlatformInit();
 

@@ -22,11 +22,11 @@ import net.skinsrestorer.bukkit.logger.BukkitConsoleImpl;
 import net.skinsrestorer.bukkit.update.UpdateDownloaderGithub;
 import net.skinsrestorer.bukkit.utils.BukkitSoundProvider;
 import net.skinsrestorer.bukkit.utils.PluginJarProvider;
+import net.skinsrestorer.shared.commands.SoundProvider;
 import net.skinsrestorer.shared.log.JavaLoggerImpl;
 import net.skinsrestorer.shared.plugin.SRBootstrapper;
 import net.skinsrestorer.shared.plugin.SRServerPlugin;
 import net.skinsrestorer.shared.update.DownloaderClassProvider;
-import net.skinsrestorer.shared.utils.SoundProvider;
 import org.bukkit.Server;
 import org.bukkit.plugin.java.JavaPlugin;
 

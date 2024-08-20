@@ -119,6 +119,7 @@
   "skinsrestorer.skinsmenu_set_favourite_lore": "<gray>Shift + click to set as favourite",
   "skinsrestorer.skinsmenu_remove_favourite_lore": "<gray>Shift + click to remove from favourites",
   "skinsrestorer.skinsmenu_favourite_since_lore": "<blue>Favourite since <time>",
+  "skinsrestorer.skinsmenu_no_permission": "<red>You don't have permission to use this skin.",
   "skinsrestorer.skinsmenu_main_button": "<aqua><bold>[</bold> <gray>Skins Menu</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_history_button": "<aqua><bold>[</bold> <gray>History Menu</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_favourites_button": "<aqua><bold>[</bold> <gray>Favourites Menu</gray> <bold>]</bold>",
@@ -157,12 +158,12 @@
   "skinsrestorer.permission_bypasscooldown": "Bypasses any command cooldown set in the config.",
   "skinsrestorer.permission_bypassdisabled": "Bypasses any disabled skins set in the config.",
   "skinsrestorer.permission_ownskin": "Allows access to set your own skin.",
-  "skinsrestorer.duration_day": "day",
-  "skinsrestorer.duration_days": "days",
-  "skinsrestorer.duration_hour": "hour",
-  "skinsrestorer.duration_hours": "hours",
-  "skinsrestorer.duration_minute": "minute",
-  "skinsrestorer.duration_minutes": "minutes",
-  "skinsrestorer.duration_second": "second",
-  "skinsrestorer.duration_seconds": "seconds"
+  "skinsrestorer.duration_day": " day",
+  "skinsrestorer.duration_days": " days",
+  "skinsrestorer.duration_hour": " hour",
+  "skinsrestorer.duration_hours": " hours",
+  "skinsrestorer.duration_minute": " minute",
+  "skinsrestorer.duration_minutes": " minutes",
+  "skinsrestorer.duration_second": " second",
+  "skinsrestorer.duration_seconds": " seconds"
 }

@@ -32,17 +32,18 @@ import net.skinsrestorer.bukkit.v1_7.BukkitLegacyPropertyApplier;
 import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
 import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.info.ClassInfo;
+import net.skinsrestorer.shared.info.PluginInfo;
 import net.skinsrestorer.shared.log.SRChatColor;
 import net.skinsrestorer.shared.log.SRLogLevel;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.plugin.SRServerPlatformInit;
+import net.skinsrestorer.shared.subjects.messages.ComponentHelper;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.PermissionGroup;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
-import net.skinsrestorer.shared.utils.ComponentHelper;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
-import net.skinsrestorer.shared.utils.SRConstants;
+import net.skinsrestorer.shared.utils.SRHelpers;
 import org.bukkit.Server;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -58,6 +59,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
@@ -81,7 +83,7 @@ public class SRBukkitInit implements SRServerPlatformInit {
         // Log information about the platform
         logger.info(SRChatColor.GREEN + "Running on Minecraft " + SRChatColor.YELLOW + BukkitReflection.SERVER_VERSION + SRChatColor.GREEN + ".");
 
-        if (!BukkitReflection.SERVER_VERSION.isNewerThan(new SemanticVersion(1, 7, 10))) {
+        if (BukkitReflection.SERVER_VERSION.isOlderThan(new SemanticVersion(1, 8, 0))) {
             logger.warning(SRChatColor.YELLOW + "Although SkinsRestorer allows using this ancient version, we will not provide full support for it. This version of Minecraft does not allow using all of SkinsRestorers features due to client side restrictions. Please be aware things WILL BREAK and not work!");
         }
     }
@@ -102,8 +104,8 @@ public class SRBukkitInit implements SRServerPlatformInit {
         }
 
         if (isPaper()) {
-            boolean viaBackwardsExists = adapter.isPluginEnabled("ViaBackwards");
-            boolean protocolSupportExists = adapter.isPluginEnabled("ProtocolSupport");
+            boolean viaBackwardsExists = adapter.getPluginInfo("ViaBackwards").isPresent();
+            boolean protocolSupportExists = adapter.getPluginInfo("ProtocolSupport").isPresent();
             if (viaBackwardsExists || protocolSupportExists) {
                 logger.debug(SRLogLevel.WARNING, "Unsupported plugin (ViaBackwards or ProtocolSupport) detected, forcing SpigotSkinRefresher");
                 return selectSpigotRefresher();
@@ -122,7 +124,7 @@ public class SRBukkitInit implements SRServerPlatformInit {
     }
 
     private SkinRefresher selectSpigotRefresher() {
-        if (adapter.isPluginEnabled("ViaBackwards") && ViaWorkaround.shouldApplyWorkaround()) {
+        if (adapter.getPluginInfo("ViaBackwards").isPresent() && ViaWorkaround.shouldApplyWorkaround()) {
             logger.debug("Activating ViaBackwards workaround.");
             injector.register(ViaRefreshProvider.class, d -> {
                 try {
@@ -200,21 +202,25 @@ public class SRBukkitInit implements SRServerPlatformInit {
     }
 
     private void checkViaVersion() {
-        if (!adapter.isPluginEnabled("ViaBackwards")) {
+        Optional<PluginInfo> viaVersion = adapter.getPluginInfo("ViaVersion");
+        Optional<PluginInfo> viaBackwards = adapter.getPluginInfo("ViaBackwards");
+        if (viaVersion.isEmpty() || viaBackwards.isEmpty()) {
             return;
         }
 
-        // ViaBackwards 5.0.0+ class
-        if (ReflectionUtil.classExists("com.viaversion.viabackwards.protocol.v1_16to1_15_2.Protocol1_16To1_15_2")) {
+        SemanticVersion viaVersionVersion = viaVersion.get().parsedVersion();
+        SemanticVersion viaBackwardsVersion = viaBackwards.get().parsedVersion();
+        SemanticVersion requiredVersion = new SemanticVersion(5, 0, 0);
+        if (!viaVersionVersion.isOlderThan(requiredVersion) && !viaBackwardsVersion.isOlderThan(requiredVersion)) {
             return;
         }
 
-        adapter.runRepeatAsync(() -> logger.severe("Outdated ViaBackwards found! Please update to at least ViaBackwards 5.0.0 for SkinsRestorer to work again!"),
+        adapter.runRepeatAsync(() -> logger.severe("Outdated ViaVersion/ViaBackwards found! Please update to at least ViaVersion/ViaBackwards 5.0.0 for SkinsRestorer to work again!"),
                 2, 60, TimeUnit.SECONDS);
     }
 
     private void checkMundoSK() {
-        if (!adapter.isPluginEnabled("MundoSK")) {
+        if (adapter.getPluginInfo("MundoSK").isEmpty()) {
             return;
         }
 
@@ -285,14 +291,14 @@ public class SRBukkitInit implements SRServerPlatformInit {
 
     @Override
     public void initMessageChannel() {
-        server.getMessenger().registerOutgoingPluginChannel(adapter.getPluginInstance(), SRConstants.MESSAGE_CHANNEL);
-        server.getMessenger().registerIncomingPluginChannel(adapter.getPluginInstance(), SRConstants.MESSAGE_CHANNEL,
+        server.getMessenger().registerOutgoingPluginChannel(adapter.getPluginInstance(), SRHelpers.MESSAGE_CHANNEL);
+        server.getMessenger().registerIncomingPluginChannel(adapter.getPluginInstance(), SRHelpers.MESSAGE_CHANNEL,
                 injector.getSingleton(ServerMessageListener.class));
     }
 
     @Override
     public void placeholderSetupHook() {
-        if (adapter.isPluginEnabled("PlaceholderAPI")) {
+        if (adapter.getPluginInfo("PlaceholderAPI").isPresent()) {
             new SRPlaceholderAPIExpansion(
                     logger,
                     adapter.getPluginInstance().getDescription(),

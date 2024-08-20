@@ -19,26 +19,50 @@ package net.skinsrestorer.api.semver;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Arrays;
 
 @Getter
-@RequiredArgsConstructor
 @EqualsAndHashCode
 @ApiStatus.Internal
 public class SemanticVersion {
+    // Requires at least three parts
+    // Filled with zeros at the end if needed
     private final int[] version;
+
+    public SemanticVersion(int[] version) {
+        this.version = fillZerosIfNeeded(version);
+    }
+
+    private static int[] fillZerosIfNeeded(int[] version) {
+        int[] newVersion = new int[Math.max(3, version.length)];
+        System.arraycopy(version, 0, newVersion, 0, version.length);
+        return newVersion;
+    }
 
     public SemanticVersion(int major, int minor, int patch) {
         this(new int[]{major, minor, patch});
     }
 
     public static SemanticVersion fromString(String version) {
-        // Sanitize version
-        version = version.replace("v", "");
-        version = version.replace("-SNAPSHOT", "");
+        int firstDigit = 0;
+        for (int i = 0; i < version.length(); i++) {
+            if (Character.isDigit(version.charAt(i))) {
+                firstDigit = i;
+                break;
+            }
+        }
+
+        int lastDigit = version.length();
+        for (int i = version.length() - 1; i >= 0; i--) {
+            if (Character.isDigit(version.charAt(i))) {
+                lastDigit = i;
+                break;
+            }
+        }
+
+        version = version.substring(firstDigit, lastDigit + 1);
 
         String[] split = version.split("\\.");
         return new SemanticVersion(Arrays.stream(split).mapToInt(Integer::parseInt).toArray());
@@ -62,6 +86,10 @@ public class SemanticVersion {
         }
 
         return false;
+    }
+
+    public boolean isOlderThan(SemanticVersion otherVersion) {
+        return !isNewerThan(otherVersion) && !equals(otherVersion);
     }
 
     @Override

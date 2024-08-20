@@ -18,8 +18,8 @@
 package net.skinsrestorer.shared.exception;
 
 import net.skinsrestorer.shared.subjects.SRForeign;
+import net.skinsrestorer.shared.subjects.messages.ComponentString;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
-import net.skinsrestorer.shared.utils.ComponentString;
 
 import java.util.Optional;
 

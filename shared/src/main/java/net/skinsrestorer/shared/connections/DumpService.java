@@ -28,6 +28,7 @@ import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.shared.config.APIConfig;
+import net.skinsrestorer.shared.config.DatabaseConfig;
 import net.skinsrestorer.shared.connections.http.HttpClient;
 import net.skinsrestorer.shared.connections.http.HttpResponse;
 import net.skinsrestorer.shared.connections.requests.DumpInfo;
@@ -114,7 +115,15 @@ public class DumpService {
             jsonObject.add(keyName, gson.toJsonTree(configurationData.getValue(key)));
         }
 
-        DumpInfo.PluginInfo pluginInfo = new DumpInfo.PluginInfo(proxyMode, configMap);
+        DumpInfo.PluginInfo.StorageType storageType = proxyMode != null && proxyMode ? DumpInfo.PluginInfo.StorageType.NONE :
+                (settingsManager.getProperty(DatabaseConfig.MYSQL_ENABLED) ?
+                        DumpInfo.PluginInfo.StorageType.MYSQL : DumpInfo.PluginInfo.StorageType.FILE);
+
+        DumpInfo.PluginInfo pluginInfo = new DumpInfo.PluginInfo(
+                proxyMode,
+                storageType,
+                configMap
+        );
 
         EnvironmentInfo environmentInfo = EnvironmentInfo.determineEnvironment(adapter);
         PlatformInfo platformInfo = new PlatformInfo(

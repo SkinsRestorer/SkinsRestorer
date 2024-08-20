@@ -58,12 +58,17 @@ import net.skinsrestorer.shared.storage.model.skin.URLIndexData;
 import net.skinsrestorer.shared.storage.model.skin.URLSkinData;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
+import net.skinsrestorer.shared.subjects.messages.ComponentHelper;
+import net.skinsrestorer.shared.subjects.messages.ComponentString;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.Permission;
 import net.skinsrestorer.shared.subjects.permissions.PermissionGroup;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
-import net.skinsrestorer.shared.utils.*;
+import net.skinsrestorer.shared.utils.ExpiringSet;
+import net.skinsrestorer.shared.utils.SRHelpers;
+import net.skinsrestorer.shared.utils.UUIDUtils;
+import net.skinsrestorer.shared.utils.ValidationUtil;
 import org.incendo.cloud.annotation.specifier.Greedy;
 import org.incendo.cloud.annotation.specifier.Quoted;
 import org.incendo.cloud.annotations.Argument;
@@ -76,7 +81,6 @@ import org.incendo.cloud.minecraft.extras.caption.ComponentCaptionFormatter;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -360,8 +364,7 @@ public final class SRCommand {
         MojangProfileTextureMeta skinMetadata = profile.getTextures().getSKIN().getMetadata();
 
         long timestamp = profile.getTimestamp();
-        String requestTime = new SimpleDateFormat(SRConstants.DATE_FORMAT, sender.getLocale())
-                .format(new Date(timestamp));
+        String requestTime = SRHelpers.formatEpochMillis(settings, timestamp, sender.getLocale());
 
         sender.sendMessage(Message.ADMINCOMMAND_INFO_GENERIC,
                 Placeholder.parsed("url", texturesUrl),
@@ -418,8 +421,8 @@ public final class SRCommand {
             return playerSkinData.<Consumer<SRCommandSender>>map(skinData -> sender -> {
                 sender.sendMessage(Message.ADMINCOMMAND_INFO_PLAYER_SKIN,
                         Placeholder.parsed("skin", input),
-                        Placeholder.parsed("timestamp", SRHelpers.formatEpochSeconds(playerSkinData.get().getTimestamp(), sender.getLocale())),
-                        Placeholder.parsed("expires", SRHelpers.formatEpochSeconds(playerSkinData.get().getTimestamp()
+                        Placeholder.parsed("timestamp", SRHelpers.formatEpochSeconds(settings, playerSkinData.get().getTimestamp(), sender.getLocale())),
+                        Placeholder.parsed("expires", SRHelpers.formatEpochSeconds(settings, playerSkinData.get().getTimestamp()
                                 + TimeUnit.MINUTES.toSeconds(settings.getProperty(StorageConfig.SKIN_EXPIRES_AFTER)), sender.getLocale())));
                 sendGenericSkinInfoMessage(sender, skinData.getProperty());
             }).orElseGet(() -> sender -> sender.sendMessage(Message.NO_SKIN_DATA));

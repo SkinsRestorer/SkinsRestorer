@@ -47,6 +47,11 @@ public class MessageConfig implements SettingsHolder {
             "If disabled, the config locale will be used instead."
     })
     public static final Property<Boolean> PER_ISSUER_LOCALE = newProperty("messages.perIssuerLocale", true);
+    @Comment({
+            "How dates are formatted by the plugin in messages. Format is explained here:",
+            "https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/format/DateTimeFormatter.html"
+    })
+    public static final Property<String> DATE_FORMAT = newProperty("messages.dateFormat", "dd MMMM yyyy");
 
     @Override
     public void registerComments(CommentsConfiguration conf) {

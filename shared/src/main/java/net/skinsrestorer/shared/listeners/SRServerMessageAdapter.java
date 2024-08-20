@@ -23,7 +23,7 @@ import net.skinsrestorer.shared.codec.SRInputReader;
 import net.skinsrestorer.shared.codec.SRServerPluginMessage;
 import net.skinsrestorer.shared.listeners.event.SRServerMessageEvent;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
-import net.skinsrestorer.shared.utils.SRConstants;
+import net.skinsrestorer.shared.utils.SRHelpers;
 
 import javax.inject.Inject;
 
@@ -33,7 +33,7 @@ public final class SRServerMessageAdapter {
     private final SharedSkinApplier<Object> skinApplier;
 
     public void handlePluginMessage(SRServerMessageEvent event) {
-        if (!event.getChannel().equals(SRConstants.MESSAGE_CHANNEL)) {
+        if (!event.getChannel().equals(SRHelpers.MESSAGE_CHANNEL)) {
             return;
         }
 

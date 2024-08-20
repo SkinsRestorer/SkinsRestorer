@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.codec.SRInputReader;
 import net.skinsrestorer.shared.codec.SRProxyPluginMessage;
 import net.skinsrestorer.shared.listeners.event.SRProxyMessageEvent;
-import net.skinsrestorer.shared.utils.SRConstants;
+import net.skinsrestorer.shared.utils.SRHelpers;
 
 import javax.inject.Inject;
 
@@ -34,7 +34,7 @@ public final class SRProxyMessageAdapter {
             return;
         }
 
-        if (!event.getChannel().equals(SRConstants.MESSAGE_CHANNEL)) {
+        if (!event.getChannel().equals(SRHelpers.MESSAGE_CHANNEL)) {
             return;
         }
 

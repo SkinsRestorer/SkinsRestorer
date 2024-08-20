@@ -23,7 +23,7 @@ import net.skinsrestorer.shared.config.MessageConfig;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.SRServerPlayer;
 import net.skinsrestorer.shared.utils.LocaleParser;
-import net.skinsrestorer.shared.utils.SRConstants;
+import net.skinsrestorer.shared.utils.SRHelpers;
 import org.bukkit.entity.Player;
 
 import java.util.Locale;
@@ -69,6 +69,6 @@ public class WrapperPlayer extends WrapperCommandSender implements SRServerPlaye
 
     @Override
     public void sendToMessageChannel(byte[] data) {
-        player.sendPluginMessage(adapter.getPluginInstance(), SRConstants.MESSAGE_CHANNEL, data);
+        player.sendPluginMessage(adapter.getPluginInstance(), SRHelpers.MESSAGE_CHANNEL, data);
     }
 }

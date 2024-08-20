@@ -24,15 +24,16 @@ import net.skinsrestorer.api.PropertyUtils;
 import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.shared.config.GUIConfig;
 import net.skinsrestorer.shared.connections.RecommendationsState;
+import net.skinsrestorer.shared.gui.GUIUtils;
 import net.skinsrestorer.shared.gui.PageInfo;
 import net.skinsrestorer.shared.gui.PageType;
 import net.skinsrestorer.shared.storage.adapter.AdapterReference;
 import net.skinsrestorer.shared.subjects.SRPlayer;
+import net.skinsrestorer.shared.subjects.messages.ComponentHelper;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
-import net.skinsrestorer.shared.utils.ComponentHelper;
-import net.skinsrestorer.shared.utils.GUIUtils;
+import net.skinsrestorer.shared.subjects.permissions.SkinPermissionManager;
 import net.skinsrestorer.shared.utils.SRHelpers;
 
 import javax.inject.Inject;
@@ -48,9 +49,10 @@ public class GUIStorage {
     private final SettingsManager settings;
     private final AdapterReference adapterReference;
     private final RecommendationsState recommendationsState;
+    private final SkinPermissionManager permissionManager;
 
     public PageInfo getGUIPage(SRPlayer player, int page, PageType pageType) {
-        return GUIUtils.getGUIPage(player, locale, playerStorage, page, pageType, new GUIUtils.GUIDataSource() {
+        return GUIUtils.getGUIPage(player, locale, settings, playerStorage, permissionManager, page, pageType, new GUIUtils.GUIDataSource() {
             @Override
             public boolean isEnabled() {
                 return settings.getProperty(GUIConfig.CUSTOM_GUI_ENABLED);
@@ -161,7 +163,7 @@ public class GUIStorage {
                                 skinStorage.resolveSkinName(h.getSkinIdentifier()),
                                 PropertyUtils.getSkinTextureHash(skinStorage.getSkinDataByIdentifier(h.getSkinIdentifier()).orElseThrow()),
                                 List.of(locale.getMessageRequired(player, Message.SKINSMENU_HISTORY_LORE,
-                                        Placeholder.parsed("time", SRHelpers.formatEpochSeconds(h.getTimestamp(), player.getLocale()))))
+                                        Placeholder.parsed("time", SRHelpers.formatEpochSeconds(settings, h.getTimestamp(), player.getLocale()))))
                         ))
                         .toList();
             }

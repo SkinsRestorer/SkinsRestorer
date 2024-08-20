@@ -117,6 +117,7 @@
   "skinsrestorer.skinsmenu_set_favourite_lore": "<gray>Shift + kliknij aby ustawić jako ulubione",
   "skinsrestorer.skinsmenu_remove_favourite_lore": "<gray>Shift + kliknij, aby usunąć z ulubionych",
   "skinsrestorer.skinsmenu_favourite_since_lore": "<blue>Ulubione od <time>",
+  "skinsrestorer.skinsmenu_no_permission": "<red>Nie masz uprawnień do używania tej skórki.",
   "skinsrestorer.skinsmenu_main_button": "<aqua><bold>[</bold> <gray>Menu Skórek</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_history_button": "<aqua><bold>[</bold> <gray>Menu Historii</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_favourites_button": "<aqua><bold>[</bold> <gray>Menu Ulubionych</gray> <bold>]</bold>",
@@ -155,12 +156,12 @@
   "skinsrestorer.permission_bypasscooldown": "Pomija wszelkie czasy odnowienia poleceń ustawione w konfiguracji.",
   "skinsrestorer.permission_bypassdisabled": "Pomija wszystkie wyłączone skórki ustawione w konfiguracji.",
   "skinsrestorer.permission_ownskin": "Umożliwia dostęp do ustawienia własnej skórki.",
-  "skinsrestorer.duration_day": "dzień",
-  "skinsrestorer.duration_days": "dni",
-  "skinsrestorer.duration_hour": "godzina",
-  "skinsrestorer.duration_hours": "godzin",
-  "skinsrestorer.duration_minute": "minuta",
-  "skinsrestorer.duration_minutes": "minut",
-  "skinsrestorer.duration_second": "sekunda",
-  "skinsrestorer.duration_seconds": "sekund"
+  "skinsrestorer.duration_day": " dzień",
+  "skinsrestorer.duration_days": " dni",
+  "skinsrestorer.duration_hour": " godzina",
+  "skinsrestorer.duration_hours": " godzin",
+  "skinsrestorer.duration_minute": " minuta",
+  "skinsrestorer.duration_minutes": " minut",
+  "skinsrestorer.duration_second": " sekunda",
+  "skinsrestorer.duration_seconds": " sekund"
 }

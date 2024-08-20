@@ -19,7 +19,7 @@ package net.skinsrestorer.velocity.wrapper;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
-import net.skinsrestorer.shared.utils.ComponentString;
+import net.skinsrestorer.shared.subjects.messages.ComponentString;
 
 public class VelocityComponentHelper {
     public static Component deserialize(ComponentString messageJson) {

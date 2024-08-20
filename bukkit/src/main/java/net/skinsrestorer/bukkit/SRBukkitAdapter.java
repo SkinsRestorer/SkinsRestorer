@@ -88,11 +88,6 @@ public class SRBukkitAdapter implements SRServerAdapter {
     }
 
     @Override
-    public boolean isPluginEnabled(String pluginName) {
-        return server.getPluginManager().getPlugin(pluginName) != null;
-    }
-
-    @Override
     public InputStream getResource(String resource) {
         return getClass().getClassLoader().getResourceAsStream(resource);
     }

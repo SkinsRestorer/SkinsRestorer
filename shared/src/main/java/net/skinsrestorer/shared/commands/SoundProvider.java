@@ -15,12 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package net.skinsrestorer.shared.utils;
+package net.skinsrestorer.shared.commands;
 
-import net.skinsrestorer.api.property.SkinProperty;
+import ch.jalu.injector.Injector;
+import net.skinsrestorer.shared.subjects.SRPlayer;
 
-public class SRConstants {
-    public static final SkinProperty EMPTY_SKIN = SkinProperty.of("", "");
-    public static final String MESSAGE_CHANNEL = "sr:messagechannel";
-    public static final String DATE_FORMAT = "dd MMMM yyyy";
+import java.util.function.BiConsumer;
+
+public interface SoundProvider extends BiConsumer<Injector, SRPlayer> {
 }

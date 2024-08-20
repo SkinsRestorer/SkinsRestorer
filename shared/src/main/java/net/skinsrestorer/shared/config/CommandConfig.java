@@ -60,11 +60,21 @@ public class CommandConfig implements SettingsHolder {
     );
     public static final Property<Boolean> DISABLED_SKINS_ENABLED = newProperty("commands.disabledSkins.enabled", false);
     public static final Property<List<String>> DISABLED_SKINS = newListProperty("commands.disabledSkins.list", "steve", "owner");
+    public static final String CONSENT_MESSAGE = "I will follow the rules";
+    @Comment({
+            "To enable per skin permissions you must agree to these rules:",
+            "- Do not monetize players being able to use their own skin",
+            "- Do not force players to steve skins and make them pay to use their own skin",
+            "- You can charge them for custom skins, but not their own skin",
+            "If you agree, set this to: '" + CONSENT_MESSAGE + "'"
+    })
+    public static final Property<String> PER_SKIN_PERMISSIONS_CONSENT = newProperty("commands.perSkinPermissionsConsent", "");
     @Comment({
             "Allows the usage of per-skin permission.",
             "Example: skinsrestorer.skin.xknat OR skinsrestorer.skin.Pistonmaster",
-            "with \"skinsrestorer.ownskin\" players can run /skin set %playerusername%.",
-            "[!] Only enable if you have set up permissions properly and know what you are doing."
+            "with \"skinsrestorer.ownskin\" players can run /skin set <their own name>.",
+            "[!] Only enable if you have set up permissions properly and know what you are doing.",
+            "[!] This option only works if 'commands.perSkinPermissionsConsent' is consented to."
     })
     public static final Property<Boolean> PER_SKIN_PERMISSIONS = newProperty("commands.perSkinPermissions", false);
     @Comment({

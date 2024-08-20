@@ -60,11 +60,6 @@ public record SRVelocityAdapter(Injector injector, SRVelocityBootstrap pluginIns
     }
 
     @Override
-    public boolean isPluginEnabled(String pluginName) {
-        return proxy.getPluginManager().getPlugin(pluginName).isPresent();
-    }
-
-    @Override
     public InputStream getResource(String resource) {
         return getClass().getClassLoader().getResourceAsStream(resource);
     }

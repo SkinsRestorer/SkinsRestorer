@@ -45,8 +45,6 @@ public interface SRPlatformAdapter {
 
     void runRepeatAsync(Runnable runnable, int delay, int interval, TimeUnit timeUnit);
 
-    boolean isPluginEnabled(String pluginName);
-
     String getPlatformVersion();
 
     String getPlatformName();
@@ -56,6 +54,12 @@ public interface SRPlatformAdapter {
     Platform getPlatform();
 
     List<PluginInfo> getPlugins();
+
+    default Optional<PluginInfo> getPluginInfo(String name) {
+        return getPlugins().stream()
+                .filter(pluginInfo -> pluginInfo.name().equalsIgnoreCase(name))
+                .findFirst();
+    }
 
     Optional<SkinProperty> getSkinProperty(SRPlayer player);
 

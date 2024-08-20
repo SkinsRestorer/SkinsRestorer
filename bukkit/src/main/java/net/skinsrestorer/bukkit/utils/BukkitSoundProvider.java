@@ -18,8 +18,8 @@
 package net.skinsrestorer.bukkit.utils;
 
 import ch.jalu.injector.Injector;
+import net.skinsrestorer.shared.commands.SoundProvider;
 import net.skinsrestorer.shared.subjects.SRPlayer;
-import net.skinsrestorer.shared.utils.SoundProvider;
 
 public class BukkitSoundProvider implements SoundProvider {
     @Override
