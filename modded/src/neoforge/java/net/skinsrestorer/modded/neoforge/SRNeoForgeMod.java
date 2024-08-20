@@ -17,10 +17,8 @@
  */
 package net.skinsrestorer.modded.neoforge;
 
-import net.minecraft.server.dedicated.DedicatedServer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.common.Mod;
-
 import net.skinsrestorer.modded.SRMod;
 
 @Mod(value = SRMod.MOD_ID, dist = Dist.DEDICATED_SERVER)

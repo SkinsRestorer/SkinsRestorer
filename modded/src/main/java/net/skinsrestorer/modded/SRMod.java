@@ -18,12 +18,11 @@
 package net.skinsrestorer.modded;
 
 import dev.architectury.platform.Platform;
-import net.minecraft.server.dedicated.DedicatedServer;
 import net.skinsrestorer.modded.logger.Slf4jLoggerImpl;
 import net.skinsrestorer.modded.utils.ModSoundProvider;
+import net.skinsrestorer.shared.commands.SoundProvider;
 import net.skinsrestorer.shared.plugin.SRBootstrapper;
 import net.skinsrestorer.shared.plugin.SRServerPlugin;
-import net.skinsrestorer.shared.utils.SoundProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -24,8 +24,8 @@ import net.skinsrestorer.modded.MinecraftKyoriSerializer;
 import net.skinsrestorer.modded.SRModAdapter;
 import net.skinsrestorer.modded.SRModPlatform;
 import net.skinsrestorer.shared.subjects.AbstractSRCommandSender;
+import net.skinsrestorer.shared.subjects.messages.ComponentString;
 import net.skinsrestorer.shared.subjects.permissions.Permission;
-import net.skinsrestorer.shared.utils.ComponentString;
 
 @SuperBuilder
 public class WrapperCommandSender extends AbstractSRCommandSender {

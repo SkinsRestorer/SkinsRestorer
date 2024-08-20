@@ -18,8 +18,8 @@
 package net.skinsrestorer.modded.utils;
 
 import ch.jalu.injector.Injector;
+import net.skinsrestorer.shared.commands.SoundProvider;
 import net.skinsrestorer.shared.subjects.SRPlayer;
-import net.skinsrestorer.shared.utils.SoundProvider;
 
 public class ModSoundProvider implements SoundProvider {
     @Override

@@ -24,12 +24,11 @@ import net.lenni0451.mcstructs.nbt.INbtTag;
 import net.lenni0451.mcstructs.nbt.io.NbtIO;
 import net.lenni0451.mcstructs.text.ATextComponent;
 import net.lenni0451.mcstructs.text.serializer.TextComponentCodec;
-import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
-import net.skinsrestorer.shared.utils.ComponentString;
+import net.skinsrestorer.shared.subjects.messages.ComponentString;
 
 public class MinecraftKyoriSerializer {
     @SneakyThrows

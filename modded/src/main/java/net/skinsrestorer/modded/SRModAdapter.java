@@ -58,11 +58,6 @@ public class SRModAdapter implements SRServerAdapter {
     }
 
     @Override
-    public boolean isPluginEnabled(String pluginName) {
-        return dev.architectury.platform.Platform.getOptionalMod(pluginName).isPresent();
-    }
-
-    @Override
     public InputStream getResource(String resource) {
         return getClass().getClassLoader().getResourceAsStream(resource);
     }

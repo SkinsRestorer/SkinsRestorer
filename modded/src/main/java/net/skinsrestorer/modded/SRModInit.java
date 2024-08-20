@@ -26,10 +26,12 @@ import lombok.RequiredArgsConstructor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.skinsrestorer.api.semver.SemanticVersion;
 import net.skinsrestorer.modded.listener.AdminInfoListener;
 import net.skinsrestorer.modded.listener.PlayerJoinListener;
 import net.skinsrestorer.modded.listener.ServerMessageListener;
 import net.skinsrestorer.modded.wrapper.WrapperMod;
+import net.skinsrestorer.shared.info.PluginInfo;
 import net.skinsrestorer.shared.log.SRChatColor;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
@@ -37,16 +39,16 @@ import net.skinsrestorer.shared.plugin.SRServerPlatformInit;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.PermissionGroup;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
-import net.skinsrestorer.shared.utils.ReflectionUtil;
-import net.skinsrestorer.shared.utils.SRConstants;
+import net.skinsrestorer.shared.utils.SRHelpers;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SRModInit implements SRServerPlatformInit {
-    public static final ResourceLocation SR_MESSAGE_CHANNEL = ResourceLocation.parse(SRConstants.MESSAGE_CHANNEL);
+    public static final ResourceLocation SR_MESSAGE_CHANNEL = ResourceLocation.parse(SRHelpers.MESSAGE_CHANNEL);
     private final SRPlugin plugin;
     private final SRModAdapter adapter;
     private final Injector injector;
@@ -78,16 +80,20 @@ public class SRModInit implements SRServerPlatformInit {
     }
 
     private void checkViaVersion() {
-        if (!adapter.isPluginEnabled("ViaBackwards")) {
+        Optional<PluginInfo> viaVersion = adapter.getPluginInfo("ViaVersion");
+        Optional<PluginInfo> viaBackwards = adapter.getPluginInfo("ViaBackwards");
+        if (viaVersion.isEmpty() || viaBackwards.isEmpty()) {
             return;
         }
 
-        // ViaBackwards 5.0.0+ class
-        if (ReflectionUtil.classExists("com.viaversion.viabackwards.protocol.v1_16to1_15_2.Protocol1_16To1_15_2")) {
+        SemanticVersion viaVersionVersion = viaVersion.get().parsedVersion();
+        SemanticVersion viaBackwardsVersion = viaBackwards.get().parsedVersion();
+        SemanticVersion requiredVersion = new SemanticVersion(5, 0, 0);
+        if (!viaVersionVersion.isOlderThan(requiredVersion) && !viaBackwardsVersion.isOlderThan(requiredVersion)) {
             return;
         }
 
-        adapter.runRepeatAsync(() -> logger.severe("Outdated ViaBackwards found! Please update to at least ViaBackwards 5.0.0 for SkinsRestorer to work again!"),
+        adapter.runRepeatAsync(() -> logger.severe("Outdated ViaVersion/ViaBackwards found! Please update to at least ViaVersion/ViaBackwards 5.0.0 for SkinsRestorer to work again!"),
                 2, 60, TimeUnit.SECONDS);
     }
 
