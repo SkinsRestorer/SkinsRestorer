@@ -30,13 +30,13 @@ dependencies {
     api("org.incendo:cloud-translations-core:1.0.0-SNAPSHOT")
     api("org.incendo:cloud-translations-minecraft-extras:1.0.0-SNAPSHOT")
 
-    compileOnly("org.bstats:bstats-base:3.0.2") {
+    compileOnly("org.bstats:bstats-base:3.0.3") {
         isTransitive = false
     }
 
     compileOnly("org.geysermc.floodgate:api:2.2.2-SNAPSHOT")
 
-    testImplementation("org.bstats:bstats-base:3.0.2")
+    testImplementation("org.bstats:bstats-base:3.0.3")
 
     testImplementation("org.testcontainers:testcontainers:1.20.1")
     testImplementation("org.testcontainers:mariadb:1.20.1")
