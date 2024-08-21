@@ -156,12 +156,12 @@
   "skinsrestorer.permission_bypasscooldown": "Megkerüli a konfigurációban beállított várakozási időt bármely parancsra.",
   "skinsrestorer.permission_bypassdisabled": "Megkerüli a konfigurációban letiltott kinézetek beállítását.",
   "skinsrestorer.permission_ownskin": "Engedélyezi, hogy beállítsd a saját kinézeted.",
-  "skinsrestorer.duration_day": "nap",
-  "skinsrestorer.duration_days": "nap",
-  "skinsrestorer.duration_hour": "óra",
-  "skinsrestorer.duration_hours": "óra",
-  "skinsrestorer.duration_minute": "perc",
-  "skinsrestorer.duration_minutes": "perc",
-  "skinsrestorer.duration_second": "másodperc",
-  "skinsrestorer.duration_seconds": "másodperc"
+  "skinsrestorer.duration_day": " nap",
+  "skinsrestorer.duration_days": " nap",
+  "skinsrestorer.duration_hour": " óra",
+  "skinsrestorer.duration_hours": " óra",
+  "skinsrestorer.duration_minute": " perc",
+  "skinsrestorer.duration_minutes": " perc",
+  "skinsrestorer.duration_second": " másodperc",
+  "skinsrestorer.duration_seconds": " másodperc"
 }

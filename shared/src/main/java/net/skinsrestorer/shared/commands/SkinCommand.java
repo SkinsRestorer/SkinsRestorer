@@ -369,12 +369,12 @@ public final class SkinCommand {
             if (senderEqual(sender, target)) {
                 sender.sendMessage(Message.SUCCESS_SKIN_UNDO,
                         Placeholder.component("skin", ComponentHelper.convertJsonToComponent(skinStorage.resolveSkinName(historyData.get().getSkinIdentifier()))),
-                        Placeholder.parsed("timestamp", SRHelpers.formatEpochSeconds(historyData.get().getTimestamp(), sender.getLocale())));
+                        Placeholder.parsed("timestamp", SRHelpers.formatEpochSeconds(settings, historyData.get().getTimestamp(), sender.getLocale())));
             } else {
                 sender.sendMessage(Message.SUCCESS_SKIN_UNDO_OTHER,
                         Placeholder.unparsed("name", targetName),
                         Placeholder.component("skin", ComponentHelper.convertJsonToComponent(skinStorage.resolveSkinName(historyData.get().getSkinIdentifier()))),
-                        Placeholder.parsed("timestamp", SRHelpers.formatEpochSeconds(historyData.get().getTimestamp(), sender.getLocale())));
+                        Placeholder.parsed("timestamp", SRHelpers.formatEpochSeconds(settings, historyData.get().getTimestamp(), sender.getLocale())));
             }
         }
     }
@@ -402,7 +402,7 @@ public final class SkinCommand {
             sender.sendMessage(Message.DIVIDER);
             for (HistoryData historyData : historyDataList) {
                 sender.sendMessage(Message.SUCCESS_HISTORY_LINE,
-                        Placeholder.parsed("timestamp", SRHelpers.formatEpochSeconds(historyData.getTimestamp(), sender.getLocale())),
+                        Placeholder.parsed("timestamp", SRHelpers.formatEpochSeconds(settings, historyData.getTimestamp(), sender.getLocale())),
                         Placeholder.parsed("skin_id", historyData.getSkinIdentifier().getIdentifier()),
                         Placeholder.component("skin", ComponentHelper.convertJsonToComponent(skinStorage.resolveSkinName(historyData.getSkinIdentifier()))));
             }
@@ -439,12 +439,12 @@ public final class SkinCommand {
                 if (senderEqual(sender, target)) {
                     sender.sendMessage(Message.SUCCESS_SKIN_UNFAVOURITE,
                             Placeholder.component("skin", ComponentHelper.convertJsonToComponent(skinStorage.resolveSkinName(currentSkin.get()))),
-                            Placeholder.parsed("timestamp", SRHelpers.formatEpochSeconds(favouriteData.get().getTimestamp(), sender.getLocale())));
+                            Placeholder.parsed("timestamp", SRHelpers.formatEpochSeconds(settings, favouriteData.get().getTimestamp(), sender.getLocale())));
                 } else {
                     sender.sendMessage(Message.SUCCESS_SKIN_UNFAVOURITE_OTHER,
                             Placeholder.unparsed("name", targetName),
                             Placeholder.component("skin", ComponentHelper.convertJsonToComponent(skinStorage.resolveSkinName(currentSkin.get()))),
-                            Placeholder.parsed("timestamp", SRHelpers.formatEpochSeconds(favouriteData.get().getTimestamp(), sender.getLocale())));
+                            Placeholder.parsed("timestamp", SRHelpers.formatEpochSeconds(settings, favouriteData.get().getTimestamp(), sender.getLocale())));
                 }
             } else {
                 playerStorage.addFavourite(target, FavouriteData.of(SRHelpers.getEpochSecond(), currentSkin.get()));
@@ -483,7 +483,7 @@ public final class SkinCommand {
             sender.sendMessage(Message.DIVIDER);
             for (FavouriteData favouriteData : favouriteDataList) {
                 sender.sendMessage(Message.SUCCESS_HISTORY_LINE,
-                        Placeholder.parsed("timestamp", SRHelpers.formatEpochSeconds(favouriteData.getTimestamp(), sender.getLocale())),
+                        Placeholder.parsed("timestamp", SRHelpers.formatEpochSeconds(settings, favouriteData.getTimestamp(), sender.getLocale())),
                         Placeholder.parsed("skin_id", favouriteData.getSkinIdentifier().getIdentifier()),
                         Placeholder.component("skin", ComponentHelper.convertJsonToComponent(skinStorage.resolveSkinName(favouriteData.getSkinIdentifier()))));
             }

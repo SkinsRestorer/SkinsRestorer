@@ -158,12 +158,12 @@
   "skinsrestorer.permission_bypasscooldown": "Bypasses any command cooldown set in the config.",
   "skinsrestorer.permission_bypassdisabled": "Bypasses any disabled skins set in the config.",
   "skinsrestorer.permission_ownskin": "Allows access to set your own skin.",
-  "skinsrestorer.duration_day": "day",
-  "skinsrestorer.duration_days": "days",
-  "skinsrestorer.duration_hour": "hour",
-  "skinsrestorer.duration_hours": "hours",
-  "skinsrestorer.duration_minute": "minute",
-  "skinsrestorer.duration_minutes": "minutes",
-  "skinsrestorer.duration_second": "second",
-  "skinsrestorer.duration_seconds": "seconds"
+  "skinsrestorer.duration_day": " day",
+  "skinsrestorer.duration_days": " days",
+  "skinsrestorer.duration_hour": " hour",
+  "skinsrestorer.duration_hours": " hours",
+  "skinsrestorer.duration_minute": " minute",
+  "skinsrestorer.duration_minutes": " minutes",
+  "skinsrestorer.duration_second": " second",
+  "skinsrestorer.duration_seconds": " seconds"
 }

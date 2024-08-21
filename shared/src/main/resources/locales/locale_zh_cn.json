@@ -117,6 +117,7 @@
   "skinsrestorer.skinsmenu_set_favourite_lore": "<gray>Shift + 单击添加到收藏夹",
   "skinsrestorer.skinsmenu_remove_favourite_lore": "<gray>Shift + 点击从收藏夹中删除",
   "skinsrestorer.skinsmenu_favourite_since_lore": "<blue>收藏时间：<time>",
+  "skinsrestorer.skinsmenu_no_permission": "<red>你没有权限设置该皮肤。",
   "skinsrestorer.skinsmenu_main_button": "<aqua><bold>[</bold> <gray>皮肤菜单</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_history_button": "<aqua><bold>[</bold> <gray>历史菜单</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_favourites_button": "<aqua><bold>[</bold> <gray>收藏菜单</gray> <bold>]</bold>",
@@ -155,12 +156,12 @@
   "skinsrestorer.permission_bypasscooldown": "绕过配置中设置的任何命令冷却时间。",
   "skinsrestorer.permission_bypassdisabled": "绕过配置中设置的任何禁用皮肤。",
   "skinsrestorer.permission_ownskin": "允许设置自己的皮肤。",
-  "skinsrestorer.duration_day": "天",
-  "skinsrestorer.duration_days": "天",
-  "skinsrestorer.duration_hour": "小时",
-  "skinsrestorer.duration_hours": "小时",
-  "skinsrestorer.duration_minute": "分钟",
-  "skinsrestorer.duration_minutes": "分钟",
-  "skinsrestorer.duration_second": "秒",
-  "skinsrestorer.duration_seconds": "秒"
+  "skinsrestorer.duration_day": " 天",
+  "skinsrestorer.duration_days": " 天",
+  "skinsrestorer.duration_hour": " 小时",
+  "skinsrestorer.duration_hours": " 小时",
+  "skinsrestorer.duration_minute": " 分钟",
+  "skinsrestorer.duration_minutes": " 分钟",
+  "skinsrestorer.duration_second": " 秒",
+  "skinsrestorer.duration_seconds": " 秒"
 }

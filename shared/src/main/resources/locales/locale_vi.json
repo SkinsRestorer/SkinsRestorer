@@ -156,12 +156,12 @@
   "skinsrestorer.permission_bypasscooldown": "Bỏ qua bất kỳ thời gian chờ lệnh nào được đặt trong cấu hình.",
   "skinsrestorer.permission_bypassdisabled": "Bỏ qua bất kỳ giao diện nào bị vô hiệu hóa được đặt trong cấu hình.",
   "skinsrestorer.permission_ownskin": "Cho phép truy cập để đặt giao diện của riêng bạn.",
-  "skinsrestorer.duration_day": "ngày",
-  "skinsrestorer.duration_days": "ngày",
-  "skinsrestorer.duration_hour": "giờ",
-  "skinsrestorer.duration_hours": "giờ",
-  "skinsrestorer.duration_minute": "phút",
-  "skinsrestorer.duration_minutes": "phút",
-  "skinsrestorer.duration_second": "giây",
-  "skinsrestorer.duration_seconds": "giây"
+  "skinsrestorer.duration_day": " ngày",
+  "skinsrestorer.duration_days": " ngày",
+  "skinsrestorer.duration_hour": " giờ",
+  "skinsrestorer.duration_hours": " giờ",
+  "skinsrestorer.duration_minute": " phút",
+  "skinsrestorer.duration_minutes": " phút",
+  "skinsrestorer.duration_second": " giây",
+  "skinsrestorer.duration_seconds": " giây"
 }

@@ -7,7 +7,7 @@ pluginManagement {
 }
 
 plugins {
-    id("com.gradle.develocity") version "3.17.6"
+    id("com.gradle.develocity") version "3.18"
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
 }
 
@@ -55,10 +55,10 @@ dependencyResolutionManagement {
             name = "OpenCollab Release Repository"
         }
         maven("https://maven.wagyourtail.xyz/releases") {
-            name = "PaperMC Repository"
+            name = "WagYourTail Release Repository"
         }
         maven("https://maven.wagyourtail.xyz/snapshots") {
-            name = "PaperMC Repository"
+            name = "WagYourTail Snapshot Repository"
         }
         mavenCentral()
     }

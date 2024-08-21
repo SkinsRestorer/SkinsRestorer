@@ -89,7 +89,7 @@ public class GUIUtils {
                                 lore.add(locale.getMessageRequired(player, Message.SKINSMENU_SET_FAVOURITE_LORE));
                             }
                             favouriteData.ifPresent(data -> lore.add(locale.getMessageRequired(player, Message.SKINSMENU_FAVOURITE_SINCE_LORE,
-                                    Placeholder.unparsed("time", SRHelpers.formatEpochSeconds(data.getTimestamp(), player.getLocale())))));
+                                    Placeholder.unparsed("time", SRHelpers.formatEpochSeconds(settings, data.getTimestamp(), player.getLocale())))));
 
                             lore.addAll(base.extraLore());
                         } else {

@@ -18,7 +18,7 @@ dependencies {
     }
     compileOnly("net.md-5:bungeecord-proxy:1.18-R0.1-SNAPSHOT")
 
-    implementation("org.bstats:bstats-bungeecord:3.0.2")
+    implementation("org.bstats:bstats-bungeecord:3.0.3")
     implementation("org.incendo:cloud-bungee:2.0.0-SNAPSHOT")
 }
 
