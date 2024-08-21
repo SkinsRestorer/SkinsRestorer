@@ -17,7 +17,7 @@ repositories {
 }
 
 dependencies {
-    implementation("gradle.plugin.com.github.johnrengelman:shadow:8.0.0")
+    implementation("com.gradleup.shadow:shadow-gradle-plugin:8.3.0")
     implementation("gradle.plugin.org.cadixdev.gradle:licenser:0.6.1")
     implementation("com.diffplug.spotless:spotless-plugin-gradle:6.25.0")
     implementation("com.github.spotbugs.snom:spotbugs-gradle-plugin:6.0.20")
@@ -26,6 +26,10 @@ dependencies {
     implementation("io.github.patrick.remapper:io.github.patrick.remapper.gradle.plugin:1.4.2")
     implementation("io.freefair.gradle:lombok-plugin:8.10")
     implementation("xyz.wagyourtail.jvmdowngrader:xyz.wagyourtail.jvmdowngrader.gradle.plugin:1.1.1")
+
+    implementation("commons-io:commons-io:2.16.1")
+    implementation("org.apache.ant:ant:1.10.14")
+    implementation("org.codehaus.plexus:plexus-utils:4.0.1")
 }
 
 java {

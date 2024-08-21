@@ -24,6 +24,6 @@ import net.skinsrestorer.shared.subjects.SRPlayer;
 public class ModSoundProvider implements SoundProvider {
     @Override
     public void accept(Injector injector, SRPlayer player) {
-        // TODO: Implement sound provider
+        injector.getSingleton(SoundUtil.class).playSound(player);
     }
 }

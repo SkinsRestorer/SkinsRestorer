@@ -15,18 +15,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package net.skinsrestorer.bukkit.utils;
+package net.skinsrestorer.modded.utils;
 
 import ch.jalu.configme.SettingsManager;
-import com.cryptomorin.xseries.XSound;
 import lombok.RequiredArgsConstructor;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.skinsrestorer.shared.config.ServerConfig;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.sound.SoundParser;
 import net.skinsrestorer.shared.subjects.SRPlayer;
-import org.bukkit.entity.Player;
 
 import javax.inject.Inject;
+import java.util.Objects;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SoundUtil {
@@ -38,7 +41,7 @@ public class SoundUtil {
             return;
         }
 
-        Player p = player.getAs(Player.class);
+        ServerPlayer p = player.getAs(ServerPlayer.class);
         String sound = settings.getProperty(ServerConfig.SOUND_VALUE);
         SoundParser.Record record = SoundParser.parse(sound);
         if (record == null) {
@@ -47,12 +50,12 @@ public class SoundUtil {
         }
 
         logger.debug("Playing sound for player: %s".formatted(player.getName()));
-        XSound.Record record2 = new XSound.Record();
-        record2.withSound(XSound.matchXSound(record.getSound()).orElseThrow());
-        record2.inCategory(XSound.Category.valueOf(record.getCategory()));
-        record2.withVolume(record.getVolume());
-        record2.withPitch(record.getPitch());
+        SoundEvent soundEvent = BuiltInRegistries.SOUND_EVENT.stream()
+                .filter(soundEvent1 -> soundEvent1.getLocation().getPath().replace(".", "_").equalsIgnoreCase(record.getSound()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Invalid sound: " + record.getSound()));
+        SoundSource source = SoundSource.valueOf(record.getCategory());
 
-        record2.soundPlayer().forPlayers(p).play();
+        p.playNotifySound(Objects.requireNonNull(soundEvent), source, record.getVolume(), record.getPitch());
     }
 }
