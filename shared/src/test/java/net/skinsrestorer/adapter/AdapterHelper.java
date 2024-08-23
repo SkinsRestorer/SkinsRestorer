@@ -17,10 +17,14 @@
  */
 package net.skinsrestorer.adapter;
 
+import lombok.SneakyThrows;
+import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.api.property.SkinVariant;
 import net.skinsrestorer.shared.storage.HardcodedSkins;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.storage.model.cache.MojangCacheData;
+import net.skinsrestorer.shared.storage.model.player.FavouriteData;
+import net.skinsrestorer.shared.storage.model.player.HistoryData;
 import net.skinsrestorer.shared.storage.model.player.PlayerData;
 import net.skinsrestorer.shared.storage.model.skin.CustomSkinData;
 import net.skinsrestorer.shared.storage.model.skin.PlayerSkinData;
@@ -35,9 +39,17 @@ public class AdapterHelper {
     private static final String DEFAULT_NAME = "Pistonmaster";
     private static final UUID DEFAULT_UUID = UUID.nameUUIDFromBytes(DEFAULT_NAME.getBytes(StandardCharsets.UTF_8));
 
+    @SneakyThrows
     public static void testAdapter(StorageAdapter adapter) {
+        UUID playerId = UUID.randomUUID();
+        PlayerData playerData = PlayerData.of(playerId, null, List.of(
+                HistoryData.of(0, SkinIdentifier.ofCustom("abc"))
+        ), List.of(
+                FavouriteData.of(0, SkinIdentifier.ofCustom("abc"))
+        ));
+
         adapter.setCachedUUID("test", MojangCacheData.of(UUID.randomUUID(), -1));
-        adapter.setPlayerData(UUID.randomUUID(), PlayerData.of(UUID.randomUUID(), null, List.of(), List.of()));
+        adapter.setPlayerData(playerId, playerData);
         adapter.setPlayerSkinData(DEFAULT_UUID, PlayerSkinData.of(DEFAULT_UUID, DEFAULT_NAME,
                 HardcodedSkins.getHardcodedSkin("steve").orElseThrow().getProperty(), -1));
         adapter.setURLSkinData("test", URLSkinData.of("https://test.com", "test",
@@ -58,5 +70,7 @@ public class AdapterHelper {
 
         // Check if offset works as well, we actually have one skins in the storage for GUI
         Assert.assertEquals(0, adapter.getPlayerGUISkins(1, Integer.MAX_VALUE).size());
+
+        Assert.assertEquals(playerData, adapter.getPlayerData(playerId).orElseThrow());
     }
 }
