@@ -3,7 +3,7 @@ plugins {
     java
     id("sr.formatting-logic")
     id("io.freefair.lombok")
-    id("xyz.wagyourtail.unimined") version "1.3.4-SNAPSHOT"
+    id("xyz.wagyourtail.unimined") version "1.3.9"
 }
 
 val main: SourceSet by sourceSets.getting
@@ -84,7 +84,7 @@ dependencies {
     implementation(projects.skinsrestorerShared)
 
     implementation("net.lenni0451.mcstructs:text:2.5.1")
-    compileOnly("org.spongepowered:mixin:0.8.5-SNAPSHOT")
+    compileOnly("org.spongepowered:mixin:0.8.7")
 
     modImplementation("dev.architectury:architectury:13.0.6")
 
