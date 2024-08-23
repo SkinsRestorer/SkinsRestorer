@@ -3,7 +3,7 @@ plugins {
     java
     id("sr.formatting-logic")
     id("io.freefair.lombok")
-    id("xyz.wagyourtail.unimined") version "1.3.4-SNAPSHOT"
+    id("xyz.wagyourtail.unimined") version "1.3.9"
 }
 
 val main: SourceSet by sourceSets.getting
