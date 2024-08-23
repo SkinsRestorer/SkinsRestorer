@@ -45,7 +45,7 @@ public class WrapperCommandSender extends AbstractSRCommandSender {
         Runnable runnable = () -> adapter.getAdventure().get().sender(sender).sendMessage(message);
         if (sender instanceof BlockCommandSender) {
             // Command blocks require messages to be sent synchronously in Bukkit
-            adapter.runSync(runnable);
+            adapter.runSync(this, runnable);
         } else {
             runnable.run();
         }

@@ -268,6 +268,10 @@ public class SRPlugin {
     }
 
     public void registerMetrics(Object metricsParent) {
+        if (metricsParent == null) {
+            return;
+        }
+
         MetricsBase metrics;
         try {
             Field field = metricsParent.getClass().getDeclaredField("metricsBase");

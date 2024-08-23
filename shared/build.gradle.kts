@@ -30,7 +30,7 @@ dependencies {
     api("org.incendo:cloud-translations-core:1.0.0-SNAPSHOT")
     api("org.incendo:cloud-translations-minecraft-extras:1.0.0-SNAPSHOT")
 
-    compileOnly("org.bstats:bstats-base:3.0.3") {
+    implementation("org.bstats:bstats-base:3.0.3") {
         isTransitive = false
     }
 

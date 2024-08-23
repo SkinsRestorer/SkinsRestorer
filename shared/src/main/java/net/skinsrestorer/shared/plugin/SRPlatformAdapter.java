@@ -35,9 +35,9 @@ import java.util.concurrent.TimeUnit;
 public interface SRPlatformAdapter {
     CommandManager<SRCommandSender> createCommandManager();
 
-    Collection<SRPlayer> getOnlinePlayers();
+    Collection<SRPlayer> getOnlinePlayers(SRCommandSender sender);
 
-    Optional<SRPlayer> getPlayer(UUID uniqueId);
+    Optional<SRPlayer> getPlayer(SRCommandSender sender, UUID uniqueId);
 
     InputStream getResource(String resource);
 

@@ -87,10 +87,10 @@ indra {
     }
 
     javaVersions {
-        target(17)
+        target(21)
         strictVersions()
-        testWith(17)
-        minimumToolchain(17)
+        testWith(21)
+        minimumToolchain(21)
     }
 }
 

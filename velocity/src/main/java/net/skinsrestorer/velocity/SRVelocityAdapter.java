@@ -138,12 +138,12 @@ public record SRVelocityAdapter(Injector injector, SRVelocityBootstrap pluginIns
     }
 
     @Override
-    public Collection<SRPlayer> getOnlinePlayers() {
+    public Collection<SRPlayer> getOnlinePlayers(SRCommandSender sender) {
         return proxy.getAllPlayers().stream().map(injector.getSingleton(WrapperVelocity.class)::player).collect(Collectors.toList());
     }
 
     @Override
-    public Optional<SRPlayer> getPlayer(UUID uniqueId) {
+    public Optional<SRPlayer> getPlayer(SRCommandSender sender, UUID uniqueId) {
         return proxy.getPlayer(uniqueId).map(injector.getSingleton(WrapperVelocity.class)::player);
     }
 }

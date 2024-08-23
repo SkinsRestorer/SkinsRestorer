@@ -67,4 +67,8 @@ public class Permission {
     public Tristate internalCheckPermission(Function<String, Tristate> predicate) {
         return predicate.apply(permissionString);
     }
+
+    public boolean isInDefaultGroup() {
+        return PermissionGroup.getGrantedBy(this).contains(PermissionGroup.DEFAULT_GROUP);
+    }
 }

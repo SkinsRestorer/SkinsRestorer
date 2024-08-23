@@ -434,7 +434,7 @@ public final class SRCommand {
     @CommandDescription(Message.HELP_SR_APPLY_SKIN)
     private void onApplySkin(SRCommandSender sender, PlayerSelector selector) {
         for (UUID target : selector.resolve(sender)) {
-            Optional<SRPlayer> targetPlayer = adapter.getPlayer(target);
+            Optional<SRPlayer> targetPlayer = adapter.getPlayer(sender, target);
             if (targetPlayer.isEmpty()) {
                 continue;
             }
