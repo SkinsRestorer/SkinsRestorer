@@ -21,6 +21,7 @@ import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.codec.SRProxyPluginMessage;
 import net.skinsrestorer.shared.listeners.GUIActionListener;
+import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.plugin.SRServerPlugin;
 import net.skinsrestorer.shared.subjects.SRServerPlayer;
 
@@ -28,6 +29,7 @@ import javax.inject.Inject;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class ActionDataCallback {
+    private final SRPlatformAdapter adapter;
     private final Injector injector;
     private final SRServerPlugin plugin;
 
@@ -36,7 +38,9 @@ public class ActionDataCallback {
             if (plugin.isProxyMode()) {
                 player.sendToMessageChannel(new SRProxyPluginMessage(new SRProxyPluginMessage.GUIActionChannelPayloadList(action.actionChannelPayload())));
             } else {
-                injector.getSingleton(GUIActionListener.class).handle(player, action.actionChannelPayload());
+                adapter.runAsync(() -> {
+                    injector.getSingleton(GUIActionListener.class).handle(player, action.actionChannelPayload());
+                });
             }
         }
 
