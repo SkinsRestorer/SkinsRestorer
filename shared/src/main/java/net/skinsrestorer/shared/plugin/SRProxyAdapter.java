@@ -28,4 +28,10 @@ public interface SRProxyAdapter extends SRPlatformAdapter {
         SRProxyPlayer proxyPlayer = (SRProxyPlayer) player;
         proxyPlayer.sendToMessageChannel(new SRServerPluginMessage(new SRServerPluginMessage.GUIPageChannelPayload(srInventory)));
     }
+
+    @Override
+    default void giveSkullItem(SRPlayer player, SRServerPluginMessage.GiveSkullChannelPayload giveSkullPayload) {
+        SRProxyPlayer proxyPlayer = (SRProxyPlayer) player;
+        proxyPlayer.sendToMessageChannel(new SRServerPluginMessage(giveSkullPayload));
+    }
 }

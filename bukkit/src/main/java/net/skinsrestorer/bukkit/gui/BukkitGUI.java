@@ -20,9 +20,8 @@ package net.skinsrestorer.bukkit.gui;
 import ch.jalu.injector.Injector;
 import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XMaterial;
-import com.cryptomorin.xseries.profiles.objects.ProfileInputType;
-import com.cryptomorin.xseries.profiles.objects.Profileable;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.bukkit.utils.SkullUtil;
 import net.skinsrestorer.bukkit.wrapper.BukkitComponentHelper;
 import net.skinsrestorer.shared.gui.GUIManager;
 import net.skinsrestorer.shared.gui.SRInventory;
@@ -33,7 +32,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import javax.inject.Inject;
-import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Objects;
 
@@ -53,19 +51,7 @@ public class BukkitGUI implements GUIManager<Inventory> {
             case ENCHANTING_TABLE -> XMaterial.ENCHANTING_TABLE;
         };
         ItemStack itemStack = Objects.requireNonNull(material.parseItem());
-        entry.textureHash().ifPresent(hash -> {
-            ItemMeta skullMeta = Objects.requireNonNull(itemStack.getItemMeta());
-
-            try {
-                Field profileField = Objects.requireNonNull(skullMeta.getClass().getDeclaredField("profile"));
-                profileField.setAccessible(true);
-                profileField.set(skullMeta, Profileable.of(Objects.requireNonNull(ProfileInputType.typeOf(hash)), hash).getProfile());
-            } catch (ReflectiveOperationException e) {
-                throw new RuntimeException(e);
-            }
-
-            itemStack.setItemMeta(skullMeta);
-        });
+        entry.textureHash().ifPresent(hash -> SkullUtil.setSkull(itemStack, hash));
 
         ItemMeta skullMeta = Objects.requireNonNull(itemStack.getItemMeta());
         skullMeta.setDisplayName(BukkitComponentHelper.toStupidHex(entry.displayName()));

@@ -18,6 +18,7 @@
 package net.skinsrestorer.bukkit;
 
 import ch.jalu.injector.Injector;
+import com.cryptomorin.xseries.XMaterial;
 import lombok.Getter;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.bukkit.folia.FoliaSchedulerProvider;
@@ -28,7 +29,9 @@ import net.skinsrestorer.bukkit.spigot.SpigotConfigUtil;
 import net.skinsrestorer.bukkit.utils.BukkitSchedulerProvider;
 import net.skinsrestorer.bukkit.utils.SchedulerProvider;
 import net.skinsrestorer.bukkit.utils.SkinApplyBukkitAdapter;
+import net.skinsrestorer.bukkit.utils.SkullUtil;
 import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
+import net.skinsrestorer.shared.codec.SRServerPluginMessage;
 import net.skinsrestorer.shared.gui.SRInventory;
 import net.skinsrestorer.shared.info.ClassInfo;
 import net.skinsrestorer.shared.info.Platform;
@@ -42,6 +45,7 @@ import org.bukkit.Server;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.SenderMapper;
@@ -129,6 +133,15 @@ public class SRBukkitAdapter implements SRServerAdapter {
     @Override
     public void runSyncToPlayer(SRPlayer player, Runnable runnable) {
         runSyncToPlayer(player.getAs(Player.class), runnable);
+    }
+
+    @Override
+    public void giveSkullItem(SRPlayer player, SRServerPluginMessage.GiveSkullChannelPayload giveSkullPayload) {
+        Player bukkitPlayer = player.getAs(Player.class);
+        ItemStack itemStack = Objects.requireNonNull(XMaterial.PLAYER_HEAD.parseItem());
+        SkullUtil.setSkull(itemStack, giveSkullPayload.textureHash());
+
+        bukkitPlayer.getInventory().addItem(itemStack);
     }
 
     public void runSyncToPlayer(Player player, Runnable runnable) {
