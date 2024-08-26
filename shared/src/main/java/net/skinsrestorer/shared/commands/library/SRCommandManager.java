@@ -175,7 +175,10 @@ public class SRCommandManager {
         commandManager.parserRegistry().registerParser(ParserDescriptor.of(new PlayerSelectorArgumentParser(platform), PlayerSelector.class));
         annotationParser.registerBuilderModifier(
                 CommandPermission.class,
-                (commandPermission, builder) -> builder.permission(PredicatePermission.of(c -> c.hasPermission(commandPermission.value())))
+                (commandPermission, builder) -> builder.permission(PredicatePermission.of(
+                        CloudKey.of(commandPermission.value().getPermission().getPermissionString()),
+                        c -> c.hasPermission(commandPermission.value())
+                ))
         );
         annotationParser.registerBuilderModifier(
                 CommandDescription.class,
