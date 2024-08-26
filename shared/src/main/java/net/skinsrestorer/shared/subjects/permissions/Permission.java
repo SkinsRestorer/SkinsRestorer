@@ -34,15 +34,12 @@ public class Permission {
     private final String permissionString;
 
     public boolean checkPermission(SettingsManager settings, Function<String, Tristate> predicate) {
-        Collection<PermissionGroup> permissionGroups = PermissionGroup.getGrantedBy(this);
-        if (permissionGroups.isEmpty()) {
-            return internalCheckPermission(predicate).asBoolean();
-        }
-
         Tristate tristate = internalCheckPermission(predicate);
+        Collection<PermissionGroup> permissionGroups = PermissionGroup.getGrantedBy(this);
 
-        // The permission was set explicitly, so we don't need to check the groups.
-        if (tristate != Tristate.UNDEFINED) {
+        // If no group can grant this, it'll be mapped to false.
+        // If it was set explicitly, we don't need to check the groups.
+        if (permissionGroups.isEmpty() || tristate != Tristate.UNDEFINED) {
             return tristate.asBoolean();
         }
 
