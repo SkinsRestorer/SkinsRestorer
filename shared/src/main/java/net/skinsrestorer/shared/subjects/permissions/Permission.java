@@ -17,11 +17,9 @@
  */
 package net.skinsrestorer.shared.subjects.permissions;
 
-import ch.jalu.configme.SettingsManager;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.config.CommandConfig;
 import net.skinsrestorer.shared.utils.Tristate;
 
 import java.util.function.Function;
@@ -32,7 +30,7 @@ import java.util.function.Function;
 public class Permission {
     private final String permissionString;
 
-    public boolean checkPermission(SettingsManager settings, Function<String, Tristate> predicate) {
+    public boolean checkPermission(Function<String, Tristate> predicate) {
         Tristate tristate = internalCheckPermission(predicate);
 
         // If it was set explicitly, we don't need to check the groups or inheritance.
@@ -41,8 +39,7 @@ public class Permission {
         }
 
         for (PermissionGroup permissionGroup : PermissionGroup.getGrantedBy(this)) {
-            if (permissionGroup == PermissionGroup.DEFAULT_GROUP
-                    && settings.getProperty(CommandConfig.FORCE_DEFAULT_PERMISSIONS)) {
+            if (permissionGroup == PermissionGroup.DEFAULT_GROUP) {
                 return true;
             }
 

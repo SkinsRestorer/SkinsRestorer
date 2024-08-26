@@ -53,6 +53,6 @@ public class WrapperCommandSender extends AbstractSRCommandSender {
 
     @Override
     public boolean hasPermission(Permission permission) {
-        return permission.checkPermission(settings, p -> Tristate.fromBoolean(sender.hasPermission(p)));
+        return permission.checkPermission(p -> Tristate.fromBoolean(sender.hasPermission(p)));
     }
 }

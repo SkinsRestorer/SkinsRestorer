@@ -55,11 +55,7 @@ public class SRModPlatformImpl implements SRModPlatform {
     @Override
     public Tristate test(CommandSourceStack stack, Permission permission) {
         if (!stack.isPlayer()) {
-            if (permission.isInDefaultGroup()) {
-                return Tristate.TRUE;
-            }
-
-            return stack.hasPermission(stack.getServer().getOperatorUserPermissionLevel()) ? Tristate.TRUE : Tristate.FALSE;
+            return stack.hasPermission(stack.getServer().getOperatorUserPermissionLevel()) ? Tristate.TRUE : Tristate.UNDEFINED;
         }
 
         return PermissionAPI.getPermission(Objects.requireNonNull(stack.getPlayer()), PERMISSIONS.get(permission.getPermissionString())) ? Tristate.TRUE : Tristate.FALSE;
