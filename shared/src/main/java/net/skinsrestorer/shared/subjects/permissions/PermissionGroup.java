@@ -97,7 +97,7 @@ public enum PermissionGroup {
 
     public boolean hasPermission(Permission permission) {
         for (PermissionRegistry registry : permissions) {
-            if (registry.getPermission() == permission) {
+            if (registry.getPermission().equals(permission)) {
                 return true;
             }
         }

@@ -18,6 +18,7 @@
 package net.skinsrestorer.shared.subjects.permissions;
 
 import ch.jalu.configme.SettingsManager;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.config.CommandConfig;
@@ -27,6 +28,7 @@ import java.util.Collection;
 import java.util.function.Function;
 
 @Getter
+@EqualsAndHashCode
 @RequiredArgsConstructor(staticName = "of")
 public class Permission {
     private final String permissionString;
