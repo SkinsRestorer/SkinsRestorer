@@ -86,7 +86,7 @@ public enum PermissionGroup {
     public static Collection<PermissionGroup> getGrantedBy(Permission permission) {
         Set<PermissionGroup> groups = new HashSet<>();
 
-        for (PermissionGroup group : values()) {
+        for (PermissionGroup group : VALUES) {
             if (group.hasPermission(permission)) {
                 groups.add(group);
             }
