@@ -24,7 +24,6 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.config.CommandConfig;
 import net.skinsrestorer.shared.utils.Tristate;
 
-import java.util.Collection;
 import java.util.function.Function;
 
 @Getter
@@ -35,15 +34,13 @@ public class Permission {
 
     public boolean checkPermission(SettingsManager settings, Function<String, Tristate> predicate) {
         Tristate tristate = internalCheckPermission(predicate);
-        Collection<PermissionGroup> permissionGroups = PermissionGroup.getGrantedBy(this);
 
-        // If no group can grant this, it'll be mapped to false.
-        // If it was set explicitly, we don't need to check the groups.
-        if (permissionGroups.isEmpty() || tristate != Tristate.UNDEFINED) {
+        // If it was set explicitly, we don't need to check the groups or inheritance.
+        if (tristate != Tristate.UNDEFINED) {
             return tristate.asBoolean();
         }
 
-        for (PermissionGroup permissionGroup : permissionGroups) {
+        for (PermissionGroup permissionGroup : PermissionGroup.getGrantedBy(this)) {
             if (permissionGroup == PermissionGroup.DEFAULT_GROUP
                     && settings.getProperty(CommandConfig.FORCE_DEFAULT_PERMISSIONS)) {
                 return true;
