@@ -23,7 +23,6 @@ import lombok.experimental.SuperBuilder;
 import net.skinsrestorer.shared.subjects.AbstractSRCommandSender;
 import net.skinsrestorer.shared.subjects.messages.ComponentString;
 import net.skinsrestorer.shared.subjects.permissions.Permission;
-import net.skinsrestorer.shared.subjects.permissions.PermissionGroup;
 import net.skinsrestorer.shared.utils.Tristate;
 
 @SuperBuilder
@@ -45,9 +44,7 @@ public class WrapperCommandSender extends AbstractSRCommandSender {
         return permission.checkPermission(settings, p -> switch (sender.getPermissionValue(p)) {
             case TRUE -> Tristate.TRUE;
             case FALSE -> Tristate.FALSE;
-            case UNDEFINED -> Tristate.fromBoolean(
-                    PermissionGroup.DEFAULT_GROUP.hasPermission(permission)
-            );
+            case UNDEFINED -> Tristate.UNDEFINED;
         });
     }
 }
