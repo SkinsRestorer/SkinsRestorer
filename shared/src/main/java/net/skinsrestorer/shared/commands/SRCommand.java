@@ -260,7 +260,6 @@ public final class SRCommand {
         } else {
             // No services are unavailable, but some APIs are not working
             sender.sendMessage(Message.ADMINCOMMAND_STATUS_DEGRADED);
-            sender.sendMessage(Message.ADMINCOMMAND_STATUS_FIREWALL);
         }
 
         sender.sendMessage(Message.DIVIDER);
