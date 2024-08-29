@@ -1,9 +1,9 @@
 {
-  "skinsrestorer.help_skin": "Thay đổi skin của bản thân.",
-  "skinsrestorer.help_skins": "Mở giao diện Chọn skin.",
-  "skinsrestorer.help_sr": "Các lệnh quản trị của SkinsRestorer.",
+  "skinsrestorer.help_skin": "Thay đổi skin của chính bạn.",
+  "skinsrestorer.help_skins": "Mở giao diện chọn skin.",
+  "skinsrestorer.help_sr": "Các lệnh cho quản trị viên của SkinsRestorer.",
   "skinsrestorer.help_skin_help": "Hiển thị lệnh trợ giúp này.",
-  "skinsrestorer.help_skin_set": "Thay đổi skin của bản thân.",
+  "skinsrestorer.help_skin_set": "Thay đổi skin của bạn.",
   "skinsrestorer.help_skin_set_other": "Đặt skin cho một người chơi khác.",
   "skinsrestorer.help_skin_set_url": "Áp dụng skin mới bằng URL.",
   "skinsrestorer.help_skin_clear": "Loại bỏ skin hiện tại của bạn.",
