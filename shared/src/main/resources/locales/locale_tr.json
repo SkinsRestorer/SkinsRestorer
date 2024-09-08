@@ -13,6 +13,8 @@
   "skinsrestorer.help_skin_search": "İstediğiniz bir skin'i arayın.",
   "skinsrestorer.help_skin_update": "Skin'inizi günceller.",
   "skinsrestorer.help_skin_update_other": "Hedef oyuncunun skin'ini günceller.",
+  "skinsrestorer.help_skin_undo": "Kostümünüzü bir önceki kostüme geri döndürür.",
+  "skinsrestorer.help_skin_undo_other": "Hedef oyuncunun kostümünü bir önceki kostümüne geri döndürür.",
   "skinsrestorer.help_sr_reload": "Yapılandırma dosyasını yeniden yükler.",
   "skinsrestorer.help_sr_status": "Gerekli eklenti API hizmetlerini kontrol eder.",
   "skinsrestorer.help_sr_drop": "Veritabanından oyuncu veya skin verilerini kaldırır.",
@@ -109,5 +111,13 @@
   "skinsrestorer.permission_admincommand_dump": "\"/sr dump\" komutu aracılığıyla sunucu bilgilerini yüklemeye erişim sağlar.",
   "skinsrestorer.permission_bypasscooldown": "Yapılandırmada ayarlanmış olan herhangi bir komut bekleme süresini atlar.",
   "skinsrestorer.permission_bypassdisabled": "Yapılandırmada devre dışı bırakılmış olan herhangi bir skin'i atlar.",
-  "skinsrestorer.permission_ownskin": "Kendi skin'inizi ayarlama erişimi sağlar."
+  "skinsrestorer.permission_ownskin": "Kendi skin'inizi ayarlama erişimi sağlar.",
+  "skinsrestorer.duration_day": " gün",
+  "skinsrestorer.duration_days": " gün",
+  "skinsrestorer.duration_hour": " saat",
+  "skinsrestorer.duration_hours": " saat",
+  "skinsrestorer.duration_minute": " dakika",
+  "skinsrestorer.duration_minutes": " dakika",
+  "skinsrestorer.duration_second": " saniye",
+  "skinsrestorer.duration_seconds": " saniye"
 }
