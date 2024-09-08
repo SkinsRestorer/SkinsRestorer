@@ -28,7 +28,7 @@ dependencies {
     implementation("xyz.wagyourtail.jvmdowngrader:xyz.wagyourtail.jvmdowngrader.gradle.plugin:1.1.2")
 
     implementation("commons-io:commons-io:2.16.1")
-    implementation("org.apache.ant:ant:1.10.14")
+    implementation("org.apache.ant:ant:1.10.15")
     implementation("org.codehaus.plexus:plexus-utils:4.0.1")
 }
 
