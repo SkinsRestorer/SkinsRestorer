@@ -165,8 +165,8 @@ public final class SRCommand {
         }
 
         boolean startsWithQuote = input.startsWith("\"");
-        boolean endsWithQuote = input.endsWith("\"");
         String withoutStartQuote = startsWithQuote ? input.substring(1) : input;
+        boolean endsWithQuote = withoutStartQuote.endsWith("\"");
         String withoutEndQuote = endsWithQuote ? withoutStartQuote.substring(0, withoutStartQuote.length() - 1) : withoutStartQuote;
 
         if (!startsWithQuote && !endsWithQuote && SRHelpers.isNotAllowedUnquotedString(withoutEndQuote)) {
