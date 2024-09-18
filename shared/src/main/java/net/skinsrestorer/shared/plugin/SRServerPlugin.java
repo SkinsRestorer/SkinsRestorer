@@ -26,8 +26,6 @@ import net.skinsrestorer.shared.utils.SRHelpers;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -47,14 +45,7 @@ public class SRServerPlugin {
             Path warning = plugin.getDataFolder().resolve("(README) Use proxy config for settings! (README).txt");
             if (proxyMode) {
                 SRHelpers.createDirectoriesSafe(plugin.getDataFolder());
-
-                try (InputStream inputStream = serverAdapter.getResource("proxy_warning.txt")) {
-                    if (inputStream == null) {
-                        throw new IllegalStateException("Could not find proxy_warning.txt in resources!");
-                    }
-
-                    SRHelpers.writeIfNeeded(warning, new String(inputStream.readAllBytes(), StandardCharsets.UTF_8));
-                }
+                SRHelpers.writeIfNeeded(warning, serverAdapter.getResouceAsString("proxy_warning.txt"));
             } else {
                 Files.deleteIfExists(warning);
             }

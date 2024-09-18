@@ -28,11 +28,9 @@ import net.skinsrestorer.shared.utils.TranslationReader;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -58,23 +56,21 @@ public class MessageLoader {
             Locale locale = getTranslationLocale(localeFile);
 
             int count = 0;
-            try (InputStream is = adapter.getResource(resourcePath)) {
-                for (Map.Entry<String, String> entry : TranslationReader.readJsonTranslation(is).entrySet()) {
-                    var message = Message.fromKey(entry.getKey());
-                    if (message.isEmpty() && locale != LocaleManager.BASE_LOCALE) {
-                        continue;
-                    }
-
-                    manager.addMessage(
-                            message
-                                    .orElseThrow(() -> new IllegalArgumentException(
-                                            "No message enum found for key %s".formatted(entry.getKey())
-                                    )),
-                            locale,
-                            entry.getValue()
-                    );
-                    count++;
+            for (Map.Entry<String, String> entry : TranslationReader.readJsonTranslation(adapter.getResouceAsString(resourcePath)).entrySet()) {
+                var message = Message.fromKey(entry.getKey());
+                if (message.isEmpty() && locale != LocaleManager.BASE_LOCALE) {
+                    continue;
                 }
+
+                manager.addMessage(
+                        message
+                                .orElseThrow(() -> new IllegalArgumentException(
+                                        "No message enum found for key %s".formatted(entry.getKey())
+                                )),
+                        locale,
+                        entry.getValue()
+                );
+                count++;
             }
 
             logger.debug("Loaded %d default message strings for locale %s".formatted(count, locale));
@@ -93,9 +89,7 @@ public class MessageLoader {
             String resourcePath = "locales/%s".formatted(localeFile);
             Path filePath = repositoryFolder.resolve(localeFile);
 
-            try (InputStream is = adapter.getResource(resourcePath)) {
-                Files.copy(is, filePath, StandardCopyOption.REPLACE_EXISTING);
-            }
+            SRHelpers.writeIfNeeded(filePath, adapter.getResouceAsString(resourcePath));
         }
 
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(customFolder)) {
@@ -123,17 +117,15 @@ public class MessageLoader {
                 Locale locale = getTranslationLocale(fileName);
 
                 int count = 0;
-                try (InputStream is = Files.newInputStream(path)) {
-                    for (Map.Entry<String, String> entry : TranslationReader.readJsonTranslation(is).entrySet()) {
-                        Optional<Message> message = Message.fromKey(entry.getKey());
-                        if (message.isEmpty()) {
-                            logger.warning("Skipping unknown message key %s".formatted(entry.getKey()));
-                            continue;
-                        }
-
-                        manager.addMessage(message.get(), locale, entry.getValue());
-                        count++;
+                for (Map.Entry<String, String> entry : TranslationReader.readJsonTranslation(Files.readString(path)).entrySet()) {
+                    Optional<Message> message = Message.fromKey(entry.getKey());
+                    if (message.isEmpty()) {
+                        logger.warning("Skipping unknown message key %s".formatted(entry.getKey()));
+                        continue;
                     }
+
+                    manager.addMessage(message.get(), locale, entry.getValue());
+                    count++;
                 }
 
                 logger.debug("Loaded %d custom message strings for locale %s".formatted(count, locale));
