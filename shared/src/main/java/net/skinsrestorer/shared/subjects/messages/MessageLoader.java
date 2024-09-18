@@ -23,6 +23,7 @@ import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.utils.LocaleParser;
+import net.skinsrestorer.shared.utils.SRHelpers;
 import net.skinsrestorer.shared.utils.TranslationReader;
 
 import javax.inject.Inject;
@@ -85,8 +86,8 @@ public class MessageLoader {
         Path repositoryFolder = localesFolder.resolve("repository");
         Path customFolder = localesFolder.resolve("custom");
 
-        Files.createDirectories(repositoryFolder);
-        Files.createDirectories(customFolder);
+        SRHelpers.createDirectoriesSafe(repositoryFolder);
+        SRHelpers.createDirectoriesSafe(customFolder);
 
         for (String localeFile : BuildData.LOCALES) {
             String resourcePath = "locales/%s".formatted(localeFile);

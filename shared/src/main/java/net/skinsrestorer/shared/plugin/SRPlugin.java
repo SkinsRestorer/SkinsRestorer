@@ -204,7 +204,7 @@ public class SRPlugin {
         Path target = archive.resolve(path.getFileName().toString() + "_" + SRHelpers.getEpochSecond());
 
         try {
-            Files.createDirectories(archive);
+            SRHelpers.createDirectoriesSafe(archive);
             Files.move(path, target, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             logger.warning("Failed to move old file %s to archive folder.".formatted(path.getFileName()), e);

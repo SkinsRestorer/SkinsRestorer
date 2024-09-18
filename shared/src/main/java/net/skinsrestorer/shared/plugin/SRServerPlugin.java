@@ -22,16 +22,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.log.SRLogger;
+import net.skinsrestorer.shared.utils.SRHelpers;
 
 import javax.inject.Inject;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SRServerPlugin {
@@ -48,27 +46,14 @@ public class SRServerPlugin {
         try {
             Path warning = plugin.getDataFolder().resolve("(README) Use proxy config for settings! (README).txt");
             if (proxyMode) {
-                if (!Files.isDirectory(plugin.getDataFolder())) { // in case the directory is a symbol link
-                    Files.createDirectories(plugin.getDataFolder());
-                }
+                SRHelpers.createDirectoriesSafe(plugin.getDataFolder());
 
                 try (InputStream inputStream = serverAdapter.getResource("proxy_warning.txt")) {
                     if (inputStream == null) {
                         throw new IllegalStateException("Could not find proxy_warning.txt in resources!");
                     }
 
-                    String proxyWarning = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))
-                            .lines()
-                            .collect(Collectors.joining("\n"));
-
-                    if (Files.exists(warning)) {
-                        String existingWarning = Files.readString(warning);
-                        if (!existingWarning.equals(proxyWarning)) {
-                            Files.writeString(warning, proxyWarning);
-                        }
-                    } else {
-                        Files.copy(inputStream, warning);
-                    }
+                    SRHelpers.writeIfNeeded(warning, new String(inputStream.readAllBytes(), StandardCharsets.UTF_8));
                 }
             } else {
                 Files.deleteIfExists(warning);

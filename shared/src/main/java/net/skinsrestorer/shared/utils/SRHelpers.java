@@ -288,4 +288,26 @@ public class SRHelpers {
     public static String encodeHashToTexturesValue(String textureHash) {
         return Base64Utils.encode("{\"textures\":{\"SKIN\":{\"url\":\"http://textures.minecraft.net/texture/%s\"}}}".formatted(textureHash));
     }
+
+    public static void createDirectoriesSafe(Path path) {
+        if (!Files.isDirectory(path)) { // In case the directory is a symbol link
+            try {
+                Files.createDirectories(path);
+            } catch (IOException e) {
+                throw new IllegalStateException("Failed to create directories: %s".formatted(path), e);
+            }
+        }
+    }
+
+    public static void writeIfNeeded(Path path, String content) throws IOException {
+        if (Files.exists(path)) {
+            var existingContent = Files.readString(path);
+            if (!existingContent.equals(content)) {
+                Files.writeString(path, content);
+            }
+        } else {
+            SRHelpers.createDirectoriesSafe(path.getParent());
+            Files.writeString(path, content);
+        }
+    }
 }

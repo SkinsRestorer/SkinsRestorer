@@ -101,12 +101,7 @@ public class UpdateDownloaderGithub implements UpdateDownloader {
     public boolean downloadUpdate(String downloadUrl, @Nullable String verificationAssetUrl) {
         Path pluginFile = jarProvider.get(); // /plugins/XXX.jar
         Path updateFolder = server.getUpdateFolderFile().toPath();
-        try {
-            Files.createDirectories(updateFolder);
-        } catch (IOException e) {
-            logger.warning("[GitHubUpdate] Could not create update folder", e);
-            return false;
-        }
+        SRHelpers.createDirectoriesSafe(updateFolder);
 
         Path updateFile = updateFolder.resolve(pluginFile.getFileName()); // /plugins/update/XXX.jar
 

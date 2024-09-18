@@ -88,14 +88,10 @@ public class FileAdapter implements StorageAdapter {
 
     @Override
     public void init() {
-        try {
-            Files.createDirectories(skinsFolder);
-            Files.createDirectories(playersFolder);
-            Files.createDirectories(cooldownsFolder);
-            Files.createDirectories(cacheFolder);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        SRHelpers.createDirectoriesSafe(skinsFolder);
+        SRHelpers.createDirectoriesSafe(playersFolder);
+        SRHelpers.createDirectoriesSafe(cooldownsFolder);
+        SRHelpers.createDirectoriesSafe(cacheFolder);
     }
 
     private void migrate(Path dataFolder) throws IOException {
@@ -124,7 +120,7 @@ public class FileAdapter implements StorageAdapter {
 
                 if (!generatedFolder) {
                     generatedFolder = true;
-                    Files.createDirectories(legacyPlayersFolder);
+                    SRHelpers.createDirectoriesSafe(legacyPlayersFolder);
                     logger.info("Migrating legacy player files to new format...");
                 }
 
@@ -165,7 +161,7 @@ public class FileAdapter implements StorageAdapter {
             for (Path path : stream) {
                 if (!generatedFolder) {
                     generatedFolder = true;
-                    Files.createDirectories(legacySkinsFolder);
+                    SRHelpers.createDirectoriesSafe(legacySkinsFolder);
                     logger.info("Migrating legacy skin files to new format...");
                 }
 
