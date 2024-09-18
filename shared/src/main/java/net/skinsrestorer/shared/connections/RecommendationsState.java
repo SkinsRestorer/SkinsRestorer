@@ -79,7 +79,7 @@ public class RecommendationsState {
                     setDataFromResponse(recommenationResponse.getSkins());
 
                     try {
-                        Files.write(path, gson.toJson(recommenationResponse).getBytes());
+                        SRHelpers.writeIfNeeded(path, gson.toJson(recommenationResponse));
                     } catch (IOException e) {
                         logger.warning("Failed to save recommendations to file: %s".formatted(e.getMessage()));
                     }

@@ -25,11 +25,11 @@ import ch.jalu.configme.resource.PropertyReader;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
+import net.skinsrestorer.shared.utils.SRHelpers;
 import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.List;
 
 import static ch.jalu.configme.properties.PropertyInitializer.newListProperty;
@@ -102,7 +102,7 @@ public class ConfigMigratorService implements MigrationService {
             Property<String> oldMySQLSkinTable = newProperty("MySQL.SkinTable", "Skins");
             if (oldMySQLSkinTable.isValidInResource(reader)) {
                 try {
-                    Files.writeString(plugin.getDataFolder().resolve("legacy_skin_table.txt"),
+                    SRHelpers.writeIfNeeded(plugin.getDataFolder().resolve("legacy_skin_table.txt"),
                             oldMySQLSkinTable.determineValue(reader).getValue());
                 } catch (IOException e) {
                     logger.severe("Failed to write legacy_skin_table.txt", e);
@@ -112,7 +112,7 @@ public class ConfigMigratorService implements MigrationService {
             Property<String> oldMySQLPlayerTable = newProperty("MySQL.PlayerTable", "Players");
             if (oldMySQLPlayerTable.isValidInResource(reader)) {
                 try {
-                    Files.writeString(plugin.getDataFolder().resolve("legacy_player_table.txt"),
+                    SRHelpers.writeIfNeeded(plugin.getDataFolder().resolve("legacy_player_table.txt"),
                             oldMySQLPlayerTable.determineValue(reader).getValue());
                 } catch (IOException e) {
                     logger.severe("Failed to write legacy_player_table.txt", e);

@@ -45,7 +45,7 @@ import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.SRHelpers;
 import org.bukkit.Server;
-import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
@@ -53,7 +53,6 @@ import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.SimplePluginManager;
 
 import javax.inject.Inject;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -229,8 +228,9 @@ public class SRBukkitInit implements SRServerPlatformInit {
             return;
         }
 
-        try (BufferedReader reader = Files.newBufferedReader(pluginsFolder.resolve("MundoSK").resolve("config.yml"))) {
-            FileConfiguration config = YamlConfiguration.loadConfiguration(reader);
+        try {
+            YamlConfiguration config = new YamlConfiguration();
+            config.load(Files.readString(pluginsFolder.resolve("MundoSK").resolve("config.yml")));
             if (config.getBoolean("enable_custom_skin_and_tablist")) {
                 logger.warning(SRChatColor.DARK_RED + "----------------------------------------------");
                 logger.warning(SRChatColor.DARK_RED + "             [CRITICAL WARNING]");
@@ -239,7 +239,7 @@ public class SRBukkitInit implements SRServerPlatformInit {
                 logger.warning(SRChatColor.RED + "You have to disable ('false') it to get SkinsRestorer to work!");
                 logger.warning(SRChatColor.DARK_RED + "----------------------------------------------");
             }
-        } catch (IOException e) {
+        } catch (IOException | InvalidConfigurationException e) {
             logger.warning("Could not read MundoSK config.yml to check for 'enable_custom_skin_and_tablist'!", e);
         }
     }
