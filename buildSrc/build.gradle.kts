@@ -27,7 +27,7 @@ dependencies {
     implementation("io.freefair.gradle:lombok-plugin:8.10")
     implementation("xyz.wagyourtail.jvmdowngrader:xyz.wagyourtail.jvmdowngrader.gradle.plugin:1.1.3")
 
-    implementation("commons-io:commons-io:2.16.1")
+    implementation("commons-io:commons-io:2.17.0")
     implementation("org.apache.ant:ant:1.10.15")
     implementation("org.codehaus.plexus:plexus-utils:4.0.1")
 }
