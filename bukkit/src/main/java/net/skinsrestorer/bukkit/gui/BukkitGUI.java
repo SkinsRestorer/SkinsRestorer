@@ -22,6 +22,7 @@ import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.profiles.objects.ProfileInputType;
 import com.cryptomorin.xseries.profiles.objects.Profileable;
+import com.mojang.authlib.GameProfile;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.bukkit.wrapper.BukkitComponentHelper;
 import net.skinsrestorer.shared.gui.GUIManager;
@@ -34,6 +35,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import javax.inject.Inject;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Objects;
 
@@ -56,12 +58,19 @@ public class BukkitGUI implements GUIManager<Inventory> {
         entry.textureHash().ifPresent(hash -> {
             ItemMeta skullMeta = Objects.requireNonNull(itemStack.getItemMeta());
 
+            GameProfile profile = Profileable.of(Objects.requireNonNull(ProfileInputType.typeOf(hash)), hash).getProfile();
             try {
-                Field profileField = Objects.requireNonNull(skullMeta.getClass().getDeclaredField("profile"));
-                profileField.setAccessible(true);
-                profileField.set(skullMeta, Profileable.of(Objects.requireNonNull(ProfileInputType.typeOf(hash)), hash).getProfile());
+                Method setProfileMethod = Objects.requireNonNull(skullMeta.getClass().getDeclaredMethod("setProfile"));
+                setProfileMethod.setAccessible(true);
+                setProfileMethod.invoke(skullMeta, profile);
             } catch (ReflectiveOperationException e) {
-                throw new RuntimeException(e);
+                try {
+                    Field profileField = Objects.requireNonNull(skullMeta.getClass().getDeclaredField("profile"));
+                    profileField.setAccessible(true);
+                    profileField.set(skullMeta, profile);
+                } catch (ReflectiveOperationException e2) {
+                    throw new RuntimeException(e2);
+                }
             }
 
             itemStack.setItemMeta(skullMeta);
