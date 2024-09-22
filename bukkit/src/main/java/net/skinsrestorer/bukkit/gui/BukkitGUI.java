@@ -61,7 +61,7 @@ public class BukkitGUI implements GUIManager<Inventory> {
             GameProfile profile = Profileable.of(Objects.requireNonNull(ProfileInputType.typeOf(hash)), hash).getProfile();
             try {
                 // Some versions require this method to be called instead of setting the field directly (early 1.20.4)
-                Method setProfileMethod = Objects.requireNonNull(skullMeta.getClass().getDeclaredMethod("setProfile"));
+                Method setProfileMethod = Objects.requireNonNull(skullMeta.getClass().getDeclaredMethod("setProfile", GameProfile.class));
                 setProfileMethod.setAccessible(true);
                 setProfileMethod.invoke(skullMeta, profile);
             } catch (ReflectiveOperationException e) {
