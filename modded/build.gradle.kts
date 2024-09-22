@@ -83,7 +83,7 @@ dependencies {
     implementation(projects.skinsrestorerApi)
     implementation(projects.skinsrestorerShared)
 
-    implementation("net.lenni0451.mcstructs:text:2.5.2")
+    implementation("net.lenni0451.mcstructs:text:2.5.3")
     compileOnly("org.spongepowered:mixin:0.8.7")
 
     modImplementation("dev.architectury:architectury:13.0.6")
