@@ -26,7 +26,7 @@ dependencies {
         isTransitive = false
     }
 
-    implementation("org.bstats:bstats-bukkit:3.0.3")
+    implementation("org.bstats:bstats-bukkit:3.1.0")
     implementation("com.github.cryptomorin:XSeries:11.2.2")
 
     // MultiPaper support
