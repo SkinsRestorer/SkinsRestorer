@@ -29,7 +29,7 @@ dependencies {
 
     implementation("commons-io:commons-io:2.17.0")
     implementation("org.apache.ant:ant:1.10.15")
-    implementation("org.codehaus.plexus:plexus-utils:4.0.1")
+    implementation("org.codehaus.plexus:plexus-utils:4.0.2")
 }
 
 java {
