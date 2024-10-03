@@ -13,10 +13,10 @@ dependencies {
     api("org.jetbrains:annotations:24.1.0")
     compileOnly("com.github.spotbugs:spotbugs-annotations:4.8.6")
 
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.11.0")
-    testFixturesApi("org.junit.jupiter:junit-jupiter-api:5.11.0")
-    testFixturesApi("org.mockito:mockito-core:5.13.0")
-    testFixturesApi("org.mockito:mockito-junit-jupiter:5.13.0")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.11.1")
+    testFixturesApi("org.junit.jupiter:junit-jupiter-api:5.11.1")
+    testFixturesApi("org.mockito:mockito-core:5.14.1")
+    testFixturesApi("org.mockito:mockito-junit-jupiter:5.14.1")
 }
 
 tasks {
