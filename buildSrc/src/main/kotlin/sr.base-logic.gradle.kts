@@ -10,7 +10,7 @@ plugins {
 }
 
 dependencies {
-    api("org.jetbrains:annotations:24.1.0")
+    api("org.jetbrains:annotations:25.0.0")
     compileOnly("com.github.spotbugs:spotbugs-annotations:4.8.6")
 
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.11.2")
