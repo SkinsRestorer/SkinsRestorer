@@ -86,7 +86,7 @@ dependencies {
     implementation("net.lenni0451.mcstructs:text:2.5.3")
     compileOnly("org.spongepowered:mixin:0.8.7")
 
-    modImplementation("dev.architectury:architectury:13.0.6")
+    modImplementation("dev.architectury:architectury:14.0.1")
 
     fabricModImplementation(fabricApi.fabric("0.100.7+1.21"))
     fabricModImplementation("dev.architectury:architectury-fabric:13.0.6")
