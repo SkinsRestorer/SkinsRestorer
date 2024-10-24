@@ -92,7 +92,7 @@ dependencies {
     fabricModImplementation("dev.architectury:architectury-fabric:13.0.8")
     fabricModImplementation("org.incendo:cloud-fabric:2.0.0-SNAPSHOT")
 
-    neoforgeModImplementation("dev.architectury:architectury-neoforge:13.0.8")
+    neoforgeModImplementation("dev.architectury:architectury-neoforge:14.0.3")
     neoforgeModImplementation("org.incendo:cloud-neoforge:2.0.0-SNAPSHOT")
 }
 
