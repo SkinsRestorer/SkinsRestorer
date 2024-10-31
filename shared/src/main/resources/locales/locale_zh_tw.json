@@ -24,5 +24,13 @@
   "skinsrestorer.admincommand_drop_player_not_found": "<red>未找到玩家 <yellow><player></yellow>。",
   "skinsrestorer.admincommand_drop_skin_not_found": "<red>皮膚 <yellow><skin></yellow> 未找到。",
   "skinsrestorer.permission_admincommand_applyskin": "允許訪問以重新應用其他玩家的皮膚。",
-  "skinsrestorer.permission_admincommand_createcustom": "允許訪問以通過URL創建自定義全域皮膚。"
+  "skinsrestorer.permission_admincommand_createcustom": "允許訪問以通過URL創建自定義全域皮膚。",
+  "skinsrestorer.duration_day": " 天",
+  "skinsrestorer.duration_days": " 天",
+  "skinsrestorer.duration_hour": " 小時",
+  "skinsrestorer.duration_hours": " 小時",
+  "skinsrestorer.duration_minute": " 分",
+  "skinsrestorer.duration_minutes": " 分",
+  "skinsrestorer.duration_second": " 秒",
+  "skinsrestorer.duration_seconds": " 秒"
 }
