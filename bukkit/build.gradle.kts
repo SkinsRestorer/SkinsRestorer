@@ -39,7 +39,7 @@ dependencies {
         isTransitive = false
     }
 
-    compileOnly("com.viaversion:viabackwards-common:5.1.0") {
+    compileOnly("com.viaversion:viabackwards-common:5.1.1") {
         isTransitive = false
     }
     compileOnly("com.viaversion:viaversion:5.0.0") {
