@@ -1,1 +1,18 @@
-{}
+{
+  "skinsrestorer.help_skin": "Променя вашият скин.",
+  "skinsrestorer.help_skins": "Отваря менюто със скинове.",
+  "skinsrestorer.help_sr": "Администраторски команди за SkinsRestorer.",
+  "skinsrestorer.help_skin_help": "Показва тази помощна команда.",
+  "skinsrestorer.help_skin_set": "Променя вашият скин.",
+  "skinsrestorer.help_skin_set_other": "Променя скина на даден играч.",
+  "skinsrestorer.help_skin_set_url": "Променя вашият скин с такъв от Линк.",
+  "skinsrestorer.help_skin_clear": "Премахва вашият скин.",
+  "skinsrestorer.help_skin_clear_other": "Премахва скина на даден играч.",
+  "skinsrestorer.help_skin_random": "Дава ви случаен скин.",
+  "skinsrestorer.help_skin_random_other": "Дава случаен скин на даден играч.",
+  "skinsrestorer.help_skin_search": "Потърси скин който искаш.",
+  "skinsrestorer.help_skin_update": "Обновява скина ви.",
+  "skinsrestorer.help_skin_update_other": "Обновява скина на даден играч.",
+  "skinsrestorer.help_skin_undo": "Връща скина ви обратно към предишния.",
+  "skinsrestorer.help_skin_undo_other": "Връща скина на играч обратно към предишния."
+}
