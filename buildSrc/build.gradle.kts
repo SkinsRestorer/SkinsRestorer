@@ -24,10 +24,10 @@ dependencies {
     implementation("net.kyori:indra-common:3.1.3")
     implementation("net.kyori:indra-git:3.1.3")
     implementation("io.github.patrick.remapper:io.github.patrick.remapper.gradle.plugin:1.4.2")
-    implementation("io.freefair.gradle:lombok-plugin:8.10.2")
+    implementation("io.freefair.gradle:lombok-plugin:8.11")
     implementation("xyz.wagyourtail.jvmdowngrader:xyz.wagyourtail.jvmdowngrader.gradle.plugin:1.2.1")
 
-    implementation("commons-io:commons-io:2.17.0")
+    implementation("commons-io:commons-io:2.18.0")
     implementation("org.apache.ant:ant:1.10.15")
     implementation("org.codehaus.plexus:plexus-utils:4.0.2")
 }

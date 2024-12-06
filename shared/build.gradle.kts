@@ -7,7 +7,7 @@ dependencies {
     implementation(projects.skinsrestorerApi)
 
     api("com.google.code.gson:gson:2.11.0")
-    implementation("org.mariadb.jdbc:mariadb-java-client:3.5.0") {
+    implementation("org.mariadb.jdbc:mariadb-java-client:3.5.1") {
         exclude("com.github.waffle", "waffle-jna")
     }
 
@@ -40,9 +40,9 @@ dependencies {
 
     testImplementation("org.bstats:bstats-base:3.1.0")
 
-    testImplementation("org.testcontainers:testcontainers:1.20.3")
-    testImplementation("org.testcontainers:mariadb:1.20.3")
-    testImplementation("org.testcontainers:junit-jupiter:1.20.3")
+    testImplementation("org.testcontainers:testcontainers:1.20.4")
+    testImplementation("org.testcontainers:mariadb:1.20.4")
+    testImplementation("org.testcontainers:junit-jupiter:1.20.4")
 
     testRuntimeOnly("org.slf4j:slf4j-simple:2.0.16")
 }
