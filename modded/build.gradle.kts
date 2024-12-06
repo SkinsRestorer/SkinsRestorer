@@ -89,7 +89,7 @@ dependencies {
     modImplementation("dev.architectury:architectury:14.0.4")
 
     fabricModImplementation(fabricApi.fabric("0.100.7+1.21"))
-    fabricModImplementation("dev.architectury:architectury-fabric:14.0.4")
+    fabricModImplementation("dev.architectury:architectury-fabric:15.0.1")
     fabricModImplementation("org.incendo:cloud-fabric:2.0.0-SNAPSHOT")
     fabricModImplementation("me.lucko:fabric-permissions-api:0.3.3")
 
