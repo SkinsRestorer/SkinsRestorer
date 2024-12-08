@@ -63,6 +63,7 @@
   "skinsrestorer.error_ms_unknown": "Ismeretlen MineSkin Hiba!",
   "skinsrestorer.error_no_history": "Nincs kinézet-előzményed!",
   "skinsrestorer.error_no_favourites": "Nincs kedvenc kinézeted!",
+  "skinsrestorer.error_player_refresh_no_mapping": "Nem frissítheted a kinézeted, mert a SkinsRestorer nem támogatja ezt a Minecraft verziót. Kérlek, mondd el a szerver adminnak, hogy frissítse a SkinsRestorer plugint.",
   "skinsrestorer.not_connected_to_server": "<red>Nem csatlakoztál fel egy szerverre sem.",
   "skinsrestorer.divider": "<dark_aqua>----------------------------------------------",
   "skinsrestorer.admincommand_status_checking": "<gray>Az SR megfelelő működéséhez szükséges szolgáltatások ellenőrzése...",
