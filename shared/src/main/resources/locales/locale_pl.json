@@ -63,6 +63,7 @@
   "skinsrestorer.error_ms_unknown": "Nieznany błąd MineSkin!",
   "skinsrestorer.error_no_history": "Nie masz historii skórek!",
   "skinsrestorer.error_no_favourites": "Nie masz ulubionych skórek!",
+  "skinsrestorer.error_player_refresh_no_mapping": "Nie można odświeżyć skórki, ponieważ ta wersja Minecraft nie jest obsługiwana przez SkinsRestorer. Poinformuj administratora serwera o aktualizacji wtyczki SkinsRestorer.",
   "skinsrestorer.not_connected_to_server": "<red>Nie jesteś połączony z żadnym serwerem.",
   "skinsrestorer.divider": "<dark_aqua>----------------------------------------------",
   "skinsrestorer.admincommand_status_checking": "<gray>Sprawdzanie usług potrzebnych do prawidłowego działania SR...",
