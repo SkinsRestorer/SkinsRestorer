@@ -85,7 +85,7 @@
   "skinsrestorer.admincommand_info_no_set_skin": "<red>El jugador no tiene ningúna skin establecida explícitamente.",
   "skinsrestorer.admincommand_info_url_skin": "<gray>URL Skin: <gold><url><newline><gray>MineSkin ID: <gold><mine_skin_id>",
   "skinsrestorer.admincommand_info_hardcoded_skin": "<gray>Código de skin: <gold><skin>",
-  "skinsrestorer.admincommand_info_custom_skin": "<gray>Skin personalizada: <gold><skin>",
+  "skinsrestorer.admincommand_info_custom_skin": "<gray>Aspecto personalizado: <gold><skin>",
   "skinsrestorer.admincommand_info_player_skin": "<gray>Skin de jugador: <gold><skin><newline><gray>Marca de tiempo: <gold><timestamp><newline><gray>Expira: <gold><expires>",
   "skinsrestorer.admincommand_info_generic": "<gray>URL de textura: <gold><url><newline><gray>Variante: <gold><variant><newline><gray>Perfil UUID: <gold><uuid><newline><gray>Nombre de Perfil: <gold><name><newline><gray>Tiempo de Solicitud: <gold><request_time>",
   "skinsrestorer.admincommand_purgeolddata_success": "<green>¡Se han purgado las skins antiguas exitosamente!",
