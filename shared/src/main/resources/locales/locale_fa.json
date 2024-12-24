@@ -44,6 +44,7 @@
   "skinsrestorer.error_generic": "<dark_red>خطا<dark_gray>: <red><message>",
   "skinsrestorer.error_generic_skin": "خطایی به هنگام دریافت داده اسکین رخ داد، لطفا بعدا مجددا تلاش کنید!",
   "skinsrestorer.error_no_undo": "شما اسکینی برای بازگردانی ندارید!",
+  "skinsrestorer.error_no_skin_to_favourite": "شما هیچ اسکینی برای تنظیم به عنوان مورد علاقه ندارید!",
   "skinsrestorer.command_unknown_player": "بازیکن ناشناخته: <name>",
   "skinsrestorer.player_has_no_permission_skin": "<dark_red>خطا<dark_gray>: <red>شما دسترسی تنظیم این اسکین را ندارید.",
   "skinsrestorer.player_has_no_permission_url": "<dark_red>خطا<dark_gray>: <red>شما دسترسی تنظیم اسکین با لینک را ندارید.",
