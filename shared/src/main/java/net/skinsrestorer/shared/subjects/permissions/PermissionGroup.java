@@ -39,6 +39,7 @@ public enum PermissionGroup {
             PermissionRegistry.SKIN_RANDOM,
             PermissionRegistry.SKIN_UPDATE,
             PermissionRegistry.SKIN_SEARCH,
+            PermissionRegistry.SKIN_EDIT,
             PermissionRegistry.SKINS
     ),
     ADMIN(

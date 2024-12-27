@@ -20,6 +20,7 @@ package net.skinsrestorer.shared.commands;
 import ch.jalu.configme.SettingsManager;
 import ch.jalu.configme.properties.Property;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.PropertyUtils;
 import net.skinsrestorer.shadow.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.skinsrestorer.api.connections.MineSkinAPI;
 import net.skinsrestorer.api.exception.DataRequestException;
@@ -221,6 +222,16 @@ public final class SkinCommand {
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinSearch(SRCommandSender sender, @Greedy String searchString) {
         sender.sendMessage(Message.SKIN_SEARCH_MESSAGE, Placeholder.unparsed("search", searchString));
+    }
+
+    @Command("edit")
+    @CommandPermission(PermissionRegistry.SKIN_EDIT)
+    @CommandDescription(Message.HELP_SKIN_EDIT)
+    @SRCooldownGroup(COOLDOWN_GROUP_ID)
+    private void onSkinEdit(SRPlayer player) {
+        player.sendMessage(Message.SKIN_EDIT_MESSAGE,
+                Placeholder.parsed("url", "https://minecraft.novaskin.me/?skin=%s".formatted(
+                        PropertyUtils.getSkinTextureUrl(adapter.getSkinProperty(player).orElse(SRHelpers.EMPTY_SKIN)))));
     }
 
     @Command("update|refresh")
