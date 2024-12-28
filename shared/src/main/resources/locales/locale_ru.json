@@ -63,6 +63,7 @@
   "skinsrestorer.error_ms_unknown": "Неизвестная ошибка MineSkin!",
   "skinsrestorer.error_no_history": "У вас нет истории скинов!",
   "skinsrestorer.error_no_favourites": "У вас нет избранных скинов!",
+  "skinsrestorer.error_player_refresh_no_mapping": "Не удалось обновить ваш скин т.к. данная версия Minecraft не поддерживается SkinsRestorer. Пожалуйста, сообщите администратору сервера обновить плагин SkinsRestorer.",
   "skinsrestorer.not_connected_to_server": "<red>Вы не подключены ни к одному серверу.",
   "skinsrestorer.divider": "<dark_aqua>----------------------------------------------",
   "skinsrestorer.admincommand_status_checking": "<gray>Запуск проверки службы...",

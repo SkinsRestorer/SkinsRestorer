@@ -13,8 +13,8 @@ dependencies {
     api("org.jetbrains:annotations:26.0.1")
     compileOnly("com.github.spotbugs:spotbugs-annotations:4.8.6")
 
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.11.3")
-    testFixturesApi("org.junit.jupiter:junit-jupiter-api:5.11.3")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.11.4")
+    testFixturesApi("org.junit.jupiter:junit-jupiter-api:5.11.4")
     testFixturesApi("org.mockito:mockito-core:5.14.2")
     testFixturesApi("org.mockito:mockito-junit-jupiter:5.14.2")
 }
