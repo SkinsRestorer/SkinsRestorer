@@ -21,25 +21,25 @@ import ch.jalu.configme.Comment;
 import ch.jalu.configme.SettingsHolder;
 import ch.jalu.configme.configurationdata.CommentsConfiguration;
 import ch.jalu.configme.properties.Property;
-import ch.jalu.configme.properties.TypeBasedProperty;
 
 import java.util.Locale;
 
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
+import static net.skinsrestorer.shared.config.ConfigHelpers.newLocaleProperty;
 
 public class MessageConfig implements SettingsHolder {
     @Comment({
             "A locale code for the locale you want to use by default for messages and commands.",
             "Has to be a string separated by an underscore."
     })
-    public static final Property<Locale> LOCALE = new TypeBasedProperty<>("messages.locale", Locale.ENGLISH, LocaleProperty.instance());
+    public static final Property<Locale> LOCALE = newLocaleProperty("messages.locale", Locale.ENGLISH);
     @Comment({
             "A locale code for the messages and commands sent to the console.",
             "This is useful if you want to use a different locale for the console than for players.",
             "We recommend keeping this at the default value because we mostly only provide support in English.",
             "Has to be a string separated by an underscore."
     })
-    public static final Property<Locale> CONSOLE_LOCALE = new TypeBasedProperty<>("messages.consoleLocale", Locale.ENGLISH, LocaleProperty.instance());
+    public static final Property<Locale> CONSOLE_LOCALE = newLocaleProperty("messages.consoleLocale", Locale.ENGLISH);
     @Comment("Disable the message prefix in SkinsRestorer messages.")
     public static final Property<Boolean> DISABLE_PREFIX = newProperty("messages.disablePrefix", false);
     @Comment({

@@ -6,7 +6,7 @@ plugins {
 
 allprojects {
     group = "net.skinsrestorer"
-    version = "15.5.1-SNAPSHOT"
+    version = "15.5.1"
     description = "Ability to restore/change skins on servers!"
 
     repositories {

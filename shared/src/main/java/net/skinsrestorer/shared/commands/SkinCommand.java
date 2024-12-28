@@ -21,11 +21,11 @@ import ch.jalu.configme.SettingsManager;
 import ch.jalu.configme.properties.Property;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.PropertyUtils;
-import net.skinsrestorer.shadow.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.skinsrestorer.api.connections.MineSkinAPI;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.exception.MineSkinException;
 import net.skinsrestorer.api.property.*;
+import net.skinsrestorer.shadow.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
 import net.skinsrestorer.shared.commands.library.PlayerSelector;
 import net.skinsrestorer.shared.commands.library.SRCommandManager;
@@ -510,9 +510,9 @@ public final class SkinCommand {
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean setSkin(SRCommandSender sender, UUID target, String skinInput, SkinVariant skinVariant, boolean insertHistory) {
-        Optional<Runnable> noPermissionMessage = permissionManager.canSetSkin(sender, skinInput);
+        Optional<Message> noPermissionMessage = permissionManager.canSetSkin(sender, skinInput);
         if (noPermissionMessage.isPresent()) {
-            noPermissionMessage.get().run();
+            sender.sendMessage(noPermissionMessage.get());
             return false;
         }
 

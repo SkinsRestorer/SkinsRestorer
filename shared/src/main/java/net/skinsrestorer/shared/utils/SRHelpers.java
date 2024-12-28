@@ -119,13 +119,11 @@ public class SRHelpers {
     }
 
     public static <E> E getRandomEntry(List<E> list) {
-        Random random = ThreadLocalRandom.current();
-        return list.get(random.nextInt(list.size()));
+        return list.get(ThreadLocalRandom.current().nextInt(list.size()));
     }
 
     public static <E> E getRandomEntry(Collection<E> list) {
-        Random random = ThreadLocalRandom.current();
-        int index = random.nextInt(list.size());
+        int index = ThreadLocalRandom.current().nextInt(list.size());
         int i = 0;
         for (E entry : list) {
             if (i == index) {
