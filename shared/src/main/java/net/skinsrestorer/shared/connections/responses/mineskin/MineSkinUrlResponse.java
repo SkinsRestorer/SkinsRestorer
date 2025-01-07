@@ -33,7 +33,9 @@ public class MineSkinUrlResponse {
     private MineSkinData data;
     private long timestamp;
     private int duration;
-    private int account;
+    // sometimes account is returned as a string and sometimes as an int,
+    // so it's just easier to comment this field out, it's not used anyway
+    // private int account;
     private String server;
     @SerializedName("private")
     private boolean private_;
