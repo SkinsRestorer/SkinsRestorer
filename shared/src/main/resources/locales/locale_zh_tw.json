@@ -45,6 +45,7 @@
   "skinsrestorer.error_no_skin_to_favourite": "你沒有可設為收藏的外觀！",
   "skinsrestorer.error_skin_disabled": "這個外觀已被管理員停用。",
   "skinsrestorer.error_skinurl_disallowed": "管理員不允許這個網域。",
+  "skinsrestorer.error_updating_skin": "更新你的外觀時發生錯誤。請稍後再試！",
   "skinsrestorer.error_admin_applyskin": "玩家皮膚無法刷新！",
   "skinsrestorer.not_connected_to_server": "<red>你沒有連線到任何伺服器。",
   "skinsrestorer.admincommand_status_summary_server": "<gray>伺服器：<gold><version>",
