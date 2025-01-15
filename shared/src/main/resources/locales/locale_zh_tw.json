@@ -33,7 +33,7 @@
   "skinsrestorer.success_skin_undo_other": "<yellow><name></yellow> 的外觀 <yellow><skin></yellow> 已還原回來自 <yellow><timestamp></yellow> 的外觀。",
   "skinsrestorer.success_skin_favourite": "已將你的外觀 <yellow><skin></yellow> 設為收藏。",
   "skinsrestorer.success_skin_favourite_other": "已將 <yellow><name></yellow> 的外觀 <yellow><skin></yellow> 加入收藏。",
-  "skinsrestorer.success_skin_unfavourite": "你來自 <dark_green><skin></0> 的收藏外觀 <dark_green><yellow></0> 已取消收藏。",
+  "skinsrestorer.success_skin_unfavourite": "你來自 <yellow><timestamp></yellow> 的收藏外觀 <yellow><skin></yellow> 已取消收藏。",
   "skinsrestorer.success_skin_unfavourite_other": "<yellow><name></yellow> 來自 <yellow><timestamp></yellow> 的收藏外觀 <yellow><skin></yellow> 已取消收藏。",
   "skinsrestorer.success_skin_clear": "你的外觀已清除。",
   "skinsrestorer.success_skin_clear_other": "玩家 <yellow><name></yellow> 的外觀已清除。",
