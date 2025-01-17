@@ -102,7 +102,7 @@
   "skinsrestorer.only_allowed_on_console": "<dark_red>錯誤<dark_gray>：<red>只有控制台可以執行此指令！",
   "skinsrestorer.only_allowed_on_player": "<dark_red>錯誤<dark_gray>：<red>只有玩家可以執行此指令！",
   "skinsrestorer.invalid_player": "<dark_red>錯誤<dark_gray>：<red><input>不是有效的的使用者名稱或網址。",
-  "skinsrestorer.skin_cooldown": "<dark_red>錯誤<dark_gray>: <red>你可以在：<yellow><time></yellow> 秒後再次變更你的外觀",
+  "skinsrestorer.skin_cooldown": "<dark_red>錯誤<dark_gray>：<red>你可以在 <yellow><time></yellow> 秒後再次變更你的外觀",
   "skinsrestorer.ms_uploading_skin": "<dark_green>正在上傳外觀，請稍候……（這可能需要一點時間）",
   "skinsrestorer.wait_a_minute": "<dark_red>錯誤<dark_gray>：<red>請稍候一分鐘後再請求該外觀。（速率限制）",
   "skinsrestorer.skinsmenu_open": "<dark_green>正在開啟外觀選單……",
