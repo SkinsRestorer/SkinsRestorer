@@ -63,6 +63,7 @@
   "skinsrestorer.error_ms_unknown": "Error desconocido de MineSkin!",
   "skinsrestorer.error_no_history": "No tienes historial de skin!",
   "skinsrestorer.error_no_favourites": "No tienes ninguna skin favorita!",
+  "skinsrestorer.error_player_refresh_no_mapping": "No se pudo actualizar tu aspecto porque esta versión de Minecraft no es compatible con Restaurador de aspectos. Por favor, indica al administrador del servidor que actualice el plug-in Restaurador de aspectos.",
   "skinsrestorer.not_connected_to_server": "<red>No estás conectado a un servidor.",
   "skinsrestorer.divider": "<dark_aqua>--------------------------------------",
   "skinsrestorer.admincommand_status_checking": "<gray>Comprobando los servicios necesarios para el correcto funcionamiento de SR...",
