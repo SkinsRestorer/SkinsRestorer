@@ -31,7 +31,7 @@ Restoring offline mode skins & changing skins for Bukkit/Spigot/Paper/Purpur/etc
 **WE DO NOT SUPPORT FORGE / FABRIC**
 
 - Java 17+ ([Get Adoptium](https://adoptium.net/))
-- Minecraft 1.8.0 - 1.21.1
+- Minecraft 1.8.0 - 1.21.4
 
 Implementation:
 - Proxy: BungeeCord (Waterfall) & Velocity
