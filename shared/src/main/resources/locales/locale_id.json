@@ -1,4 +1,5 @@
 {
+  "skinsrestorer.prefix_format": "<yellow>[<dark_green>SkinsRestorer</dark_green>] <message>",
   "skinsrestorer.help_skin": "Mengubah skin milikmu.",
   "skinsrestorer.help_skins": "Membuka GUI skin.",
   "skinsrestorer.help_sr": "Perintah admin untuk SkinsRestorer.",
