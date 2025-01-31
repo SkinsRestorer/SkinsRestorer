@@ -1,4 +1,5 @@
 {
+  "skinsrestorer.prefix_format": "<yellow>[<dark_green>SkinsRestorer</dark_green>] <message>",
   "skinsrestorer.help_skin": "Zmienia twoją skórkę.",
   "skinsrestorer.help_skins": "Otwiera interfejs skinów.",
   "skinsrestorer.help_sr": "Komendy administracyjne dla SkinsRestorer.",
