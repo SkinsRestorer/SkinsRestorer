@@ -1,4 +1,5 @@
 {
+  "skinsrestorer.prefix_format": "<yellow>[<dark_green>SkinsRestorer</dark_green>] <message>",
   "skinsrestorer.help_skin": "Змінює ваш власний скін.",
   "skinsrestorer.help_skins": "Відкриває меню скінів.",
   "skinsrestorer.help_sr": "Команди адміністратора для SkinsRestorer.",
