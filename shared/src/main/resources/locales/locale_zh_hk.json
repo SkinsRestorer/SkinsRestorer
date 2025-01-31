@@ -1,4 +1,5 @@
 {
+  "skinsrestorer.prefix_format": "<yellow>[<dark_green>SkinsRestorer</dark_green>] <message>",
   "skinsrestorer.help_skin": "更改你自己的皮膚。",
   "skinsrestorer.help_skins": "打開皮膚GUI。",
   "skinsrestorer.help_sr": "SkinsRestorer的管理員命令。",
@@ -25,6 +26,7 @@
   "skinsrestorer.help_sr_create_custom": "創建一個自定義的全服皮膚。",
   "skinsrestorer.help_sr_purge_old_data": "清除x天前的舊皮膚數據。",
   "skinsrestorer.help_sr_dump": "將支持數據上傳到bytebin.lucko.me。",
+  "skinsrestorer.success_generic": "<dark_green><message>",
   "skinsrestorer.info_use_quotes": "URL必須用引號括起來。例如：<yellow>/skin set \"https://example.com/skin.png\"</yellow>（你可以按Tab鍵自動完成引號）",
   "skinsrestorer.success_skin_change": "你的皮膚已更改。",
   "skinsrestorer.success_skin_change_other": "你更改了<yellow><name></yellow>的皮膚。",
@@ -64,6 +66,7 @@
   "skinsrestorer.error_no_favourites": "你沒有最愛的皮膚！",
   "skinsrestorer.error_player_refresh_no_mapping": "無法刷新你的皮膚，因為此Minecraft版本不受SkinsRestorer支持。請告訴伺服器管理員更新SkinsRestorer插件。",
   "skinsrestorer.not_connected_to_server": "<red>你未連接到任何伺服器。",
+  "skinsrestorer.divider": "<dark_aqua>----------------------------------------------",
   "skinsrestorer.admincommand_status_checking": "<gray>正在運行服務檢查...",
   "skinsrestorer.admincommand_status_uuid_api": "<gray>可用的UUID API：<count>/<total>",
   "skinsrestorer.admincommand_status_profile_api": "<gray>可用的Profile API：<count>/<total>",
