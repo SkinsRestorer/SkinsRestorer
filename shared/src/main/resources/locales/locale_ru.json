@@ -1,4 +1,5 @@
 {
+  "skinsrestorer.prefix_format": "<yellow>[<dark_green>SkinsRestorer</dark_green>] <message>",
   "skinsrestorer.help_skin": "Изменяет ваш собственный скин.",
   "skinsrestorer.help_skins": "Открывает интерфейс скинов.",
   "skinsrestorer.help_sr": "Команды администратора для SkinsRestorer.",
@@ -123,7 +124,6 @@
   "skinsrestorer.skinsmenu_history_button": "<aqua><bold>[</bold> <gray>История скинов</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_favourites_button": "<aqua><bold>[</bold> <gray>Избранные скины</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_back_select_button": "<yellow><bold>«</bold> <gray>Вернуться в Главное Меню</gray> <bold>«</bold>",
-  "skinsrestorer.skin_search_message": "<dark_green>Вы можете найти скины по запросу <green><search></green> здесь: <newline><green>https://namemc.com/minecraft-skins/tag/<search> <newline><newline><dark_green>Если скинов не найдено, вы всегда можете найти некоторые скины по адресу https://namemc.com/minecraft-skins/tag <newline>Вы можете установить скин по ссылке скина:<newline> /skin https://namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>Ошибка<dark_gray>: <red>Не найдены данные скина! Имеет ли этот игрок скин?",
   "skinsrestorer.outdated": "<dark_red>Вы используете устаревшую версию SkinsRestorer на своём <platform>!<newline><red>Обновите Spigot до последней версии: <newline><yellow>https://www.spigotmc.org/resources/skinsrestorer.2124/",
   "skinsrestorer.unsupported_java": "<dark_red>Версия Java (<version>) на вашем <platform> не поддерживается SkinsRestorer!<newline><red>Обновите версию Java до версии 17 или выше, чтобы использовать SkinsRestorer без проблем. Более новые версии Java также могут работать на старых серверах, поэтому сервер Minecraft 1.8 может работать на Java 17. Для получения более подробной информации прочтите информацию в консоли.",
