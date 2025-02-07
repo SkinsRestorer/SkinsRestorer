@@ -62,7 +62,6 @@
   "skinsrestorer.skinsmenu_open": "<dark_green>Odperas skin menu...",
   "skinsrestorer.skinsmenu_next_page": "<green><bold>»</bold> <gray>Naslednja stran</gray> <bold>»</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[</bold> <gray>Odstrani skin</gray> <bold>]</bold>",
-  "skinsrestorer.skin_search_message": "<dark_green>Lahko najdes skine, ki se ujemajo <green><search></green> tukaj: <newline><green>https://namemc.com/minecraft-skins/tag/<search> <newline><newline><dark_green>Ce ni najdenih nobenih skinov, jih lahko vedno najdes na https://namemc.com/minecraft-skins/tag <newline>Skin lahko nastavis s povezavo:<newline>/skin https://namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>Napaka<dark_gray>: <red>Nobenega skina ni bilo najdeno! Ali ima igralec sploh skin?",
   "skinsrestorer.permission_player_wildcard": "Wildcard permission for players",
   "skinsrestorer.permission_command": "Omogoca dostop do komande \"/skin\".",
