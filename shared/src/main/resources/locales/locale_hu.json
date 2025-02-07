@@ -1,4 +1,5 @@
 {
+  "skinsrestorer.prefix_format": "<yellow>[<dark_green>SkinsRestorer</dark_green>] <message>",
   "skinsrestorer.help_skin": "Megváltoztatja a kinézeted.",
   "skinsrestorer.help_skins": "Megnyitja a kinézetek menüt.",
   "skinsrestorer.help_sr": "SkinsRestorer admin parancsai.",
@@ -123,7 +124,6 @@
   "skinsrestorer.skinsmenu_history_button": "<aqua><bold>[</bold> <gray>Előzmények menü</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_favourites_button": "<aqua><bold>[</bold> <gray>Kedvencek menü</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_back_select_button": "<yellow><bold>«</bold> <gray>Menü kiválasztás</gray> <bold>«</bold>",
-  "skinsrestorer.skin_search_message": "<dark_green>Megtaláltad a(z) <green><search></green> szerinti megfelelő kinézetet itt: <newline><green>https://namemc.com/minecraft-skins/tag/<search> <newline><newline><dark_green>Ha nem ezt a kinézetet kerested, még megtalálhatsz hasonló kinézeteket itt: https://namemc.com/minecraft-skins/tag <newline>Egy link alapján is be tudsz állítani kinézetet: <newline>/skin https://namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>Hiba<dark_gray>: <red>Nem lehet betölteni a kinézet adatait! Ennek a játékosnak van kinézete?",
   "skinsrestorer.outdated": "<dark_red>A SkinsRestores egy elavult verzióját futtatod a(z) <platform> szervereden!<newline><red>Kérlek, töltsd le a legújabb verziót a Spigotról és frissítsd:<newline><yellow>https://www.spigotmc.org/resources/skinsrestorer.2124/",
   "skinsrestorer.unsupported_java": "<dark_red>A(z) <platform> szervereden elavult a Java verzió (<version>), melyet nem támogat a SkinsRestorer!<newline><red>Kérlek, válts át Java 17-re vagy újabb verzióra, hogy zökkenőmentesen futtasd a SkinsRestorert. Az újabb Java verzió is fut a régebbi szervereken, így a Minecraft 1.8-as verziója is fut a Java 17-esen. A részletesebb adatért olvasd át a konzolt.",
