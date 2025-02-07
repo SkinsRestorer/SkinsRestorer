@@ -122,7 +122,6 @@
   "skinsrestorer.skinsmenu_history_button": "<aqua><bold>[</bold> <gray>História</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_favourites_button": "<aqua><bold>[</bold> <gray>Obľúbené</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_back_select_button": "<yellow><bold>«</bold> <gray>Výber</gray> <bold>«</bold>",
-  "skinsrestorer.skin_search_message": "<dark_green>Skiny vyhovujúce <green><search></green> nájdeš tu: <newline><green>https://namemc.com/minecraft-skins/tag/<search> <newline><newline><dark_green>Ak sa nenašli žiadne skiny, vždy je možné nájsť nejaké skiny na adrese https://namemc.com/minecraft-skins/tag <newline>Skin môžeš nastaviť pomocou odkazu skin:<newline>/skin https://namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>Chyba<dark_gray>: <red>Nenašli sa žiadne údaje o skine! Má tento hráč skin?",
   "skinsrestorer.outdated": "<dark_red>Na <platform> používaš zastaranú verziu pluginu SkinsRestorer!<newline><red>Aktualizuj na najnovšiu verziu na Spigote: <newline><yellow>https://www.spigotmc.org/resources/skinsrestorer.2124/",
   "skinsrestorer.unsupported_java": "<dark_red>Verzia Javy (<version>) pre <platform> nie je pluginom SkinsRestorer podporovaná!<newline><red>Prosím aktualizuj na Java 17, alebo vyššiu, aby si mohol SkinsRestorer použivať bez problémov. Staršie servery môžu bežať aj s novšou Javou, takže aj server pre Minecraft 1.8 môže bežať na Jave 17. Prečítaj si informácie z konzoly, aby si zistil viac detailov.",
