@@ -36,8 +36,6 @@ import java.util.function.Predicate;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SRMiniPlaceholdersAPIExpansion<P> {
-    public static final SkinProperty STEVE_PROPERTY = HardcodedSkins.getHardcodedSkin("steve").orElseThrow().getProperty();
-    public static final SkinProperty ALEX_PROPERTY = HardcodedSkins.getHardcodedSkin("alex").orElseThrow().getProperty();
     private final SRPlatformAdapter adapter;
     private final Predicate<Object> playerPredicate;
     private final Function<P, SRPlayer> playerProvider;
@@ -81,13 +79,13 @@ public class SRMiniPlaceholdersAPIExpansion<P> {
         builder.audiencePlaceholder("texture_url_or_steve", ((audience, queue, ctx) -> {
             SRPlayer player = playerProvider.apply((P) audience);
 
-            return adapter.getSkinProperty(player).map(this::extractTextureUrl).orElseGet(() -> extractTextureUrl(STEVE_PROPERTY));
+            return adapter.getSkinProperty(player).map(this::extractTextureUrl).orElseGet(() -> extractTextureUrl(HardcodedSkins.STEVE.getProperty()));
         }));
 
         builder.audiencePlaceholder("texture_url_or_alex", ((audience, queue, ctx) -> {
             SRPlayer player = playerProvider.apply((P) audience);
 
-            return adapter.getSkinProperty(player).map(this::extractTextureUrl).orElseGet(() -> extractTextureUrl(ALEX_PROPERTY));
+            return adapter.getSkinProperty(player).map(this::extractTextureUrl).orElseGet(() -> extractTextureUrl(HardcodedSkins.ALEX.getProperty()));
         }));
 
         builder.audiencePlaceholder("texture_id_or_empty", ((audience, queue, ctx) -> {
@@ -99,13 +97,13 @@ public class SRMiniPlaceholdersAPIExpansion<P> {
         builder.audiencePlaceholder("texture_id_or_steve", ((audience, queue, ctx) -> {
             SRPlayer player = playerProvider.apply((P) audience);
 
-            return adapter.getSkinProperty(player).map(this::extractTextureHash).orElseGet(() -> extractTextureHash(STEVE_PROPERTY));
+            return adapter.getSkinProperty(player).map(this::extractTextureHash).orElseGet(() -> extractTextureHash(HardcodedSkins.STEVE.getProperty()));
         }));
 
         builder.audiencePlaceholder("texture_id_or_alex", ((audience, queue, ctx) -> {
             SRPlayer player = playerProvider.apply((P) audience);
 
-            return adapter.getSkinProperty(player).map(this::extractTextureHash).orElseGet(() -> extractTextureHash(ALEX_PROPERTY));
+            return adapter.getSkinProperty(player).map(this::extractTextureHash).orElseGet(() -> extractTextureHash(HardcodedSkins.ALEX.getProperty()));
         }));
 
         builder.build().register();

@@ -39,6 +39,7 @@ import net.skinsrestorer.shared.log.SRLogLevel;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.plugin.SRPlugin;
+import net.skinsrestorer.shared.storage.HardcodedSkins;
 import net.skinsrestorer.shared.storage.PlayerStorageImpl;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.storage.model.player.FavouriteData;
@@ -231,7 +232,7 @@ public final class SkinCommand {
     private void onSkinEdit(SRPlayer player) {
         player.sendMessage(Message.SKIN_EDIT_MESSAGE,
                 Placeholder.parsed("url", "https://minecraft.novaskin.me/?skin=%s".formatted(
-                        PropertyUtils.getSkinTextureUrl(adapter.getSkinProperty(player).orElse(SRHelpers.EMPTY_SKIN)))));
+                        PropertyUtils.getSkinTextureUrl(adapter.getSkinProperty(player).orElse(HardcodedSkins.STEVE.getProperty())))));
     }
 
     @Command("update|refresh")

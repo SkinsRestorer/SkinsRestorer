@@ -29,6 +29,8 @@ import java.util.*;
 
 public class HardcodedSkins {
     private static final Map<String, SkinProperty> SKINS = new HashMap<>();
+    public static final InputDataResult STEVE;
+    public static final InputDataResult ALEX;
 
     static {
         var gson = new Gson();
@@ -46,6 +48,9 @@ public class HardcodedSkins {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        STEVE = getHardcodedSkin("steve").orElseThrow();
+        ALEX = getHardcodedSkin("alex").orElseThrow();
     }
 
     public static Optional<InputDataResult> getHardcodedSkin(String input) {

@@ -51,13 +51,13 @@ public class AdapterHelper {
         adapter.setCachedUUID("test", MojangCacheData.of(UUID.randomUUID(), -1));
         adapter.setPlayerData(playerId, playerData);
         adapter.setPlayerSkinData(DEFAULT_UUID, PlayerSkinData.of(DEFAULT_UUID, DEFAULT_NAME,
-                HardcodedSkins.getHardcodedSkin("steve").orElseThrow().getProperty(), -1));
+                HardcodedSkins.STEVE.getProperty(), -1));
         adapter.setURLSkinData("test", URLSkinData.of("https://test.com", "test",
-                HardcodedSkins.getHardcodedSkin("steve").orElseThrow().getProperty(), SkinVariant.CLASSIC));
+                HardcodedSkins.STEVE.getProperty(), SkinVariant.CLASSIC));
         adapter.setCustomSkinData("test-skin", CustomSkinData.of("test-skin",
-                null, HardcodedSkins.getHardcodedSkin("steve").orElseThrow().getProperty()));
+                null, HardcodedSkins.STEVE.getProperty()));
         adapter.setCustomSkinData("test-skin2", CustomSkinData.of("test-skin2",
-                null, HardcodedSkins.getHardcodedSkin("alex").orElseThrow().getProperty()));
+                null, HardcodedSkins.ALEX.getProperty()));
 
         Assert.assertEquals(2, adapter.getTotalCustomSkins());
         Assert.assertEquals(2, adapter.getCustomGUISkins(0, Integer.MAX_VALUE).size());
