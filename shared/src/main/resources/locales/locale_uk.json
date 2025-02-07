@@ -1,4 +1,5 @@
 {
+  "skinsrestorer.prefix_format": "<yellow>[<dark_green>SkinsRestorer</dark_green>] <message>",
   "skinsrestorer.help_skin": "Змінює ваш власний скін.",
   "skinsrestorer.help_skins": "Відкриває меню скінів.",
   "skinsrestorer.help_sr": "Команди адміністратора для SkinsRestorer.",
@@ -122,7 +123,6 @@
   "skinsrestorer.skinsmenu_history_button": "<aqua><bold>[</bold> <gray>Меню Історії</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_favourites_button": "<aqua><bold>[</bold> <gray>Меню Улюбленого</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_back_select_button": "<yellow><bold>«</bold> <gray>Меню Вибору</gray> <bold>«</bold>",
-  "skinsrestorer.skin_search_message": "<dark_green>Ви можете знайти скіни, які відповідають <green><search></green> тут: <newline><green>https://namemc.com/minecraft-skins/tag/<search> <newline><newline><dark_green>Якщо скіни не знайдено, ви завжди можете знайти кілька скінів на https://namemc.com/minecraft-skins/tag<newline>Ви можете встановити скін за посиланням:<newline> /skin https://namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>Помилка<dark_gray>: <red>Цей скін не знайдено! Чи має цей гравець скін?",
   "skinsrestorer.outdated": "<dark_red>Ви використовуєте застарілу версію SkinsResorter на вашому <platform> сервері!<newline><red>Будь ласка, оновіться до найновішої версії зі Spigot: <newline><yellow>https://www.spigotmc.org/resources/skinsrestorer.2124/",
   "skinsrestorer.unsupported_java": "<dark_red>Версія Java (<version>) на вашому <platform> сервері не підтримує SkinsResorter!<newline><red>Будь ласка, оновіться до Java 17 або вищої для роботи коректної SkinsResorter. Нові версії Java підтримують старіші версії серверів, так що Minecraft 1.8 може бути запущеним на Java 17. Прочитайте повідомлення у консолі для подробиць.",
