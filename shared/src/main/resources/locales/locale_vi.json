@@ -122,7 +122,6 @@
   "skinsrestorer.skinsmenu_history_button": "<aqua><bold>[</bold> <gray>Lịch Sử</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_favourites_button": "<aqua><bold>[</bold> <gray>Yêu Thích</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_back_select_button": "<yellow><bold>«</bold> <gray>Chọn Skin</gray> <bold>«</bold>",
-  "skinsrestorer.skin_search_message": "<dark_green>Bạn có thể tìm thấy skin giống <green><search></green> tại đây: <newline><green>https://namemc.com/minecraft-skins/tag/<search> <newline><newline><dark_green>Nếu không có skin nào trùng cả, bạn có thể tìm những skin khác trên https://namemc.com/minecraft-skins/tag <newline>Bạn có thể đặt skin dựa trên URL của skin:<newline>/skin https://namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>Lỗi<dark_gray>: <red>Không tìm thấy dữ liệu của skin!",
   "skinsrestorer.outdated": "<dark_red>Bạn đang chạy một phiên bản lỗi thời của SkinsRestorer trên <platform> của bạn!<newline><red>Hãy cập nhật lên phiên bản mới nhất trên Spigot: <newline><yellow>https://www.spigotmc.org/resources/skinsrestorer.2124/",
   "skinsrestorer.unsupported_java": "<dark_red>Phiên bản Java (<version>) trên <platform> của bạn hiện không được hỗ trợ bởi SkinsRestorer!<newline><red>Hãy cập nhật lên Java 17 hoặc cao hơn để sử dụng SkinsRestorer. Phiên bản Java mới hơn vẫn có thể chạy các máy chủ cũ, vì vậy máy chủ Minecraft 1.8 vẫn có thể dùng Java 17 để chạy. Hãy đọc nhật ký trong console để biết thêm chi tiết.",
