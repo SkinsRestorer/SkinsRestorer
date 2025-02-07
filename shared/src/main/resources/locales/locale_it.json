@@ -74,7 +74,6 @@
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[</bold> <gray>Rimuovi Skin</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_favourites_button": "<aqua><bold>[</bold> <gray>Menu Preferiti</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_back_select_button": "<yellow><bold>«</bold> <gray>Menu selezione</gray> <bold>«</bold>",
-  "skinsrestorer.skin_search_message": "<dark_green>Puoi trovare le skin corrispondenti a <green><search></green> qui: <newline><green>https://namemc. om/minecraft-skins/tag/<search> <newline><newline><dark_green>Se non si trovano skin, puoi sempre trovare alcuni skins su https://namemc. om/minecraft-skins/tag <newline>Puoi impostare la skin usando il link di skin<newline>/skin https://namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>Errore<dark_gray>: <red>Nessun dato skin trovato!",
   "skinsrestorer.outdated": "<dark_red>Stai eseguendo una versione obsoleta di SkinsRestorernel tuo <platform>!<newline><red>Si prega di aggiornare all'ultima versione su Spigot: <newline><yellow>https://www.spigotmc.org/resources/skinsrestorer.2124/",
   "skinsrestorer.unsupported_java": "<dark_red>La versione Java (<version>) della tua <platform> non è supportata da SkinsRestorer!<newline><red>Si prega di aggiornare a Java 17 o superiore per utilizzare SkinsRestorer senza problemi. Le versioni più recenti di Java possono anche eseguire server più vecchi, quindi un server Minecraft 1.8 può essere eseguito su Java 17. Leggi le informazioni sulla console per maggiori dettagli.",
