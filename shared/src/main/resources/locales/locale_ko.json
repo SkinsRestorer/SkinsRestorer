@@ -1,4 +1,5 @@
 {
+  "skinsrestorer.prefix_format": "<yellow>[<dark_green>SkinsRestorer</dark_green>] <message>",
   "skinsrestorer.help_skin": "내 스킨을 변경해요.",
   "skinsrestorer.help_skins": "스킨 GUI를 열어요.",
   "skinsrestorer.help_sr": "SkinsRestorer용 관리자 명령어예요.",
@@ -123,7 +124,6 @@
   "skinsrestorer.skinsmenu_history_button": "<aqua><bold>[</bold> <gray>기록 메뉴</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_favourites_button": "<aqua><bold>[</bold> <gray>선호 스킨 메뉴</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_back_select_button": "<yellow><bold>«</bold> <gray>메뉴 선택</gray> <bold>«</bold>",
-  "skinsrestorer.skin_search_message": "<green><search></green><dark_green>와(과) 일치하는 스킨을 아래에서 찾아보세요.<newline><green>https://https://namemc.com/minecraft-skins/tag/<search><newline><newline><dark_green>어떠한 스킨도 찾지 못한 경우, https://namemc.com/minecraft-skins/tag 에서 언제든지 스킨을 찾을 수 있어요.<newline>스킨의 링크를 사용해서 스킨을 설정할 수도 있어요.<newline>/skin https://namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>오류<dark_gray>: <red>스킨 데이터를 찾지 못했어요!",
   "skinsrestorer.outdated": "<dark_red><platform>에서 이전 버전의 SkinsRestorer를 사용 중이에요!<newline><red>Spigot에서 최신 버전으로 업데이트해 주세요.\n<newline<yellow>https://www.spigotmc.org/resources/skinsrestorer.2124/",
   "skinsrestorer.unsupported_java": "<dark_red><platform>의 Java 버전(<version>)이 SkinsRestorer와 호환되지 않아요!<newline><red>SkinsRestorer를 원활히 사용하려면 Java 17 이상으로 업데이트해 주세요. 최신 Java v버전은 오래된 서버를 돌릴 수 있어요. 즉, Minecraft 1.8 서버도 Java 17에서 돌릴 수 있어요. 더 알아보려면 콘솔 정보를 확인하세요.",
