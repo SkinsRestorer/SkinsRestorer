@@ -271,7 +271,7 @@ public class SkinStorageImpl implements SkinStorage {
         return switch (identifier.getSkinType()) {
             case PLAYER -> {
                 try {
-                    yield ComponentHelper.convertPlainToJson(adapterReference.get().getPlayerSkinData(UUID.fromString(identifier.getIdentifier()))
+                    yield ComponentHelper.convertPlainToJson(adapterReference.get().getPlayerSkinData(identifier.getPlayerUniqueId())
                             .map(PlayerSkinData::getLastKnownName)
                             .orElse(identifier.getIdentifier()));
                 } catch (StorageAdapter.StorageException e) {
@@ -339,7 +339,7 @@ public class SkinStorageImpl implements SkinStorage {
     public Optional<SkinProperty> getSkinDataByIdentifier(SkinIdentifier identifier) {
         try {
             return switch (identifier.getSkinType()) {
-                case PLAYER -> adapterReference.get().getPlayerSkinData(UUID.fromString(identifier.getIdentifier()))
+                case PLAYER -> adapterReference.get().getPlayerSkinData(identifier.getPlayerUniqueId())
                         .map(PlayerSkinData::getProperty);
                 case URL ->
                         adapterReference.get().getURLSkinData(identifier.getIdentifier(), identifier.getSkinVariant())
@@ -378,7 +378,7 @@ public class SkinStorageImpl implements SkinStorage {
     @Override
     public void removeSkinData(SkinIdentifier identifier) {
         switch (identifier.getSkinType()) {
-            case PLAYER -> adapterReference.get().removePlayerSkinData(UUID.fromString(identifier.getIdentifier()));
+            case PLAYER -> adapterReference.get().removePlayerSkinData(identifier.getPlayerUniqueId());
             case URL ->
                     adapterReference.get().removeURLSkinData(identifier.getIdentifier(), identifier.getSkinVariant());
             case CUSTOM -> adapterReference.get().removeCustomSkinData(identifier.getIdentifier());

@@ -1,8 +1,5 @@
-
 plugins {
-    java
-    id("sr.formatting-logic")
-    id("io.freefair.lombok")
+    id("sr.base-logic")
     id("xyz.wagyourtail.unimined") version "1.3.12"
 }
 

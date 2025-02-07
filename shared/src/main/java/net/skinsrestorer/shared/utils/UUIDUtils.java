@@ -17,6 +17,8 @@
  */
 package net.skinsrestorer.shared.utils;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Optional;
 import java.util.UUID;
 
@@ -35,6 +37,14 @@ public class UUIDUtils {
             }
 
             return Optional.empty();
+        }
+    }
+
+    public static @Nullable UUID parseUniqueIdNullable(String str) {
+        try {
+            return UUID.fromString(str);
+        } catch (IllegalArgumentException ignored) {
+            return null;
         }
     }
 

@@ -1,6 +1,5 @@
 plugins {
     id("sr.base-logic")
-    id("net.kyori.indra.publishing")
 }
 
 val repoName = if (version.toString().endsWith("SNAPSHOT")) "maven-snapshots" else "maven-releases"
@@ -15,5 +14,5 @@ publishing {
 }
 
 dependencies {
-    compileOnly("com.google.code.gson:gson:2.11.0")
+    compileOnly("com.google.code.gson:gson:2.12.1")
 }

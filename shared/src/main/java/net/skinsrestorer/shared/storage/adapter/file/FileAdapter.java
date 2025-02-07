@@ -723,8 +723,8 @@ public class FileAdapter implements StorageAdapter {
                     continue;
                 }
 
-                UUID uuid = UUID.fromString(parts[0]);
-                if (!uuid.equals(owner)) {
+                UUID uuid = UUIDUtils.parseUniqueIdNullable(parts[0]);
+                if (uuid == null || !uuid.equals(owner)) {
                     continue;
                 }
 
@@ -735,7 +735,7 @@ public class FileAdapter implements StorageAdapter {
 
                     list.add(file.toCooldownData());
                 } catch (Exception e) {
-                    throw new StorageException(e);
+                    logger.debug("Failed to load cooldown data for " + owner, e);
                 }
             }
 

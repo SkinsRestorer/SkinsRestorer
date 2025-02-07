@@ -255,7 +255,7 @@ public final class SkinCommand {
                 Optional<SkinIdentifier> currentSkin = targetPlayer.isPresent() ? playerStorage.getSkinIdForPlayer(target, targetPlayer.get().getName())
                         : playerStorage.getSkinIdOfPlayer(target);
                 if (currentSkin.isPresent() && currentSkin.get().getSkinType() == SkinType.PLAYER) {
-                    if (skinStorage.updatePlayerSkinData(UUID.fromString(currentSkin.get().getIdentifier())).isEmpty()) {
+                    if (skinStorage.updatePlayerSkinData(currentSkin.get().getPlayerUniqueId()).isEmpty()) {
                         sender.sendMessage(Message.ERROR_UPDATING_SKIN);
                         return;
                     }
