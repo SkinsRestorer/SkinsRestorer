@@ -1,4 +1,5 @@
 {
+  "skinsrestorer.prefix_format": "<yellow>[<dark_green>SkinsRestorer</dark_green>] <message>",
   "skinsrestorer.help_skin": "Cambia tu aspecto.",
   "skinsrestorer.help_skins": "Abre el menú de Skins.",
   "skinsrestorer.help_sr": "Comandos de administrador para SkinsRestorer.",
@@ -123,7 +124,6 @@
   "skinsrestorer.skinsmenu_history_button": "<aqua><bold>[</bold> <gray>Menú de Historial</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_favourites_button": "<aqua><bold>[</bold> <gray>Menú de Favoritos</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_back_select_button": "<yellow><bold>«</bold> <gray>Menú de Selección</gray> <bold>«</bold>",
-  "skinsrestorer.skin_search_message": "<dark_green>Puedes encontrar skins que coincidan con <green><search></green> aquí: <newline><green>https://namemc.com/minecraft-skins/tag/<search> <newline><newline><dark_green>Si no se encuentran skins, siempre puede encontrar algunas en https://namemc.com/minecraft-skins/tag <newline>Puedes establecer la skin usando el enlace de la misma:<newline> /skin https://namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>Error<dark_gray>: <red>¡No se encontraron datos de skin! ¿Este jugador tiene un skin?",
   "skinsrestorer.outdated": "<dark_red>Estás usando una versión vieja de SkinsRestorer en tu <platform>!<newline><red>Puede actualizarlo mediante el siguiente link en Spigot: <newline><yellow>https://www.spigotmc.org/resources/skinsrestorer.2124",
   "skinsrestorer.unsupported_java": "<dark_red>La versión de Java (<version>) de tu <platform> no es compatible con SkinsRestorer!<newline><red>Por favor, actualice a Java 17 o superior para utilizar SkinsRestorer sin problemas. Las nuevas versiones de Java también pueden ejecutar servidores más antiguos, por lo que un servidor de Minecraft 1.8 puede funcionar con Java 17. Lee la información de la consola para más detalles.",
