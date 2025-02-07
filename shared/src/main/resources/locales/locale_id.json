@@ -1,4 +1,5 @@
 {
+  "skinsrestorer.prefix_format": "<yellow>[<dark_green>SkinsRestorer</dark_green>] <message>",
   "skinsrestorer.help_skin": "Mengubah skin milikmu.",
   "skinsrestorer.help_skins": "Membuka GUI skin.",
   "skinsrestorer.help_sr": "Perintah admin untuk SkinsRestorer.",
@@ -123,7 +124,6 @@
   "skinsrestorer.skinsmenu_history_button": "<aqua><bold>[</bold> <gray>Menu Riwayat</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_favourites_button": "<aqua><bold>[</bold> <gray>Menu Favorit</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_back_select_button": "<yellow><bold>«</bold> <gray>Pilihan menu</gray> <bold>«</bold>",
-  "skinsrestorer.skin_search_message": "<dark_green>Kamu bisa menemukan skin yang cocok <green><search></green> disini:<newline><green>https://namemc.com/minecraft-skins/tag/<search><newline><newline><dark_green>Jika tidak ada skin yang ditemukan, kamu selalu dapat menemukan beberapa skin di https://namemc.com/minecraft-skins/tag <newline>Kamu bisa mengatur skin menggunakan link skin:<newline>/skin https://namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>Kesalahan<dark_gray>: <red>Tidak ada data skin ditemukan! Apakah pemain ini memiliki skin?",
   "skinsrestorer.outdated": "<dark_red>Kamu menjalankan versi usang SkinsRestorer di <platform> mu!<newline><red>Mohon perbarui ke versi terbaru di Spigot:\n<newline><yellow>https://www.spigotmc.org/resources/skinsrestorer.2124/",
   "skinsrestorer.unsupported_java": "<dark_red>Versi Java (<version>) pada <platform> mu tidak didukung oleh SkinsRestorer!<newline><red>Mohon update ke Java 17 atau lebih tinggi untuk menggunakan SkinsRestorer tanpa isu. Versi Java yang lebih baru juga dapat dijalankan server lama, jadi server Minecraft 1.8 dapat dijalankan di Java 17. Baca info konsol untuk detail lebih lanjut.",
