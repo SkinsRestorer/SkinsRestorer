@@ -1,6 +1,6 @@
 package org.incendo.cloud.velocity;
 
-import com.velocitypowered.api.command.SimpleCommand;
+import com.velocitypowered.api.command.RawCommand;
 import io.leangen.geantyref.GenericTypeReflector;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class SRVelocityCommand<C> implements SimpleCommand {
+public class SRVelocityCommand<C> implements RawCommand {
 
     private final SRVelocityCommandManager<C> manager;
     private final CommandComponent<C> command;
@@ -33,24 +33,21 @@ public class SRVelocityCommand<C> implements SimpleCommand {
 
     @Override
     public void execute(Invocation invocation) {
-        /* Join input */
-        final StringBuilder builder = new StringBuilder(this.command.name());
-        for (final String string : invocation.arguments()) {
-            builder.append(" ").append(string);
+        var cmd = this.command.name();
+        if (!invocation.arguments().isEmpty()) {
+            cmd += " " + invocation.arguments();
         }
+
         final C sender = this.manager.senderMapper().map(invocation.source());
-        this.manager.commandExecutor().executeCommand(sender, builder.toString());
+        this.manager.commandExecutor().executeCommand(sender, cmd);
     }
 
     @Override
     public List<String> suggest(Invocation invocation) {
-        final StringBuilder builder = new StringBuilder(this.command.name());
-        for (final String string : invocation.arguments()) {
-            builder.append(" ").append(string);
-        }
+        var cmd = this.command.name() + " " + invocation.arguments();
         final Suggestions<C, ?> result = this.manager.suggestionFactory().suggestImmediately(
                 this.manager.senderMapper().map(invocation.source()),
-                builder.toString()
+                cmd
         );
         return result.list().stream()
                 .map(Suggestion::suggestion)
