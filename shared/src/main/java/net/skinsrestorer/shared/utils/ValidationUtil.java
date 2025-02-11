@@ -24,15 +24,21 @@ public class ValidationUtil {
     private ValidationUtil() {
     }
 
-    /**
-     * Check if the given string is a valid Minecraft username.
-     * Logic is from net.minecraft.util.StringUtil#isValidPlayerName
-     *
-     * @param str The string to check
-     * @return true if the string is a valid Minecraft username
-     */
     public static boolean invalidMinecraftUsername(String str) {
-        return str.length() > 16 || str.chars().filter(i -> i <= 32 || i >= 127).findAny().isPresent();
+        // Note: there are exceptions to players with under 3 characters, who bought the game early in its development.
+        if (str.length() > 16) {
+            return true;
+        }
+
+        // For some reason, Apache's Lists.charactersOf is faster than character indexing for small strings.
+        for (char c : str.toCharArray()) {
+            // Note: Players who bought the game early in its development can have "-" in usernames.
+            if (!(c >= 'a' && c <= 'z') && !(c >= '0' && c <= '9') && !(c >= 'A' && c <= 'Z') && c != '_' && c != '-') {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public static boolean validSkinUrl(String str) {
