@@ -1,5 +1,8 @@
 {
-  "extends": ["config:base", "group:allNonMajor"],
+  "extends": [
+    "config:recommended",
+    "group:allNonMajor"
+  ],
   "baseBranches": [
     "dev"
   ],
