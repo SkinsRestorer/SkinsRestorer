@@ -10,7 +10,7 @@ dependencies {
     }
 
     api("com.google.code.gson:gson:2.12.1")
-    implementation("org.mariadb.jdbc:mariadb-java-client:3.5.1") {
+    implementation("org.mariadb.jdbc:mariadb-java-client:3.5.2") {
         exclude("com.github.waffle", "waffle-jna")
     }
 
@@ -28,7 +28,7 @@ dependencies {
         isTransitive = false
     }
 
-    compileOnly("net.kyori:adventure-text-minimessage:4.18.0")
+    compileOnly("net.kyori:adventure-text-minimessage:4.19.0")
     compileOnly("io.github.miniplaceholders:miniplaceholders-api:2.2.3")
 
     compileOnly("org.geysermc.floodgate:api:2.2.2-SNAPSHOT")
