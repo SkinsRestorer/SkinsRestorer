@@ -59,11 +59,12 @@ public class CustomCooldownProcessor<C> implements CommandPostprocessor<C> {
         if (cooldownInstance != null) {
             final Instant endTime = cooldownInstance.creationTime().plus(cooldownInstance.duration());
             final Duration remainingTime = Duration.between(Instant.now(this.cooldownManager.configuration().clock()), endTime);
+            final Duration filteredDuration = remainingTime.toSeconds() <= 0 ? Duration.ofSeconds(1) : remainingTime;
             this.cooldownManager.configuration().activeCooldownListeners().forEach(listener -> listener.cooldownActive(
                     context.commandContext().sender(),
                     context.command(),
                     cooldownInstance,
-                    remainingTime
+                    filteredDuration
             ));
             ConsumerService.interrupt();
         }

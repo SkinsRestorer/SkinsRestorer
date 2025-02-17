@@ -20,8 +20,8 @@ package net.skinsrestorer.shared.commands.library;
 import ch.jalu.configme.SettingsManager;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shadow.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.skinsrestorer.api.property.SkinVariant;
+import net.skinsrestorer.shadow.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.skinsrestorer.shared.commands.library.annotations.*;
 import net.skinsrestorer.shared.commands.library.types.PlayerSelectorArgumentParser;
 import net.skinsrestorer.shared.config.ProxyConfig;
@@ -102,7 +102,8 @@ public class SRCommandManager {
         });
         this.cooldownManager = CooldownManager.cooldownManager(CooldownConfiguration.<SRCommandSender>builder()
                 .repository(cooldownRepository)
-                .addCreationListener((sender, command, instance) -> service.schedule(new CooldownDeletionTask(instance.group(), instance.profile()), instance.duration().toSeconds(), TimeUnit.SECONDS))
+                .addCreationListener((sender, command, instance) ->
+                        service.schedule(new CooldownDeletionTask(instance.group(), instance.profile()), instance.duration().toSeconds(), TimeUnit.SECONDS))
                 .addAllActiveCooldownListeners(List.of((sender, command, cooldown, remainingTime) ->
                         sender.sendMessage(Message.SKIN_COOLDOWN, Placeholder.parsed("time", SRHelpers.durationFormat(locale, sender, remainingTime)))))
                 .bypassCooldown(context -> !(context.sender() instanceof SRPlayer) || context.sender().hasPermission(PermissionRegistry.BYPASS_COOLDOWN))
@@ -136,8 +137,10 @@ public class SRCommandManager {
         MinecraftExceptionHandler
                 .create(ComponentHelper::commandSenderToAudience)
                 .defaultHandlers()
-                .handler(InvalidCommandSenderException.class, (formatter, ctx) -> ComponentHelper.convertJsonToComponent(locale.getMessageRequired(ctx.context().sender(), Message.ONLY_ALLOWED_ON_PLAYER)))
-                .handler(SRMessageException.class, (formatter, ctx) -> ComponentHelper.convertJsonToComponent(ctx.exception().getMessageSupplier().apply(locale)))
+                .handler(InvalidCommandSenderException.class, (formatter, ctx) ->
+                        ComponentHelper.convertJsonToComponent(locale.getMessageRequired(ctx.context().sender(), Message.ONLY_ALLOWED_ON_PLAYER)))
+                .handler(SRMessageException.class, (formatter, ctx) ->
+                        ComponentHelper.convertJsonToComponent(ctx.exception().getMessageSupplier().apply(locale)))
                 .captionFormatter(ComponentCaptionFormatter.miniMessage())
                 .registerTo(commandManager);
 
