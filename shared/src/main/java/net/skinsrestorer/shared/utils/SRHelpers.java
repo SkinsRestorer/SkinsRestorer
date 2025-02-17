@@ -239,19 +239,11 @@ public class SRHelpers {
         return map;
     }
 
-    public static boolean isNotAllowedUnquotedString(String str) {
-        return !str.chars().allMatch(c -> isAllowedInUnquotedString((char) c));
-    }
-
-    public static boolean isAllowedInUnquotedString(char c) {
-        return c >= '0' && c <= '9'
-                || c >= 'A' && c <= 'Z'
-                || c >= 'a' && c <= 'z'
-                || c == '_' || c == '-'
-                || c == '.' || c == '+';
-    }
-
     public static String durationFormat(SkinsRestorerLocale locale, SRCommandSender sender, Duration duration) {
+        if (duration.isNegative() || duration.isZero() || duration.getSeconds() == 0) {
+            duration = Duration.ofSeconds(1);
+        }
+
         long days = duration.toDaysPart();
         long hours = duration.toHoursPart();
         long minutes = duration.toMinutesPart();
