@@ -124,7 +124,6 @@
   "skinsrestorer.skinsmenu_favourites_button": "<aqua><bold>[</bold> <gray>Favoritenmenü</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_back_select_button": "<yellow><bold>«</bold> <gray>Menü wählen Sie</gray> <bold>«</bold>",
   "skinsrestorer.no_skin_data": "<dark_red>Fehler<dark_gray>: <red>Keine Skin Daten gefunden!",
-  "skinsrestorer.outdated": "<dark_red>Du verwendest eine veraltete Version von SkinsRestorer auf Deiner <platform>!<newline><red> Bitte aktualisiere auf die neueste Version auf Spigot: <newline><yellow>https://www. pigotmc.org/resources/skinsrestorer.2124/",
   "skinsrestorer.unsupported_java": "<dark_red>Die Java-Version (<version>) Deiner<platform> wird von SkinsRestorer nicht unterstützt!<newline><red>Bitte aktualisiere auf Java 17 oder höher, um SkinsRestorer ohne Probleme zu verwenden. Neuere Java-Versionen können auch ältere Server ausführen, so dass ein Minecraft 1.8 Server auf Java 17 laufen kann. Lesen Sie die Konsoleninfo für weitere Details.",
   "skinsrestorer.permission_player_wildcard": "Platzhalter Berechtigung für Spieler",
   "skinsrestorer.permission_command": "Erlaubt den Zugriff auf die Haupt-\"/skin\"-Befehle.",
