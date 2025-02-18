@@ -125,7 +125,6 @@
   "skinsrestorer.skinsmenu_favourites_button": "<aqua><bold>[</bold> <gray>最愛菜單</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_back_select_button": "<yellow><bold>«</bold> <gray>菜單選擇</gray> <bold>«</bold>",
   "skinsrestorer.no_skin_data": "<dark_red>錯誤<dark_gray>: <red>未找到皮膚數據！",
-  "skinsrestorer.outdated": "<dark_red>你在<platform>上運行的SkinsRestorer版本已過時！<newline><red>請更新到Spigot上的最新版本：<newline><yellow>https://www.spigotmc.org/resources/skinsrestorer.2124/",
   "skinsrestorer.unsupported_java": "<dark_red>你的<platform>的Java版本（<version>）不受SkinsRestorer支持！<newline><red>請更新到Java 17或更高版本以無問題地使用SkinsRestorer。較新的Java版本也可以運行舊的伺服器，因此Minecraft 1.8伺服器可以在Java 17上運行。請閱讀控制台信息以獲取更多詳細信息。",
   "skinsrestorer.permission_player_wildcard": "玩家的通配符權限",
   "skinsrestorer.permission_command": "允許訪問主“/skin”命令。",
