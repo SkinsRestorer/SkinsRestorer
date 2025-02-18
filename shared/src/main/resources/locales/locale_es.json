@@ -125,7 +125,6 @@
   "skinsrestorer.skinsmenu_favourites_button": "<aqua><bold>[</bold> <gray>Menú de Favoritos</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_back_select_button": "<yellow><bold>«</bold> <gray>Menú de Selección</gray> <bold>«</bold>",
   "skinsrestorer.no_skin_data": "<dark_red>Error<dark_gray>: <red>¡No se encontraron datos de skin! ¿Este jugador tiene un skin?",
-  "skinsrestorer.outdated": "<dark_red>Estás usando una versión vieja de SkinsRestorer en tu <platform>!<newline><red>Puede actualizarlo mediante el siguiente link en Spigot: <newline><yellow>https://www.spigotmc.org/resources/skinsrestorer.2124",
   "skinsrestorer.unsupported_java": "<dark_red>La versión de Java (<version>) de tu <platform> no es compatible con SkinsRestorer!<newline><red>Por favor, actualice a Java 17 o superior para utilizar SkinsRestorer sin problemas. Las nuevas versiones de Java también pueden ejecutar servidores más antiguos, por lo que un servidor de Minecraft 1.8 puede funcionar con Java 17. Lee la información de la consola para más detalles.",
   "skinsrestorer.permission_player_wildcard": "Permiso wildcard para jugadores.",
   "skinsrestorer.permission_command": "Permite el acceso a los comandos principales \"/skin\".",
