@@ -8,12 +8,12 @@ val fabric: SourceSet by sourceSets.creating
 val neoforge: SourceSet by sourceSets.creating
 
 unimined.minecraft {
-    version = "1.21"
+    version = "1.21.4"
 
     mappings {
         intermediary()
         mojmap()
-        parchment("1.21", "2024.07.28")
+        parchment("1.21.4", "2025.02.16")
 
         devFallbackNamespace("official")
     }
@@ -42,7 +42,7 @@ unimined.minecraft(fabric) {
     combineWith(main)
 
     fabric {
-        loader("0.16.0")
+        loader("0.16.10")
     }
 
     defaultRemapJar = true
@@ -52,7 +52,7 @@ unimined.minecraft(neoforge) {
     combineWith(main)
 
     neoForge {
-        loader("139-beta")
+        loader("94-beta")
     }
 
     minecraftRemapper.config {
@@ -85,7 +85,7 @@ dependencies {
 
     modImplementation("dev.architectury:architectury:15.0.3")
 
-    fabricModImplementation(fabricApi.fabric("0.100.7+1.21"))
+    fabricModImplementation(fabricApi.fabric("0.118.0+1.21.4"))
     fabricModImplementation("dev.architectury:architectury-fabric:15.0.3")
     fabricModImplementation("org.incendo:cloud-fabric:2.0.0-SNAPSHOT")
     fabricModImplementation("me.lucko:fabric-permissions-api:0.3.3")

@@ -51,7 +51,7 @@ public class SoundUtil {
 
         logger.debug("Playing sound for player: %s".formatted(player.getName()));
         SoundEvent soundEvent = BuiltInRegistries.SOUND_EVENT.stream()
-                .filter(soundEvent1 -> soundEvent1.getLocation().getPath().replace(".", "_").equalsIgnoreCase(record.getSound()))
+                .filter(soundEvent1 -> soundEvent1.location().getPath().replace(".", "_").equalsIgnoreCase(record.getSound()))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Invalid sound: " + record.getSound()));
         SoundSource source = SoundSource.valueOf(record.getCategory());
