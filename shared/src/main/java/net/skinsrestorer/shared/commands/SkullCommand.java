@@ -20,13 +20,13 @@ package net.skinsrestorer.shared.commands;
 import ch.jalu.configme.SettingsManager;
 import ch.jalu.configme.properties.Property;
 import lombok.RequiredArgsConstructor;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.skinsrestorer.api.PropertyUtils;
 import net.skinsrestorer.api.connections.MineSkinAPI;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.exception.MineSkinException;
 import net.skinsrestorer.api.property.InputDataResult;
 import net.skinsrestorer.api.property.SkinVariant;
+import net.skinsrestorer.shadow.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
 import net.skinsrestorer.shared.codec.SRServerPluginMessage;
 import net.skinsrestorer.shared.commands.library.PlayerSelector;
@@ -37,6 +37,7 @@ import net.skinsrestorer.shared.commands.library.annotations.RootDescription;
 import net.skinsrestorer.shared.commands.library.annotations.SRCooldownGroup;
 import net.skinsrestorer.shared.config.CommandConfig;
 import net.skinsrestorer.shared.connections.RecommendationsState;
+import net.skinsrestorer.shared.connections.responses.RecommenationResponse;
 import net.skinsrestorer.shared.log.SRLogLevel;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
@@ -168,15 +169,13 @@ public final class SkullCommand {
     @CommandDescription(Message.HELP_SKIN_RANDOM_OTHER)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkullRandomOther(SRCommandSender sender, PlayerSelector selector) {
-        onSkullGetOther(sender, SkinStorageImpl.RECOMMENDATION_PREFIX + recommendationsState.getRandomRecommendation().getSkinId(), selector);
-    }
+        Optional<RecommenationResponse.SkinInfo> randomRecommendation = recommendationsState.getRandomRecommendation();
+        if (randomRecommendation.isEmpty()) {
+            logger.warning("No random skins available, skipping");
+            return;
+        }
 
-    @Command("search <searchString>")
-    @CommandPermission(PermissionRegistry.SKIN_SEARCH)
-    @CommandDescription(Message.HELP_SKIN_SEARCH)
-    @SRCooldownGroup(COOLDOWN_GROUP_ID)
-    private void onSkullSearch(SRCommandSender sender, @Greedy String searchString) {
-        sender.sendMessage(Message.SKIN_SEARCH_MESSAGE, Placeholder.unparsed("search", searchString));
+        onSkullGetOther(sender, SkinStorageImpl.RECOMMENDATION_PREFIX + randomRecommendation.get().getSkinId(), selector);
     }
 
     @Command("get|give <skinName>")
@@ -201,7 +200,7 @@ public final class SkullCommand {
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkullGetOther(SRCommandSender sender, @Argument(suggestions = "skin_input_quote") @Quoted String skinName, PlayerSelector selector, SkinVariant skinVariant) {
         for (UUID target : selector.resolve(sender)) {
-            Optional<SRPlayer> targetPlayer = adapter.getPlayer(target);
+            Optional<SRPlayer> targetPlayer = adapter.getPlayer(sender, target);
             String targetName = targetPlayer.map(SRPlayer::getName).orElseGet(target::toString);
 
             if (!setSkin(sender, target, skinName, skinVariant)) {
@@ -234,9 +233,9 @@ public final class SkullCommand {
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean setSkin(SRCommandSender sender, UUID target, String skinInput, SkinVariant skinVariant) {
-        Optional<Runnable> noPermissionMessage = permissionManager.canSetSkin(sender, skinInput);
+        Optional<Message> noPermissionMessage = permissionManager.canSetSkin(sender, skinInput);
         if (noPermissionMessage.isPresent()) {
-            noPermissionMessage.get().run();
+            sender.sendMessage(noPermissionMessage.get());
             return false;
         }
 
@@ -253,7 +252,7 @@ public final class SkullCommand {
                 return false;
             }
 
-            Optional<SRPlayer> targetPlayer = adapter.getPlayer(target);
+            Optional<SRPlayer> targetPlayer = adapter.getPlayer(sender, target);
             if (targetPlayer.isEmpty()) {
                 // TODO: Send message
                 return false;

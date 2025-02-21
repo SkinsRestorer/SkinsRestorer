@@ -17,26 +17,17 @@
  */
 package net.skinsrestorer.bukkit.utils;
 
+import com.cryptomorin.xseries.profiles.builder.XSkull;
 import com.cryptomorin.xseries.profiles.objects.ProfileInputType;
 import com.cryptomorin.xseries.profiles.objects.Profileable;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
-import java.lang.reflect.Field;
 import java.util.Objects;
 
 public class SkullUtil {
     public static void setSkull(ItemStack skullItem, String hash) {
-        ItemMeta skullMeta = Objects.requireNonNull(skullItem.getItemMeta());
-
-        try {
-            Field profileField = Objects.requireNonNull(skullMeta.getClass().getDeclaredField("profile"));
-            profileField.setAccessible(true);
-            profileField.set(skullMeta, Profileable.of(Objects.requireNonNull(ProfileInputType.typeOf(hash)), hash).getProfile());
-        } catch (ReflectiveOperationException e) {
-            throw new RuntimeException(e);
-        }
-
-        skullItem.setItemMeta(skullMeta);
+        XSkull.of(skullItem)
+                .profile(Profileable.of(Objects.requireNonNull(ProfileInputType.typeOf(hash), "Unknown input"), hash))
+                .apply();
     }
 }

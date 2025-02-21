@@ -18,14 +18,23 @@
 package net.skinsrestorer.modded;
 
 import ch.jalu.injector.Injector;
+import com.mojang.authlib.properties.Property;
+import com.mojang.authlib.properties.PropertyMap;
 import dev.architectury.registry.menu.MenuRegistry;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ResolvableProfile;
+import net.skinsrestorer.api.Base64Utils;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.modded.gui.ModGUI;
 import net.skinsrestorer.modded.wrapper.WrapperMod;
+import net.skinsrestorer.shared.codec.SRServerPluginMessage;
 import net.skinsrestorer.shared.gui.SRInventory;
 import net.skinsrestorer.shared.info.Platform;
 import net.skinsrestorer.shared.info.PluginInfo;
@@ -105,6 +114,24 @@ public class SRModAdapter implements SRServerAdapter {
         MenuProvider inventory = injector.getSingleton(ModGUI.class).createGUI(srInventory);
 
         runSyncToPlayer(player, () -> MenuRegistry.openMenu(player.getAs(ServerPlayer.class), inventory));
+    }
+
+    @SuppressWarnings("HttpUrlsUsage")
+    @Override
+    public void giveSkullItem(SRPlayer player, SRServerPluginMessage.GiveSkullChannelPayload giveSkullPayload) {
+        PropertyMap properties = new PropertyMap();
+        properties.put(SkinProperty.TEXTURES_NAME, new Property(
+                SkinProperty.TEXTURES_NAME,
+                Base64Utils.encode("{\"textures\":{\"SKIN\":{\"url\":\"http://textures.minecraft.net/texture/" + giveSkullPayload.textureHash() + "\"}}}"),
+                null
+        ));
+
+        ItemStack stack = new ItemStack(Items.PLAYER_HEAD);
+        stack.applyComponents(DataComponentPatch.builder()
+                .set(DataComponents.PROFILE, new ResolvableProfile(Optional.empty(), Optional.empty(), properties))
+                .build());
+
+        player.getAs(ServerPlayer.class).getInventory().add(stack);
     }
 
     @Override
