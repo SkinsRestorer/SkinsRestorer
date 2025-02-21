@@ -23,7 +23,7 @@ spotless {
         target("**/net/skinsrestorer/**")
 
         trimTrailingWhitespace()
-        indentWithSpaces(4)
+        leadingTabsToSpaces(4)
         endWithNewline()
     }
 }
