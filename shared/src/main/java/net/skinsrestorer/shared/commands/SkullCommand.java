@@ -144,7 +144,7 @@ public final class SkullCommand {
     @CommandPermission(PermissionRegistry.SKIN_SET)
     @CommandDescription(Message.HELP_SKIN_SET)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
-    private void onSkullGetShort(SRPlayer player, @Argument(suggestions = "skin_input_quote") @Quoted String skinName) {
+    private void onSkullGetShort(SRPlayer player, @Quoted String skinName) {
         onSkullGetOther(player, skinName, PlayerSelector.singleton(player), null);
     }
 
@@ -152,7 +152,7 @@ public final class SkullCommand {
     @CommandPermission(PermissionRegistry.SKIN_SET_OTHER)
     @CommandDescription(Message.HELP_SKIN_SET_OTHER)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
-    private void onSkullGetShortOther(SRPlayer player, @Argument(suggestions = "skin_input_quote") @Quoted String skinName, PlayerSelector selector) {
+    private void onSkullGetShortOther(SRPlayer player, @Quoted String skinName, PlayerSelector selector) {
         onSkullGetOther(player, skinName, selector, null);
     }
 
@@ -182,7 +182,7 @@ public final class SkullCommand {
     @CommandPermission(PermissionRegistry.SKIN_SET)
     @CommandDescription(Message.HELP_SKIN_SET)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
-    private void onSkullGet(SRPlayer player, @Argument(suggestions = "skin_input_quote") @Quoted String skinName) {
+    private void onSkullGet(SRPlayer player, @Quoted String skinName) {
         onSkullGetOther(player, skinName, PlayerSelector.singleton(player));
     }
 
@@ -190,7 +190,7 @@ public final class SkullCommand {
     @CommandPermission(PermissionRegistry.SKIN_SET_OTHER)
     @CommandDescription(Message.HELP_SKIN_SET_OTHER)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
-    private void onSkullGetOther(SRCommandSender sender, @Argument(suggestions = "skin_input_quote") @Quoted String skinName, PlayerSelector selector) {
+    private void onSkullGetOther(SRCommandSender sender, @Quoted String skinName, PlayerSelector selector) {
         onSkullGetOther(sender, skinName, selector, null);
     }
 
@@ -198,7 +198,7 @@ public final class SkullCommand {
     @CommandPermission(PermissionRegistry.SKIN_SET_OTHER)
     @CommandDescription(Message.HELP_SKIN_SET_OTHER)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
-    private void onSkullGetOther(SRCommandSender sender, @Argument(suggestions = "skin_input_quote") @Quoted String skinName, PlayerSelector selector, SkinVariant skinVariant) {
+    private void onSkullGetOther(SRCommandSender sender, @Quoted String skinName, PlayerSelector selector, SkinVariant skinVariant) {
         for (UUID target : selector.resolve(sender)) {
             Optional<SRPlayer> targetPlayer = adapter.getPlayer(sender, target);
             String targetName = targetPlayer.map(SRPlayer::getName).orElseGet(target::toString);
@@ -222,7 +222,7 @@ public final class SkullCommand {
     @CommandPermission(PermissionRegistry.SKIN_SET_URL)
     @CommandDescription(Message.HELP_SKIN_SET_URL)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
-    private void onSkullGetUrl(SRPlayer player, @Argument(suggestions = "skin_input_quote") @Quoted String url, @Nullable SkinVariant skinVariant) {
+    private void onSkullGetUrl(SRPlayer player, @Quoted String url, @Nullable SkinVariant skinVariant) {
         if (!ValidationUtil.validSkinUrl(url)) {
             player.sendMessage(Message.ERROR_INVALID_URLSKIN);
             return;
