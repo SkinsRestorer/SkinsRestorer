@@ -335,6 +335,26 @@ public class MySQLAdapter implements StorageAdapter {
                     historySkinType,
                     historySkinVariant);
         }
+
+        mysql.execute("DELETE FROM " + resolvePlayerFavouritesTable() + " WHERE uuid=? AND timestamp NOT IN (" +
+                (data.getFavourites().isEmpty() ? "NULL" : data.getFavourites().stream().map(FavouriteData::getTimestamp).map(String::valueOf).collect(Collectors.joining(", ")))
+                + ")", uuid);
+        for (FavouriteData favouriteData : data.getFavourites()) {
+            SkinIdentifier favouriteIdentifier = favouriteData.getSkinIdentifier();
+            String favouriteSkinIdentifier = favouriteIdentifier.getIdentifier();
+            String favouriteSkinType = favouriteIdentifier.getSkinType().name();
+            String favouriteSkinVariant = favouriteIdentifier.getSkinVariant() != null ? favouriteIdentifier.getSkinVariant().name() : null;
+
+            mysql.execute("INSERT INTO " + resolvePlayerFavouritesTable() + " (uuid, timestamp, skin_identifier, skin_type, skin_variant) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE skin_identifier=?, skin_type=?, skin_variant=?",
+                    uuid.toString(),
+                    favouriteData.getTimestamp(),
+                    favouriteSkinIdentifier,
+                    favouriteSkinType,
+                    favouriteSkinVariant,
+                    favouriteSkinIdentifier,
+                    favouriteSkinType,
+                    favouriteSkinVariant);
+        }
     }
 
     @Override

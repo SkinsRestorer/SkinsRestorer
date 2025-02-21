@@ -43,7 +43,6 @@
   "skinsrestorer.skinsmenu_open": "<dark_green>Atidaromas išvaizdų meniu...",
   "skinsrestorer.skinsmenu_next_page": "<green><bold>»</bold> <gray>Kitas puslapis</gray> <bold>»</bold>",
   "skinsrestorer.skinsmenu_clear_skin": "<red><bold>[</bold> <gray>Pašalinti išvaizdą</gray> <bold>]</bold>",
-  "skinsrestorer.skin_search_message": "<dark_green>Galite rasti tinkamą išvaizdą <green><search></green> čia: <newline><green>https://namemc.com/minecraft-skins/tag/<search> <newline><newline><dark_green>Jei išvaizdų nerandate čia, jų visada galite rasti https://namemc.com/minecraft-skins/tag <newline>Galite nustatyti savo išvaizdą naudodami išvaizdos nuorodą:<newline>/skin https://namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>Klaida<dark_gray>: <red>Negauta jokių išvaizdos duomenų! Ar šis žaidėjas turi išvaizdą?",
   "skinsrestorer.permission_player_wildcard": "Pakaitos simbolių leidimas žaidėjams",
   "skinsrestorer.permission_command": "Leidžia naudoti pagrindines \"/skin\" komandas.",

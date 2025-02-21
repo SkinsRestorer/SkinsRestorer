@@ -27,6 +27,7 @@ import java.util.List;
 
 import static ch.jalu.configme.properties.PropertyInitializer.newListProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
+import static net.skinsrestorer.shared.config.ConfigHelpers.newCappedProperty;
 
 public class CommandConfig implements SettingsHolder {
 
@@ -43,9 +44,9 @@ public class CommandConfig implements SettingsHolder {
             "SkinErrorCooldown is used when an error or invalid url occurs.",
             "Can be bypassed with 'skinsrestorer.bypasscooldown'."
     })
-    public static final Property<Integer> SKIN_CHANGE_COOLDOWN = newProperty("commands.skinChangeCooldown", 30);
+    public static final Property<Integer> SKIN_CHANGE_COOLDOWN = newCappedProperty("commands.skinChangeCooldown", 30, 0, Integer.MAX_VALUE);
 
-    public static final Property<Integer> SKIN_ERROR_COOLDOWN = newProperty("commands.skinErrorCooldown", 5);
+    public static final Property<Integer> SKIN_ERROR_COOLDOWN = newCappedProperty("commands.skinErrorCooldown", 5, 0, Integer.MAX_VALUE);
     public static final Property<Boolean> RESTRICT_SKIN_URLS_ENABLED = newProperty("commands.restrictSkinUrls.enabled", false);
     @SuppressWarnings("HttpUrlsUsage")
     public static final Property<List<String>> RESTRICT_SKIN_URLS_LIST = newListProperty("commands.restrictSkinUrls.list",
@@ -82,13 +83,13 @@ public class CommandConfig implements SettingsHolder {
             "This is used for the /skin undo command.",
             "Use 0 to disable storing command history."
     })
-    public static final Property<Integer> MAX_HISTORY_LENGTH = newProperty("commands.maxHistoryLength", SharedGUI.HEAD_COUNT_PER_PAGE);
+    public static final Property<Integer> MAX_HISTORY_LENGTH = newCappedProperty("commands.maxHistoryLength", SharedGUI.HEAD_COUNT_PER_PAGE, 0, Integer.MAX_VALUE);
     @Comment({
             "How many favourites a player may have.",
             "This is used for the /skin favourite command.",
             "Use 0 to disable storing favourites."
     })
-    public static final Property<Integer> MAX_FAVOURITE_LENGTH = newProperty("commands.maxFavouriteLength", SharedGUI.HEAD_COUNT_PER_PAGE * 5);
+    public static final Property<Integer> MAX_FAVOURITE_LENGTH = newCappedProperty("commands.maxFavouriteLength", SharedGUI.HEAD_COUNT_PER_PAGE * 5, 0, Integer.MAX_VALUE);
     @Comment({
             "Override the automatically generated translated help message with a custom one.",
             "This is useful if you want to have a custom help message for your server.",

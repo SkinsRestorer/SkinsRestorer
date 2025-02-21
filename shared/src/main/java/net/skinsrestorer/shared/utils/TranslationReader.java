@@ -21,17 +21,14 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class TranslationReader {
     private final static Gson gson = new Gson();
 
-    public static Map<String, String> readJsonTranslation(InputStream is) {
-        JsonObject jsonObject = gson.fromJson(new InputStreamReader(is, StandardCharsets.UTF_8), JsonObject.class);
+    public static Map<String, String> readJsonTranslation(String str) {
+        JsonObject jsonObject = gson.fromJson(str, JsonObject.class);
 
         Map<String, String> map = new LinkedHashMap<>();
         for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {

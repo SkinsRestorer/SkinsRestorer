@@ -62,7 +62,7 @@ public class Mapping1_19_3 implements IMapping {
                 entityPlayer.getLastDeathLocation()
         );
 
-        sendPacket(entityPlayer, new ClientboundPlayerInfoRemovePacket(List.of(player.getUniqueId())));
+        sendPacket(entityPlayer, new ClientboundPlayerInfoRemovePacket(List.of(entityPlayer.getUUID())));
         sendPacket(entityPlayer, ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(entityPlayer)));
 
         if (viaFunction.test(() -> new ViaPacketData(player, respawn.getSeed(), respawn.getPlayerGameType().getId(), respawn.isFlat()))) {

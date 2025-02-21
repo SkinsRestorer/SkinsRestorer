@@ -1,4 +1,5 @@
 {
+  "skinsrestorer.prefix_format": "<yellow>[<dark_green>SkinsRestorer</dark_green>] <message>",
   "skinsrestorer.help_skin": "更改您自己的皮肤。",
   "skinsrestorer.help_skins": "打开皮肤菜单",
   "skinsrestorer.help_sr": "SkinsRestorer的管理员指令",
@@ -122,9 +123,7 @@
   "skinsrestorer.skinsmenu_history_button": "<aqua><bold>[</bold> <gray>历史菜单</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_favourites_button": "<aqua><bold>[</bold> <gray>收藏菜单</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_back_select_button": "<yellow><bold>«</bold> <gray>菜单选择</gray> <bold>«</bold>",
-  "skinsrestorer.skin_search_message": "<dark_green>您可以在这里找到匹配 <green><search></green> 的皮肤: <newline><green>htps://namemc.com/minecraft-skins/tag/<search> <newline><newline><dark_green>如果找不到皮肤，您可以在 https://namemc.com/minecraft-skins/tag 找到其他皮肤。 <newline>您可以通过以下命令使用链接设置皮肤：<newline> /skin https://namemc.com/skin/",
   "skinsrestorer.no_skin_data": "<dark_red>错误<dark_gray>：<red>没有获取到皮肤数据！确定这个玩家有皮肤吗？",
-  "skinsrestorer.outdated": "<dark_red>你正在运行一个旧版本的 SkinsRestorer!<platform> <newline><red>请到 SpigotMC 更新 SkinsRestorer 至最新版本: <newline><yellow>https://www.spigotmc.org/resources/skinsrestorer.2124/",
   "skinsrestorer.unsupported_java": "<dark_red>SkinsResotorer不支持您的 <platform> 的 Java 版本 (<version>) ！<newline><red>请更新到 Java 17或更高版本来使用 SkinsRestorer 而不存在问题。 较新的 Java 版本也可以运行旧服务器，所以Minecraft 1.8 服务器可以在 Java 17 上运行。阅读控制台信息以了解更多详情。",
   "skinsrestorer.permission_player_wildcard": "玩家通配符权限",
   "skinsrestorer.permission_command": "允许使用\"/skin\"命令。",

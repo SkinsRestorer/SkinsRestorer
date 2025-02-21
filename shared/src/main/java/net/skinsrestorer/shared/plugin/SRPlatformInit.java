@@ -17,7 +17,7 @@
  */
 package net.skinsrestorer.shared.plugin;
 
-public interface SRPlatformInit {
+public sealed interface SRPlatformInit permits SRProxyPlatformInit, SRServerPlatformInit {
     default void checkPluginSupport() {
     }
 
@@ -28,5 +28,8 @@ public interface SRPlatformInit {
     void initAdminInfoListener();
 
     default void prePlatformInit() {
+    }
+
+    default void placeholderSetupHook() {
     }
 }

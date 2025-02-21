@@ -3,5 +3,6 @@ plugins {
 }
 
 mapping {
-    mcVersion = "1.21"
+    // Upstream only has 1.21.1
+    mcVersion = "1.21.1"
 }

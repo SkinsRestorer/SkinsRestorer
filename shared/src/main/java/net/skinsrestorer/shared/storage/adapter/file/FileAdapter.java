@@ -88,14 +88,10 @@ public class FileAdapter implements StorageAdapter {
 
     @Override
     public void init() {
-        try {
-            Files.createDirectories(skinsFolder);
-            Files.createDirectories(playersFolder);
-            Files.createDirectories(cooldownsFolder);
-            Files.createDirectories(cacheFolder);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        SRHelpers.createDirectoriesSafe(skinsFolder);
+        SRHelpers.createDirectoriesSafe(playersFolder);
+        SRHelpers.createDirectoriesSafe(cooldownsFolder);
+        SRHelpers.createDirectoriesSafe(cacheFolder);
     }
 
     private void migrate(Path dataFolder) throws IOException {
@@ -124,7 +120,7 @@ public class FileAdapter implements StorageAdapter {
 
                 if (!generatedFolder) {
                     generatedFolder = true;
-                    Files.createDirectories(legacyPlayersFolder);
+                    SRHelpers.createDirectoriesSafe(legacyPlayersFolder);
                     logger.info("Migrating legacy player files to new format...");
                 }
 
@@ -138,7 +134,7 @@ public class FileAdapter implements StorageAdapter {
 
                     LegacyPlayerData legacyPlayerData = LegacyPlayerData.of(playerName, skinName);
 
-                    Files.writeString(legacyPlayerFile, gson.toJson(LegacyPlayerFile.fromLegacyPlayerData(legacyPlayerData)));
+                    SRHelpers.writeIfNeeded(legacyPlayerFile, gson.toJson(LegacyPlayerFile.fromLegacyPlayerData(legacyPlayerData)));
 
                     Files.deleteIfExists(path);
                 } catch (Exception e) {
@@ -165,7 +161,7 @@ public class FileAdapter implements StorageAdapter {
             for (Path path : stream) {
                 if (!generatedFolder) {
                     generatedFolder = true;
-                    Files.createDirectories(legacySkinsFolder);
+                    SRHelpers.createDirectoriesSafe(legacySkinsFolder);
                     logger.info("Migrating legacy skin files to new format...");
                 }
 
@@ -189,7 +185,7 @@ public class FileAdapter implements StorageAdapter {
                     } else {
                         LegacySkinData legacySkinData = LegacySkinData.of(skinName, skinProperty);
 
-                        Files.writeString(legacySkinFile, gson.toJson(LegacySkinFile.fromLegacySkinData(legacySkinData)));
+                        SRHelpers.writeIfNeeded(legacySkinFile, gson.toJson(LegacySkinFile.fromLegacySkinData(legacySkinData)));
                     }
 
                     Files.deleteIfExists(path);
@@ -231,7 +227,7 @@ public class FileAdapter implements StorageAdapter {
         try {
             PlayerFile file = PlayerFile.fromPlayerData(data);
 
-            Files.writeString(playerFile, gson.toJson(file));
+            SRHelpers.writeIfNeeded(playerFile, gson.toJson(file));
         } catch (IOException e) {
             logger.warning("Failed to save player data for " + uuid, e);
         }
@@ -274,7 +270,7 @@ public class FileAdapter implements StorageAdapter {
         try {
             PlayerSkinFile file = PlayerSkinFile.fromPlayerSkinData(skinData);
 
-            Files.writeString(skinFile, gson.toJson(file));
+            SRHelpers.writeIfNeeded(skinFile, gson.toJson(file));
         } catch (IOException e) {
             logger.warning("Failed to save player skin data for " + uuid, e);
         }
@@ -317,7 +313,7 @@ public class FileAdapter implements StorageAdapter {
         try {
             URLSkinFile file = URLSkinFile.fromURLSkinData(skinData);
 
-            Files.writeString(skinFile, gson.toJson(file));
+            SRHelpers.writeIfNeeded(skinFile, gson.toJson(file));
         } catch (IOException e) {
             logger.warning("Failed to save URL skin data for " + url, e);
         }
@@ -360,7 +356,7 @@ public class FileAdapter implements StorageAdapter {
         try {
             URLIndexFile file = URLIndexFile.fromURLIndexData(skinData);
 
-            Files.writeString(skinFile, gson.toJson(file));
+            SRHelpers.writeIfNeeded(skinFile, gson.toJson(file));
         } catch (IOException e) {
             logger.warning("Failed to save URL skin index for " + url, e);
         }
@@ -406,7 +402,7 @@ public class FileAdapter implements StorageAdapter {
         try {
             CustomSkinFile file = CustomSkinFile.fromCustomSkinData(skinData);
 
-            Files.writeString(skinFile, gson.toJson(file));
+            SRHelpers.writeIfNeeded(skinFile, gson.toJson(file));
         } catch (IOException e) {
             logger.warning("Failed to save custom skin data for " + skinName, e);
         }
@@ -686,7 +682,7 @@ public class FileAdapter implements StorageAdapter {
         try {
             MojangCacheFile file = MojangCacheFile.fromMojangCacheData(mojangCacheData);
 
-            Files.writeString(cacheFile, gson.toJson(file));
+            SRHelpers.writeIfNeeded(cacheFile, gson.toJson(file));
         } catch (IOException e) {
             logger.warning("Failed to save cached UUID for " + playerName, e);
         }
@@ -727,8 +723,8 @@ public class FileAdapter implements StorageAdapter {
                     continue;
                 }
 
-                UUID uuid = UUID.fromString(parts[0]);
-                if (!uuid.equals(owner)) {
+                UUID uuid = UUIDUtils.parseUniqueIdNullable(parts[0]);
+                if (uuid == null || !uuid.equals(owner)) {
                     continue;
                 }
 
@@ -739,7 +735,7 @@ public class FileAdapter implements StorageAdapter {
 
                     list.add(file.toCooldownData());
                 } catch (Exception e) {
-                    throw new StorageException(e);
+                    logger.debug("Failed to load cooldown data for " + owner, e);
                 }
             }
 
@@ -756,7 +752,7 @@ public class FileAdapter implements StorageAdapter {
         try {
             CooldownFile file = CooldownFile.fromCooldownData(new StorageCooldown(owner, groupName, creationTime, duration));
 
-            Files.writeString(cooldownFile, gson.toJson(file));
+            SRHelpers.writeIfNeeded(cooldownFile, gson.toJson(file));
         } catch (IOException e) {
             logger.warning("Failed to save cooldown data for " + owner, e);
         }

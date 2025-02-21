@@ -33,6 +33,7 @@ public enum PermissionRegistry {
     SKIN_RANDOM("skinsrestorer.command.random", Message.PERMISSION_COMMAND_RANDOM),
     SKIN_RANDOM_OTHER("skinsrestorer.command.random.other", Message.PERMISSION_COMMAND_RANDOM_OTHER),
     SKIN_SEARCH("skinsrestorer.command.search", Message.PERMISSION_COMMAND_SEARCH),
+    SKIN_EDIT("skinsrestorer.command.edit", Message.PERMISSION_COMMAND_EDIT),
     SKIN_UPDATE("skinsrestorer.command.update", Message.PERMISSION_COMMAND_UPDATE),
     SKIN_UPDATE_OTHER("skinsrestorer.command.update.other", Message.PERMISSION_COMMAND_UPDATE_OTHER),
     SKIN_UNDO("skinsrestorer.command.undo", Message.PERMISSION_COMMAND_UNDO),

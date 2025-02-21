@@ -17,7 +17,7 @@
  */
 package net.skinsrestorer.shared.exception;
 
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.skinsrestorer.shadow.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.skinsrestorer.api.exception.MineSkinException;
 import net.skinsrestorer.shared.subjects.SRForeign;
 import net.skinsrestorer.shared.subjects.messages.ComponentString;

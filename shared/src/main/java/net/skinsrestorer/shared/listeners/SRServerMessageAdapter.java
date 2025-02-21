@@ -18,9 +18,11 @@
 package net.skinsrestorer.shared.listeners;
 
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
 import net.skinsrestorer.shared.codec.SRInputReader;
 import net.skinsrestorer.shared.codec.SRServerPluginMessage;
+import net.skinsrestorer.shared.gui.SRInventory;
 import net.skinsrestorer.shared.listeners.event.SRServerMessageEvent;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
 import net.skinsrestorer.shared.utils.SRHelpers;
@@ -29,7 +31,7 @@ import javax.inject.Inject;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class SRServerMessageAdapter {
-    private final SRServerAdapter adapter;
+    private final SRServerAdapter serverAdapter;
     private final SharedSkinApplier<Object> skinApplier;
 
     public void handlePluginMessage(SRServerMessageEvent event) {
@@ -37,14 +39,16 @@ public final class SRServerMessageAdapter {
             return;
         }
 
-        SRServerPluginMessage message = SRServerPluginMessage.CODEC.read(new SRInputReader(event.getData()));
-        SRServerPluginMessage.ChannelPayload<?> channelPayload = message.channelPayload();
-        if (channelPayload instanceof SRServerPluginMessage.GUIPageChannelPayload payload) {
-            adapter.openGUI(event.getPlayer(), payload.srInventory());
-        } else if (channelPayload instanceof SRServerPluginMessage.SkinUpdateChannelPayload payload) {
-            skinApplier.applySkin(event.getPlayer().getAs(Object.class), payload.skinProperty());
-        } else if (channelPayload instanceof SRServerPluginMessage.GiveSkullChannelPayload payload) {
-            adapter.giveSkullItem(event.getPlayer(), payload);
-        }
+        serverAdapter.runAsync(() -> {
+            SRServerPluginMessage message = SRServerPluginMessage.CODEC.read(new SRInputReader(event.getData()));
+            SRServerPluginMessage.ChannelPayload<?> channelPayload = message.channelPayload();
+            if (channelPayload instanceof SRServerPluginMessage.GUIPageChannelPayload(SRInventory srInventory)) {
+                serverAdapter.openGUI(event.getPlayer(), srInventory);
+            } else if (channelPayload instanceof SRServerPluginMessage.SkinUpdateChannelPayload(SkinProperty skinProperty)) {
+                skinApplier.applySkin(event.getPlayer().getAs(Object.class), skinProperty);
+            } else if (channelPayload instanceof SRServerPluginMessage.GiveSkullChannelPayload payload) {
+                serverAdapter.giveSkullItem(event.getPlayer(), payload);
+            }
+        });
     }
 }

@@ -22,14 +22,13 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
       - name: Build with Gradle
-        uses: gradle/gradle-build-action@v3
-        with:
-          arguments: build test --stacktrace --scan
-          dependency-graph: generate-and-submit
-        env:
-          # Only generate dependency graph on push events
-          GITHUB_DEPENDENCY_GRAPH_ENABLED: "${{ github.event_name != 'pull_request' }}"
+        run: ./gradlew build test --stacktrace --scan
+      - name: Generate and submit dependency graph
+        if: "${{ github.event_name != 'pull_request' }}"
+        uses: gradle/actions/dependency-submission@v4
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:

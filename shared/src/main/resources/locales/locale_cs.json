@@ -1,3 +1,13 @@
 {
-  "skinsrestorer.help_skin": "Změní tvůj skin."
+  "skinsrestorer.help_skin": "Změní tvůj skin.",
+  "skinsrestorer.help_skins": "Otevře GUI skinů.",
+  "skinsrestorer.help_sr": "Admin příkazy pro SkinsRestorer.",
+  "skinsrestorer.duration_day": " den",
+  "skinsrestorer.duration_days": " dní",
+  "skinsrestorer.duration_hour": " hodina",
+  "skinsrestorer.duration_hours": " hodin",
+  "skinsrestorer.duration_minute": " minuta",
+  "skinsrestorer.duration_minutes": " minut",
+  "skinsrestorer.duration_second": " vteřina",
+  "skinsrestorer.duration_seconds": " vteřin"
 }

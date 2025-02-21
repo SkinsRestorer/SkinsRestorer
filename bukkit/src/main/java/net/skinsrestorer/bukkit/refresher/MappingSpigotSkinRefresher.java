@@ -17,34 +17,64 @@
  */
 package net.skinsrestorer.bukkit.refresher;
 
+import ch.jalu.injector.Injector;
 import net.skinsrestorer.bukkit.mappings.IMapping;
+import net.skinsrestorer.bukkit.mappings.ViaPacketData;
+import net.skinsrestorer.bukkit.utils.ExceptionSupplier;
 import net.skinsrestorer.bukkit.utils.MappingManager;
+import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
 import net.skinsrestorer.shared.log.SRLogger;
+import net.skinsrestorer.shared.subjects.messages.Message;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 
 import javax.inject.Inject;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.Predicate;
 
 public class MappingSpigotSkinRefresher implements SkinRefresher {
     private final IMapping mapping;
     private final ViaRefreshProvider viaProvider;
 
     @Inject
-    public MappingSpigotSkinRefresher(Server server, SRLogger logger, ViaRefreshProvider viaProvider) {
+    public MappingSpigotSkinRefresher(Injector injector, Server server, SRLogger logger, ViaRefreshProvider viaProvider) {
         this.viaProvider = viaProvider;
 
         Optional<IMapping> mapping = MappingManager.getMapping(server);
         if (mapping.isEmpty()) {
-            logger.severe("Your Minecraft version (%s) is not supported by this version of SkinsRestorer! Is there a newer version available? If not, join our discord server!".formatted(MappingManager.getVersion(server)));
-            throw new IllegalStateException("No mapping found for this server version!");
-        }
+            logger.severe(("Your Minecraft version (%s) is not supported by this version of SkinsRestorer! " +
+                    "Is there a newer version available? " +
+                    "If not, join our discord server!").formatted(MappingManager.getVersion(server)));
 
-        this.mapping = mapping.get();
+            if (Boolean.getBoolean("sr.throw-if-mapping-unsupported")) {
+                throw new IllegalStateException("Unsupported Minecraft version");
+            } else {
+                this.mapping = injector.getSingleton(UnsupportedMapping.class);
+            }
+        } else {
+            this.mapping = mapping.get();
+        }
     }
 
     @Override
     public void refresh(Player player) {
         mapping.accept(player, viaProvider);
+    }
+
+    private record UnsupportedMapping(WrapperBukkit wrapper) implements IMapping {
+        @Inject
+        private UnsupportedMapping {
+        }
+
+        @Override
+        public void accept(Player player, Predicate<ExceptionSupplier<ViaPacketData>> viaFunction) {
+            wrapper.player(player).sendMessage(Message.ERROR_PLAYER_REFRESH_NO_MAPPING);
+        }
+
+        @Override
+        public Set<String> getSupportedVersions() {
+            return Set.of(); // This is fine, it's not used
+        }
     }
 }

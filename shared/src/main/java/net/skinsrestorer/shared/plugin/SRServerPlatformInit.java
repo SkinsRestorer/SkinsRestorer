@@ -17,7 +17,7 @@
  */
 package net.skinsrestorer.shared.plugin;
 
-public interface SRServerPlatformInit extends SRPlatformInit {
+public non-sealed interface SRServerPlatformInit extends SRPlatformInit {
     default void initMetricsJoinListener() {
     }
 
@@ -26,7 +26,4 @@ public interface SRServerPlatformInit extends SRPlatformInit {
     void initGUIListener();
 
     void initMessageChannel();
-
-    default void placeholderSetupHook() {
-    }
 }

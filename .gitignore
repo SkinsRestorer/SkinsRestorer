@@ -13,6 +13,7 @@ target/
 *.plantuml
 
 # Gradle
+.kotlin
 .gradle
 **/build/
 !src/**/build/

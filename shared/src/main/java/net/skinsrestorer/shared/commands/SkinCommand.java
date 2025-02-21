@@ -20,11 +20,12 @@ package net.skinsrestorer.shared.commands;
 import ch.jalu.configme.SettingsManager;
 import ch.jalu.configme.properties.Property;
 import lombok.RequiredArgsConstructor;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.skinsrestorer.api.PropertyUtils;
 import net.skinsrestorer.api.connections.MineSkinAPI;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.exception.MineSkinException;
 import net.skinsrestorer.api.property.*;
+import net.skinsrestorer.shadow.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
 import net.skinsrestorer.shared.commands.library.PlayerSelector;
 import net.skinsrestorer.shared.commands.library.SRCommandManager;
@@ -34,10 +35,12 @@ import net.skinsrestorer.shared.commands.library.annotations.RootDescription;
 import net.skinsrestorer.shared.commands.library.annotations.SRCooldownGroup;
 import net.skinsrestorer.shared.config.CommandConfig;
 import net.skinsrestorer.shared.connections.RecommendationsState;
+import net.skinsrestorer.shared.connections.responses.RecommenationResponse;
 import net.skinsrestorer.shared.log.SRLogLevel;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.plugin.SRPlugin;
+import net.skinsrestorer.shared.storage.HardcodedSkins;
 import net.skinsrestorer.shared.storage.PlayerStorageImpl;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.storage.model.player.FavouriteData;
@@ -149,7 +152,7 @@ public final class SkinCommand {
     @CommandPermission(PermissionRegistry.SKIN_SET)
     @CommandDescription(Message.HELP_SKIN_SET)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
-    private void onSkinSetShort(SRPlayer player, @Argument(suggestions = "skin_input_quote") @Quoted String skinName) {
+    private void onSkinSetShort(SRPlayer player, @Quoted String skinName) {
         onSkinSetOther(player, skinName, PlayerSelector.singleton(player), null);
     }
 
@@ -157,7 +160,7 @@ public final class SkinCommand {
     @CommandPermission(PermissionRegistry.SKIN_SET_OTHER)
     @CommandDescription(Message.HELP_SKIN_SET_OTHER)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
-    private void onSkinSetShortOther(SRPlayer player, @Argument(suggestions = "skin_input_quote") @Quoted String skinName, PlayerSelector selector) {
+    private void onSkinSetShortOther(SRPlayer player, @Quoted String skinName, PlayerSelector selector) {
         onSkinSetOther(player, skinName, selector, null);
     }
 
@@ -175,7 +178,7 @@ public final class SkinCommand {
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinClearOther(SRCommandSender sender, PlayerSelector selector) {
         for (UUID target : selector.resolve(sender)) {
-            Optional<SRPlayer> targetPlayer = adapter.getPlayer(target);
+            Optional<SRPlayer> targetPlayer = adapter.getPlayer(sender, target);
             String targetName = targetPlayer.map(SRPlayer::getName).orElseGet(target::toString);
 
             // Remove the targets defined skin from database
@@ -212,7 +215,13 @@ public final class SkinCommand {
     @CommandDescription(Message.HELP_SKIN_RANDOM_OTHER)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinRandomOther(SRCommandSender sender, PlayerSelector selector) {
-        onSkinSetOther(sender, SkinStorageImpl.RECOMMENDATION_PREFIX + recommendationsState.getRandomRecommendation().getSkinId(), selector);
+        Optional<RecommenationResponse.SkinInfo> randomRecommendation = recommendationsState.getRandomRecommendation();
+        if (randomRecommendation.isEmpty()) {
+            logger.warning("No random skins available, skipping");
+            return;
+        }
+
+        onSkinSetOther(sender, SkinStorageImpl.RECOMMENDATION_PREFIX + randomRecommendation.get().getSkinId(), selector);
     }
 
     @Command("search <searchString>")
@@ -221,6 +230,16 @@ public final class SkinCommand {
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinSearch(SRCommandSender sender, @Greedy String searchString) {
         sender.sendMessage(Message.SKIN_SEARCH_MESSAGE, Placeholder.unparsed("search", searchString));
+    }
+
+    @Command("edit")
+    @CommandPermission(PermissionRegistry.SKIN_EDIT)
+    @CommandDescription(Message.HELP_SKIN_EDIT)
+    @SRCooldownGroup(COOLDOWN_GROUP_ID)
+    private void onSkinEdit(SRPlayer player) {
+        player.sendMessage(Message.SKIN_EDIT_MESSAGE,
+                Placeholder.parsed("url", "https://minecraft.novaskin.me/?skin=%s".formatted(
+                        PropertyUtils.getSkinTextureUrl(adapter.getSkinProperty(player).orElse(HardcodedSkins.STEVE.getProperty())))));
     }
 
     @Command("update|refresh")
@@ -237,14 +256,14 @@ public final class SkinCommand {
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinUpdateOther(SRCommandSender sender, PlayerSelector selector) {
         for (UUID target : selector.resolve(sender)) {
-            Optional<SRPlayer> targetPlayer = adapter.getPlayer(target);
+            Optional<SRPlayer> targetPlayer = adapter.getPlayer(sender, target);
             String targetName = targetPlayer.map(SRPlayer::getName).orElseGet(target::toString);
 
             try {
                 Optional<SkinIdentifier> currentSkin = targetPlayer.isPresent() ? playerStorage.getSkinIdForPlayer(target, targetPlayer.get().getName())
                         : playerStorage.getSkinIdOfPlayer(target);
                 if (currentSkin.isPresent() && currentSkin.get().getSkinType() == SkinType.PLAYER) {
-                    if (skinStorage.updatePlayerSkinData(UUID.fromString(currentSkin.get().getIdentifier())).isEmpty()) {
+                    if (skinStorage.updatePlayerSkinData(currentSkin.get().getPlayerUniqueId()).isEmpty()) {
                         sender.sendMessage(Message.ERROR_UPDATING_SKIN);
                         return;
                     }
@@ -275,7 +294,7 @@ public final class SkinCommand {
     @CommandPermission(PermissionRegistry.SKIN_SET)
     @CommandDescription(Message.HELP_SKIN_SET)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
-    private void onSkinSet(SRPlayer player, @Argument(suggestions = "skin_input_quote") @Quoted String skinName) {
+    private void onSkinSet(SRPlayer player, @Quoted String skinName) {
         onSkinSetOther(player, skinName, PlayerSelector.singleton(player));
     }
 
@@ -283,7 +302,7 @@ public final class SkinCommand {
     @CommandPermission(PermissionRegistry.SKIN_SET_OTHER)
     @CommandDescription(Message.HELP_SKIN_SET_OTHER)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
-    private void onSkinSetOther(SRCommandSender sender, @Argument(suggestions = "skin_input_quote") @Quoted String skinName, PlayerSelector selector) {
+    private void onSkinSetOther(SRCommandSender sender, @Quoted String skinName, PlayerSelector selector) {
         onSkinSetOther(sender, skinName, selector, null);
     }
 
@@ -291,9 +310,9 @@ public final class SkinCommand {
     @CommandPermission(PermissionRegistry.SKIN_SET_OTHER)
     @CommandDescription(Message.HELP_SKIN_SET_OTHER)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
-    private void onSkinSetOther(SRCommandSender sender, @Argument(suggestions = "skin_input_quote") @Quoted String skinName, PlayerSelector selector, SkinVariant skinVariant) {
+    private void onSkinSetOther(SRCommandSender sender, @Quoted String skinName, PlayerSelector selector, SkinVariant skinVariant) {
         for (UUID target : selector.resolve(sender)) {
-            Optional<SRPlayer> targetPlayer = adapter.getPlayer(target);
+            Optional<SRPlayer> targetPlayer = adapter.getPlayer(sender, target);
             String targetName = targetPlayer.map(SRPlayer::getName).orElseGet(target::toString);
 
             if (!setSkin(sender, target, skinName, skinVariant, true)) {
@@ -315,7 +334,7 @@ public final class SkinCommand {
     @CommandPermission(PermissionRegistry.SKIN_SET_URL)
     @CommandDescription(Message.HELP_SKIN_SET_URL)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
-    private void onSkinSetUrl(SRPlayer player, @Argument(suggestions = "skin_input_quote") @Quoted String url, @Nullable SkinVariant skinVariant) {
+    private void onSkinSetUrl(SRPlayer player, @Quoted String url, @Nullable SkinVariant skinVariant) {
         if (!ValidationUtil.validSkinUrl(url)) {
             player.sendMessage(Message.ERROR_INVALID_URLSKIN);
             return;
@@ -338,7 +357,7 @@ public final class SkinCommand {
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinUndoOther(SRCommandSender sender, PlayerSelector selector) {
         for (UUID target : selector.resolve(sender)) {
-            Optional<SRPlayer> targetPlayer = adapter.getPlayer(target);
+            Optional<SRPlayer> targetPlayer = adapter.getPlayer(sender, target);
             String targetName = targetPlayer.map(SRPlayer::getName).orElseGet(target::toString);
 
             Optional<HistoryData> historyData = playerStorage.getTopOfHistory(target, 0);
@@ -424,7 +443,7 @@ public final class SkinCommand {
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinFavouriteOther(SRCommandSender sender, PlayerSelector selector) {
         for (UUID target : selector.resolve(sender)) {
-            Optional<SRPlayer> targetPlayer = adapter.getPlayer(target);
+            Optional<SRPlayer> targetPlayer = adapter.getPlayer(sender, target);
             String targetName = targetPlayer.map(SRPlayer::getName).orElseGet(target::toString);
 
             Optional<SkinIdentifier> currentSkin = playerStorage.getSkinIdOfPlayer(target);
@@ -499,9 +518,9 @@ public final class SkinCommand {
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean setSkin(SRCommandSender sender, UUID target, String skinInput, SkinVariant skinVariant, boolean insertHistory) {
-        Optional<Runnable> noPermissionMessage = permissionManager.canSetSkin(sender, skinInput);
+        Optional<Message> noPermissionMessage = permissionManager.canSetSkin(sender, skinInput);
         if (noPermissionMessage.isPresent()) {
-            noPermissionMessage.get().run();
+            sender.sendMessage(noPermissionMessage.get());
             return false;
         }
 
@@ -518,7 +537,7 @@ public final class SkinCommand {
                 return false;
             }
 
-            Optional<SRPlayer> targetPlayer = adapter.getPlayer(target);
+            Optional<SRPlayer> targetPlayer = adapter.getPlayer(sender, target);
             playerStorage.setSkinIdOfPlayer(target, optional.get().getIdentifier());
             targetPlayer.ifPresent(player -> skinApplier.applySkin(player.getAs(Object.class), optional.get().getProperty()));
 

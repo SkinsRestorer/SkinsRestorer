@@ -17,36 +17,29 @@
  */
 package net.skinsrestorer.shared.subjects.permissions;
 
-import ch.jalu.configme.SettingsManager;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.config.CommandConfig;
 import net.skinsrestorer.shared.utils.Tristate;
 
-import java.util.Collection;
 import java.util.function.Function;
 
 @Getter
+@EqualsAndHashCode
 @RequiredArgsConstructor(staticName = "of")
 public class Permission {
     private final String permissionString;
 
-    public boolean checkPermission(SettingsManager settings, Function<String, Tristate> predicate) {
-        Collection<PermissionGroup> permissionGroups = PermissionGroup.getGrantedBy(this);
-        if (permissionGroups.isEmpty()) {
-            return internalCheckPermission(predicate).asBoolean();
-        }
-
+    public boolean checkPermission(Function<String, Tristate> predicate) {
         Tristate tristate = internalCheckPermission(predicate);
 
-        // The permission was set explicitly, so we don't need to check the groups.
+        // If it was set explicitly, we don't need to check the groups or inheritance.
         if (tristate != Tristate.UNDEFINED) {
             return tristate.asBoolean();
         }
 
-        for (PermissionGroup permissionGroup : permissionGroups) {
-            if (permissionGroup == PermissionGroup.DEFAULT_GROUP
-                    && settings.getProperty(CommandConfig.FORCE_DEFAULT_PERMISSIONS)) {
+        for (PermissionGroup permissionGroup : PermissionGroup.getGrantedBy(this)) {
+            if (permissionGroup == PermissionGroup.DEFAULT_GROUP) {
                 return true;
             }
 
@@ -66,5 +59,9 @@ public class Permission {
 
     public Tristate internalCheckPermission(Function<String, Tristate> predicate) {
         return predicate.apply(permissionString);
+    }
+
+    public boolean isInDefaultGroup() {
+        return PermissionGroup.getGrantedBy(this).contains(PermissionGroup.DEFAULT_GROUP);
     }
 }

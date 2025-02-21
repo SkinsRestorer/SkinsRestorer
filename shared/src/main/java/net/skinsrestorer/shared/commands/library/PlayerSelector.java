@@ -65,8 +65,8 @@ public record PlayerSelector(Collection<Resolvable> toResolve) {
         @Override
         public Collection<UUID> resolve(SRCommandSender commandSender) {
             return switch (type) {
-                case ALL_PLAYERS -> platform.getOnlinePlayers().stream().map(SRPlayer::getUniqueId).toList();
-                case RANDOM_PLAYER -> List.of(SRHelpers.getRandomEntry(platform.getOnlinePlayers()).getUniqueId());
+                case ALL_PLAYERS -> platform.getOnlinePlayers(commandSender).stream().map(SRPlayer::getUniqueId).toList();
+                case RANDOM_PLAYER -> List.of(SRHelpers.getRandomEntry(platform.getOnlinePlayers(commandSender)).getUniqueId());
             };
         }
     }

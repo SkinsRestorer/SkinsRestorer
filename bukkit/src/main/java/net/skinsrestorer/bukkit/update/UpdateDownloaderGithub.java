@@ -31,7 +31,7 @@ import javax.inject.Inject;
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -49,7 +49,7 @@ public class UpdateDownloaderGithub implements UpdateDownloader {
     private void download(String downloadUrl, Path targetFile, @Nullable String expectedHash) throws UpdateException {
         try {
             // We don't use HttpClient because this writes to a file directly
-            HttpsURLConnection connection = (HttpsURLConnection) new URL(downloadUrl).openConnection();
+            HttpsURLConnection connection = (HttpsURLConnection) URI.create(downloadUrl).toURL().openConnection();
             connection.setRequestProperty("User-Agent", plugin.getUserAgent());
             if (connection.getResponseCode() != 200) {
                 throw new UpdateException("Download returned status code %d".formatted(connection.getResponseCode()));
@@ -79,7 +79,7 @@ public class UpdateDownloaderGithub implements UpdateDownloader {
 
     private String readStringFromUrl(String url) throws UpdateException {
         try {
-            HttpsURLConnection connection = (HttpsURLConnection) new URL(url).openConnection();
+            HttpsURLConnection connection = (HttpsURLConnection) URI.create(url).toURL().openConnection();
             connection.setRequestProperty("User-Agent", plugin.getUserAgent());
             if (connection.getResponseCode() != 200) {
                 throw new UpdateException("Download returned status code %d".formatted(connection.getResponseCode()));
@@ -101,12 +101,7 @@ public class UpdateDownloaderGithub implements UpdateDownloader {
     public boolean downloadUpdate(String downloadUrl, @Nullable String verificationAssetUrl) {
         Path pluginFile = jarProvider.get(); // /plugins/XXX.jar
         Path updateFolder = server.getUpdateFolderFile().toPath();
-        try {
-            Files.createDirectories(updateFolder);
-        } catch (IOException e) {
-            logger.warning("[GitHubUpdate] Could not create update folder", e);
-            return false;
-        }
+        SRHelpers.createDirectoriesSafe(updateFolder);
 
         Path updateFile = updateFolder.resolve(pluginFile.getFileName()); // /plugins/update/XXX.jar
 

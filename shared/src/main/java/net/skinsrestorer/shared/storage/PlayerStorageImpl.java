@@ -320,7 +320,7 @@ public class PlayerStorageImpl implements PlayerStorage {
             return Optional.empty();
         }
 
-        String selectedSkin = skins.size() == 1 ? skins.get(0) : SRHelpers.getRandomEntry(skins);
+        String selectedSkin = skins.size() == 1 ? skins.getFirst() : SRHelpers.getRandomEntry(skins);
 
         return skinStorage.findSkinData(selectedSkin).map(result -> new SkinForResult(result.getIdentifier(), result.getProperty()));
     }

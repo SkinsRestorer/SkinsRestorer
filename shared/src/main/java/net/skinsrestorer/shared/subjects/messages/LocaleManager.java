@@ -51,8 +51,8 @@ public class LocaleManager {
         Map<Locale, String> localeMap = messages.get(key);
 
         // First try language_country, then language and finally default
-        return Optional.ofNullable(localeMap.get(new Locale(locale.getLanguage(), locale.getCountry())))
-                .orElseGet(() -> Optional.ofNullable(localeMap.get(new Locale(locale.getLanguage())))
+        return Optional.ofNullable(localeMap.get(Locale.of(locale.getLanguage(), locale.getCountry())))
+                .orElseGet(() -> Optional.ofNullable(localeMap.get(Locale.of(locale.getLanguage())))
                         .orElse(localeMap.get(BASE_LOCALE)));
     }
 }

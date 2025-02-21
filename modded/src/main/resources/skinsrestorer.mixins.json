@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "net.skinsrestorer.modded.mixins",
+  "compatibilityLevel": "JAVA_21",
+  "minVersion": "0.8",
+  "server": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "mixins": [
+  ]
+}

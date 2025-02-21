@@ -23,6 +23,8 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.shared.hooks.SRMiniPlaceholdersAPIExpansion;
+import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.plugin.SRProxyPlatformInit;
 import net.skinsrestorer.shared.utils.SRHelpers;
@@ -37,6 +39,7 @@ import javax.inject.Inject;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SRVelocityInit implements SRProxyPlatformInit {
     private final Injector injector;
+    private final SRLogger logger;
     private final SRVelocityAdapter adapter;
     private final SRPlugin plugin;
     private final ProxyServer proxy;
@@ -61,5 +64,17 @@ public class SRVelocityInit implements SRProxyPlatformInit {
     public void initMessageChannel() {
         proxy.getChannelRegistrar().register(MinecraftChannelIdentifier.from(SRHelpers.MESSAGE_CHANNEL));
         proxy.getEventManager().register(adapter.pluginInstance(), PluginMessageEvent.class, injector.getSingleton(ProxyMessageListener.class));
+    }
+
+    @Override
+    public void placeholderSetupHook() {
+        if (adapter.getPluginInfo("miniplaceholders").isPresent()) {
+            new SRMiniPlaceholdersAPIExpansion<>(
+                    adapter,
+                    audience -> audience instanceof Player,
+                    wrapper::player
+            ).register();
+            logger.info("MiniPlaceholders expansion registered!");
+        }
     }
 }

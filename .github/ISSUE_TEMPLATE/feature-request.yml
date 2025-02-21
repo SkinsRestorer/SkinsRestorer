@@ -1,6 +1,6 @@
 name: 💡 Feature Request
 description: Request a feature/enhancement
-labels: ["type: :bulb: enhancement"]
+type: "Feature"
 
 body:
   - type: checkboxes

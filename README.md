@@ -31,7 +31,7 @@ Restoring offline mode skins & changing skins for Bukkit/Spigot/Paper/Purpur/etc
 **WE DO NOT SUPPORT FORGE / FABRIC**
 
 - Java 17+ ([Get Adoptium](https://adoptium.net/))
-- Minecraft 1.8.0 - 1.21.1
+- Minecraft 1.8.0 - 1.21.4
 
 Implementation:
 - Proxy: BungeeCord (Waterfall) & Velocity
@@ -39,9 +39,9 @@ Implementation:
 
 ## :link: Links
 
+- [Modrinth](https://modrinth.com/plugin/skinsrestorer)
 - [SpigotMC](https://www.spigotmc.org/resources/2124)
 - [Hangar](https://hangar.papermc.io/SRTeam/SkinsRestorer)
-- [BuiltByBit](https://builtbybit.com/resources/skinsrestorer.21982/)
 - [Jenkins](https://ci.codemc.io/job/SkinsRestorer/job/SkinsRestorer/)
 - [Discord](https://skinsrestorer.net/discord)
 - [Website](https://skinsrestorer.net)

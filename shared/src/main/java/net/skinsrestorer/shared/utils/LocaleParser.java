@@ -28,9 +28,9 @@ public class LocaleParser {
 
         String[] split = locale.split("_");
         if (split.length == 1) {
-            return Optional.of(new Locale(split[0]));
+            return Optional.of(Locale.of(split[0]));
         } else if (split.length == 2) {
-            return Optional.of(new Locale(split[0], split[1]));
+            return Optional.of(Locale.of(split[0], split[1]));
         } else {
             return Optional.empty();
         }
@@ -39,9 +39,9 @@ public class LocaleParser {
     public static Locale parseLocaleStrict(String locale) {
         String[] split = locale.split("_");
         if (split.length == 1) {
-            return new Locale(split[0]);
+            return Locale.of(split[0]);
         } else if (split.length == 2) {
-            return new Locale(split[0], split[1]);
+            return Locale.of(split[0], split[1]);
         }
 
         throw new IllegalArgumentException("Invalid locale: %s".formatted(locale));

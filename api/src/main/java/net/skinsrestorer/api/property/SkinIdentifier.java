@@ -98,4 +98,19 @@ public class SkinIdentifier {
     public static SkinIdentifier of(String skinIdentifier, @Nullable SkinVariant skinVariant, SkinType skinType) {
         return new SkinIdentifier(skinIdentifier, skinVariant, skinType);
     }
+
+    /**
+     * Converts the {@link String} identifier to a {@link UUID}.
+     * This is only possible if the skin type is {@link SkinType#PLAYER}.
+     *
+     * @return The UUID of the player.
+     * @throws IllegalStateException If the skin type is not {@link SkinType#PLAYER}.
+     */
+    public UUID getPlayerUniqueId() {
+        if (skinType != SkinType.PLAYER) {
+            throw new IllegalStateException("This skin identifier is not for a player skin.");
+        }
+
+        return UUID.fromString(identifier);
+    }
 }

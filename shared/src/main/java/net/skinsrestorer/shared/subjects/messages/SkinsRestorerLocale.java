@@ -19,10 +19,10 @@ package net.skinsrestorer.shared.subjects.messages;
 
 import ch.jalu.configme.SettingsManager;
 import lombok.Getter;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.skinsrestorer.shadow.kyori.adventure.text.Component;
+import net.skinsrestorer.shadow.kyori.adventure.text.minimessage.MiniMessage;
+import net.skinsrestorer.shadow.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.skinsrestorer.shadow.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.skinsrestorer.shared.config.MessageConfig;
 import net.skinsrestorer.shared.subjects.SRForeign;
 

@@ -22,7 +22,6 @@ import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
-import com.velocitypowered.api.util.GameProfile;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.info.Platform;
 import net.skinsrestorer.shared.info.PluginInfo;
@@ -35,7 +34,7 @@ import org.bstats.velocity.Metrics;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.SenderMapper;
 import org.incendo.cloud.execution.ExecutionCoordinator;
-import org.incendo.cloud.velocity.VelocityCommandManager;
+import org.incendo.cloud.velocity.SRVelocityCommandManager;
 
 import javax.inject.Inject;
 import java.io.InputStream;
@@ -67,7 +66,7 @@ public record SRVelocityAdapter(Injector injector, SRVelocityBootstrap pluginIns
     @Override
     public CommandManager<SRCommandSender> createCommandManager() {
         WrapperVelocity wrapper = injector.getSingleton(WrapperVelocity.class);
-        return new VelocityCommandManager<>(
+        return new SRVelocityCommandManager<>(
                 proxy.getPluginManager().fromInstance(pluginInstance).orElseThrow(),
                 proxy,
                 ExecutionCoordinator.asyncCoordinator(),
@@ -131,19 +130,16 @@ public record SRVelocityAdapter(Injector injector, SRVelocityBootstrap pluginIns
 
     @Override
     public Optional<SkinProperty> getSkinProperty(SRPlayer player) {
-        List<GameProfile.Property> prop = player.getAs(Player.class).getGameProfileProperties();
-
-        return prop.stream().filter(p -> p.getName().equals(SkinProperty.TEXTURES_NAME))
-                .map(p -> SkinProperty.of(p.getValue(), p.getSignature())).findFirst();
+        return injector.getSingleton(SkinApplierVelocity.class).getSkinProperty(player.getAs(Player.class));
     }
 
     @Override
-    public Collection<SRPlayer> getOnlinePlayers() {
+    public Collection<SRPlayer> getOnlinePlayers(SRCommandSender sender) {
         return proxy.getAllPlayers().stream().map(injector.getSingleton(WrapperVelocity.class)::player).collect(Collectors.toList());
     }
 
     @Override
-    public Optional<SRPlayer> getPlayer(UUID uniqueId) {
+    public Optional<SRPlayer> getPlayer(SRCommandSender sender, UUID uniqueId) {
         return proxy.getPlayer(uniqueId).map(injector.getSingleton(WrapperVelocity.class)::player);
     }
 }

@@ -42,5 +42,7 @@ public class SRProxyPlugin {
         plugin.initCommands();
 
         init.initMessageChannel();
+
+        init.placeholderSetupHook();
     }
 }

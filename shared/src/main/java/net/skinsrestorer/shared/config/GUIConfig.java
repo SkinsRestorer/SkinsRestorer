@@ -26,6 +26,7 @@ import java.util.List;
 
 import static ch.jalu.configme.properties.PropertyInitializer.newListProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
+import static net.skinsrestorer.shared.config.ConfigHelpers.newCappedProperty;
 
 public class GUIConfig implements SettingsHolder {
     @Comment({
@@ -37,7 +38,7 @@ public class GUIConfig implements SettingsHolder {
     @Comment("Whether custom skins are enabled in the /skins GUI")
     public static final Property<Boolean> CUSTOM_GUI_ENABLED = newProperty("gui.custom.enabled", true);
     @Comment("Order of custom skins relative to the other skin types")
-    public static final Property<Integer> CUSTOM_GUI_INDEX = newProperty("gui.custom.index", 0);
+    public static final Property<Integer> CUSTOM_GUI_INDEX = newCappedProperty("gui.custom.index", 0, 0, Integer.MAX_VALUE);
     @Comment("Whether only specific custom skins are allowed in the /skins GUI")
     public static final Property<Boolean> CUSTOM_GUI_ONLY_LIST = newProperty("gui.custom.onlyShowList", false);
     @Comment("Specific custom skins to show in the /skins GUI")
@@ -45,7 +46,7 @@ public class GUIConfig implements SettingsHolder {
     @Comment("Whether player skins are enabled in the /skins GUI")
     public static final Property<Boolean> PLAYERS_GUI_ENABLED = newProperty("gui.players.enabled", false);
     @Comment("Order of player skins relative to the other skin types")
-    public static final Property<Integer> PLAYERS_GUI_INDEX = newProperty("gui.players.index", 1);
+    public static final Property<Integer> PLAYERS_GUI_INDEX = newCappedProperty("gui.players.index", 1, 0, Integer.MAX_VALUE);
     @Comment("Whether only specific player skins are allowed in the /skins GUI")
     public static final Property<Boolean> PLAYERS_GUI_ONLY_LIST = newProperty("gui.players.onlyShowList", false);
     @Comment("Specific player skins to show in the /skins GUI")
@@ -53,7 +54,7 @@ public class GUIConfig implements SettingsHolder {
     @Comment("Whether recommended skins are enabled in the /skins GUI")
     public static final Property<Boolean> RECOMMENDATIONS_GUI_ENABLED = newProperty("gui.recommendations.enabled", true);
     @Comment("Order of recommended skins relative to the other skin types")
-    public static final Property<Integer> RECOMMENDATIONS_GUI_INDEX = newProperty("gui.recommendations.index", 2);
+    public static final Property<Integer> RECOMMENDATIONS_GUI_INDEX = newCappedProperty("gui.recommendations.index", 2, 0, Integer.MAX_VALUE);
     @Comment("Whether only specific recommended skins are allowed in the /skins GUI")
     public static final Property<Boolean> RECOMMENDATIONS_GUI_ONLY_LIST = newProperty("gui.recommendations.onlyShowList", false);
     @Comment("Specific recommended skins to show in the /skins GUI")

@@ -17,10 +17,11 @@
  */
 package net.skinsrestorer.shared.plugin;
 
+import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 
 public interface SRServerAdapter extends SRPlatformAdapter {
-    void runSync(Runnable runnable);
+    void runSync(SRCommandSender sender, Runnable runnable);
 
     void runSyncToPlayer(SRPlayer player, Runnable runnable);
 

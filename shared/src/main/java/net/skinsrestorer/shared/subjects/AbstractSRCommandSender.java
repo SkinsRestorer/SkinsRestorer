@@ -20,7 +20,7 @@ package net.skinsrestorer.shared.subjects;
 import ch.jalu.configme.SettingsManager;
 import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.skinsrestorer.shadow.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.skinsrestorer.shared.config.MessageConfig;
 import net.skinsrestorer.shared.subjects.messages.ComponentString;
 import net.skinsrestorer.shared.subjects.messages.Message;

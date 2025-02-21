@@ -26,11 +26,13 @@ import net.skinsrestorer.shared.api.SkinApplierAccess;
 import net.skinsrestorer.shared.api.event.EventBusImpl;
 import net.skinsrestorer.shared.api.event.SkinApplyEventImpl;
 import net.skinsrestorer.shared.codec.SRServerPluginMessage;
+import net.skinsrestorer.shared.utils.AuthLibHelper;
 import net.skinsrestorer.velocity.wrapper.WrapperVelocity;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SkinApplierVelocity implements SkinApplierAccess<Player> {
@@ -63,5 +65,16 @@ public class SkinApplierVelocity implements SkinApplierAccess<Player> {
         properties.add(new Property(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
 
         return properties;
+    }
+
+    public Optional<SkinProperty> getSkinProperty(Player player) {
+        return player.getGameProfileProperties().stream()
+                .map(property -> SkinProperty.tryParse(
+                        property.getName(),
+                        property.getValue(),
+                        property.getSignature()
+                ))
+                .flatMap(Optional::stream)
+                .findFirst();
     }
 }

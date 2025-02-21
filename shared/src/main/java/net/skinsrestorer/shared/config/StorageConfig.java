@@ -30,6 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
+import static net.skinsrestorer.shared.config.ConfigHelpers.newCappedProperty;
 
 public class StorageConfig implements SettingsHolder {
     public static final Property<Boolean> DEFAULT_SKINS_ENABLED = newProperty("storage.defaultSkins.enabled", false);
@@ -52,12 +53,16 @@ public class StorageConfig implements SettingsHolder {
     public static final Property<Boolean> DISALLOW_AUTO_UPDATE_SKIN = newProperty("storage.disallowAutoUpdateSkin", false); // TODO: Should this not be in AdvancedConfig?
     @Comment({
             "Time that skins are stored in the database before we request again (in minutes).",
-            "[?] A value of 0 will disable auto updating of skins and players will need to manual run /skin update.",
+            "[?] A value of 0 will always trigger a request to the Mojang API.",
             "[!] Lowering this value will increase the amount of requests which could be a problem on large servers."
     })
-    public static final Property<Integer> SKIN_EXPIRES_AFTER = newProperty("storage.skinExpiresAfter", 15);
-    @Comment("How long we should cache the UUIDs of players (in minutes).")
-    public static final Property<Integer> UUID_EXPIRES_AFTER = newProperty("storage.uuidExpiresAfter", 60);
+    public static final Property<Integer> SKIN_EXPIRES_AFTER = newCappedProperty("storage.skinExpiresAfter", 15, 0, Integer.MAX_VALUE);
+    @Comment({
+            "How long we should cache the UUIDs of players (in minutes).",
+            "[?] A value of 0 will always trigger a request to the Mojang API.",
+            "[!] Lowering this value will increase the amount of requests which could be a problem on large servers."
+    })
+    public static final Property<Integer> UUID_EXPIRES_AFTER = newCappedProperty("storage.uuidExpiresAfter", 60, 0, Integer.MAX_VALUE);
 
     @Override
     public void registerComments(CommentsConfiguration conf) {
@@ -72,7 +77,7 @@ public class StorageConfig implements SettingsHolder {
                 "Enable or disable default skins",
                 "applyForPremium: false will only put a skin on skinless/steve players.",
                 "If there is more than one, the plugin will choose a random one.",
-                "[?] Supports custom & url.png skins, read SkinFile Generator below. [?]"
+                "[?] Supports custom & url.png skins, read SkinFile Generator below."
         );
     }
 }

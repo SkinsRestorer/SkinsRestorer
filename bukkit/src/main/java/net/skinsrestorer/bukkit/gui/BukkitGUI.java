@@ -25,6 +25,7 @@ import net.skinsrestorer.bukkit.utils.SkullUtil;
 import net.skinsrestorer.bukkit.wrapper.BukkitComponentHelper;
 import net.skinsrestorer.shared.gui.GUIManager;
 import net.skinsrestorer.shared.gui.SRInventory;
+import net.skinsrestorer.shared.log.SRLogger;
 import org.bukkit.Server;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
@@ -39,6 +40,7 @@ import java.util.Objects;
 public class BukkitGUI implements GUIManager<Inventory> {
     private final Injector injector;
     private final Server server;
+    private final SRLogger logger;
 
     @SuppressWarnings("UnstableApiUsage")
     private ItemStack createItem(SRInventory.Item entry) {

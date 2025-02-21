@@ -17,7 +17,7 @@
  */
 package net.skinsrestorer.bukkit;
 
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.skinsrestorer.shadow.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import org.bukkit.plugin.java.JavaPlugin;
 

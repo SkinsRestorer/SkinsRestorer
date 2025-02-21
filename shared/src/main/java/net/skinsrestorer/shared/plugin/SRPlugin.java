@@ -209,7 +209,7 @@ public class SRPlugin {
         Path target = archive.resolve(path.getFileName().toString() + "_" + SRHelpers.getEpochSecond());
 
         try {
-            Files.createDirectories(archive);
+            SRHelpers.createDirectoriesSafe(archive);
             Files.move(path, target, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             logger.warning("Failed to move old file %s to archive folder.".formatted(path.getFileName()), e);
@@ -273,6 +273,10 @@ public class SRPlugin {
     }
 
     public void registerMetrics(Object metricsParent) {
+        if (metricsParent == null) {
+            return;
+        }
+
         MetricsBase metrics;
         try {
             Field field = metricsParent.getClass().getDeclaredField("metricsBase");
@@ -363,14 +367,14 @@ public class SRPlugin {
     private void runJavaCheck() {
         try {
             int version = SRHelpers.getJavaVersion();
-            if (version >= 17) {
-                return;
+            if (version < 17) {
+                logger.warning(SRChatColor.YELLOW + "You are running an outdated Java version, please update it to at least Java 21 (your version is %d).".formatted(version));
+                logger.warning(SRChatColor.YELLOW + "SkinsRestorer no longer officially supports this version of Java, you are currently using an unsupported compatibility build.");
+                logger.warning(SRChatColor.YELLOW + "You can still use the plugin, but you may encounter issues that are not present in newer versions of Java.");
+            } else if (version < 21) {
+                logger.warning(SRChatColor.YELLOW + "Please update your Java runtime to at least Java 21 (your version is %d).".formatted(version));
+                logger.warning(SRChatColor.YELLOW + "At some point in the future, SkinsRestorer will no longer be compatible with this version of Java.");
             }
-
-            logger.warning(SRChatColor.YELLOW + "Your Java version \"%s\" is not supported! SkinsRestorer now uses Java 17 primarily.".formatted(version));
-            logger.warning(SRChatColor.YELLOW + "The plugin was \"downgraded\" to Java 1.8 (Java 8) to ensure compatibility with your server, but it may cause issues.");
-            logger.warning(SRChatColor.YELLOW + "The plugin still works, but it may have Java version related issues.");
-            logger.warning(SRChatColor.YELLOW + "Please update your server Java version to 17 or higher to get the best performance, security and to avoid issues with SkinsRestorer.");
         } catch (Exception e) {
             logger.warning("Failed to parse Java version.", e);
         }

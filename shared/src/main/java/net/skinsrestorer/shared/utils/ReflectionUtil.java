@@ -135,7 +135,7 @@ public class ReflectionUtil {
     }
 
     private static Object getFieldByType(Object obj, Class<?> superClass, String typeName) throws ReflectiveOperationException {
-        return getFieldByTypeList(obj, superClass, typeName).get(0);
+        return getFieldByTypeList(obj, superClass, typeName).getFirst();
     }
 
     public static List<Object> getFieldByTypeList(Object obj, String typeName) throws ReflectiveOperationException {

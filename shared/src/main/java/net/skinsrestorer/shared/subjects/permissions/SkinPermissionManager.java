@@ -33,26 +33,26 @@ import java.util.Optional;
 public class SkinPermissionManager {
     private final SettingsManager settings;
 
-    public Optional<Runnable> canSetSkin(SRCommandSender sender, String skinInput) {
+    public Optional<Message> canSetSkin(SRCommandSender sender, String skinInput) {
         if (isPerSkinPermissions()
                 && !sender.hasPermission(PermissionRegistry.forSkin(skinInput.toLowerCase(Locale.ROOT)))
                 && (!sender.hasPermission(PermissionRegistry.OWN_SKIN)
                 || !(sender instanceof SRPlayer player)
                 || !skinInput.equalsIgnoreCase(player.getName()))) {
-            return Optional.of(() -> sender.sendMessage(Message.PLAYER_HAS_NO_PERMISSION_SKIN));
+            return Optional.of(Message.PLAYER_HAS_NO_PERMISSION_SKIN);
         }
 
         if (isDisabledSkin(skinInput) && !sender.hasPermission(PermissionRegistry.BYPASS_DISABLED)) {
-            return Optional.of(() -> sender.sendMessage(Message.ERROR_SKIN_DISABLED));
+            return Optional.of(Message.ERROR_SKIN_DISABLED);
         }
 
         if (ValidationUtil.validSkinUrl(skinInput)) {
             if (!sender.hasPermission(PermissionRegistry.SKIN_SET_URL)) {
-                return Optional.of(() -> sender.sendMessage(Message.PLAYER_HAS_NO_PERMISSION_URL));
+                return Optional.of(Message.PLAYER_HAS_NO_PERMISSION_URL);
             }
 
             if (!allowedSkinUrl(skinInput)) {
-                return Optional.of(() -> sender.sendMessage(Message.ERROR_SKINURL_DISALLOWED));
+                return Optional.of(Message.ERROR_SKINURL_DISALLOWED);
             }
         }
 

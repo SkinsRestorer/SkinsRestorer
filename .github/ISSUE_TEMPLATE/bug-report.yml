@@ -1,6 +1,6 @@
 name: 🐞 Bug
 description: File a bug/issue report
-labels: ["type: :bug: bug"]
+type: "Bug"
 
 body:
   - type: checkboxes
@@ -16,8 +16,8 @@ body:
   - type: dropdown
     id: download
     attributes:
-      label: Are you using forge?
-      description: "If you don't know what forge is, awnser no"
+      label: Are you using forge/fabric/any modloader?
+      description: "If you don't know what a modloader like forge or fabric is, awnser no"
       options:
         - "Yes"
         - "No"

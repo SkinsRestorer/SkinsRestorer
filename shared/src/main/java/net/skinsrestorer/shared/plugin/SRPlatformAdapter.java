@@ -26,7 +26,9 @@ import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import org.incendo.cloud.CommandManager;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -36,11 +38,23 @@ import java.util.concurrent.TimeUnit;
 public interface SRPlatformAdapter {
     CommandManager<SRCommandSender> createCommandManager();
 
-    Collection<SRPlayer> getOnlinePlayers();
+    Collection<SRPlayer> getOnlinePlayers(SRCommandSender sender);
 
-    Optional<SRPlayer> getPlayer(UUID uniqueId);
+    Optional<SRPlayer> getPlayer(SRCommandSender sender, UUID uniqueId);
 
     InputStream getResource(String resource);
+
+    default String getResouceAsString(String resource) {
+        try (InputStream is = getResource(resource)) {
+            if (is == null) {
+                throw new IllegalStateException("Could not find resource %s in resources!".formatted(resource));
+            }
+
+            return new String(is.readAllBytes(), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     void runAsync(Runnable runnable);
 

@@ -21,12 +21,14 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.codec.SRInputReader;
 import net.skinsrestorer.shared.codec.SRProxyPluginMessage;
 import net.skinsrestorer.shared.listeners.event.SRProxyMessageEvent;
+import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.utils.SRHelpers;
 
 import javax.inject.Inject;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class SRProxyMessageAdapter {
+    private final SRPlatformAdapter adapter;
     private final GUIActionListener guiActionListener;
 
     public void handlePluginMessage(SRProxyMessageEvent event) {
@@ -43,10 +45,12 @@ public final class SRProxyMessageAdapter {
             return;
         }
 
-        SRInputReader in = new SRInputReader(event.getData());
-        SRProxyPluginMessage.ChannelPayload<?> msg = SRProxyPluginMessage.CODEC.read(in).channelPayload();
-        if (msg instanceof SRProxyPluginMessage.GUIActionChannelPayloadList actionChannelPayload) {
-            guiActionListener.handle(event.getPlayer(), actionChannelPayload.actions());
-        }
+        adapter.runAsync(() -> {
+            SRInputReader in = new SRInputReader(event.getData());
+            SRProxyPluginMessage.ChannelPayload<?> msg = SRProxyPluginMessage.CODEC.read(in).channelPayload();
+            if (msg instanceof SRProxyPluginMessage.GUIActionChannelPayloadList actionChannelPayload) {
+                guiActionListener.handle(event.getPlayer(), actionChannelPayload.actions());
+            }
+        });
     }
 }

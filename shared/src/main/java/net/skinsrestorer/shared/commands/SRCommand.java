@@ -20,8 +20,6 @@ package net.skinsrestorer.shared.commands;
 import ch.jalu.configme.SettingsManager;
 import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.skinsrestorer.api.PropertyUtils;
 import net.skinsrestorer.api.SkinsRestorer;
 import net.skinsrestorer.api.connections.MineSkinAPI;
@@ -33,6 +31,8 @@ import net.skinsrestorer.api.property.*;
 import net.skinsrestorer.api.storage.CacheStorage;
 import net.skinsrestorer.api.storage.PlayerStorage;
 import net.skinsrestorer.builddata.BuildData;
+import net.skinsrestorer.shadow.kyori.adventure.text.Component;
+import net.skinsrestorer.shadow.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.skinsrestorer.shared.commands.library.PlayerSelector;
 import net.skinsrestorer.shared.commands.library.SRCommandManager;
 import net.skinsrestorer.shared.commands.library.annotations.CommandDescription;
@@ -158,33 +158,6 @@ public final class SRCommand {
                 .queryCommands(query == null ? "" : query, sender);
     }
 
-    @Suggestions("skin_input_quote")
-    public List<String> suggestSkinInputUrl(CommandContext<SRCommandSender> ctx, String input) {
-        if (input.isEmpty()) {
-            return List.of();
-        }
-
-        boolean startsWithQuote = input.startsWith("\"");
-        boolean endsWithQuote = input.endsWith("\"");
-        String withoutStartQuote = startsWithQuote ? input.substring(1) : input;
-        String withoutEndQuote = endsWithQuote ? withoutStartQuote.substring(0, withoutStartQuote.length() - 1) : withoutStartQuote;
-
-        if (!startsWithQuote && !endsWithQuote && SRHelpers.isNotAllowedUnquotedString(withoutEndQuote)) {
-            if (ctx.sender() instanceof SRPlayer player && !quotesHelpCache.contains(player.getUniqueId())) {
-                ctx.sender().sendMessage(Message.INFO_USE_QUOTES);
-                quotesHelpCache.add(player.getUniqueId());
-            }
-
-            return List.of("\"%s\"".formatted(input));
-        } else if (startsWithQuote && !endsWithQuote) {
-            return List.of("%s\"".formatted(input));
-        } else if (!startsWithQuote && endsWithQuote) {
-            return List.of("\"%s".formatted(input));
-        } else {
-            return List.of(input);
-        }
-    }
-
     @Command("reload")
     @CommandPermission(PermissionRegistry.SR_RELOAD)
     @CommandDescription(Message.HELP_SR_RELOAD)
@@ -260,7 +233,6 @@ public final class SRCommand {
         } else {
             // No services are unavailable, but some APIs are not working
             sender.sendMessage(Message.ADMINCOMMAND_STATUS_DEGRADED);
-            sender.sendMessage(Message.ADMINCOMMAND_STATUS_FIREWALL);
         }
 
         sender.sendMessage(Message.DIVIDER);
@@ -434,7 +406,7 @@ public final class SRCommand {
     @CommandDescription(Message.HELP_SR_APPLY_SKIN)
     private void onApplySkin(SRCommandSender sender, PlayerSelector selector) {
         for (UUID target : selector.resolve(sender)) {
-            Optional<SRPlayer> targetPlayer = adapter.getPlayer(target);
+            Optional<SRPlayer> targetPlayer = adapter.getPlayer(sender, target);
             if (targetPlayer.isEmpty()) {
                 continue;
             }
@@ -451,18 +423,18 @@ public final class SRCommand {
     @Command("createcustom <skinName> <skinInput>")
     @CommandPermission(PermissionRegistry.SR_CREATE_CUSTOM)
     @CommandDescription(Message.HELP_SR_CREATE_CUSTOM)
-    private void onCreateCustom(SRCommandSender sender, String skinName, @Argument(suggestions = "skin_input_quote") @Quoted String skinInput) {
+    private void onCreateCustom(SRCommandSender sender, String skinName, @Quoted String skinInput) {
         createCustom(sender, skinName, skinInput, null);
     }
 
     @Command("createcustom <skinName> <skinInput> <skinVariant>")
     @CommandPermission(PermissionRegistry.SR_CREATE_CUSTOM)
     @CommandDescription(Message.HELP_SR_CREATE_CUSTOM)
-    private void onCreateCustom(SRCommandSender sender, String skinName, @Argument(suggestions = "skin_input_quote") @Quoted String skinInput, SkinVariant skinVariant) {
+    private void onCreateCustom(SRCommandSender sender, String skinName, @Quoted String skinInput, SkinVariant skinVariant) {
         createCustom(sender, skinName, skinInput, skinVariant);
     }
 
-    private void createCustom(SRCommandSender sender, String skinName, @Argument(suggestions = "skin_input_quote") @Quoted String skinInput, SkinVariant skinVariant) {
+    private void createCustom(SRCommandSender sender, String skinName, @Quoted String skinInput, SkinVariant skinVariant) {
         try {
             Optional<InputDataResult> response = skinStorage.findOrCreateSkinData(skinInput, skinVariant);
             if (response.isEmpty()) {

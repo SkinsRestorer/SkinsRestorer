@@ -17,14 +17,14 @@
  */
 package net.skinsrestorer.shared.subjects.messages;
 
-import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import net.skinsrestorer.shadow.kyori.adventure.audience.Audience;
+import net.skinsrestorer.shadow.kyori.adventure.text.Component;
+import net.skinsrestorer.shadow.kyori.adventure.text.minimessage.MiniMessage;
+import net.skinsrestorer.shadow.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.skinsrestorer.shadow.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.skinsrestorer.shadow.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.skinsrestorer.shadow.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.skinsrestorer.shadow.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.skinsrestorer.shared.exception.TranslatableException;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.subjects.SRCommandSender;

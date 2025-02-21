@@ -21,6 +21,7 @@ import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 import net.md_5.bungee.api.CommandSender;
 import net.skinsrestorer.bungee.SRBungeeAdapter;
+import net.skinsrestorer.shared.config.CommandConfig;
 import net.skinsrestorer.shared.subjects.AbstractSRCommandSender;
 import net.skinsrestorer.shared.subjects.messages.ComponentString;
 import net.skinsrestorer.shared.subjects.permissions.Permission;
@@ -43,13 +44,13 @@ public class WrapperCommandSender extends AbstractSRCommandSender {
 
     @Override
     public boolean hasPermission(Permission permission) {
-        return permission.checkPermission(settings, p -> {
+        return permission.checkPermission(p -> {
             if (sender.hasPermission(p)) {
                 return Tristate.TRUE;
             } else {
-                // We don't know if the permission is explicitly set to false or if it's undefined.
-                // So we return undefined to check the groups as well before returning false.
-                return Tristate.UNDEFINED;
+                // Since BungeeCord has no default permissions, we allow forcing a FALSE to be UNDEFINED
+                // if enabled in the config. Else a FALSE means FALSE.
+                return settings.getProperty(CommandConfig.FORCE_DEFAULT_PERMISSIONS) ? Tristate.UNDEFINED : Tristate.FALSE;
             }
         });
     }

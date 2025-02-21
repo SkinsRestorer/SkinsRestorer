@@ -2,67 +2,18 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
     repositories {
+        maven("https://maven.wagyourtail.xyz/releases")
+        maven("https://maven.wagyourtail.xyz/snapshots")
         gradlePluginPortal()
     }
 }
 
 plugins {
-    id("com.gradle.develocity") version "3.18"
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
+    id("com.gradle.develocity") version "3.19.2"
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.9.0"
 }
 
 rootProject.name = "skinsrestorer-parent"
-
-dependencyResolutionManagement {
-    @Suppress("UnstableApiUsage")
-    repositoriesMode = RepositoriesMode.PREFER_SETTINGS
-    @Suppress("UnstableApiUsage")
-    repositories {
-        maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") {
-            name = "SpigotMC Repository"
-        }
-        maven("https://repo.papermc.io/repository/maven-public/") {
-            name = "PaperMC Repository"
-        }
-        maven("https://repo.codemc.org/repository/maven-public/") {
-            name = "CodeMC Repository"
-        }
-        maven("https://repo.codemc.org/repository/nms/") {
-            name = "CodeMC NMS Repository"
-        }
-        maven("https://repo.viaversion.com/") {
-            name = "ViaVersion Repository"
-        }
-        maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") {
-            name = "PlaceholderAPI Repository"
-        }
-        maven("https://jitpack.io/") {
-            name = "JitPack Repository"
-        }
-        maven("https://libraries.minecraft.net/") {
-            name = "Minecraft Repository"
-        }
-        maven("https://oss.sonatype.org/content/repositories/snapshots/") {
-            name = "Sonatype Repository"
-        }
-        maven("https://repo.clojars.org/") {
-            name = "Clojars Repository"
-        }
-        maven("https://repo.opencollab.dev/maven-snapshots/") {
-            name = "OpenCollab Snapshot Repository"
-        }
-        maven("https://repo.opencollab.dev/maven-releases/") {
-            name = "OpenCollab Release Repository"
-        }
-        maven("https://maven.wagyourtail.xyz/releases") {
-            name = "WagYourTail Release Repository"
-        }
-        maven("https://maven.wagyourtail.xyz/snapshots") {
-            name = "WagYourTail Snapshot Repository"
-        }
-        mavenCentral()
-    }
-}
 
 develocity {
     buildScan {
@@ -84,15 +35,18 @@ setOf("shared", "v1-7", "spigot", "paper", "folia").forEach {
     include("multiver:bukkit:$it")
 }
 
+include("multiver:kyori")
+
 setOf(
     "1-18", "1-18-2",
     "1-19", "1-19-1", "1-19-2", "1-19-3", "1-19-4",
     "1-20", "1-20-2", "1-20-4", "1-20-5",
-    "1-21"
+    "1-21", "1-21-2", "1-21-4"
 ).forEach {
     include("mappings:mc-$it")
 }
 
+include("modded")
 setupSRSubproject("build-data")
 setupSRSubproject("api")
 setupSRSubproject("shared")

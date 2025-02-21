@@ -18,6 +18,7 @@
 package net.skinsrestorer.shared.utils;
 
 import ch.jalu.configme.SettingsManager;
+import net.skinsrestorer.api.Base64Utils;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.config.MessageConfig;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
@@ -26,6 +27,7 @@ import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -117,13 +119,11 @@ public class SRHelpers {
     }
 
     public static <E> E getRandomEntry(List<E> list) {
-        Random random = ThreadLocalRandom.current();
-        return list.get(random.nextInt(list.size()));
+        return list.get(ThreadLocalRandom.current().nextInt(list.size()));
     }
 
     public static <E> E getRandomEntry(Collection<E> list) {
-        Random random = ThreadLocalRandom.current();
-        int index = random.nextInt(list.size());
+        int index = ThreadLocalRandom.current().nextInt(list.size());
         int i = 0;
         for (E entry : list) {
             if (i == index) {
@@ -155,7 +155,7 @@ public class SRHelpers {
 
     public static Optional<URL> parseURL(String str) {
         try {
-            return Optional.of(new URL(str));
+            return Optional.of(URI.create(str).toURL());
         } catch (Exception e) {
             return Optional.empty();
         }
@@ -239,19 +239,11 @@ public class SRHelpers {
         return map;
     }
 
-    public static boolean isNotAllowedUnquotedString(String str) {
-        return !str.chars().allMatch(c -> isAllowedInUnquotedString((char) c));
-    }
-
-    public static boolean isAllowedInUnquotedString(char c) {
-        return c >= '0' && c <= '9'
-                || c >= 'A' && c <= 'Z'
-                || c >= 'a' && c <= 'z'
-                || c == '_' || c == '-'
-                || c == '.' || c == '+';
-    }
-
     public static String durationFormat(SkinsRestorerLocale locale, SRCommandSender sender, Duration duration) {
+        if (duration.isNegative() || duration.isZero() || duration.getSeconds() == 0) {
+            duration = Duration.ofSeconds(1);
+        }
+
         long days = duration.toDaysPart();
         long hours = duration.toHoursPart();
         long minutes = duration.toMinutesPart();
@@ -280,5 +272,32 @@ public class SRHelpers {
         }
 
         return result.toString().trim();
+    }
+
+    @SuppressWarnings("HttpUrlsUsage")
+    public static String encodeHashToTexturesValue(String textureHash) {
+        return Base64Utils.encode("{\"textures\":{\"SKIN\":{\"url\":\"http://textures.minecraft.net/texture/%s\"}}}".formatted(textureHash));
+    }
+
+    public static void createDirectoriesSafe(Path path) {
+        if (!Files.isDirectory(path)) { // In case the directory is a symbol link
+            try {
+                Files.createDirectories(path);
+            } catch (IOException e) {
+                throw new IllegalStateException("Failed to create directories: %s".formatted(path), e);
+            }
+        }
+    }
+
+    public static void writeIfNeeded(Path path, String content) throws IOException {
+        if (Files.exists(path)) {
+            var existingContent = Files.readString(path);
+            if (!existingContent.equals(content)) {
+                Files.writeString(path, content);
+            }
+        } else {
+            SRHelpers.createDirectoriesSafe(path.getParent());
+            Files.writeString(path, content);
+        }
     }
 }

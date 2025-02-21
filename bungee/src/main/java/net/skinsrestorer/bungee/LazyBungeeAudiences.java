@@ -17,7 +17,7 @@
  */
 package net.skinsrestorer.bungee;
 
-import net.kyori.adventure.platform.bungeecord.BungeeAudiences;
+import net.skinsrestorer.shadow.kyori.adventure.platform.bungeecord.BungeeAudiences;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 

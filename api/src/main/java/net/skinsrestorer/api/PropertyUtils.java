@@ -24,9 +24,6 @@ import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.property.SkinVariant;
 import org.jetbrains.annotations.NotNull;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-
 /**
  * Utility class for retrieving information from profile properties related to skins.
  */
@@ -101,9 +98,7 @@ public class PropertyUtils {
      * @return Decoded profile data as java object
      */
     public static MojangProfileResponse getSkinProfileData(@NotNull String base64) {
-        String decodedString = new String(Base64.getDecoder().decode(base64), StandardCharsets.UTF_8);
-
-        return GSON.fromJson(decodedString, MojangProfileResponse.class);
+        return GSON.fromJson(Base64Utils.decode(base64), MojangProfileResponse.class);
     }
 
     public static MojangProfileResponse getSkinProfileData(@NotNull SkinProperty property) {

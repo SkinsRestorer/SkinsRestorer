@@ -54,7 +54,13 @@ public class SkinApplierBungeeNew implements SkinApplyBungeeAdapter {
             return Optional.empty();
         }
 
-        return Arrays.stream(props).filter(property -> property.getName().equals(SkinProperty.TEXTURES_NAME))
-                .map(property -> SkinProperty.of(property.getValue(), property.getSignature())).findFirst();
+        return Arrays.stream(props)
+                .map(property -> SkinProperty.tryParse(
+                        property.getName(),
+                        property.getValue(),
+                        property.getSignature()
+                ))
+                .flatMap(Optional::stream)
+                .findFirst();
     }
 }

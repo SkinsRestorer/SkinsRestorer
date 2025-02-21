@@ -32,12 +32,10 @@ import net.skinsrestorer.shared.utils.SRHelpers;
 
 import javax.inject.Inject;
 import java.io.IOException;
+import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -64,8 +62,12 @@ public class RecommendationsState {
 
         boolean fileExists = Files.exists(path);
         if (fileExists) {
-            try {
-                RecommenationResponse recommenationResponse = gson.fromJson(Files.newBufferedReader(path), RecommenationResponse.class);
+            try (Reader reader = Files.newBufferedReader(path)) {
+                RecommenationResponse recommenationResponse = gson.fromJson(reader, RecommenationResponse.class);
+                if (recommenationResponse == null || recommenationResponse.getSkins() == null) {
+                    throw new IOException("Invalid data");
+                }
+
                 setDataFromResponse(recommenationResponse.getSkins());
             } catch (IOException e) {
                 logger.warning("Failed to load recommendations from file: %s".formatted(e.getMessage()));
@@ -79,7 +81,7 @@ public class RecommendationsState {
                     setDataFromResponse(recommenationResponse.getSkins());
 
                     try {
-                        Files.write(path, gson.toJson(recommenationResponse).getBytes());
+                        SRHelpers.writeIfNeeded(path, gson.toJson(recommenationResponse));
                     } catch (IOException e) {
                         logger.warning("Failed to save recommendations to file: %s".formatted(e.getMessage()));
                     }
@@ -114,8 +116,12 @@ public class RecommendationsState {
                 .toArray(RecommenationResponse.SkinInfo[]::new);
     }
 
-    public RecommenationResponse.SkinInfo getRandomRecommendation() {
-        return SRHelpers.getRandomEntry(recommendationsList);
+    public Optional<RecommenationResponse.SkinInfo> getRandomRecommendation() {
+        if (recommendationsList.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(SRHelpers.getRandomEntry(recommendationsList));
     }
 
     public RecommenationResponse.SkinInfo getRecommendation(String skinId) {

@@ -38,8 +38,6 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 public class SRPlaceholderAPIExpansion extends PlaceholderExpansion {
-    private static final SkinProperty STEVE_PROPERTY = HardcodedSkins.getHardcodedSkin("steve").orElseThrow().getProperty();
-    private static final SkinProperty ALEX_PROPERTY = HardcodedSkins.getHardcodedSkin("alex").orElseThrow().getProperty();
     private static final String ERROR_MESSAGE = "Error";
     private final SRLogger logger;
     private final PluginDescriptionFile description;
@@ -111,9 +109,9 @@ public class SRPlaceholderAPIExpansion extends PlaceholderExpansion {
                     if (subString.equalsIgnoreCase("or_empty")) {
                         return "";
                     } else if (subString.equalsIgnoreCase("or_steve")) {
-                        return extractTextureUrl(STEVE_PROPERTY);
+                        return extractTextureUrl(HardcodedSkins.STEVE.getProperty());
                     } else if (subString.equalsIgnoreCase("or_alex")) {
-                        return extractTextureUrl(ALEX_PROPERTY);
+                        return extractTextureUrl(HardcodedSkins.ALEX.getProperty());
                     }
                 }
             } catch (DataRequestException e) {
@@ -139,9 +137,9 @@ public class SRPlaceholderAPIExpansion extends PlaceholderExpansion {
                     if (subString.equalsIgnoreCase("or_empty")) {
                         return "";
                     } else if (subString.equalsIgnoreCase("or_steve")) {
-                        return extractTextureHash(STEVE_PROPERTY);
+                        return extractTextureHash(HardcodedSkins.STEVE.getProperty());
                     } else if (subString.equalsIgnoreCase("or_alex")) {
-                        return extractTextureHash(ALEX_PROPERTY);
+                        return extractTextureHash(HardcodedSkins.ALEX.getProperty());
                     }
                 }
             } catch (DataRequestException e) {

@@ -176,9 +176,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
 
                 Map<String, String> headers = new HashMap<>();
                 Optional<String> apiKey = getApiKey(settings);
-                if (apiKey.isPresent()) {
-                    headers.put("Authorization", "Bearer %s".formatted(apiKey));
-                }
+                apiKey.ifPresent(s -> headers.put("Authorization", "Bearer %s".formatted(s)));
 
                 return httpClient.execute(
                         MINESKIN_ENDPOINT,

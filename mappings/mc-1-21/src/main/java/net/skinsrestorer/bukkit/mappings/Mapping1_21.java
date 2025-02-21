@@ -50,7 +50,7 @@ public class Mapping1_21 implements IMapping {
                 ClientboundRespawnPacket.KEEP_ALL_DATA
         );
 
-        sendPacket(entityPlayer, new ClientboundPlayerInfoRemovePacket(List.of(player.getUniqueId())));
+        sendPacket(entityPlayer, new ClientboundPlayerInfoRemovePacket(List.of(entityPlayer.getUUID())));
         sendPacket(entityPlayer, ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(entityPlayer)));
 
         if (viaFunction.test(() -> new ViaPacketData(player, spawnInfo.seed(), spawnInfo.gameType().getId(), spawnInfo.isFlat()))) {

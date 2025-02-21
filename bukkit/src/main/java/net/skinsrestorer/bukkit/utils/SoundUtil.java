@@ -22,6 +22,7 @@ import com.cryptomorin.xseries.XSound;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.config.ServerConfig;
 import net.skinsrestorer.shared.log.SRLogger;
+import net.skinsrestorer.shared.sound.SoundParser;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import org.bukkit.entity.Player;
 
@@ -39,13 +40,19 @@ public class SoundUtil {
 
         Player p = player.getAs(Player.class);
         String sound = settings.getProperty(ServerConfig.SOUND_VALUE);
-        XSound.Record record = XSound.parse(sound);
+        SoundParser.Record record = SoundParser.parse(sound);
         if (record == null) {
             logger.warning("Invalid sound value in config: %s".formatted(sound));
             return;
         }
 
         logger.debug("Playing sound for player: %s".formatted(player.getName()));
-        record.soundPlayer().forPlayers(p).play();
+        XSound.Record record2 = new XSound.Record();
+        record2.withSound(XSound.matchXSound(record.getSound()).orElseThrow());
+        record2.inCategory(XSound.Category.valueOf(record.getCategory()));
+        record2.withVolume(record.getVolume());
+        record2.withPitch(record.getPitch());
+
+        record2.soundPlayer().forPlayers(p).play();
     }
 }
