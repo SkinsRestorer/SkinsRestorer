@@ -29,7 +29,7 @@ dependencies {
     }
 
     compileOnly("net.kyori:adventure-text-minimessage:4.19.0")
-    compileOnly("io.github.miniplaceholders:miniplaceholders-api:2.2.3")
+    compileOnly("io.github.miniplaceholders:miniplaceholders-api:2.3.0")
 
     compileOnly("org.geysermc.floodgate:api:2.2.2-SNAPSHOT")
 
