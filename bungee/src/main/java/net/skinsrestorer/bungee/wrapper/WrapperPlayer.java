@@ -20,6 +20,7 @@ package net.skinsrestorer.bungee.wrapper;
 import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.connection.Server;
 import net.skinsrestorer.shared.config.MessageConfig;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.SRProxyPlayer;
@@ -51,7 +52,16 @@ public class WrapperPlayer extends WrapperCommandSender implements SRProxyPlayer
 
     @Override
     public void sendToMessageChannel(byte[] data) {
-        player.getServer().sendData(SRHelpers.MESSAGE_CHANNEL, data);
+        if (!player.isConnected()) {
+            return;
+        }
+
+        Server server = player.getServer();
+        if (server == null) {
+            return;
+        }
+
+        server.sendData(SRHelpers.MESSAGE_CHANNEL, data);
     }
 
     @Override

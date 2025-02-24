@@ -18,6 +18,8 @@
 package net.skinsrestorer.velocity.wrapper;
 
 import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.proxy.ServerConnection;
+import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
@@ -33,6 +35,7 @@ import java.util.UUID;
 
 @SuperBuilder
 public class WrapperPlayer extends WrapperCommandSender implements SRProxyPlayer {
+    private static final ChannelIdentifier MESSAGE_CHANNEL = MinecraftChannelIdentifier.from(SRHelpers.MESSAGE_CHANNEL);
     private final @NonNull Player player;
 
     @Override
@@ -57,8 +60,16 @@ public class WrapperPlayer extends WrapperCommandSender implements SRProxyPlayer
 
     @Override
     public void sendToMessageChannel(byte[] data) {
-        player.getCurrentServer().map(server ->
-                server.sendPluginMessage(MinecraftChannelIdentifier.from(SRHelpers.MESSAGE_CHANNEL), data));
+        if (!player.isActive()) {
+            return;
+        }
+
+        Optional<ServerConnection> serverConnection = player.getCurrentServer();
+        if (serverConnection.isEmpty()) {
+            return;
+        }
+
+        serverConnection.get().sendPluginMessage(MESSAGE_CHANNEL, data);
     }
 
     @Override
