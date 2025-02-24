@@ -30,6 +30,7 @@ import net.skinsrestorer.bukkit.utils.BukkitSchedulerProvider;
 import net.skinsrestorer.bukkit.utils.SchedulerProvider;
 import net.skinsrestorer.bukkit.utils.SkinApplyBukkitAdapter;
 import net.skinsrestorer.bukkit.utils.SkullUtil;
+import net.skinsrestorer.bukkit.wrapper.BukkitComponentHelper;
 import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
 import net.skinsrestorer.shared.codec.SRServerPluginMessage;
 import net.skinsrestorer.shared.gui.SRInventory;
@@ -46,6 +47,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.SenderMapper;
@@ -138,6 +140,10 @@ public class SRBukkitAdapter implements SRServerAdapter {
         Player bukkitPlayer = player.getAs(Player.class);
         ItemStack itemStack = Objects.requireNonNull(XMaterial.PLAYER_HEAD.parseItem());
         SkullUtil.setSkull(itemStack, giveSkullPayload.textureHash());
+
+        ItemMeta skullMeta = Objects.requireNonNull(itemStack.getItemMeta());
+        skullMeta.setDisplayName(BukkitComponentHelper.toStupidHex(giveSkullPayload.displayName()));
+        itemStack.setItemMeta(skullMeta);
 
         bukkitPlayer.getInventory().addItem(itemStack);
     }

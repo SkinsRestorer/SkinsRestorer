@@ -25,7 +25,6 @@ import net.skinsrestorer.bukkit.utils.SkullUtil;
 import net.skinsrestorer.bukkit.wrapper.BukkitComponentHelper;
 import net.skinsrestorer.shared.gui.GUIManager;
 import net.skinsrestorer.shared.gui.SRInventory;
-import net.skinsrestorer.shared.log.SRLogger;
 import org.bukkit.Server;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
@@ -40,7 +39,6 @@ import java.util.Objects;
 public class BukkitGUI implements GUIManager<Inventory> {
     private final Injector injector;
     private final Server server;
-    private final SRLogger logger;
 
     @SuppressWarnings("UnstableApiUsage")
     private ItemStack createItem(SRInventory.Item entry) {
@@ -60,7 +58,7 @@ public class BukkitGUI implements GUIManager<Inventory> {
         skullMeta.setLore(entry.lore().stream().map(BukkitComponentHelper::toStupidHex).toList());
         if (entry.enchantmentGlow()) {
             skullMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-            skullMeta.addEnchant(Objects.requireNonNull(XEnchantment.LURE.getEnchant()), 1, true);
+            skullMeta.addEnchant(Objects.requireNonNull(XEnchantment.LURE.get()), 1, true);
         }
 
         itemStack.setItemMeta(skullMeta);

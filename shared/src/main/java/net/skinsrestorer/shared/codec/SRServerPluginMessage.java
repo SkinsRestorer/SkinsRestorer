@@ -19,6 +19,7 @@ package net.skinsrestorer.shared.codec;
 
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.gui.SRInventory;
+import net.skinsrestorer.shared.subjects.messages.ComponentString;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -99,10 +100,14 @@ public record SRServerPluginMessage(ChannelPayload<?> channelPayload) {
     }
 
     public record GiveSkullChannelPayload(
+            ComponentString displayName,
             String textureHash) implements ChannelPayload<GiveSkullChannelPayload> {
         public static final NetworkCodec<GiveSkullChannelPayload> CODEC = NetworkCodec.of(
-                (out, msg) -> BuiltInCodecs.STRING_CODEC.write(out, msg.textureHash()),
-                in -> new GiveSkullChannelPayload(BuiltInCodecs.STRING_CODEC.read(in))
+                (out, msg) -> {
+                    ComponentString.CODEC.write(out, msg.displayName());
+                    BuiltInCodecs.STRING_CODEC.write(out, msg.textureHash());
+                },
+                in -> new GiveSkullChannelPayload(ComponentString.CODEC.read(in), BuiltInCodecs.STRING_CODEC.read(in))
         );
 
         @Override

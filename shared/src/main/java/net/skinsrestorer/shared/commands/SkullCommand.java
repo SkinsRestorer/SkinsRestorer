@@ -25,6 +25,7 @@ import net.skinsrestorer.api.connections.MineSkinAPI;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.exception.MineSkinException;
 import net.skinsrestorer.api.property.InputDataResult;
+import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.api.property.SkinVariant;
 import net.skinsrestorer.shadow.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
@@ -258,7 +259,13 @@ public final class SkullCommand {
                 return false;
             }
 
+            SkinIdentifier skinIdentifier = optional.get().getIdentifier();
+            String itemName = switch (skinIdentifier.getSkinType()) {
+                case PLAYER, LEGACY, CUSTOM -> skinInput;
+                case URL -> "Custom skull";
+            };
             adapter.giveSkullItem(targetPlayer.get(), new SRServerPluginMessage.GiveSkullChannelPayload(
+                    ComponentHelper.convertPlainToJson(itemName),
                     PropertyUtils.getSkinTextureHash(optional.get().getProperty())
             ));
 
