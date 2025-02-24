@@ -45,8 +45,15 @@ public class CommandConfig implements SettingsHolder {
             "Can be bypassed with 'skinsrestorer.bypasscooldown'."
     })
     public static final Property<Integer> SKIN_CHANGE_COOLDOWN = newCappedProperty("commands.skinChangeCooldown", 30, 0, Integer.MAX_VALUE);
+    @Comment({
+            "Players cooldown in seconds when getting skulls (set to 0 to disable).",
+            "SkullErrorCooldown is used when an error or invalid url occurs.",
+            "Can be bypassed with 'skinsrestorer.bypasscooldown'."
+    })
+    public static final Property<Integer> SKULL_GET_COOLDOWN = newCappedProperty("commands.skullGetCooldown", 30, 0, Integer.MAX_VALUE);
 
     public static final Property<Integer> SKIN_ERROR_COOLDOWN = newCappedProperty("commands.skinErrorCooldown", 5, 0, Integer.MAX_VALUE);
+    public static final Property<Integer> SKULL_ERROR_COOLDOWN = newCappedProperty("commands.skullErrorCooldown", 5, 0, Integer.MAX_VALUE);
     public static final Property<Boolean> RESTRICT_SKIN_URLS_ENABLED = newProperty("commands.restrictSkinUrls.enabled", false);
     @SuppressWarnings("HttpUrlsUsage")
     public static final Property<List<String>> RESTRICT_SKIN_URLS_LIST = newListProperty("commands.restrictSkinUrls.list",

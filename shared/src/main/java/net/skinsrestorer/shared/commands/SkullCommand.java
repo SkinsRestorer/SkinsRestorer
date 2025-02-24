@@ -72,7 +72,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @Command("skull")
-@RootDescription(Message.HELP_SKIN)
+@RootDescription(Message.HELP_SKULL)
 @SuppressWarnings("unused")
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class SkullCommand {
@@ -93,7 +93,7 @@ public final class SkullCommand {
     private final SkinPermissionManager permissionManager;
 
     @Command("")
-    @CommandPermission(PermissionRegistry.SKIN)
+    @CommandPermission(PermissionRegistry.SKULL)
     public void rootCommand(SRCommandSender sender) {
         MinecraftHelp.<SRCommandSender>builder()
                 .commandManager(commandManager.getCommandManager())
@@ -123,8 +123,8 @@ public final class SkullCommand {
     }
 
     @Command("help [query]")
-    @CommandPermission(PermissionRegistry.SKIN)
-    @CommandDescription(Message.HELP_SKIN)
+    @CommandPermission(PermissionRegistry.SKULL)
+    @CommandDescription(Message.HELP_SKULL)
     public void commandHelp(SRCommandSender sender, @Argument(suggestions = "help_queries_skull") @Greedy String query) {
         MinecraftHelp.<SRCommandSender>builder()
                 .commandManager(commandManager.getCommandManager())
@@ -141,32 +141,32 @@ public final class SkullCommand {
     }
 
     @Command("<skinName>")
-    @CommandPermission(PermissionRegistry.SKIN_SET)
-    @CommandDescription(Message.HELP_SKIN_SET)
+    @CommandPermission(PermissionRegistry.SKULL_GET)
+    @CommandDescription(Message.HELP_SKULL_GET)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkullGetShort(SRPlayer player, @Quoted String skinName) {
         onSkullGetOther(player, skinName, PlayerSelector.singleton(player), null);
     }
 
     @Command("<skinName> <selector>")
-    @CommandPermission(PermissionRegistry.SKIN_SET_OTHER)
-    @CommandDescription(Message.HELP_SKIN_SET_OTHER)
+    @CommandPermission(PermissionRegistry.SKULL_GET_OTHER)
+    @CommandDescription(Message.HELP_SKULL_GET_OTHER)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkullGetShortOther(SRPlayer player, @Quoted String skinName, PlayerSelector selector) {
         onSkullGetOther(player, skinName, selector, null);
     }
 
     @Command("random")
-    @CommandPermission(PermissionRegistry.SKIN_RANDOM)
-    @CommandDescription(Message.HELP_SKIN_RANDOM)
+    @CommandPermission(PermissionRegistry.SKULL_RANDOM)
+    @CommandDescription(Message.HELP_SKULL_RANDOM)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkullRandom(SRPlayer player) {
         onSkullRandomOther(player, PlayerSelector.singleton(player));
     }
 
     @Command("random <selector>")
-    @CommandPermission(PermissionRegistry.SKIN_RANDOM_OTHER)
-    @CommandDescription(Message.HELP_SKIN_RANDOM_OTHER)
+    @CommandPermission(PermissionRegistry.SKULL_RANDOM_OTHER)
+    @CommandDescription(Message.HELP_SKULL_RANDOM_OTHER)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkullRandomOther(SRCommandSender sender, PlayerSelector selector) {
         Optional<RecommenationResponse.SkinInfo> randomRecommendation = recommendationsState.getRandomRecommendation();
@@ -179,24 +179,24 @@ public final class SkullCommand {
     }
 
     @Command("get|give <skinName>")
-    @CommandPermission(PermissionRegistry.SKIN_SET)
-    @CommandDescription(Message.HELP_SKIN_SET)
+    @CommandPermission(PermissionRegistry.SKULL_GET)
+    @CommandDescription(Message.HELP_SKULL_GET)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkullGet(SRPlayer player, @Quoted String skinName) {
         onSkullGetOther(player, skinName, PlayerSelector.singleton(player));
     }
 
     @Command("get|give <skinName> <selector>")
-    @CommandPermission(PermissionRegistry.SKIN_SET_OTHER)
-    @CommandDescription(Message.HELP_SKIN_SET_OTHER)
+    @CommandPermission(PermissionRegistry.SKULL_GET_OTHER)
+    @CommandDescription(Message.HELP_SKULL_GET_OTHER)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkullGetOther(SRCommandSender sender, @Quoted String skinName, PlayerSelector selector) {
         onSkullGetOther(sender, skinName, selector, null);
     }
 
     @Command("get|give <skinName> <selector> <skinVariant>")
-    @CommandPermission(PermissionRegistry.SKIN_SET_OTHER)
-    @CommandDescription(Message.HELP_SKIN_SET_OTHER)
+    @CommandPermission(PermissionRegistry.SKULL_GET_OTHER)
+    @CommandDescription(Message.HELP_SKULL_GET_OTHER)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkullGetOther(SRCommandSender sender, @Quoted String skinName, PlayerSelector selector, SkinVariant skinVariant) {
         for (UUID target : selector.resolve(sender)) {
@@ -208,10 +208,10 @@ public final class SkullCommand {
             }
 
             if (senderEqual(sender, target)) {
-                sender.sendMessage(Message.SUCCESS_SKIN_CHANGE,
+                sender.sendMessage(Message.SUCCESS_SKULL_GET,
                         Placeholder.unparsed("skin", skinName));
             } else {
-                sender.sendMessage(Message.SUCCESS_SKIN_CHANGE_OTHER,
+                sender.sendMessage(Message.SUCCESS_SKULL_GET_OTHER,
                         Placeholder.unparsed("name", targetName),
                         Placeholder.unparsed("skin", skinName));
             }
@@ -219,8 +219,8 @@ public final class SkullCommand {
     }
 
     @Command("url <url> [skinVariant]")
-    @CommandPermission(PermissionRegistry.SKIN_SET_URL)
-    @CommandDescription(Message.HELP_SKIN_SET_URL)
+    @CommandPermission(PermissionRegistry.SKULL_GET_URL)
+    @CommandDescription(Message.HELP_SKULL_GET_URL)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkullGetUrl(SRPlayer player, @Quoted String url, @Nullable SkinVariant skinVariant) {
         if (!ValidationUtil.validSkinUrl(url)) {
@@ -262,7 +262,7 @@ public final class SkullCommand {
                     PropertyUtils.getSkinTextureHash(optional.get().getProperty())
             ));
 
-            setCoolDown(sender, CommandConfig.SKIN_CHANGE_COOLDOWN);
+            setCoolDown(sender, CommandConfig.SKULL_GET_COOLDOWN);
 
             return true;
         } catch (DataRequestException e) {
@@ -272,7 +272,7 @@ public final class SkullCommand {
             sender.sendMessage(Message.ERROR_INVALID_URLSKIN);
         }
 
-        setCoolDown(sender, CommandConfig.SKIN_ERROR_COOLDOWN);
+        setCoolDown(sender, CommandConfig.SKULL_ERROR_COOLDOWN);
         return false;
     }
 

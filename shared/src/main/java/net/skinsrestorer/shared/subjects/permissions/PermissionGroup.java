@@ -59,6 +59,11 @@ public enum PermissionGroup {
             PermissionRegistry.SR_INFO,
             PermissionRegistry.SR_APPLY_SKIN,
             PermissionRegistry.SR_CREATE_CUSTOM,
+            PermissionRegistry.SKULL_GET,
+            PermissionRegistry.SKULL_GET_OTHER,
+            PermissionRegistry.SKULL_GET_URL,
+            PermissionRegistry.SKULL_RANDOM,
+            PermissionRegistry.SKULL_RANDOM_OTHER,
             PermissionRegistry.BYPASS_COOLDOWN,
             PermissionRegistry.BYPASS_DISABLED
     );
