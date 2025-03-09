@@ -19,6 +19,7 @@
   "skinsrestorer.help_skin_undo_other": "Возвращает скин выбранного игрока к предыдущему скину.",
   "skinsrestorer.help_skin_favourite": "Сохраняет скин в избранные.",
   "skinsrestorer.help_skin_favourite_other": "Сохраняет скин указанного игрока в избранные.",
+  "skinsrestorer.help_skull": "",
   "skinsrestorer.help_sr_reload": "Перезагружает конфигурационный файл.",
   "skinsrestorer.help_sr_status": "Проверяет необходимые API службы плагинов.",
   "skinsrestorer.help_sr_drop": "Удаляет данные игрока или скина из базы данных.",
