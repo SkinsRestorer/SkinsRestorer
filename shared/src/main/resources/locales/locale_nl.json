@@ -23,7 +23,6 @@
   "skinsrestorer.admincommand_purgeolddata_success": "<green>Met succes oude skins verwijderd!",
   "skinsrestorer.admincommand_purgeolddata_error": "<dark_red>Er is een fout opgetreden bij het verwijderen van oude skins!",
   "skinsrestorer.admincommand_dump_uploading": "<green>Uploaden van gegevens naar bytebin.lucko.me...",
-  "skinsrestorer.admincommand_dump_success": "<green>Upload succesvol! <yellow><url>",
   "skinsrestorer.admincommand_dump_error": "<red>Fout tijdens het uploaden van gegevens naar bytebin.lucko.me",
   "skinsrestorer.command_server_not_allowed_message": "<red>Opdrachten zijn uitgeschakeld voor de server <server>.",
   "skinsrestorer.player_has_no_permission_skin": "<dark_red>Fout<dark_gray>: <red>Je hebt geen toestemming om deze skin in te stellen.",
