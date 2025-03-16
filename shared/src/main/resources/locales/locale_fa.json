@@ -51,7 +51,6 @@
   "skinsrestorer.error_updating_skin": "خطایی به هنگام به‌روزرسانی اسکین شما رخ داد. لطفا بعدا مجددا تلاش کنید!",
   "skinsrestorer.error_updating_url": "شما نمی‌توانید اسکین های دریافت شده از لینک‌های سفارشی را به‌روزرسانی کنید!<newline><red>دوباره درخواست کنید با استفاده از /skin url",
   "skinsrestorer.error_updating_customskin": "اسکین نمی‌تواند به‌روزرسانی شود چون سفارشی است.",
-  "skinsrestorer.error_invalid_urlskin": "فرمت یا لینک نامعتبر اسکین، <newline><red>بارگذاری اسکین خود به imgur را امتحان کنید و سپس روی 'copy image address' کلیک راست کنید. <newline><red>برای راهنمایی ببینید: <red><underlined>skinsrestorer.net/skinurl",
   "skinsrestorer.error_admin_applyskin": "تازه‌سازی اسکین بازیکن ناموفق بود!",
   "skinsrestorer.error_no_history": "شما هیچ تاریخچه اسکینی ندارید!",
   "skinsrestorer.error_no_favourites": "شما هیچ اسکین مورد علاقه ای ندارید!",
