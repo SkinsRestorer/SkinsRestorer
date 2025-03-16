@@ -55,7 +55,6 @@
   "skinsrestorer.error_updating_skin": "Si è verificato un errore durante l'aggiornamento della tua skin. Riprova più tardi!",
   "skinsrestorer.error_updating_url": "Non puoi aggiornare skin URL personalizzate! <newline><red>Richiedi di nuovo utilizzando /skin URL",
   "skinsrestorer.error_updating_customskin": "La skin non può essere aggiornata perché è personalizzata.",
-  "skinsrestorer.error_invalid_urlskin": "URL o formato skin non valido, <newline><red>Prova a caricare la tua skin su imgur e clicca con il tasto destro su 'copia indirizzo immagine' <newline><red>Per la guida vedi: <red><underlined>skinsrestorer. et/skinurl",
   "skinsrestorer.error_admin_applyskin": "La skin del giocatore NON può essere aggiornata!",
   "skinsrestorer.error_ms_full": "Il collegamento con la API di MineSkin è scaduto durante il caricamento della tua skin. Riprova più tardi.",
   "skinsrestorer.error_ms_api_failed": "L'API MineSkin è sovraccarica, riprova più tardi!",
