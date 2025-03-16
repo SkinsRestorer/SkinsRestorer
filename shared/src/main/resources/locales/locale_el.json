@@ -33,6 +33,5 @@
   "skinsrestorer.error_skinurl_disallowed": "Αυτή η διεύθυνση URL έχει απαγορευτεί από τον διαχειριστή.",
   "skinsrestorer.error_updating_skin": "Ένα σφάλμα προέκυψε κατά την ενημέρωση της εμφάνισής σας. Παρακαλώ προσπαθήστε ξανά αργότερα!",
   "skinsrestorer.error_updating_url": "Δεν μπορείτε να ενημερώσετε προσαρμοσμένα URL εμφανίσεων! Κάντε ξανά αίτηση με το /skin url",
-  "skinsrestorer.error_updating_customskin": "Η εμφάνιση δεν μπορεί να ενημερωθεί επειδή είναι προσαρμοσμένη.",
-  "skinsrestorer.error_invalid_urlskin": "Μη έγκυρη διεύθυνση URL ή μορφή εμφάνισης, <newline><red>Δοκίμασε να ανεβάσεις την εμφάνιση σου στο imgur και κάνεις δεξί κλικ στην επιλογή 'αντιγραφή διεύθυνσης εικόνας' <newline><red><red> Για περαιτέρω βοήθεια επισκεφθείτε το: <red><underlined>skinsrestorer.net/skinurl"
+  "skinsrestorer.error_updating_customskin": "Η εμφάνιση δεν μπορεί να ενημερωθεί επειδή είναι προσαρμοσμένη."
 }
