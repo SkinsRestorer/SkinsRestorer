@@ -9,12 +9,12 @@ plugins {
 
 dependencies {
     api("org.jetbrains:annotations:26.0.2")
-    compileOnly("com.github.spotbugs:spotbugs-annotations:4.9.1")
+    compileOnly("com.github.spotbugs:spotbugs-annotations:4.9.3")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    testFixturesApi("org.junit.jupiter:junit-jupiter:5.12.0")
-    testFixturesApi("org.mockito:mockito-core:5.15.2")
-    testFixturesApi("org.mockito:mockito-junit-jupiter:5.15.2")
+    testFixturesApi("org.junit.jupiter:junit-jupiter:5.12.1")
+    testFixturesApi("org.mockito:mockito-core:5.16.1")
+    testFixturesApi("org.mockito:mockito-junit-jupiter:5.16.1")
 }
 
 tasks {

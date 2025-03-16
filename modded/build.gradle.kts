@@ -1,6 +1,6 @@
 plugins {
     id("sr.base-logic")
-    id("xyz.wagyourtail.unimined") version "1.3.12"
+    id("xyz.wagyourtail.unimined") version "1.3.13"
 }
 
 val main: SourceSet by sourceSets.getting
