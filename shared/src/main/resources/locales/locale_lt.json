@@ -30,7 +30,6 @@
   "skinsrestorer.admincommand_purgeolddata_success": "<green>Sėkmingai išvalytos senos išvaizdos!",
   "skinsrestorer.admincommand_purgeolddata_error": "<dark_red>Valant senas išvaizdas įvyko klaida!",
   "skinsrestorer.admincommand_dump_uploading": "<green>Duomenys įkeliami į bytebin.lucko.me...",
-  "skinsrestorer.admincommand_dump_success": "<green>Įkėlimas sėkmingas! <yellow><url>",
   "skinsrestorer.admincommand_dump_error": "<red>Įvyko klaida bandant įkelti duomenis į bytebin.lucko.me",
   "skinsrestorer.command_server_not_allowed_message": "<red>Serverio <serveris> komandos buvo išjungtos.",
   "skinsrestorer.player_has_no_permission_skin": "<dark_red>Klaida<dark_gray>: <red>Neturite leidimo naudoti šios išvaizdos.",
