@@ -37,7 +37,6 @@
   "skinsrestorer.admincommand_info_player_skin": "<gray>Уенчы кыяфәте: <gold><skin><newline><gray>Вакыт билгесе: <gold><timestamp><newline><gray>Тәмамлана: <gold><expires>",
   "skinsrestorer.admincommand_purgeolddata_success": "<green>Иске кыяфәтләр бетерелде!",
   "skinsrestorer.admincommand_dump_uploading": "<green>bytebin.lucko.me сайтына мәгълүматны йөкләтү...",
-  "skinsrestorer.admincommand_dump_success": "<green>Йөкләтелде! <yellow><url>",
   "skinsrestorer.command_server_not_allowed_message": "<red><server> өчен боерыклар сүнек.",
   "skinsrestorer.command_unknown_player": "Билгесез уенчы: <name>",
   "skinsrestorer.player_has_no_permission_skin": "<dark_red>Хаиа<dark_gray>: <red>Сезгә бу кыяфәтне урнаштыру хокукы юк.",
