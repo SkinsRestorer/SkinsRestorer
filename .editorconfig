@@ -11,3 +11,6 @@ ij_continuation_indent_size = 8
 
 [*.json]
 indent_size = 2
+
+[*.yml]
+indent_size = 2

@@ -10,7 +10,7 @@ dependencies {
     }
 
     api("com.google.code.gson:gson:2.12.1")
-    implementation("org.mariadb.jdbc:mariadb-java-client:3.5.2") {
+    implementation("org.mariadb.jdbc:mariadb-java-client:3.5.3") {
         exclude("com.github.waffle", "waffle-jna")
     }
 
@@ -35,9 +35,9 @@ dependencies {
 
     testImplementation("org.bstats:bstats-base:3.1.0")
 
-    testImplementation("org.testcontainers:testcontainers:1.20.5")
-    testImplementation("org.testcontainers:mariadb:1.20.5")
-    testImplementation("org.testcontainers:junit-jupiter:1.20.5")
+    testImplementation("org.testcontainers:testcontainers:1.20.6")
+    testImplementation("org.testcontainers:mariadb:1.20.6")
+    testImplementation("org.testcontainers:junit-jupiter:1.20.6")
 
-    testRuntimeOnly("org.slf4j:slf4j-simple:2.0.16")
+    testRuntimeOnly("org.slf4j:slf4j-simple:2.0.17")
 }

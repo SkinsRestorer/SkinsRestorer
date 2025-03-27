@@ -6,7 +6,7 @@ plugins {
 
 allprojects {
     group = "net.skinsrestorer"
-    version = "15.6.0"
+    version = property("maven_version")!!
     description = "Ability to restore/change skins on servers!"
 
     repositories {
