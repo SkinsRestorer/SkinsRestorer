@@ -20,9 +20,9 @@ package net.skinsrestorer.modded;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
 import lombok.SneakyThrows;
-import net.lenni0451.mcstructs.nbt.INbtTag;
+import net.lenni0451.mcstructs.nbt.NbtTag;
 import net.lenni0451.mcstructs.nbt.io.NbtIO;
-import net.lenni0451.mcstructs.text.ATextComponent;
+import net.lenni0451.mcstructs.text.TextComponent;
 import net.lenni0451.mcstructs.text.serializer.TextComponentCodec;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -33,10 +33,10 @@ import net.skinsrestorer.shared.subjects.messages.ComponentString;
 public class MinecraftKyoriSerializer {
     @SneakyThrows
     public static Component toNative(ComponentString componentString) {
-        ATextComponent textComponent = TextComponentCodec.LATEST.deserializeJson(componentString.jsonString());
-        INbtTag compoundTag = TextComponentCodec.LATEST.serializeNbt(textComponent);
+        TextComponent textComponent = TextComponentCodec.V1_21_4.deserializeJson(componentString.jsonString());
+        NbtTag compoundTag = TextComponentCodec.V1_21_4.serializeNbtTree(textComponent);
         RegistryFriendlyByteBuf registryFriendlyByteBuf = new RegistryFriendlyByteBuf(Unpooled.buffer(), RegistryAccess.EMPTY);
-        NbtIO.JAVA.writeUnnamed(new ByteBufOutputStream(registryFriendlyByteBuf), compoundTag);
+        NbtIO.V1_12.writeUnnamed(new ByteBufOutputStream(registryFriendlyByteBuf), compoundTag);
 
         return ComponentSerialization.TRUSTED_STREAM_CODEC.decode(registryFriendlyByteBuf);
     }
