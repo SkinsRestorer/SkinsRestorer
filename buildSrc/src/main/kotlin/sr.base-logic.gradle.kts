@@ -12,7 +12,7 @@ dependencies {
     compileOnly("com.github.spotbugs:spotbugs-annotations:4.9.3")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    testFixturesApi("org.junit.jupiter:junit-jupiter:5.12.1")
+    testFixturesApi("org.junit.jupiter:junit-jupiter:5.12.2")
     testFixturesApi("org.mockito:mockito-core:5.17.0")
     testFixturesApi("org.mockito:mockito-junit-jupiter:5.17.0")
 }
