@@ -83,14 +83,14 @@ dependencies {
     implementation("net.lenni0451.mcstructs:text:3.0.0")
     compileOnly("org.spongepowered:mixin:0.8.7")
 
-    modImplementation("dev.architectury:architectury:16.0.3")
+    modImplementation("dev.architectury:architectury:16.1.4")
 
     fabricModImplementation(fabricApi.fabric("0.118.0+1.21.4"))
-    fabricModImplementation("dev.architectury:architectury-fabric:16.0.3")
+    fabricModImplementation("dev.architectury:architectury-fabric:16.1.4")
     fabricModImplementation("org.incendo:cloud-fabric:2.0.0-SNAPSHOT")
     fabricModImplementation("me.lucko:fabric-permissions-api:0.3.3")
 
-    neoforgeModImplementation("dev.architectury:architectury-neoforge:16.0.3")
+    neoforgeModImplementation("dev.architectury:architectury-neoforge:16.1.4")
     neoforgeModImplementation("org.incendo:cloud-neoforge:2.0.0-SNAPSHOT")
 }
 

@@ -9,7 +9,7 @@ dependencies {
         exclude("org.google.code.gson", "gson")
     }
 
-    api("com.google.code.gson:gson:2.12.1")
+    api("com.google.code.gson:gson:2.13.0")
     implementation("org.mariadb.jdbc:mariadb-java-client:3.5.3") {
         exclude("com.github.waffle", "waffle-jna")
     }
