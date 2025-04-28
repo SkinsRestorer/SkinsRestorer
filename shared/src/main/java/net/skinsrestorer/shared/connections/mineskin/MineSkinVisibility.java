@@ -15,15 +15,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package net.skinsrestorer.shared.connections.responses.mineskin;
+package net.skinsrestorer.shared.connections.mineskin;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import lombok.Getter;
+import com.google.gson.annotations.SerializedName;
 
-@Getter
-@SuppressWarnings("unused")
-@SuppressFBWarnings({"UWF_UNWRITTEN_FIELD", "URF_UNREAD_FIELD"})
-public class MineSkinData {
-    private String uuid;
-    private MineSkinTexture texture;
+public enum MineSkinVisibility {
+    @SerializedName("public")
+    PUBLIC,
+    @SerializedName("unlisted")
+    UNLISTED,
+    @SerializedName("private")
+    PRIVATE
 }

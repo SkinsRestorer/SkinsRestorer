@@ -19,9 +19,9 @@ package net.skinsrestorer.shared.storage;
 
 import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shadow.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.skinsrestorer.api.PropertyUtils;
 import net.skinsrestorer.api.property.SkinIdentifier;
+import net.skinsrestorer.shadow.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.skinsrestorer.shared.config.GUIConfig;
 import net.skinsrestorer.shared.connections.RecommendationsState;
 import net.skinsrestorer.shared.gui.GUIUtils;
@@ -158,13 +158,15 @@ public class GUIStorage {
             @Override
             public List<GUIUtils.GUIRawSkinEntry> getGUISkins(int offset, int limit) {
                 return playerStorage.getHistoryEntries(player.getUniqueId(), offset, limit).stream()
-                        .map(h -> new GUIUtils.GUIRawSkinEntry(
-                                h.getSkinIdentifier(),
-                                skinStorage.resolveSkinName(h.getSkinIdentifier()),
-                                PropertyUtils.getSkinTextureHash(skinStorage.getSkinDataByIdentifier(h.getSkinIdentifier()).orElseThrow()),
-                                List.of(locale.getMessageRequired(player, Message.SKINSMENU_HISTORY_LORE,
-                                        Placeholder.parsed("time", SRHelpers.formatEpochSeconds(settings, h.getTimestamp(), player.getLocale()))))
-                        ))
+                        .flatMap(h -> skinStorage.getSkinDataByIdentifier(h.getSkinIdentifier())
+                                .stream()
+                                .map(property -> new GUIUtils.GUIRawSkinEntry(
+                                        h.getSkinIdentifier(),
+                                        skinStorage.resolveSkinName(h.getSkinIdentifier()),
+                                        PropertyUtils.getSkinTextureHash(property),
+                                        List.of(locale.getMessageRequired(player, Message.SKINSMENU_HISTORY_LORE,
+                                                Placeholder.parsed("time", SRHelpers.formatEpochSeconds(settings, h.getTimestamp(), player.getLocale()))))
+                                )))
                         .toList();
             }
         }, new GUIUtils.GUIDataSource() {
@@ -191,12 +193,14 @@ public class GUIStorage {
             @Override
             public List<GUIUtils.GUIRawSkinEntry> getGUISkins(int offset, int limit) {
                 return playerStorage.getFavouriteEntries(player.getUniqueId(), offset, limit).stream()
-                        .map(h -> new GUIUtils.GUIRawSkinEntry(
-                                h.getSkinIdentifier(),
-                                skinStorage.resolveSkinName(h.getSkinIdentifier()),
-                                PropertyUtils.getSkinTextureHash(skinStorage.getSkinDataByIdentifier(h.getSkinIdentifier()).orElseThrow()),
-                                List.of()
-                        ))
+                        .flatMap(h -> skinStorage.getSkinDataByIdentifier(h.getSkinIdentifier())
+                                .stream()
+                                .map(property -> new GUIUtils.GUIRawSkinEntry(
+                                        h.getSkinIdentifier(),
+                                        skinStorage.resolveSkinName(h.getSkinIdentifier()),
+                                        PropertyUtils.getSkinTextureHash(property),
+                                        List.of()
+                                )))
                         .toList();
             }
         });

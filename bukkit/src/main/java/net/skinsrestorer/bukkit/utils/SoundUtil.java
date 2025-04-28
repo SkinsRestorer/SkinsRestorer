@@ -48,7 +48,7 @@ public class SoundUtil {
 
         logger.debug("Playing sound for player: %s".formatted(player.getName()));
         XSound.Record record2 = new XSound.Record();
-        record2.withSound(XSound.matchXSound(record.getSound()).orElseThrow());
+        record2.withSound(XSound.of(record.getSound()).orElseThrow());
         record2.inCategory(XSound.Category.valueOf(record.getCategory()));
         record2.withVolume(record.getVolume());
         record2.withPitch(record.getPitch());

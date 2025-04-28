@@ -48,7 +48,7 @@ jobs:
         configurationJson: |
           {
             "template": "#{{CHANGELOG}}",
-            "commit_template": "- [`#{{SHORT_MERGE_SHA}}`](https://github.com/SkinsRestorer/SkinsRestorer/commit/#{{MERGE_SHA}}) #{{TITLE}} by @#{{AUTHOR}}",
+            "commit_template": "- [`#{{SHORT_MERGE_SHA}}`](https://github.com/SkinsRestorer/SkinsRestorer/commit/#{{MERGE_SHA}}) #{{TITLE}}",
             "categories": [
               {
                   "title": "## 🚀 Features",

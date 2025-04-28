@@ -15,31 +15,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package net.skinsrestorer.shared.connections.responses.mineskin;
+package net.skinsrestorer.shared.connections.mineskin.requests;
 
-import com.google.gson.annotations.SerializedName;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.shared.connections.mineskin.MineSkinVariant;
+import net.skinsrestorer.shared.connections.mineskin.MineSkinVisibility;
+import org.jetbrains.annotations.Nullable;
 
-@Getter
+import java.util.UUID;
+
+@RequiredArgsConstructor
 @SuppressWarnings("unused")
 @SuppressFBWarnings({"UWF_UNWRITTEN_FIELD", "URF_UNREAD_FIELD"})
-public class MineSkinUrlResponse {
-    private String id;
-    private String idStr;
-    private String uuid;
-    private String name;
-    private String variant;
-    private MineSkinData data;
-    private long timestamp;
-    private int duration;
-    // sometimes account is returned as a string and sometimes as an int,
-    // so it's just easier to comment this field out, it's not used anyway
-    // private int account;
-    private String server;
-    @SerializedName("private")
-    private boolean private_;
-    private int views;
-    private int nextRequest;
-    private boolean duplicate;
+public class MineSkinUrlRequest {
+    private final @Nullable MineSkinVariant variant;
+    private final @Nullable String name;
+    private final @Nullable MineSkinVisibility visibility;
+    private final @Nullable UUID cape;
+    private final @Nullable String url;
 }

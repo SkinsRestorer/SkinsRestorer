@@ -99,9 +99,12 @@ public final class SpigotSkinRefresher implements SkinRefresher {
         }
     }
 
-    private void sendPacket(Object playerConnection, Object packet) throws ReflectiveOperationException {
+    private void sendPacket(Player player, Object packet) throws ReflectiveOperationException {
+        Object entityPlayer = HandleReflection.getHandle(player, Object.class);
+        Object playerCon = ReflectionUtil.getFieldByType(entityPlayer, "PlayerConnection");
+
         ReflectionUtil.invokeObjectMethod(
-                playerConnection,
+                playerCon,
                 "sendPacket",
                 new ReflectionUtil.ParameterPair<>(packetClass, packet)
         );
@@ -209,7 +212,6 @@ public final class SpigotSkinRefresher implements SkinRefresher {
             }
 
             Object slot = ReflectionUtil.invokeConstructor(playOutHeldItemSlotClass, player.getInventory().getHeldItemSlot());
-            Object playerCon = ReflectionUtil.getFieldByType(entityPlayer, "PlayerConnection");
 
             resendInfoPackets(player, player);
 
@@ -226,13 +228,13 @@ public final class SpigotSkinRefresher implements SkinRefresher {
             });
 
             if (sendRespawnPacketDirectly) {
-                sendPacket(playerCon, respawn);
+                sendPacket(player, respawn);
             }
 
             ReflectionUtil.invokeObjectMethod(entityPlayer, "updateAbilities");
 
-            sendPacket(playerCon, pos);
-            sendPacket(playerCon, slot);
+            sendPacket(player, pos);
+            sendPacket(player, slot);
 
             ReflectionUtil.invokeObjectMethod(player, "updateScaledHealth");
             player.updateInventory();
