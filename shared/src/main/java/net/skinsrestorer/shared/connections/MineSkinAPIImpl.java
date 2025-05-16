@@ -49,52 +49,74 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.atomic.AtomicLong;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class MineSkinAPIImpl implements MineSkinAPI {
     private static final int MAX_RETRIES = 5;
     private static final String MINESKIN_USER_AGENT = "SkinsRestorer/MineSkinAPI";
     private static final URI MINESKIN_ENDPOINT = URI.create("https://api.mineskin.org/v2/generate");
-    private final ReentrantLock lock = new ReentrantLock();
+    private final Semaphore semaphore = new Semaphore(5);
     private final Gson gson = new Gson();
     private final SRLogger logger;
     private final MetricsCounter metricsCounter;
     private final SettingsManager settings;
     private final HttpClient httpClient;
+    private final AtomicLong nextRequestAt = new AtomicLong();
 
     @Override
     public MineSkinResponse genSkin(String imageUrl, @Nullable SkinVariant skinVariant) throws DataRequestException, MineSkinException {
         imageUrl = SRHelpers.sanitizeImageURL(imageUrl);
 
-        int retryAttempts = 0;
-        do {
-            lock.lock();
-            try {
-                Optional<MineSkinResponse> optional = genSkinInternal(imageUrl, skinVariant);
+        try {
+            int retryAttempts = 0;
+            do {
+                semaphore.acquire();
+                try {
+                    long waitDuration = nextRequestAt.get() - System.currentTimeMillis();
+                    if (waitDuration > 0) {
+                        logger.debug("[INFO] Waiting %dms before next MineSkin request...".formatted(waitDuration));
+                        Thread.sleep(waitDuration);
+                    }
 
-                if (optional.isPresent()) {
-                    return optional.get();
+                    Optional<MineSkinResponse> optional = genSkinInternal(imageUrl, skinVariant);
+
+                    if (optional.isPresent()) {
+                        return optional.get();
+                    }
+                } catch (IOException e) {
+                    logger.debug(SRLogLevel.WARNING, "[ERROR] MineSkin Failed! IOException (connection/disk): (%s)".formatted(imageUrl), e);
+                    throw new DataRequestExceptionShared(e);
+                } finally {
+                    semaphore.release();
                 }
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            } catch (IOException e) {
-                logger.debug(SRLogLevel.WARNING, "[ERROR] MineSkin Failed! IOException (connection/disk): (%s)".formatted(imageUrl), e);
-                throw new DataRequestExceptionShared(e);
-            } finally {
-                lock.unlock();
-            }
-        } while (++retryAttempts < MAX_RETRIES);
+            } while (++retryAttempts < MAX_RETRIES);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new DataRequestExceptionShared(e);
+        }
 
         throw new MineSkinExceptionShared(Message.ERROR_MS_API_FAILED);
     }
 
-    private Optional<MineSkinResponse> genSkinInternal(String imageUrl, @Nullable SkinVariant skinVariant) throws DataRequestException, MineSkinException, IOException, InterruptedException {
+    private Optional<MineSkinResponse> genSkinInternal(String imageUrl, @Nullable SkinVariant skinVariant) throws DataRequestException, MineSkinException, IOException {
         HttpResponse httpResponse = queryURL(imageUrl, skinVariant);
         logger.debug("MineSkinAPI: Response: %s".formatted(httpResponse));
 
         MineSkinUrlResponse response = httpResponse.getBodyAs(MineSkinUrlResponse.class);
+
+        MineSkinUrlResponse.RateLimit rateLimit = response.getRateLimit();
+        if (rateLimit != null) {
+            long serverNextRequestAt = rateLimit.getNext().getAbsolute();
+            nextRequestAt.updateAndGet(currentValue -> Math.max(currentValue, serverNextRequestAt));
+
+            long resetMillis = TimeUnit.SECONDS.toMillis(rateLimit.getLimit().getReset());
+            if (rateLimit.getLimit().getRemaining() == 0) {
+                nextRequestAt.updateAndGet(currentValue -> Math.max(currentValue, resetMillis));
+            }
+        }
 
         if (response.isSuccess()) {
             MineSkinUrlResponse.Skin skin = response.getSkin();
@@ -103,25 +125,16 @@ public class MineSkinAPIImpl implements MineSkinAPI {
             return Optional.of(MineSkinResponse.of(property, skin.getUuid(),
                     skinVariant, PropertyUtils.getSkinVariant(property)));
         } else {
-            long requestedDelay = response.getRateLimit().getDelay().getMillis();
-
-            logger.debug("[INFO] MineSkin API Rate Limit: %dms".formatted(requestedDelay));
-            TimeUnit.MILLISECONDS.sleep(requestedDelay);
-
             for (MineSkinUrlResponse.Error error : response.getErrors()) {
                 logger.debug("[ERROR] MineSkin Failed! Reason: %s Image URL: %s".formatted(error, imageUrl));
                 return switch (error.getCode()) {
-                    case "rate_limit" -> {
-                        if (response.getRateLimit().getLimit().getRemaining() == 0) {
-                            logger.debug("[INFO] MineSkin waiting 30s for limit reset...");
-                            TimeUnit.SECONDS.sleep(30);
-                        }
-
-                        yield Optional.empty(); // try again
-                    }
+                    case "rate_limit" -> // try again
+                            Optional.empty();
                     case "failed_to_create_id", "skin_change_failed" -> {
                         logger.debug("Trying again in 6 seconds...");
-                        TimeUnit.SECONDS.sleep(6);
+                        long nowPlus = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(6);
+                        nextRequestAt.updateAndGet(currentValue -> Math.max(currentValue, nowPlus));
+
                         yield Optional.empty(); // try again
                     }
                     case "no_account_available" -> throw new MineSkinExceptionShared(Message.ERROR_MS_FULL);
