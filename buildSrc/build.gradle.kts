@@ -21,7 +21,7 @@ dependencies {
     implementation("net.kyori:indra-git:3.1.3")
     implementation("io.github.patrick.remapper:io.github.patrick.remapper.gradle.plugin:1.4.2")
     implementation("io.freefair.gradle:lombok-plugin:8.13.1")
-    implementation("xyz.wagyourtail.jvmdowngrader:xyz.wagyourtail.jvmdowngrader.gradle.plugin:1.2.2")
+    implementation("xyz.wagyourtail.jvmdowngrader:xyz.wagyourtail.jvmdowngrader.gradle.plugin:1.3.0")
 
     implementation("commons-io:commons-io:2.19.0")
     implementation("org.apache.ant:ant:1.10.15")
