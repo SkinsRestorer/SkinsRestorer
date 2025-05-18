@@ -20,6 +20,7 @@
   "skinsrestorer.help_sr_create_custom": "Creează un skin personalizat pentru un server.",
   "skinsrestorer.help_sr_purge_old_data": "Șterge datele skin-ului vechi de peste x zile în urmă.",
   "skinsrestorer.help_sr_dump": "Încărcați datele de suport pe bytebin.lucko.me.",
+  "skinsrestorer.success_generic": "<dark_green><message>",
   "skinsrestorer.success_skin_change": "Skin-ul tău a fost schimbat.",
   "skinsrestorer.success_skin_clear": "Skin-ul tău a fost șters.",
   "skinsrestorer.success_updating_skin": "Skin-ul tău a fost actualizat.",

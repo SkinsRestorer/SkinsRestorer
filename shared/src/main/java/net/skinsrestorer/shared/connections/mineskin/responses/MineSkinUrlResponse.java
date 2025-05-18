@@ -118,6 +118,7 @@ public class MineSkinUrlResponse {
         public static class Limit {
             private int limit;
             private int remaining;
+            private long reset;
         }
     }
 
