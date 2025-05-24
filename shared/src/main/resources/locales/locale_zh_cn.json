@@ -140,6 +140,7 @@
   "skinsrestorer.permission_command_update_other": "允许更新其他玩家的皮肤。",
   "skinsrestorer.permission_command_favourite_other": "允许为其他玩家设置收藏皮肤。",
   "skinsrestorer.permission_command_undo_other": "允许将皮肤还原到玩家以前的皮肤。",
+  "skinsrestorer.permission_admincommand_skull_random_other": "允许使用给其他玩家一个随机头颅。",
   "skinsrestorer.permission_admincommand_reload": "允许使用\"/sr reload\"命令",
   "skinsrestorer.permission_admincommand_status": "允许使用\"/sr status\"命令",
   "skinsrestorer.permission_admincommand_drop": "允许删除一个.SKIN文件。",
