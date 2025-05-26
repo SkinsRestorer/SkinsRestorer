@@ -99,7 +99,7 @@ public class UpdateCheckerGitHub {
                 }
 
                 String downloadUrl = jarAssetUrl.get();
-                printUpdateAvailable(cause, releaseInfo.getTagName(), downloadUrl, downloader != null);
+                printUpdateAvailable(cause, releaseInfo.getTagName(), downloader != null);
                 if (downloader != null && downloader.downloadUpdate(downloadUrl, verificationAssetUrl.orElse(null))) {
                     updateDownloaded = true;
                 }
@@ -128,7 +128,7 @@ public class UpdateCheckerGitHub {
         printFooter();
     }
 
-    public void printUpdateAvailable(UpdateCause cause, String newVersion, String downloadUrl, boolean updateDownloader) {
+    public void printUpdateAvailable(UpdateCause cause, String newVersion, boolean updateDownloader) {
         printHeader(cause);
         logger.info("§b    Version: §c%s".formatted(BuildData.VERSION));
         logger.info("§b    Commit: §c%s".formatted(BuildData.COMMIT_SHORT));
@@ -136,7 +136,7 @@ public class UpdateCheckerGitHub {
             logger.info("§b    A new version (§a%s§b) is available! Downloading update...".formatted(newVersion));
         } else {
             logger.info("§b    A new version (§a%s§b) is available!".formatted(newVersion));
-            logger.info("§e    %s".formatted(downloadUrl));
+            logger.info("§e    https://modrinth.com/plugin/skinsrestorer/version/%s".formatted(newVersion));
         }
         printFooter();
     }

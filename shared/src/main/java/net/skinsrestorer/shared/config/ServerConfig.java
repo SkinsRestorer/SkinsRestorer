@@ -33,18 +33,15 @@ public class ServerConfig implements SettingsHolder {
     public static final Property<Boolean> RESOURCE_PACK_FIX = newProperty("server.resourcePackFix", true);
     @Comment({
             "Dismounts a mounted (on a horse, or sitting) player when their skin is updated, preventing players from becoming desynced.",
-            "File override = ./plugins/SkinsRestorer/disableDismountPlayer.txt"
     })
     public static final Property<Boolean> DISMOUNT_PLAYER_ON_UPDATE = newProperty("server.dismountPlayerOnSkinUpdate", true);
     @Comment({
             "Remounts a player that was dismounted after a skin update (above option must be true).",
             "Disabling this is only recommended if you use plugins that allow you ride other players, or use sit. Otherwise you could get errors or players could be kicked for flying.",
-            "File override = ./plugins/SkinsRestorer/disableRemountPlayer.txt"
     })
     public static final Property<Boolean> REMOUNT_PLAYER_ON_UPDATE = newProperty("server.remountPlayerOnSkinUpdate", true);
     @Comment({
             "Dismounts all passengers mounting a player (such as plugins that let you ride another player), preventing those players from becoming desynced.",
-            "File override = ./plugins/SkinsRestorer/enableDismountEntities.txt"
     })
     public static final Property<Boolean> DISMOUNT_PASSENGERS_ON_UPDATE = newProperty("server.dismountPassengersOnSkinUpdate", false);
     @Comment({

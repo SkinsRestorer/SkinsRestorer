@@ -34,7 +34,7 @@ public class SkinsRestorerProvider {
         if (SkinsRestorerProvider.api == null) {
             throw new IllegalStateException("SkinsRestorer API is not enabled! " +
                     "This can have multiple reasons, for example 'server.proxyMode.api' was enabled in the server-side config.yml, but the database was not configured in the server-side config.yml. " +
-                    "For more information read this page: https://skinsrestorer.net/docs/troubleshooting");
+                    "For more information read this page: https://skinsrestorer.net/docs/troubleshooting/proxy-mode");
         }
 
         return SkinsRestorerProvider.api;

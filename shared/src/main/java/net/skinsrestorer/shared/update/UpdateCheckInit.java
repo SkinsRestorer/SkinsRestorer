@@ -19,6 +19,7 @@ package net.skinsrestorer.shared.update;
 
 import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 
@@ -31,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class UpdateCheckInit {
     private final SRPlugin plugin;
+    private final SRLogger logger;
     private final SRPlatformAdapter adapter;
     private final UpdateCheckerGitHub updateChecker;
     private final UpdateCheckExecutor updateCheckExecutor;
@@ -38,6 +40,10 @@ public class UpdateCheckInit {
 
     public Optional<UpdateDownloader> getDownloader() {
         boolean downloaderDisabled = Files.exists(plugin.getDataFolder().resolve("noupdate.txt"));
+        if (downloaderDisabled) {
+            logger.info("Auto updater was manually disabled. This is not recommended, as it will prevent the plugin from updating automatically. See why at: https://skinsrestorer.net/docs/configuration/auto-update");
+        }
+
         DownloaderClassProvider downloaderClassProvider = injector.getIfAvailable(DownloaderClassProvider.class);
         return downloaderClassProvider == null || downloaderDisabled ? Optional.empty() : Optional.of(injector.getSingleton(downloaderClassProvider.get()));
     }
