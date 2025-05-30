@@ -94,6 +94,7 @@
   "skinsrestorer.admincommand_info_player": "<gray>UUID de jugador: <gold><uuid><newline><gray>Identificador de skin: <gold><identifier><newline><gray>Variante de skin: <gold><variant><newline><gray>Tipo de skin: <gold><type>",
   "skinsrestorer.admincommand_info_invalid_uuid": "<red>Debe especificar el UUID del jugador.",
   "skinsrestorer.admincommand_info_no_set_skin": "<red>El jugador no tiene ningúna skin establecida explícitamente.",
+  "skinsrestorer.admincommand_info_url_skin": "<gray>Piel URL: <gold><click:open_url:'<url>'><url></click><newline><gray>Piel de Minecraft Id: <gold><mine_skin_id>",
   "skinsrestorer.admincommand_info_hardcoded_skin": "<gray>Código de skin: <gold><skin>",
   "skinsrestorer.admincommand_info_custom_skin": "<gray>Skin personalizada: <gold><skin>",
   "skinsrestorer.admincommand_info_player_skin": "<gray>Skin de jugador: <gold><skin><newline><gray>Marca de tiempo: <gold><timestamp><newline><gray>Expira: <gold><expires>",
