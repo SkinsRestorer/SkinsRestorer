@@ -1,3 +1,18 @@
 {
-  "skinsrestorer.help_skin": "ცვლის თქვენს სკინს."
+  "skinsrestorer.prefix_format": "<yellow>[<dark_green>SkinsRestorer</dark_green>] <message>",
+  "skinsrestorer.help_skin": "ცვლის თქვენს სკინს.",
+  "skinsrestorer.help_skins": "ხსის სკინების ინტერფეისს.",
+  "skinsrestorer.help_sr": "ადმინის ბრძანებები SkinsRestorer-ისთვის.",
+  "skinsrestorer.help_skin_help": "აჩვენებს ამ დამხმარე ბრძანებას.",
+  "skinsrestorer.help_skin_set": "ცვლის თქვენს სკინს.",
+  "skinsrestorer.help_skin_set_other": "უყენებს სასურველ მოთამაშეს სკინს.",
+  "skinsrestorer.help_skin_set_url": "ცვლის სკინს URL-ით.",
+  "skinsrestorer.help_skin_clear": "სკინს ანულებს.",
+  "skinsrestorer.help_skin_clear_other": "სასურველი მოთამაშის სკინს ანულება.",
+  "skinsrestorer.help_skin_random": "აყენებს შემთხვევით სკინს.",
+  "skinsrestorer.help_skin_random_other": "უყენებს სასურველ მოთამაშეს შემთხვევით სკინს.",
+  "skinsrestorer.help_skin_search": "მოიძიეთ სასურველი სკინი.",
+  "skinsrestorer.help_skin_edit": "გადააკეთეთ თქვენი სკინი ქსელში.",
+  "skinsrestorer.help_skin_update": "სკინს ანახლებს.",
+  "skinsrestorer.help_skin_update_other": "სასურველი მოთამაშის სკინს ანახლებს."
 }
