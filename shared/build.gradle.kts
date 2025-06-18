@@ -28,7 +28,7 @@ dependencies {
         isTransitive = false
     }
 
-    compileOnly("net.kyori:adventure-text-minimessage:4.22.0")
+    compileOnly("net.kyori:adventure-text-minimessage:4.23.0")
     compileOnly("io.github.miniplaceholders:miniplaceholders-api:2.3.0")
 
     compileOnly("org.geysermc.floodgate:api:2.2.2-SNAPSHOT")
