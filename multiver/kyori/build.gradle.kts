@@ -5,11 +5,11 @@ plugins {
 
 dependencies {
     api("net.kyori:adventure-api:4.21.0")
-    api("net.kyori:adventure-text-serializer-gson:4.21.0")
-    api("net.kyori:adventure-text-serializer-legacy:4.21.0")
-    api("net.kyori:adventure-text-serializer-ansi:4.21.0")
-    api("net.kyori:adventure-text-serializer-plain:4.21.0")
-    api("net.kyori:adventure-text-minimessage:4.21.0")
+    api("net.kyori:adventure-text-serializer-gson:4.22.0")
+    api("net.kyori:adventure-text-serializer-legacy:4.22.0")
+    api("net.kyori:adventure-text-serializer-ansi:4.22.0")
+    api("net.kyori:adventure-text-serializer-plain:4.22.0")
+    api("net.kyori:adventure-text-minimessage:4.22.0")
 
     api(libs.adventure.bukkit)
     api(libs.adventure.bungeecord)
