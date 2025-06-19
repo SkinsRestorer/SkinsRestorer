@@ -18,6 +18,9 @@ dependencies {
 }
 
 tasks {
+    test {
+        useJUnitPlatform()
+    }
     // Variable replacements
     processResources {
         filesMatching(listOf("plugin.yml", "bungee.yml")) {

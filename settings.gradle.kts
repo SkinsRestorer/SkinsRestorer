@@ -42,6 +42,7 @@ rootProject.projectDir.resolve("mappings").list().toList().forEach { include(":m
 include("modded")
 setupSRSubproject("build-data")
 setupSRSubproject("api")
+setupSRSubproject("scissors")
 setupSRSubproject("shared")
 
 setupSRSubproject("bukkit")
