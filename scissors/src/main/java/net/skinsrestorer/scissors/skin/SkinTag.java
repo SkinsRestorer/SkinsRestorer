@@ -20,8 +20,6 @@ package net.skinsrestorer.scissors.skin;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -35,7 +33,9 @@ public enum SkinTag {
     HEAD_OVERLAY,
     HEAD(HEAD_BASE, HEAD_OVERLAY),
     // Ears
-    // TODO: Implement ear tags
+    LEFT_EAR,
+    RIGHT_EAR,
+    EARS(LEFT_EAR, RIGHT_EAR),
     // Right leg
     RIGHT_LEG_BASE,
     RIGHT_LEG_OVERLAY,
@@ -71,8 +71,7 @@ public enum SkinTag {
     TOP,
     BOTTOM,
     // Full skin
-    // TODO: Add ears
-    FULL(HEAD, LEGS, ARMS, TORSO);
+    FULL(HEAD, LEGS, ARMS, TORSO, EARS);
 
     public static final SkinTag[] VALUES = values();
 
