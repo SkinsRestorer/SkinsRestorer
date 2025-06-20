@@ -33,9 +33,7 @@ public enum SkinTag {
     HEAD_OVERLAY,
     HEAD(HEAD_BASE, HEAD_OVERLAY),
     // Ears
-    LEFT_EAR,
-    RIGHT_EAR,
-    EARS(LEFT_EAR, RIGHT_EAR),
+    EARS,
     // Right leg
     RIGHT_LEG_BASE,
     RIGHT_LEG_OVERLAY,

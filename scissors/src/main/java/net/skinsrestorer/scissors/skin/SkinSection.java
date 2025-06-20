@@ -34,6 +34,19 @@ public enum SkinSection {
     HEAD_BASE_RIGHT(16, 8, 8, 8, SkinTag.HEAD_BASE, SkinTag.RIGHT),
     HEAD_BASE_BACK(24, 8, 8, 8, SkinTag.HEAD_BASE, SkinTag.BACK),
     // Ears
+    // TODO: Properly label sides
+    // Orange
+    EARS_TOP(25, 0, 6, 1, SkinTag.EARS, SkinTag.TOP),
+    // Green
+    EARS_BOTTOM(31, 0, 6, 1, SkinTag.EARS, SkinTag.BOTTOM),
+    // Magenta
+    EARS_LEFT(24, 1, 1, 6, SkinTag.EARS, SkinTag.LEFT),
+    // Yellow
+    EARS_RIGHT(31, 1, 1, 6, SkinTag.EARS, SkinTag.RIGHT),
+    // Red
+    EARS_FRONT(25, 1, 6, 6, SkinTag.EARS, SkinTag.FRONT),
+    // Blue
+    EARS_BACK(32, 1, 6, 6, SkinTag.EARS, SkinTag.BACK),
     // TODO: Implement ear sections
     // Head overlay
     HEAD_OVERLAY_TOP(40, 0, 8, 8, SkinTag.HEAD_OVERLAY, SkinTag.TOP),
