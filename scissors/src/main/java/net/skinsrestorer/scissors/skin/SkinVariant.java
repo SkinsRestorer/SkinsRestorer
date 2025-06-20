@@ -17,9 +17,29 @@
  */
 package net.skinsrestorer.scissors.skin;
 
+import net.skinsrestorer.scissors.RectangleSection;
+
+import java.awt.image.BufferedImage;
+
 public enum SkinVariant {
     CLASSIC,
     SLIM;
 
+    public static final RectangleSection SLIM_TRANSPARENT_RIGHT_ARM_SECTION = new RectangleSection(54, 20, 2, 12);
+    public static final RectangleSection SLIM_TRANSPARENT_LEFT_ARM_SECTION = new RectangleSection(46, 52, 2, 12);
+
     public static final SkinVariant[] VALUES = values();
+
+    public static SkinVariant detect(BufferedImage image) {
+        return anyTransparentPixel(image, SLIM_TRANSPARENT_RIGHT_ARM_SECTION) ||
+               anyTransparentPixel(image, SLIM_TRANSPARENT_LEFT_ARM_SECTION) ? SLIM : CLASSIC;
+    }
+
+    private static boolean anyTransparentPixel(BufferedImage image, RectangleSection section) {
+        return section.coordinateStream()
+                .anyMatch(pixel -> {
+                    int rgb = image.getRGB(pixel.x(), pixel.y());
+                    return (rgb & 0xFF000000) == 0x00000000; // Check if pixel is transparent
+                });
+    }
 }

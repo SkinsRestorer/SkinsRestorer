@@ -51,7 +51,7 @@ public record SkinDefinition(Map<SkinSection, BufferedImage> sections,
         }
 
         if (skinVariant == null) {
-            skinVariant = detectSkinVariant(skinImage);
+            skinVariant = SkinVariant.detect(skinImage);
         }
 
         BufferedImage backgroundImage = null;
@@ -103,11 +103,6 @@ public record SkinDefinition(Map<SkinSection, BufferedImage> sections,
         }
 
         return new SkinDefinition(map, skinVariant, backgroundImage);
-    }
-
-    public static SkinVariant detectSkinVariant(BufferedImage skinImage) {
-        // TODO: Implement transparent detection for slim skins
-        return SkinVariant.CLASSIC;
     }
 
     public BufferedImage export() {

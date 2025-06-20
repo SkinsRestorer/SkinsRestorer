@@ -17,12 +17,5 @@
  */
 package net.skinsrestorer.scissors;
 
-import java.util.stream.Stream;
-
-public record RectangleSection(int x, int y, int width, int height) {
-    public Stream<PixelCoordinate> coordinateStream() {
-        return Stream.iterate(0, i -> i < height, i -> i + 1)
-                .flatMap(i -> Stream.iterate(0, j -> j < width, j -> j + 1)
-                        .map(j -> new PixelCoordinate(x + j, y + i)));
-    }
+public record PixelCoordinate(int x, int y) {
 }

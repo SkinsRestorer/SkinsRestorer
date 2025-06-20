@@ -20,12 +20,7 @@ package net.skinsrestorer.scissors.cape;
 import lombok.Getter;
 import lombok.ToString;
 import net.skinsrestorer.scissors.RectangleSection;
-import net.skinsrestorer.scissors.skin.SkinTag;
-import net.skinsrestorer.scissors.skin.SkinVariant;
 
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.Set;
 
 @Getter
