@@ -19,6 +19,7 @@ package net.skinsrestorer.scissors.skin;
 
 import lombok.Getter;
 import lombok.ToString;
+import net.skinsrestorer.scissors.RectangleSection;
 
 import java.util.*;
 import java.util.stream.Collectors;

@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package net.skinsrestorer.scissors.skin;
+package net.skinsrestorer.scissors;
 
 public record RectangleSection(int x, int y, int width, int height) {
 }

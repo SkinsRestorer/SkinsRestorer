@@ -17,5 +17,24 @@
  */
 package net.skinsrestorer.scissors.cape;
 
+import lombok.Getter;
+import lombok.ToString;
+
+@Getter
+@ToString
 public enum CapeSection {
+    // Cape
+    CAPE_TOP,
+    CAPE_BOTTOM,
+    CAPE_LEFT,
+    CAPE_FRONT,
+    CAPE_RIGHT,
+    CAPE_BACK,
+    // Elytra
+    ELYTRA_TOP,
+    ELYTRA_BOTTOM,
+    ELYTRA_LEFT,
+    ELYTRA_BACK,
+    ELYTRA_RIGHT,
+    ELYTRA_FRONT;
 }

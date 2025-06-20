@@ -17,6 +17,8 @@
  */
 package net.skinsrestorer.scissors.skin;
 
+import net.skinsrestorer.scissors.RectangleSection;
+
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.awt.image.BufferedImage;
