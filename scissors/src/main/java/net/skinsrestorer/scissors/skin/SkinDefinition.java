@@ -51,7 +51,7 @@ public record SkinDefinition(Map<SkinSection, BufferedImage> sections,
         }
 
         if (skinVariant == null) {
-            skinVariant = SkinVariant.detect(skinImage);
+            skinVariant = SkinVariant.detectVariant(skinImage);
         }
 
         BufferedImage backgroundImage = null;

@@ -31,9 +31,13 @@ public enum SkinVariant {
 
     public static final SkinVariant[] VALUES = values();
 
-    public static SkinVariant detect(BufferedImage image) {
+    public static SkinVariant detectVariant(BufferedImage image) {
+        return isSlim(image) ? SLIM : CLASSIC;
+    }
+
+    public static boolean isSlim(BufferedImage image) {
         return anyTransparentPixel(image, SLIM_TRANSPARENT_RIGHT_ARM_SECTION) ||
-               anyTransparentPixel(image, SLIM_TRANSPARENT_LEFT_ARM_SECTION) ? SLIM : CLASSIC;
+                anyTransparentPixel(image, SLIM_TRANSPARENT_LEFT_ARM_SECTION) ;
     }
 
     private static boolean anyTransparentPixel(BufferedImage image, RectangleSection section) {
