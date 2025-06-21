@@ -37,8 +37,10 @@ public enum CapeSection {
     ELYTRA_TOP(24, 0, 8, 2, CapeTag.ELYTRA, CapeTag.TOP),
     ELYTRA_BOTTOM(32, 0, 8, 2, CapeTag.ELYTRA, CapeTag.BOTTOM),
     ELYTRA_LEFT(22, 2, 2, 20, CapeTag.ELYTRA, CapeTag.LEFT),
+    // Back and front are swapped in elytra compared to cape
     ELYTRA_BACK(24, 2, 8, 20, CapeTag.ELYTRA, CapeTag.BACK),
     ELYTRA_RIGHT(32, 2, 2, 20, CapeTag.ELYTRA, CapeTag.RIGHT),
+    // Back and front are swapped in elytra compared to cape
     ELYTRA_FRONT(34, 2, 8, 20, CapeTag.ELYTRA, CapeTag.FRONT);
 
     private final RectangleSection rectangleSection;
