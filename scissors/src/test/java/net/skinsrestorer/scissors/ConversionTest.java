@@ -22,22 +22,35 @@ import net.skinsrestorer.scissors.skin.SkinDefinition;
 import org.junit.jupiter.api.Test;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class ConversionTest {
+    public boolean imagesAreEqual(BufferedImage img1, BufferedImage img2) {
+        if (img1.getWidth() != img2.getWidth() || img1.getHeight() != img2.getHeight()) {
+            return false;
+        }
+
+        for (int y = 0; y < img1.getHeight(); y++) {
+            for (int x = 0; x < img1.getWidth(); x++) {
+                if (img1.getRGB(x, y) != img2.getRGB(x, y)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     @Test
     @SneakyThrows
     public void loadAndSave() {
-        System.setProperty("sun.java2d.uiScale", "2.0");
-        var image = loadImage("/skin/ears.png");
-        var skinDefinition = SkinDefinition.extractFrom(image, null, false);
+        var image = loadImage("/skin/steve.png");
+        var skinDefinition = SkinDefinition.extractFrom(image, null, true);
         var extracted = skinDefinition.export();
 
-        displayImage(extracted);
-        while (!Thread.currentThread().isInterrupted()) {}
+        assertTrue(imagesAreEqual(image, extracted), "The original and extracted images should be equal");
     }
 
     public BufferedImage loadImage(String path) {
@@ -48,30 +61,6 @@ public class ConversionTest {
             return ImageIO.read(stream);
         } catch (IOException e) {
             throw new RuntimeException("Failed to load image from path: " + path, e);
-        }
-    }
-
-    private void displayImage(BufferedImage image) {
-        JFrame frame = new JFrame("BufferedImage Render");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.add(new ImagePanel(image));
-        frame.setSize(220, 240);
-        frame.setVisible(true);
-    }
-
-    public static class ImagePanel extends JPanel {
-        private final BufferedImage image;
-
-        public ImagePanel(BufferedImage image) {
-            this.image = image;
-        }
-
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            Graphics2D g2d = (Graphics2D) g;
-            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2d.drawImage(image, 0, 0, getWidth(), getHeight(), this);
         }
     }
 }
