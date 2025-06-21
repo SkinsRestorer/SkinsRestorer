@@ -19,6 +19,7 @@ package net.skinsrestorer.scissors.skin;
 
 import lombok.Getter;
 import lombok.ToString;
+import net.skinsrestorer.scissors.MapHelpers;
 import net.skinsrestorer.scissors.RectangleSection;
 
 import java.util.*;
@@ -77,27 +78,27 @@ public enum SkinSection {
     LEFT_LEG_BASE_RIGHT(24, 52, 4, 12, SkinTag.LEFT_LEG_BASE, SkinTag.RIGHT),
     LEFT_LEG_BASE_BACK(28, 52, 4, 12, SkinTag.LEFT_LEG_BASE, SkinTag.BACK),
     // Left arm base
-    LEFT_ARM_BASE_TOP(Map.of(
-            SkinVariant.CLASSIC, new RectangleSection(36, 48, 4, 4),
-            SkinVariant.SLIM, new RectangleSection(36, 48, 3, 4)
-    ), SkinTag.LEFT_ARM_BASE, SkinTag.TOP),
-    LEFT_ARM_BASE_BOTTOM(Map.of(
-            SkinVariant.CLASSIC, new RectangleSection(40, 48, 4, 4),
-            SkinVariant.SLIM, new RectangleSection(39, 48, 3, 4)
-    ), SkinTag.LEFT_ARM_BASE, SkinTag.BOTTOM),
+    LEFT_ARM_BASE_TOP(MapHelpers.mapped(SkinVariant.class, variant -> switch (variant) {
+        case SkinVariant.CLASSIC -> new RectangleSection(36, 48, 4, 4);
+        case SkinVariant.SLIM -> new RectangleSection(36, 48, 3, 4);
+    }), SkinTag.LEFT_ARM_BASE, SkinTag.TOP),
+    LEFT_ARM_BASE_BOTTOM(MapHelpers.mapped(SkinVariant.class, variant -> switch (variant) {
+        case SkinVariant.CLASSIC -> new RectangleSection(40, 48, 4, 4);
+        case SkinVariant.SLIM -> new RectangleSection(39, 48, 3, 4);
+    }), SkinTag.LEFT_ARM_BASE, SkinTag.BOTTOM),
     LEFT_ARM_BASE_LEFT(32, 52, 4, 12, SkinTag.LEFT_ARM_BASE, SkinTag.LEFT),
-    LEFT_ARM_BASE_FRONT(Map.of(
-            SkinVariant.CLASSIC, new RectangleSection(36, 52, 4, 12),
-            SkinVariant.SLIM, new RectangleSection(36, 52, 3, 12)
-    ), SkinTag.LEFT_ARM_BASE, SkinTag.FRONT),
-    LEFT_ARM_BASE_RIGHT(Map.of(
-            SkinVariant.CLASSIC, new RectangleSection(40, 52, 4, 12),
-            SkinVariant.SLIM, new RectangleSection(39, 52, 4, 12)
-    ), SkinTag.LEFT_ARM_BASE, SkinTag.RIGHT),
-    LEFT_ARM_BASE_BACK(Map.of(
-            SkinVariant.CLASSIC, new RectangleSection(44, 52, 4, 12),
-            SkinVariant.SLIM, new RectangleSection(43, 52, 3, 12)
-    ), SkinTag.LEFT_ARM_BASE, SkinTag.BACK),
+    LEFT_ARM_BASE_FRONT(MapHelpers.mapped(SkinVariant.class, variant -> switch (variant) {
+        case SkinVariant.CLASSIC -> new RectangleSection(36, 52, 4, 12);
+        case SkinVariant.SLIM -> new RectangleSection(36, 52, 3, 12);
+    }), SkinTag.LEFT_ARM_BASE, SkinTag.FRONT),
+    LEFT_ARM_BASE_RIGHT(MapHelpers.mapped(SkinVariant.class, variant -> switch (variant) {
+        case SkinVariant.CLASSIC -> new RectangleSection(40, 52, 4, 12);
+        case SkinVariant.SLIM -> new RectangleSection(39, 52, 4, 12);
+    }), SkinTag.LEFT_ARM_BASE, SkinTag.RIGHT),
+    LEFT_ARM_BASE_BACK(MapHelpers.mapped(SkinVariant.class, variant -> switch (variant) {
+        case SkinVariant.CLASSIC -> new RectangleSection(44, 52, 4, 12);
+        case SkinVariant.SLIM -> new RectangleSection(43, 52, 3, 12);
+    }), SkinTag.LEFT_ARM_BASE, SkinTag.BACK),
     // Left arm overlay
     LEFT_ARM_OVERLAY_TOP(52, 48, 4, 4, SkinTag.LEFT_ARM_OVERLAY, SkinTag.TOP),
     LEFT_ARM_OVERLAY_BOTTOM(56, 48, 4, 4, SkinTag.LEFT_ARM_OVERLAY, SkinTag.BOTTOM),
@@ -141,9 +142,7 @@ public enum SkinSection {
     private final Set<SkinTag> inheritedTags;
 
     SkinSection(int x, int y, int width, int height, SkinTag... tags) {
-        this(Arrays.stream(SkinVariant.VALUES).collect(() -> new EnumMap<>(SkinVariant.class),
-                (m, e) -> m.put(e, new RectangleSection(x, y, width, height)),
-                Map::putAll), tags);
+        this(MapHelpers.allSetTo(SkinVariant.class, new RectangleSection(x, y, width, height)), tags);
     }
 
     SkinSection(Map<SkinVariant, RectangleSection> sectionVariants, SkinTag... tags) {
