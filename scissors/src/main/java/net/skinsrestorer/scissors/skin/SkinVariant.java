@@ -25,6 +25,7 @@ public enum SkinVariant {
     CLASSIC,
     SLIM;
 
+    // While layer 2 is also trimmed, the overlay can still be transparent in classic, so it's not viable for detection.
     public static final RectangleSection SLIM_TRANSPARENT_RIGHT_ARM_SECTION = new RectangleSection(54, 20, 2, 12);
     public static final RectangleSection SLIM_TRANSPARENT_LEFT_ARM_SECTION = new RectangleSection(46, 52, 2, 12);
 

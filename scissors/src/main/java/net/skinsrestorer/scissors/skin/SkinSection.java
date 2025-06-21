@@ -136,19 +136,49 @@ public enum SkinSection {
     TORSO_OVERLAY_RIGHT(28, 36, 4, 12, SkinTag.TORSO_OVERLAY, SkinTag.RIGHT),
     TORSO_OVERLAY_BACK(36, 36, 8, 12, SkinTag.TORSO_OVERLAY, SkinTag.BACK),
     // Right arm base
-    RIGHT_ARM_BASE_TOP(44, 16, 4, 4, SkinTag.RIGHT_ARM_BASE, SkinTag.TOP),
-    RIGHT_ARM_BASE_BOTTOM(48, 16, 4, 4, SkinTag.RIGHT_ARM_BASE, SkinTag.BOTTOM),
+    RIGHT_ARM_BASE_TOP(MapHelpers.mapped(SkinVariant.class, variant -> switch (variant) {
+        case SkinVariant.CLASSIC -> new RectangleSection(44, 16, 4, 4);
+        case SkinVariant.SLIM -> new RectangleSection(44, 16, 3, 4);
+    }), SkinTag.RIGHT_ARM_BASE, SkinTag.TOP),
+    RIGHT_ARM_BASE_BOTTOM(MapHelpers.mapped(SkinVariant.class, variant -> switch (variant) {
+        case SkinVariant.CLASSIC -> new RectangleSection(48, 16, 4, 4);
+        case SkinVariant.SLIM -> new RectangleSection(47, 16, 3, 4);
+    }), SkinTag.RIGHT_ARM_BASE, SkinTag.BOTTOM),
     RIGHT_ARM_BASE_LEFT(40, 20, 4, 12, SkinTag.RIGHT_ARM_BASE, SkinTag.LEFT),
-    RIGHT_ARM_BASE_FRONT(44, 20, 4, 12, SkinTag.RIGHT_ARM_BASE, SkinTag.FRONT),
-    RIGHT_ARM_BASE_RIGHT(48, 20, 4, 12, SkinTag.RIGHT_ARM_BASE, SkinTag.RIGHT),
-    RIGHT_ARM_BASE_BACK(52, 20, 4, 12, SkinTag.RIGHT_ARM_BASE, SkinTag.BACK),
+    RIGHT_ARM_BASE_FRONT(MapHelpers.mapped(SkinVariant.class, variant -> switch (variant) {
+        case SkinVariant.CLASSIC -> new RectangleSection(44, 20, 4, 12);
+        case SkinVariant.SLIM -> new RectangleSection(44, 20, 3, 12);
+    }), SkinTag.RIGHT_ARM_BASE, SkinTag.FRONT),
+    RIGHT_ARM_BASE_RIGHT(MapHelpers.mapped(SkinVariant.class, variant -> switch (variant) {
+        case SkinVariant.CLASSIC -> new RectangleSection(48, 20, 4, 12);
+        case SkinVariant.SLIM -> new RectangleSection(47, 20, 4, 12);
+    }), SkinTag.RIGHT_ARM_BASE, SkinTag.RIGHT),
+    RIGHT_ARM_BASE_BACK(MapHelpers.mapped(SkinVariant.class, variant -> switch (variant) {
+        case SkinVariant.CLASSIC -> new RectangleSection(52, 20, 4, 12);
+        case SkinVariant.SLIM -> new RectangleSection(51, 20, 3, 12);
+    }), SkinTag.RIGHT_ARM_BASE, SkinTag.BACK),
     // Right arm overlay
-    RIGHT_ARM_OVERLAY_TOP(44, 32, 4, 4, SkinTag.RIGHT_ARM_OVERLAY, SkinTag.TOP),
-    RIGHT_ARM_OVERLAY_BOTTOM(48, 32, 4, 4, SkinTag.RIGHT_ARM_OVERLAY, SkinTag.BOTTOM),
+    RIGHT_ARM_OVERLAY_TOP(MapHelpers.mapped(SkinVariant.class, variant -> switch (variant) {
+        case SkinVariant.CLASSIC -> new RectangleSection(44, 32, 4, 4);
+        case SkinVariant.SLIM -> new RectangleSection(44, 32, 3, 4);
+    }), SkinTag.RIGHT_ARM_OVERLAY, SkinTag.TOP),
+    RIGHT_ARM_OVERLAY_BOTTOM(MapHelpers.mapped(SkinVariant.class, variant -> switch (variant) {
+        case SkinVariant.CLASSIC -> new RectangleSection(48, 32, 4, 4);
+        case SkinVariant.SLIM -> new RectangleSection(47, 32, 3, 4);
+    }), SkinTag.RIGHT_ARM_OVERLAY, SkinTag.BOTTOM),
     RIGHT_ARM_OVERLAY_LEFT(40, 36, 4, 12, SkinTag.RIGHT_ARM_OVERLAY, SkinTag.LEFT),
-    RIGHT_ARM_OVERLAY_FRONT(44, 36, 4, 12, SkinTag.RIGHT_ARM_OVERLAY, SkinTag.FRONT),
-    RIGHT_ARM_OVERLAY_RIGHT(48, 36, 4, 12, SkinTag.RIGHT_ARM_OVERLAY, SkinTag.RIGHT),
-    RIGHT_ARM_OVERLAY_BACK(52, 36, 4, 12, SkinTag.RIGHT_ARM_OVERLAY, SkinTag.BACK);
+    RIGHT_ARM_OVERLAY_FRONT(MapHelpers.mapped(SkinVariant.class, variant -> switch (variant) {
+        case SkinVariant.CLASSIC -> new RectangleSection(44, 36, 4, 12);
+        case SkinVariant.SLIM -> new RectangleSection(44, 36, 3, 12);
+    }), SkinTag.RIGHT_ARM_OVERLAY, SkinTag.FRONT),
+    RIGHT_ARM_OVERLAY_RIGHT(MapHelpers.mapped(SkinVariant.class, variant -> switch (variant) {
+        case SkinVariant.CLASSIC -> new RectangleSection(48, 36, 4, 12);
+        case SkinVariant.SLIM -> new RectangleSection(47, 36, 4, 12);
+    }), SkinTag.RIGHT_ARM_OVERLAY, SkinTag.RIGHT),
+    RIGHT_ARM_OVERLAY_BACK(MapHelpers.mapped(SkinVariant.class, variant -> switch (variant) {
+        case SkinVariant.CLASSIC -> new RectangleSection(52, 36, 4, 12);
+        case SkinVariant.SLIM -> new RectangleSection(51, 36, 3, 12);
+    }), SkinTag.RIGHT_ARM_OVERLAY, SkinTag.BACK);
 
     public static final SkinSection[] VALUES = SkinSection.values();
 
