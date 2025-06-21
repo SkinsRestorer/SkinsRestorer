@@ -100,12 +100,27 @@ public enum SkinSection {
         case SkinVariant.SLIM -> new RectangleSection(43, 52, 3, 12);
     }), SkinTag.LEFT_ARM_BASE, SkinTag.BACK),
     // Left arm overlay
-    LEFT_ARM_OVERLAY_TOP(52, 48, 4, 4, SkinTag.LEFT_ARM_OVERLAY, SkinTag.TOP),
-    LEFT_ARM_OVERLAY_BOTTOM(56, 48, 4, 4, SkinTag.LEFT_ARM_OVERLAY, SkinTag.BOTTOM),
+    LEFT_ARM_OVERLAY_TOP(MapHelpers.mapped(SkinVariant.class, variant -> switch (variant) {
+        case SkinVariant.CLASSIC -> new RectangleSection(52, 48, 4, 4);
+        case SkinVariant.SLIM -> new RectangleSection(52, 48, 3, 4);
+    }), SkinTag.LEFT_ARM_OVERLAY, SkinTag.TOP),
+    LEFT_ARM_OVERLAY_BOTTOM(MapHelpers.mapped(SkinVariant.class, variant -> switch (variant) {
+        case SkinVariant.CLASSIC -> new RectangleSection(56, 48, 4, 4);
+        case SkinVariant.SLIM -> new RectangleSection(55, 48, 3, 4);
+    }), SkinTag.LEFT_ARM_OVERLAY, SkinTag.BOTTOM),
     LEFT_ARM_OVERLAY_LEFT(48, 52, 4, 12, SkinTag.LEFT_ARM_OVERLAY, SkinTag.LEFT),
-    LEFT_ARM_OVERLAY_FRONT(52, 52, 4, 12, SkinTag.LEFT_ARM_OVERLAY, SkinTag.FRONT),
-    LEFT_ARM_OVERLAY_RIGHT(56, 52, 4, 12, SkinTag.LEFT_ARM_OVERLAY, SkinTag.RIGHT),
-    LEFT_ARM_OVERLAY_BACK(60, 52, 4, 12, SkinTag.LEFT_ARM_OVERLAY, SkinTag.BACK),
+    LEFT_ARM_OVERLAY_FRONT(MapHelpers.mapped(SkinVariant.class, variant -> switch (variant) {
+        case SkinVariant.CLASSIC -> new RectangleSection(52, 52, 4, 12);
+        case SkinVariant.SLIM -> new RectangleSection(52, 52, 3, 12);
+    }), SkinTag.LEFT_ARM_OVERLAY, SkinTag.FRONT),
+    LEFT_ARM_OVERLAY_RIGHT(MapHelpers.mapped(SkinVariant.class, variant -> switch (variant) {
+        case SkinVariant.CLASSIC -> new RectangleSection(56, 52, 4, 12);
+        case SkinVariant.SLIM -> new RectangleSection(55, 52, 4, 12);
+    }), SkinTag.LEFT_ARM_OVERLAY, SkinTag.RIGHT),
+    LEFT_ARM_OVERLAY_BACK(MapHelpers.mapped(SkinVariant.class, variant -> switch (variant) {
+        case SkinVariant.CLASSIC -> new RectangleSection(60, 52, 4, 12);
+        case SkinVariant.SLIM -> new RectangleSection(59, 52, 3, 12);
+    }), SkinTag.LEFT_ARM_OVERLAY, SkinTag.BACK),
     // Torso base
     TORSO_BASE_TOP(20, 16, 8, 4, SkinTag.TORSO_BASE, SkinTag.TOP),
     TORSO_BASE_BOTTOM(28, 16, 8, 4, SkinTag.TORSO_BASE, SkinTag.BOTTOM),
