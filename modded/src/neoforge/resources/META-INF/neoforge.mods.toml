@@ -11,7 +11,7 @@ authors = "AlexProgrammerDE, xknat"
 description = '''
 Ability to restore/change skins on servers!
 '''
-#logoFile = ""
+logoFile = "skinsrestorer.png"
 
 [[dependencies.skinsrestorer]]
 modId = "neoforge"

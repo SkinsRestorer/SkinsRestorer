@@ -36,6 +36,7 @@ import net.skinsrestorer.shared.config.ServerConfig;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Objects;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SkinApplierMod implements SkinApplierAccess<ServerPlayer> {
@@ -65,7 +66,7 @@ public class SkinApplierMod implements SkinApplierAccess<ServerPlayer> {
             }
 
             // delay 1 server tick so we override online-mode
-            adapter.runSync(player.server, () -> applySkinSync(player, applyEvent.getProperty()));
+            adapter.runSync(Objects.requireNonNull(player.getServer()), () -> applySkinSync(player, applyEvent.getProperty()));
         });
     }
 
@@ -78,7 +79,7 @@ public class SkinApplierMod implements SkinApplierAccess<ServerPlayer> {
 
         setGameProfileTextures(player, property);
 
-        for (ServerPlayer otherPlayer : player.server.getPlayerList().getPlayers()) {
+        for (ServerPlayer otherPlayer : Objects.requireNonNull(player.getServer()).getPlayerList().getPlayers()) {
             // Do not hide the player from itself or do anything if the other player cannot see the player
             if (otherPlayer.getGameProfile().getId().equals(player.getGameProfile().getId())) {
                 continue;
@@ -102,7 +103,7 @@ public class SkinApplierMod implements SkinApplierAccess<ServerPlayer> {
 
             if (settings.getProperty(ServerConfig.REMOUNT_PLAYER_ON_UPDATE)) {
                 // This is delayed to next tick to allow the accepter to propagate if necessary
-                adapter.runSync(player.server, () -> {
+                adapter.runSync(Objects.requireNonNull(player.getServer()), () -> {
                     player.startRiding(vehicle, false);
                 });
             }
@@ -121,7 +122,7 @@ public class SkinApplierMod implements SkinApplierAccess<ServerPlayer> {
     public void refresh(ServerPlayer player) {
         // Slowly getting from object to object till we get what is needed for
         // the respawn packet
-        ServerLevel world = player.serverLevel();
+        ServerLevel world = player.level();
 
         CommonPlayerSpawnInfo spawnInfo = player.createCommonSpawnInfo(world);
         ClientboundRespawnPacket respawn = new ClientboundRespawnPacket(
@@ -142,7 +143,7 @@ public class SkinApplierMod implements SkinApplierAccess<ServerPlayer> {
         // Send health, food, experience (food is sent together with health)
         player.resetSentInfo();
 
-        PlayerList playerList = player.server.getPlayerList();
+        PlayerList playerList = Objects.requireNonNull(player.getServer()).getPlayerList();
         playerList.sendPlayerPermissionLevel(player);
         playerList.sendLevelInfo(player, world);
         playerList.sendAllPlayerInfo(player);
