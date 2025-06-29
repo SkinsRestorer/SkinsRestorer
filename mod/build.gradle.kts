@@ -136,8 +136,8 @@ dependencies {
     // Fabric source set
     fabricModImplementation("org.incendo:cloud-fabric:2.0.0-SNAPSHOT")
     fabricInclude("org.incendo:cloud-fabric:2.0.0-SNAPSHOT")
-    fabricModImplementation("me.lucko:fabric-permissions-api:0.4.0")
-    fabricInclude("me.lucko:fabric-permissions-api:0.4.0")
+    fabricModImplementation("me.lucko:fabric-permissions-api:0.4.1")
+    fabricInclude("me.lucko:fabric-permissions-api:0.4.1")
 
     // Needed for modImplementations to load
     neoforgeModImplementation("net.kyori:adventure-platform-neoforge:6.5.0-SNAPSHOT")
