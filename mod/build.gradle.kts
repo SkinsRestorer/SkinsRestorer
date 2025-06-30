@@ -65,7 +65,7 @@ unimined.minecraft(neoforge) {
     combineWith(main)
 
     neoForge {
-        loader("11-beta")
+        loader("1-beta")
         accessTransformer(aw2at(project.projectDir.resolve("src/main/resources/skinsrestorer.accesswidener")))
     }
 
