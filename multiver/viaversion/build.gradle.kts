@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    compileOnly("com.viaversion:viabackwards-common:5.4.0") {
+    compileOnly("com.viaversion:viabackwards-common:5.4.1") {
         isTransitive = false
     }
     compileOnly("com.viaversion:viaversion:5.0.0") {

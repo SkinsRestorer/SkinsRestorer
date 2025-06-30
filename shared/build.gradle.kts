@@ -9,7 +9,7 @@ dependencies {
     implementation(projects.skinsrestorerScissors)
 
     api("com.google.code.gson:gson:2.13.1")
-    implementation("org.mariadb.jdbc:mariadb-java-client:3.5.3") {
+    implementation("org.mariadb.jdbc:mariadb-java-client:3.5.4") {
         exclude("com.github.waffle", "waffle-jna")
     }
 
