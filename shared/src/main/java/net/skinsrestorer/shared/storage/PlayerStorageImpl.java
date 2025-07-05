@@ -35,6 +35,7 @@ import net.skinsrestorer.shared.storage.model.player.FavouriteData;
 import net.skinsrestorer.shared.storage.model.player.HistoryData;
 import net.skinsrestorer.shared.storage.model.player.PlayerData;
 import net.skinsrestorer.shared.utils.SRHelpers;
+import net.skinsrestorer.shared.connections.RecommendationsState;
 
 import javax.inject.Inject;
 import java.util.Comparator;
@@ -49,6 +50,7 @@ public class PlayerStorageImpl implements PlayerStorage {
     private final SkinStorageImpl skinStorage;
     private final SRLogger logger;
     private final AdapterReference adapterReference;
+    private final RecommendationsState recommendationsState;
 
     @Override
     public Optional<SkinIdentifier> getSkinIdOfPlayer(UUID uuid) {
@@ -312,17 +314,43 @@ public class PlayerStorageImpl implements PlayerStorage {
     }
 
     private Optional<SkinForResult> getDefaultSkin() {
-        // return default skin name if user has no custom skin set, or we want to clear to default
-        List<String> skins = settings.getProperty(StorageConfig.DEFAULT_SKINS);
-
-        // return player name if there are no default skins set
+        List<String> skins = new java.util.ArrayList<>(settings.getProperty(StorageConfig.DEFAULT_SKINS));
         if (skins.isEmpty()) {
             return Optional.empty();
         }
 
-        String selectedSkin = skins.size() == 1 ? skins.getFirst() : SRHelpers.getRandomEntry(skins);
+        // Replace "random" with a random recommended skin if available
+        for (var it = skins.listIterator(); it.hasNext(); ) {
+            String skin = it.next();
+            if ("random".equalsIgnoreCase(skin)) {
+                var randomRecommendation = recommendationsState.getRandomRecommendation();
+                if (randomRecommendation.isPresent()) {
+                    it.set(SkinStorageImpl.RECOMMENDATION_PREFIX + randomRecommendation.get().getSkinId());
+                } else {
+                    it.remove();
+                }
+            }
+        }
 
-        return skinStorage.findSkinData(selectedSkin).map(result -> new SkinForResult(result.getIdentifier(), result.getProperty()));
+        if (skins.isEmpty()) {
+            return Optional.empty();
+        }
+
+        String selectedSkin = (skins.size() == 1) ? skins.getFirst() : SRHelpers.getRandomEntry(skins);
+
+        // If the selected skin is a recommendation, we need to use the findOrCreate method
+        try {
+            if (selectedSkin.startsWith(SkinStorageImpl.RECOMMENDATION_PREFIX)) {
+                return skinStorage.findOrCreateSkinData(selectedSkin)
+                        .map(result -> new SkinForResult(result.getIdentifier(), result.getProperty()));
+            } else {
+                return skinStorage.findSkinData(selectedSkin)
+                        .map(result -> new SkinForResult(result.getIdentifier(), result.getProperty()));
+            }
+        } catch (Exception e) {
+            logger.warning("Failed to get default skin data for %s".formatted(selectedSkin), e);
+            return Optional.empty();
+        }
     }
 
     private record SkinForResult(SkinIdentifier identifier, SkinProperty property) {
