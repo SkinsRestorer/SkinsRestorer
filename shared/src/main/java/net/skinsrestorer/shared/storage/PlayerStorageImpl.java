@@ -38,7 +38,10 @@ import net.skinsrestorer.shared.storage.model.player.PlayerData;
 import net.skinsrestorer.shared.utils.SRHelpers;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
@@ -312,7 +315,7 @@ public class PlayerStorageImpl implements PlayerStorage {
 
     private Optional<SkinForResult> getDefaultSkin() {
         // return default skin name if user has no custom skin set, or we want to clear to default
-        List<String> skins = new ArrayList<>(settings.getProperty(StorageConfig.DEFAULT_SKINS));
+        List<String> skins = settings.getProperty(StorageConfig.DEFAULT_SKINS);
 
         // return player name if there are no default skins set
         if (skins.isEmpty()) {
