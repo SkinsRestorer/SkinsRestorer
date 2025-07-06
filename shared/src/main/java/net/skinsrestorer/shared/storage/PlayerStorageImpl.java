@@ -329,7 +329,7 @@ public class PlayerStorageImpl implements PlayerStorage {
             if (randomRecommendation.isPresent()) {
                 selectedSkin = SkinStorageImpl.RECOMMENDATION_PREFIX + randomRecommendation.get().getSkinId();
             } else {
-                logger.warning("No recommendations available, falling back to default skin.");
+                logger.warning("No recommendations available for default skin, please ensure SkinsRestorer can reach the internet.");
                 return Optional.empty();
             }
         }
