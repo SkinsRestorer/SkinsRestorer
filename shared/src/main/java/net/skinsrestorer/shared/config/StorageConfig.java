@@ -77,7 +77,7 @@ public class StorageConfig implements SettingsHolder {
                 "Enable or disable default skins",
                 "applyForPremium: false will only put a skin on skinless/steve players.",
                 "If there is more than one, the plugin will choose a random one.",
-                "You can use \"random\" in the DEFAULT_SKINS list to select use random SkinsRestorer recommended skin.",
+                "You can use \"<random>\" in the DEFAULT_SKINS list to select use random SkinsRestorer recommended skin.",
                 "[?] Supports custom & url.png skins, read SkinFile Generator below."
         );
     }
