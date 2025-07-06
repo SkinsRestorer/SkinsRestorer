@@ -45,7 +45,7 @@ public class StorageConfig implements SettingsHolder {
         public @Nullable Object toExportValue(String value) {
             return value;
         }
-    }, List.of("xknat", "pistonmaster", "random"));
+    }, List.of("xknat", "pistonmaster", "<random>"));
     @Comment({
             "<!! Warning !!>",
             "Enable this will require players to run \"/skin update\" to update their skin."
