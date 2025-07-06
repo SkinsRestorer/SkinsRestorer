@@ -68,8 +68,14 @@ public class SkinStorageImpl implements SkinStorage {
         }
 
         List<String> toRemove = new ArrayList<>();
+        toRemove.add("<random>");
+
         List<String> defaultSkins = new ArrayList<>(settings.getProperty(StorageConfig.DEFAULT_SKINS));
         defaultSkins.forEach(skin -> {
+            if (toRemove.stream().anyMatch(skin::equalsIgnoreCase)) {
+                return; // Skin if already marked for removal
+            }
+
             try {
                 findOrCreateSkinData(skin);
             } catch (DataRequestException | MineSkinException e) {
