@@ -20,6 +20,7 @@ package net.skinsrestorer.shared.storage;
 import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.DataRequestException;
+import net.skinsrestorer.api.exception.MineSkinException;
 import net.skinsrestorer.api.property.MojangSkinDataResult;
 import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.api.property.SkinProperty;
@@ -337,7 +338,7 @@ public class PlayerStorageImpl implements PlayerStorage {
         try {
             return skinStorage.findOrCreateSkinData(selectedSkin)
                     .map(result -> new SkinForResult(result.getIdentifier(), result.getProperty()));
-        } catch (Exception e) {
+        } catch (DataRequestException | MineSkinException e) {
             logger.warning("Failed to get default skin data for %s".formatted(selectedSkin), e);
             return Optional.empty();
         }
