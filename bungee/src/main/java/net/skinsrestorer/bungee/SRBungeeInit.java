@@ -45,7 +45,7 @@ public class SRBungeeInit implements SRProxyPlatformInit {
     @Override
     public void initSkinApplier() {
         if (!ReflectionUtil.classExists("net.md_5.bungee.protocol.Property")) {
-            logger.severe("BungeeCord version is too old, please update to a newer build. If you are using an older version because you only want old versions to show as supported on the server list, use a MOTD plugin like AdvancedServerList or PistonMOTD to show newer clients as unsupported.");
+            logger.severe("BungeeCord version is too old, please update to a newer build. Latest BungeeCord supports up to Minecraft 1.8.0, so you can safely update BungeeCord. If you are using an older version because you only want old versions to show as supported on the server list, use a MOTD plugin like AdvancedServerList or PistonMOTD to show newer clients as unsupported.");
         }
 
         plugin.registerSkinApplier(injector.getSingleton(SkinApplierBungee.class), ProxiedPlayer.class, wrapper);
