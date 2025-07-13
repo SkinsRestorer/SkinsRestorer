@@ -6,10 +6,10 @@ repositories {
     gradlePluginPortal()
     mavenCentral()
     maven("https://maven.wagyourtail.xyz/releases") {
-        name = "PaperMC Repository"
+        name = "WagYourTail Releases Repository"
     }
     maven("https://maven.wagyourtail.xyz/snapshots") {
-        name = "PaperMC Repository"
+        name = "WagYourTail Snapshots Repository"
     }
 }
 
