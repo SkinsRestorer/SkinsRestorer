@@ -15,16 +15,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package net.skinsrestorer.bungee;
+package net.skinsrestorer.bukkit.spigot;
 
-import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.connection.InitialHandler;
-import net.skinsrestorer.api.property.SkinProperty;
+import org.bukkit.Server;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.util.Optional;
 
-public interface SkinApplyBungeeAdapter {
-    void applyToHandler(InitialHandler handler, SkinProperty property) throws ReflectiveOperationException;
-
-    Optional<SkinProperty> getSkinProperty(ProxiedPlayer player);
+public class SpigotConfigUtil {
+    @SuppressWarnings("removal")
+    public static Optional<YamlConfiguration> getSpigotConfig(Server server) {
+        try {
+            return Optional.of(server.spigot().getConfig());
+        } catch (Throwable ignored) { // We're not running spigot
+            return Optional.empty();
+        }
+    }
 }

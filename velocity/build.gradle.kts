@@ -14,11 +14,11 @@ dependencies {
 
     testImplementation(testFixtures(projects.test))
 
-    compileOnly("com.velocitypowered:velocity-api:3.1.1")
-    annotationProcessor("com.velocitypowered:velocity-api:3.1.1")
+    compileOnly(libs.velocity.api)
+    annotationProcessor(libs.velocity.api)
 
-    implementation("org.bstats:bstats-velocity:3.1.0")
-    implementation("org.incendo:cloud-velocity:2.0.0-SNAPSHOT")
+    implementation(libs.bstats.velocity)
+    implementation(libs.cloud.velocity)
 }
 
 tasks {

@@ -5,6 +5,6 @@ plugins {
 dependencies {
     compileOnly(projects.skinsrestorerShared)
 
-    compileOnly("net.kyori:adventure-text-minimessage:4.23.0")
-    compileOnly("io.github.miniplaceholders:miniplaceholders-api:2.3.0")
+    compileOnly(libs.adventure.text.minimessage)
+    compileOnly(libs.miniplaceholders.api)
 }

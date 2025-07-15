@@ -84,14 +84,14 @@ public class MojangAPIImpl implements MojangAPI {
         }
 
         try {
-            return getUUIDEclipse(playerName);
+            return getUUIDMojang(playerName);
         } catch (DataRequestException e) {
             logger.debug(e);
         }
 
-        // Fall back to Mojang API
+        // Fall back to Eclipse API
         try {
-            return getUUIDMojang(playerName);
+            return getUUIDEclipse(playerName);
         } catch (DataRequestException e) {
             logger.debug(e);
         }
@@ -134,14 +134,14 @@ public class MojangAPIImpl implements MojangAPI {
 
     public Optional<SkinProperty> getProfile(UUID uuid) throws DataRequestException {
         try {
-            return getProfileEclipse(uuid);
+            return getProfileMojang(uuid);
         } catch (DataRequestException e) {
             logger.debug(e);
         }
 
-        // Fall back to Mojang API
+        // Fall back to Eclipse API
         try {
-            return getProfileMojang(uuid);
+            return getProfileEclipse(uuid);
         } catch (DataRequestException e) {
             logger.debug(e);
         }
