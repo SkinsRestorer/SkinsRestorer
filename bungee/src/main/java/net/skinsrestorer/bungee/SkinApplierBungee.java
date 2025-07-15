@@ -21,6 +21,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.connection.InitialHandler;
+import net.md_5.bungee.connection.LoginResult;
+import net.md_5.bungee.protocol.Property;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.bungee.wrapper.WrapperBungee;
 import net.skinsrestorer.shared.api.SkinApplierAccess;
@@ -34,27 +36,49 @@ import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.Optional;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SkinApplierBungee implements SkinApplierAccess<ProxiedPlayer> {
-    public static final boolean IS_NEW_PROPERTY_CLASS = ReflectionUtil.classExists("net.md_5.bungee.protocol.Property");
-    @Getter
-    private static final SkinApplyBungeeAdapter applyAdapter = selectSkinApplyAdapter();
     private final WrapperBungee wrapper;
     private final EventBusImpl eventBus;
     private final SRLogger logger;
     private final ProxyAckTracker proxyAckTracker;
 
-    /*
-     * Starting the 1.19 builds of BungeeCord, the Property class has changed.
-     * This method will check if the new class is available and return the appropriate class that was compiled for it.
-     */
-    private static SkinApplyBungeeAdapter selectSkinApplyAdapter() {
-        if (IS_NEW_PROPERTY_CLASS) {
-            return new SkinApplierBungeeNew();
+    public static void applyToHandler(InitialHandler handler, SkinProperty property) {
+        LoginResult profile = handler.getLoginProfile();
+        Property[] newProps = new Property[]{new Property(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature())};
+
+        if (profile == null) {
+            try {
+                Field field = InitialHandler.class.getDeclaredField("loginProfile");
+                field.setAccessible(true);
+                field.set(handler, new LoginResult(null, null, newProps));
+            } catch (ReflectiveOperationException e) {
+                throw new RuntimeException("Failed to apply skin property to InitialHandler", e);
+            }
         } else {
-            return new SkinApplierBungeeOld();
+            profile.setProperties(newProps);
         }
+    }
+
+    public static Optional<SkinProperty> getSkinProperty(ProxiedPlayer player) {
+        Property[] props = ((InitialHandler) player.getPendingConnection()).getLoginProfile().getProperties();
+
+        if (props == null) {
+            return Optional.empty();
+        }
+
+        return Arrays.stream(props)
+                .map(property -> SkinProperty.tryParse(
+                        property.getName(),
+                        property.getValue(),
+                        property.getSignature()
+                ))
+                .flatMap(Optional::stream)
+                .findFirst();
     }
 
     @Override
@@ -86,7 +110,7 @@ public class SkinApplierBungee implements SkinApplierAccess<ProxiedPlayer> {
     }
 
     private void applyWithProperty(@Nullable ProxiedPlayer player, InitialHandler handler, SkinProperty property) throws ReflectiveOperationException {
-        applyAdapter.applyToHandler(handler, property);
+        applyToHandler(handler, property);
 
         if (player == null) {
             return;

@@ -68,7 +68,6 @@ public class LoadTest {
         }).when(sender).sendMessage(anyString());
 
         when(server.getLogger()).thenReturn(logger);
-        when(server.getConsoleSender()).thenReturn(sender);
         BukkitScheduler scheduler = mock(BukkitScheduler.class);
 
         doAnswer(invocation -> {
@@ -113,7 +112,7 @@ public class LoadTest {
                         new SRBootstrapper.PlatformClass<>(PluginJarProvider.class, () -> pluginFile),
                         new SRBootstrapper.PlatformClass<>(DownloaderClassProvider.class, () -> UpdateDownloaderGithub.class)
                 ),
-                new JavaLoggerImpl(new BukkitConsoleImpl(server.getConsoleSender()), server.getLogger()),
+                new JavaLoggerImpl(new BukkitConsoleImpl(sender), logger),
                 true,
                 SRBukkitAdapter.class,
                 SRServerPlugin.class,

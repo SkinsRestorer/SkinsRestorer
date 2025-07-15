@@ -26,6 +26,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.skinsrestorer.api.semver.SemanticVersion;
 import net.skinsrestorer.miniplaceholders.SRMiniPlaceholdersAPIExpansion;
@@ -51,7 +52,7 @@ import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SRModInit implements SRServerPlatformInit {
-    public static final CustomPacketPayload.Type<RawBytePayload> SR_MESSAGE_CHANNEL = CustomPacketPayload.createType(SRHelpers.MESSAGE_CHANNEL);
+    public static final CustomPacketPayload.Type<RawBytePayload> SR_MESSAGE_CHANNEL = new CustomPacketPayload.Type<>(ResourceLocation.parse(SRHelpers.MESSAGE_CHANNEL));
     private final SRPlugin plugin;
     private final SRModAdapter adapter;
     private final Injector injector;
@@ -62,7 +63,6 @@ public class SRModInit implements SRServerPlatformInit {
     @Override
     public void initSkinApplier() {
         plugin.registerSkinApplier(injector.getSingleton(SkinApplierMod.class), ServerPlayer.class, wrapper);
-
         // Log information about the platform
         logger.info(SRChatColor.GREEN + "Running on Minecraft " + SRChatColor.YELLOW + Platform.getMinecraftVersion() + SRChatColor.GREEN + ".");
     }

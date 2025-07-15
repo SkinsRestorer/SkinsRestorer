@@ -11,10 +11,8 @@ dependencies {
     compileOnly(projects.skinsrestorerShared)
     runtimeOnly(project(":skinsrestorer-shared", "shadow"))
     implementation(projects.multiver.bukkit.shared)
-    implementation(projects.multiver.bukkit.spigot)
     implementation(projects.multiver.bukkit.paper)
     implementation(projects.multiver.bukkit.v17)
-    implementation(projects.multiver.bukkit.folia)
     compileOnly(projects.multiver.miniplaceholders)
 
     rootProject.subprojects.forEach {
@@ -25,31 +23,30 @@ dependencies {
     }
     testImplementation(testFixtures(projects.test))
 
-    compileOnly("org.spigotmc:spigot-api:1.19.3-R0.1-SNAPSHOT") {
+    compileOnly(libs.spigot.api) {
         isTransitive = false
     }
 
-    implementation("org.bstats:bstats-bukkit:3.1.0")
-    implementation("com.github.cryptomorin:XSeries:13.3.2")
+    implementation(libs.bstats.bukkit)
+    implementation(libs.xseries)
 
     // MultiPaper support
-    implementation("com.github.puregero:multilib:1.2.4")
-
-    implementation("org.incendo:cloud-paper:2.0.0-SNAPSHOT")
+    implementation(libs.multilib)
+    implementation(libs.cloud.paper)
 
     // PAPI API hook
-    compileOnly("me.clip:placeholderapi:2.11.6") {
+    compileOnly(libs.placeholderapi) {
         isTransitive = false
     }
 
-    compileOnly("com.mojang:authlib:2.0.27")
+    compileOnly(libs.authlib)
 
     implementation(libs.adventure.bukkit)
 
-    testImplementation("org.spigotmc:spigot-api:1.19-R0.1-SNAPSHOT") {
+    testImplementation(libs.spigot.api) {
         isTransitive = false
     }
-    testRuntimeOnly("com.mojang:authlib:2.0.27")
+    testRuntimeOnly(libs.authlib)
 }
 
 tasks {

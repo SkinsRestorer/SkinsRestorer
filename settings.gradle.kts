@@ -27,11 +27,7 @@ develocity {
     }
 }
 
-setOf("shared", "propertyold", "propertynew").forEach {
-    include("multiver:bungee:$it")
-}
-
-setOf("shared", "v1-7", "spigot", "paper", "folia").forEach {
+setOf("shared", "v1-7", "paper").forEach {
     include("multiver:bukkit:$it")
 }
 

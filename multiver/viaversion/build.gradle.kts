@@ -3,10 +3,10 @@ plugins {
 }
 
 dependencies {
-    compileOnly("com.viaversion:viabackwards-common:5.4.1") {
+    compileOnly(libs.viabackwards) {
         isTransitive = false
     }
-    compileOnly("com.viaversion:viaversion:5.0.0") {
+    compileOnly(libs.viaversion) {
         isTransitive = false
     }
 }

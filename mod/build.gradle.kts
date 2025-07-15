@@ -1,6 +1,6 @@
 plugins {
     id("sr.base-logic")
-    id("xyz.wagyourtail.unimined") version "1.3.15"
+    id("xyz.wagyourtail.unimined") version "1.4.2-SNAPSHOT"
 }
 
 base {
@@ -120,37 +120,37 @@ dependencies {
         }
     }
     // Shared mods
-    modImplementation("net.kyori:adventure-platform-mod-shared-fabric-repack:6.5.0-SNAPSHOT")
-    modImplementation("dev.architectury:architectury:17.0.6")
+    modImplementation(libs.adventure.platform.mod.shared.fabric.repack)
+    modImplementation(libs.architectury)
 
     // Mixins
-    compileOnly("org.spongepowered:mixin:0.8.7")
+    compileOnly(libs.mixin)
 
     // Bump fabric api
-    fabricModImplementation(enforcedPlatform("net.fabricmc.fabric-api:fabric-api-bom:0.128.1+1.21.7"))
-    fabricInclude(enforcedPlatform("net.fabricmc.fabric-api:fabric-api-bom:0.128.1+1.21.7"))
+    fabricModImplementation(enforcedPlatform(libs.fabric.api.bom))
+    fabricInclude(enforcedPlatform(libs.fabric.api.bom))
 
     // Needed for modImplementations to load
-    fabricModImplementation("net.kyori:adventure-platform-fabric:6.5.0-SNAPSHOT")
-    fabricInclude("net.kyori:adventure-platform-fabric:6.5.0-SNAPSHOT")
-    fabricModImplementation("dev.architectury:architectury-fabric:17.0.6")
-    fabricInclude("dev.architectury:architectury-fabric:17.0.6")
+    fabricModImplementation(libs.adventure.platform.fabric)
+    fabricInclude(libs.adventure.platform.fabric)
+    fabricModImplementation(libs.architectury.fabric)
+    fabricInclude(libs.architectury.fabric)
 
     // Fabric source set
-    fabricModImplementation("org.incendo:cloud-fabric:2.0.0-SNAPSHOT")
-    fabricInclude("org.incendo:cloud-fabric:2.0.0-SNAPSHOT")
-    fabricModImplementation("me.lucko:fabric-permissions-api:0.4.1")
-    fabricInclude("me.lucko:fabric-permissions-api:0.4.1")
+    fabricModImplementation(libs.cloud.fabric)
+    fabricInclude(libs.cloud.fabric)
+    fabricModImplementation(libs.fabric.permissions.api)
+    fabricInclude(libs.fabric.permissions.api)
 
     // Needed for modImplementations to load
-    neoforgeModImplementation("net.kyori:adventure-platform-neoforge:6.5.0-SNAPSHOT")
-    neoforgeInclude("net.kyori:adventure-platform-neoforge:6.5.0-SNAPSHOT")
-    neoforgeModImplementation("dev.architectury:architectury-neoforge:17.0.6")
-    neoforgeInclude("dev.architectury:architectury-neoforge:17.0.6")
+    neoforgeModImplementation(libs.adventure.platform.neoforge)
+    neoforgeInclude(libs.adventure.platform.neoforge)
+    neoforgeModImplementation(libs.architectury.neoforge)
+    neoforgeInclude(libs.architectury.neoforge)
 
     // NeoForge source set
-    neoforgeModImplementation("org.incendo:cloud-neoforge:2.0.0-SNAPSHOT")
-    neoforgeInclude("org.incendo:cloud-neoforge:2.0.0-SNAPSHOT")
+    neoforgeModImplementation(libs.cloud.neoforge)
+    neoforgeInclude(libs.cloud.neoforge)
 }
 
 tasks.getByName<ProcessResources>("processFabricResources") {

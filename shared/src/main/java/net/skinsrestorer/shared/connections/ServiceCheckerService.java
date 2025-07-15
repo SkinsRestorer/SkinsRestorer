@@ -50,19 +50,7 @@ public class ServiceCheckerService {
         UUID selectedUUID = selectedUser.getValue();
 
         // ##### UUID requests #####
-        try {
-            Optional<UUID> uuid = mojangAPI.getUUIDEclipse(selectedUsername);
-
-            if (uuid.isPresent()) {
-                response.addResult(UUID_MESSAGE.formatted("Eclipse", selectedUsername, uuid.get()), true, ServiceCheckResponse.ServiceCheckType.UUID);
-            } else {
-                response.addResult(MESSAGE_ERROR.formatted("Eclipse", "UUID"), false, ServiceCheckResponse.ServiceCheckType.UUID);
-            }
-        } catch (DataRequestException e) {
-            logger.debug("Error getting Eclipse UUID", e);
-            response.addResult(MESSAGE_ERROR_EXCEPTION.formatted("Eclipse", "UUID", e.getMessage()), false, ServiceCheckResponse.ServiceCheckType.UUID);
-        }
-
+        // mojang UUID
         try {
             Optional<UUID> uuid = mojangAPI.getUUIDMojang(selectedUsername);
 
@@ -76,19 +64,22 @@ public class ServiceCheckerService {
             response.addResult(MESSAGE_ERROR_EXCEPTION.formatted("Mojang", "UUID", e.getMessage()), false, ServiceCheckResponse.ServiceCheckType.UUID);
         }
 
-        // ##### Profile requests #####
+        // eclipse UUID
         try {
-            Optional<SkinProperty> eclipse = mojangAPI.getProfileEclipse(selectedUUID);
-            if (eclipse.isPresent()) {
-                response.addResult(PROFILE_MESSAGE.formatted("Eclipse", selectedUUID, eclipse.get()), true, ServiceCheckResponse.ServiceCheckType.PROFILE);
+            Optional<UUID> uuid = mojangAPI.getUUIDEclipse(selectedUsername);
+
+            if (uuid.isPresent()) {
+                response.addResult(UUID_MESSAGE.formatted("Eclipse", selectedUsername, uuid.get()), true, ServiceCheckResponse.ServiceCheckType.UUID);
             } else {
-                response.addResult(MESSAGE_ERROR.formatted("Eclipse", "Profile"), false, ServiceCheckResponse.ServiceCheckType.PROFILE);
+                response.addResult(MESSAGE_ERROR.formatted("Eclipse", "UUID"), false, ServiceCheckResponse.ServiceCheckType.UUID);
             }
         } catch (DataRequestException e) {
-            logger.debug("Error getting Eclipse Profile", e);
-            response.addResult(MESSAGE_ERROR_EXCEPTION.formatted("Eclipse", "Profile", e.getMessage()), false, ServiceCheckResponse.ServiceCheckType.PROFILE);
+            logger.debug("Error getting Eclipse UUID", e);
+            response.addResult(MESSAGE_ERROR_EXCEPTION.formatted("Eclipse", "UUID", e.getMessage()), false, ServiceCheckResponse.ServiceCheckType.UUID);
         }
 
+        // ##### Profile requests #####
+        // mojang profile
         try {
             Optional<SkinProperty> mojang = mojangAPI.getProfileMojang(selectedUUID);
             if (mojang.isPresent()) {
@@ -99,6 +90,19 @@ public class ServiceCheckerService {
         } catch (DataRequestException e) {
             logger.debug("Error getting Mojang Profile", e);
             response.addResult(MESSAGE_ERROR_EXCEPTION.formatted("Mojang", "Profile", e.getMessage()), false, ServiceCheckResponse.ServiceCheckType.PROFILE);
+        }
+
+        // eclipse profile
+        try {
+            Optional<SkinProperty> eclipse = mojangAPI.getProfileEclipse(selectedUUID);
+            if (eclipse.isPresent()) {
+                response.addResult(PROFILE_MESSAGE.formatted("Eclipse", selectedUUID, eclipse.get()), true, ServiceCheckResponse.ServiceCheckType.PROFILE);
+            } else {
+                response.addResult(MESSAGE_ERROR.formatted("Eclipse", "Profile"), false, ServiceCheckResponse.ServiceCheckType.PROFILE);
+            }
+        } catch (DataRequestException e) {
+            logger.debug("Error getting Eclipse Profile", e);
+            response.addResult(MESSAGE_ERROR_EXCEPTION.formatted("Eclipse", "Profile", e.getMessage()), false, ServiceCheckResponse.ServiceCheckType.PROFILE);
         }
 
         return response;
