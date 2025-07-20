@@ -1,3 +1,6 @@
+import java.text.SimpleDateFormat
+import java.util.*
+
 plugins {
     `java-library`
     `java-test-fixtures`
@@ -26,8 +29,19 @@ tasks {
     }
     // Variable replacements
     processResources {
-        filesMatching(listOf("plugin.yml", "bungee.yml")) {
-            expand("version" to project.version, "description" to project.description)
+        filesMatching(listOf("plugin.yml", "bungee.yml", "velocity-plugin.json", "sr-build-data.properties")) {
+            val sharedResources = rootDir.resolve("shared").resolve("src").resolve("main").resolve("resources")
+            expand(
+                "version" to project.version,
+                "description" to project.description,
+                "url" to "https://skinsrestorer.net",
+                "commit" to (indraGit.commit()?.name ?: "unknown"),
+                "branch" to (indraGit.branch()?.name ?: "unknown"),
+                "build_time" to SimpleDateFormat("dd MMMM yyyy HH:mm:ss").format(Date()),
+                "ci_name" to getCIName(),
+                "ci_build_number" to getBuildNumber(),
+                "locales" to sharedResources.resolve("locales").list()?.joinToString("|")
+            )
         }
     }
     javadoc {
@@ -52,6 +66,23 @@ tasks {
         options.isFork = true
     }
 }
+
+fun getCIName(): String {
+    val githubActions = System.getenv("GITHUB_ACTIONS")
+    val jenkinsUrl = System.getenv("JENKINS_URL")
+    if (githubActions != null && githubActions == "true") {
+        return "github-actions"
+    } else if (jenkinsUrl != null) {
+        return "jenkins"
+    }
+
+    return "local"
+}
+
+fun getBuildNumber(): String {
+    return System.getenv("BUILD_NUMBER") ?: System.getenv("GITHUB_RUN_NUMBER") ?: "local"
+}
+
 
 java {
     toolchain {

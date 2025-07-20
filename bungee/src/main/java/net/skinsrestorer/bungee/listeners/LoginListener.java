@@ -20,7 +20,6 @@ package net.skinsrestorer.bungee.listeners;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
-import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 import net.skinsrestorer.api.property.SkinProperty;
@@ -67,7 +66,7 @@ public class LoginListener implements Listener {
 
             @Override
             public void setResultProperty(SkinProperty property) {
-                skinApplier.applySkin(property, (InitialHandler) event.getConnection());
+                skinApplier.applySkin(property, event.getConnection());
             }
 
             @Override

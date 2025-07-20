@@ -17,26 +17,24 @@
  */
 package net.skinsrestorer.bungee;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.lenni0451.reflect.exceptions.ConstructorNotFoundException;
+import net.lenni0451.reflect.stream.RStream;
+import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.connection.InitialHandler;
-import net.md_5.bungee.connection.LoginResult;
-import net.md_5.bungee.protocol.Property;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.bungee.wrapper.WrapperBungee;
 import net.skinsrestorer.shared.api.SkinApplierAccess;
 import net.skinsrestorer.shared.api.event.EventBusImpl;
 import net.skinsrestorer.shared.api.event.SkinApplyEventImpl;
 import net.skinsrestorer.shared.codec.SRServerPluginMessage;
-import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.subjects.SRProxyPlayer;
+import net.skinsrestorer.shared.utils.AuthLibHelper;
 import net.skinsrestorer.shared.utils.ProxyAckTracker;
-import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
-import java.lang.reflect.Field;
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -44,38 +42,71 @@ import java.util.Optional;
 public class SkinApplierBungee implements SkinApplierAccess<ProxiedPlayer> {
     private final WrapperBungee wrapper;
     private final EventBusImpl eventBus;
-    private final SRLogger logger;
     private final ProxyAckTracker proxyAckTracker;
 
-    public static void applyToHandler(InitialHandler handler, SkinProperty property) {
-        LoginResult profile = handler.getLoginProfile();
-        Property[] newProps = new Property[]{new Property(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature())};
+    public static void applyToHandler(PendingConnection handler, SkinProperty property) {
+        // LoginResult wrapper
+        var loginProfileFieldWrapper = RStream.of(handler)
+                .fields()
+                .by("loginProfile");
+        // LoginResult.class
+        var loginProfileClass = loginProfileFieldWrapper.type();
+        // LoginProfile instance
+        var loginProfile = loginProfileFieldWrapper.get();
+        // Property[] wrapper
+        var propertyArrayFieldWrapper = RStream.of(loginProfileFieldWrapper.type())
+                .fields()
+                .by("properties");
+        // Property[].class
+        var propertyArrayClass = propertyArrayFieldWrapper.type();
+        // Property.class
+        var propertyClass = propertyArrayClass.getComponentType();
+        // Our new Property[] instance
+        var propertyArray = Array.newInstance(propertyClass, 1);
+        Array.set(propertyArray, 0, RStream.of(propertyClass)
+                .constructors()
+                .by(String.class, String.class, String.class)
+                .newInstance(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
 
-        if (profile == null) {
+        if (loginProfile == null) {
             try {
-                Field field = InitialHandler.class.getDeclaredField("loginProfile");
-                field.setAccessible(true);
-                field.set(handler, new LoginResult(null, null, newProps));
-            } catch (ReflectiveOperationException e) {
-                throw new RuntimeException("Failed to apply skin property to InitialHandler", e);
+                // New BungeeCord
+                // new LoginResult(String, String, Property[])
+                loginProfileFieldWrapper.set(RStream.of(loginProfileClass)
+                        .constructors()
+                        .by(String.class, String.class, propertyArrayClass)
+                        .newInstance(null, null, propertyArray));
+            } catch (ConstructorNotFoundException ignored) {
+                // Old BungeeCord
+                // new LoginResult(String, Property[])
+                loginProfileFieldWrapper.set(RStream.of(loginProfileClass)
+                        .constructors()
+                        .by(String.class, propertyArrayClass)
+                        .newInstance(null, propertyArray));
             }
         } else {
-            profile.setProperties(newProps);
+            propertyArrayFieldWrapper.set(loginProfile, propertyArray);
         }
     }
 
     public static Optional<SkinProperty> getSkinProperty(ProxiedPlayer player) {
-        Property[] props = ((InitialHandler) player.getPendingConnection()).getLoginProfile().getProperties();
+        var properties = (Object[]) RStream.of(player.getPendingConnection())
+                .fields()
+                .by("loginProfile")
+                .stream()
+                .fields()
+                .by("properties")
+                .get();
 
-        if (props == null) {
+        if (properties == null) {
             return Optional.empty();
         }
 
-        return Arrays.stream(props)
+        return Arrays.stream(properties)
                 .map(property -> SkinProperty.tryParse(
-                        property.getName(),
-                        property.getValue(),
-                        property.getSignature()
+                        AuthLibHelper.getPropertyName(property),
+                        AuthLibHelper.getPropertyValue(property),
+                        AuthLibHelper.getPropertySignature(property)
                 ))
                 .flatMap(Optional::stream)
                 .findFirst();
@@ -83,22 +114,14 @@ public class SkinApplierBungee implements SkinApplierAccess<ProxiedPlayer> {
 
     @Override
     public void applySkin(ProxiedPlayer player, SkinProperty property) {
-        try {
-            applyEvent(player, property, (InitialHandler) player.getPendingConnection());
-        } catch (ReflectiveOperationException e) {
-            logger.severe("Failed to apply skin to player %s".formatted(player.getName()), e);
-        }
+        applyEvent(player, property, player.getPendingConnection());
     }
 
-    public void applySkin(SkinProperty property, InitialHandler handler) {
-        try {
-            applyEvent(null, property, handler);
-        } catch (ReflectiveOperationException e) {
-            logger.severe("Failed to apply skin to player", e);
-        }
+    public void applySkin(SkinProperty property, PendingConnection handler) {
+        applyEvent(null, property, handler);
     }
 
-    private void applyEvent(@Nullable ProxiedPlayer player, SkinProperty property, InitialHandler handler) throws ReflectiveOperationException {
+    private void applyEvent(@Nullable ProxiedPlayer player, SkinProperty property, PendingConnection handler) {
         SkinApplyEventImpl event = new SkinApplyEventImpl(player, property);
 
         eventBus.callEvent(event);
@@ -109,7 +132,7 @@ public class SkinApplierBungee implements SkinApplierAccess<ProxiedPlayer> {
         applyWithProperty(player, handler, event.getProperty());
     }
 
-    private void applyWithProperty(@Nullable ProxiedPlayer player, InitialHandler handler, SkinProperty property) throws ReflectiveOperationException {
+    private void applyWithProperty(@Nullable ProxiedPlayer player, PendingConnection handler, SkinProperty property) {
         applyToHandler(handler, property);
 
         if (player == null) {

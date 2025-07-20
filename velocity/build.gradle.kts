@@ -15,7 +15,6 @@ dependencies {
     testImplementation(testFixtures(projects.test))
 
     compileOnly(libs.velocity.api)
-    annotationProcessor(libs.velocity.api)
 
     implementation(libs.bstats.velocity)
     implementation(libs.cloud.velocity)

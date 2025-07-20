@@ -26,6 +26,7 @@ dependencies {
     api(libs.cloud.translations.core)
     api(libs.cloud.minecraft.extras)
     api(libs.cloud.translations.minecraft.extras)
+    api(libs.reflect)
 
     implementation(libs.bstats.base) {
         isTransitive = false

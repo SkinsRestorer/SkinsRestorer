@@ -18,8 +18,8 @@
 package net.skinsrestorer.bungee.listeners;
 
 import lombok.RequiredArgsConstructor;
-import net.md_5.bungee.ServerConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
@@ -64,7 +64,7 @@ public class ProxyMessageListener implements Listener {
 
             @Override
             public boolean isSenderServerConnection() {
-                return event.getSender() instanceof ServerConnection;
+                return event.getSender() instanceof Server;
             }
 
             @Override

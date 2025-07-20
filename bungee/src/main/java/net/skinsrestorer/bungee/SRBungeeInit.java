@@ -25,10 +25,8 @@ import net.skinsrestorer.bungee.listeners.AdminInfoListener;
 import net.skinsrestorer.bungee.listeners.LoginListener;
 import net.skinsrestorer.bungee.listeners.ProxyMessageListener;
 import net.skinsrestorer.bungee.wrapper.WrapperBungee;
-import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.plugin.SRProxyPlatformInit;
-import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.SRHelpers;
 
 import javax.inject.Inject;
@@ -40,14 +38,9 @@ public class SRBungeeInit implements SRProxyPlatformInit {
     private final SRPlugin plugin;
     private final ProxyServer proxy;
     private final WrapperBungee wrapper;
-    private final SRLogger logger;
 
     @Override
     public void initSkinApplier() {
-        if (!ReflectionUtil.classExists("net.md_5.bungee.protocol.Property")) {
-            logger.severe("BungeeCord version is too old, please update to a newer build. Latest BungeeCord supports up to Minecraft 1.8.0, so you can safely update BungeeCord. If you are using an older version because you only want old versions to show as supported on the server list, use a MOTD plugin like AdvancedServerList or PistonMOTD to show newer clients as unsupported.");
-        }
-
         plugin.registerSkinApplier(injector.getSingleton(SkinApplierBungee.class), ProxiedPlayer.class, wrapper);
     }
 

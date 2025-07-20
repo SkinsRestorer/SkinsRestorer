@@ -3,7 +3,7 @@ main: net.skinsrestorer.bukkit.SRBukkitBootstrap
 load: STARTUP
 version: ${version}
 description: ${description}
-website: https://skinsrestorer.net/
+website: ${url}
 authors: [ "knat", "AlexProgrammerDE", "Th3Tr0LLeR", "McLive", "DoNotSpamPls" ]
 softdepend: [ "ProtocolLib", "ViaVersion", "ViaBackwards", "ProtocolSupport", "MundoSK", "floodgate", "PlaceholderAPI", "MiniPlaceholders" ]
 api-version: 1.13

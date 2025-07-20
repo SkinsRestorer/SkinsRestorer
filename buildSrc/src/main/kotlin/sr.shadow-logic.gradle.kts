@@ -132,4 +132,6 @@ fun ShadowJar.configureRelocations() {
 
     relocate("org.incendo.cloud", "net.skinsrestorer.shadow.cloud")
     relocate("io.leangen.geantyref", "net.skinsrestorer.shadow.geantyref")
+
+    relocate("net.lenni0451.reflect", "net.skinsrestorer.shadow.reflect")
 }
