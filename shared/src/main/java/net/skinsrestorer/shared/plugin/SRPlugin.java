@@ -62,6 +62,7 @@ import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.SRHelpers;
 import org.bstats.MetricsBase;
+import org.bstats.charts.DrilldownPie;
 import org.bstats.charts.SimplePie;
 import org.bstats.charts.SingleLineChart;
 
@@ -72,7 +73,9 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SRPlugin {
     @Getter
@@ -288,12 +291,20 @@ public class SRPlugin {
         }
 
         MetricsCounter metricsCounter = injector.getSingleton(MetricsCounter.class);
-        metrics.addCustomChart(new SingleLineChart("mineskin_calls", () -> metricsCounter.collect(MetricsCounter.Service.MINE_SKIN)));
-        metrics.addCustomChart(new SingleLineChart("mojang_calls", () -> metricsCounter.collect(MetricsCounter.Service.MOJANG)));
-        metrics.addCustomChart(new SingleLineChart("eclipse_uuid", () -> metricsCounter.collect(MetricsCounter.Service.ECLIPSE_UUID)));
-        metrics.addCustomChart(new SingleLineChart("eclipse_profile", () -> metricsCounter.collect(MetricsCounter.Service.ECLIPSE_PROFILE)));
+
+        for (MetricsCounter.Service service : MetricsCounter.Service.values()) {
+            String chartId = "service_" + service.name().toLowerCase();
+            metrics.addCustomChart(new SingleLineChart(chartId, () -> metricsCounter.collect(service)));
+        }
+
+        for (MetricsCounter.CommandType commandType : MetricsCounter.CommandType.values()) {
+            String chartId = "command_" + commandType.name().toLowerCase();
+            metrics.addCustomChart(new SingleLineChart(chartId, () -> metricsCounter.collect(commandType)));
+        }
+
         metrics.addCustomChart(new SimplePie("uses_mysql", metricsCounter::usesMySQL));
         metrics.addCustomChart(new SimplePie("proxy_mode", metricsCounter::isProxyMode));
+        metrics.addCustomChart(new DrilldownPie("plugin_config", metricsCounter::pluginConfig));
     }
 
     public void startup(Class<? extends SRPlatformInit> initClass) throws Exception {
