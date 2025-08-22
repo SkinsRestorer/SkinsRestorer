@@ -62,6 +62,7 @@ import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.SRHelpers;
 import org.bstats.MetricsBase;
+import org.bstats.charts.AdvancedPie;
 import org.bstats.charts.DrilldownPie;
 import org.bstats.charts.SimplePie;
 import org.bstats.charts.SingleLineChart;
@@ -291,20 +292,14 @@ public class SRPlugin {
         }
 
         MetricsCounter metricsCounter = injector.getSingleton(MetricsCounter.class);
-
+        metrics.addCustomChart(new SimplePie("uses_mysql", metricsCounter::usesMySQL));
+        metrics.addCustomChart(new SimplePie("proxy_mode", metricsCounter::isProxyMode));
+        metrics.addCustomChart(new DrilldownPie("plugin_config", metricsCounter::pluginConfig));
+        metrics.addCustomChart(new AdvancedPie("skin_command", metricsCounter::skinCommand));
         for (MetricsCounter.Service service : MetricsCounter.Service.values()) {
             String chartId = "service_" + service.name().toLowerCase();
             metrics.addCustomChart(new SingleLineChart(chartId, () -> metricsCounter.collect(service)));
         }
-
-        for (MetricsCounter.CommandType commandType : MetricsCounter.CommandType.values()) {
-            String chartId = "command_" + commandType.name().toLowerCase();
-            metrics.addCustomChart(new SingleLineChart(chartId, () -> metricsCounter.collect(commandType)));
-        }
-
-        metrics.addCustomChart(new SimplePie("uses_mysql", metricsCounter::usesMySQL));
-        metrics.addCustomChart(new SimplePie("proxy_mode", metricsCounter::isProxyMode));
-        metrics.addCustomChart(new DrilldownPie("plugin_config", metricsCounter::pluginConfig));
     }
 
     public void startup(Class<? extends SRPlatformInit> initClass) throws Exception {

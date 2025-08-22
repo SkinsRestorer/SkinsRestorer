@@ -23,6 +23,7 @@ import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.config.DatabaseConfig;
 import net.skinsrestorer.shared.plugin.SRServerPlugin;
+import org.bstats.charts.SingleLineChart;
 
 import javax.inject.Inject;
 import java.lang.reflect.Field;
@@ -86,6 +87,14 @@ public class MetricsCounter {
             }
         }
         map.put(name, configMap);
+    }
+
+    public Map<String, Integer> skinCommand() {
+        Map<String, Integer> map = new HashMap<>();
+        for (MetricsCounter.CommandType commandType : MetricsCounter.CommandType.values()) {
+            map.put(commandType.name().toLowerCase().replace("skin_", ""), collect(commandType));
+        }
+        return map;
     }
 
     public void increment(CommandType commandType) {
