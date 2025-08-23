@@ -296,6 +296,7 @@ public class SRPlugin {
         metrics.addCustomChart(new SimplePie("proxy_mode", metricsCounter::isProxyMode));
         metrics.addCustomChart(new DrilldownPie("plugin_config", metricsCounter::pluginConfig));
         metrics.addCustomChart(new AdvancedPie("skin_command", metricsCounter::skinCommand));
+        metrics.addCustomChart(new SingleLineChart("skins_applied", metricsCounter::collectSkinsAppliedCount));
         for (MetricsCounter.Service service : MetricsCounter.Service.values()) {
             String chartId = "service_" + service.name().toLowerCase();
             metrics.addCustomChart(new SingleLineChart(chartId, () -> metricsCounter.collect(service)));

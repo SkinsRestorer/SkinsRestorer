@@ -23,7 +23,6 @@ import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.config.DatabaseConfig;
 import net.skinsrestorer.shared.plugin.SRServerPlugin;
-import org.bstats.charts.SingleLineChart;
 
 import javax.inject.Inject;
 import java.lang.reflect.Field;
@@ -40,6 +39,8 @@ public class MetricsCounter {
     private final SettingsManager settingsManager;
     private final Map<Service, AtomicInteger> serviceMap = new EnumMap<>(Service.class);
     private final Map<CommandType, AtomicInteger> commandeMap = new EnumMap<>(CommandType.class);
+    private final AtomicInteger skinsAppliedCount = new AtomicInteger();
+
 
 
     public String usesMySQL() {
@@ -126,6 +127,15 @@ public class MetricsCounter {
         SKIN_FAVOURITES,
         SKIN_GUI
     }
+
+    public void incrementsSkinAppliedCount() {
+        skinsAppliedCount.incrementAndGet();
+    }
+
+    public int collectSkinsAppliedCount() {
+        return skinsAppliedCount.getAndSet(0);
+    }
+
 
     public void increment(Service service) {
         getOrCreate(service).incrementAndGet();
