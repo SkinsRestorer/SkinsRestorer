@@ -63,7 +63,7 @@ public class SharedSkinApplier<P> implements SkinApplier<P> {
     public void applySkin(P player, SkinProperty property) {
         access.applySkin(player, property);
 
-        metricsCounter.incrementsSkinAppliedCount();
+        this.metricsCounter.incrementsSkinAppliedCount();
         SRPlayer srPlayer = wrapper.player(player);
         Optional.ofNullable(injector.getIfAvailable(SoundProvider.class))
                 .ifPresent(soundProvider -> soundProvider.accept(injector, srPlayer));

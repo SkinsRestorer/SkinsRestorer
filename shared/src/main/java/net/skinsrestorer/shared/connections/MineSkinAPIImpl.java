@@ -161,7 +161,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
     private HttpResponse queryURL(String url, @Nullable SkinVariant skinVariant) throws IOException {
         for (int i = 0; true; i++) { // try 3 times if server not responding
             try {
-                metricsCounter.increment(MetricsCounter.Service.MINE_SKIN);
+                metricsCounter.increment(MetricsCounter.Service.MINESKIN_CALLS);
 
                 Map<String, String> headers = new HashMap<>();
                 getApiKey(settings).ifPresent(s ->

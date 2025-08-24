@@ -298,8 +298,7 @@ public class SRPlugin {
         metrics.addCustomChart(new AdvancedPie("skin_command", metricsCounter::skinCommand));
         metrics.addCustomChart(new SingleLineChart("skins_applied", metricsCounter::collectSkinsAppliedCount));
         for (MetricsCounter.Service service : MetricsCounter.Service.values()) {
-            String chartId = "service_" + service.name().toLowerCase();
-            metrics.addCustomChart(new SingleLineChart(chartId, () -> metricsCounter.collect(service)));
+            metrics.addCustomChart(new SingleLineChart(service.name().toLowerCase(), () -> metricsCounter.collect(service)));
         }
     }
 

@@ -150,7 +150,7 @@ public class MetricsCounter {
     }
 
     public enum Service {
-        MINE_SKIN,
+        MINESKIN_CALLS,
         MOJANG_UUID,
         MOJANG_PROFILE,
         ECLIPSE_UUID,
