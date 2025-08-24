@@ -21,15 +21,14 @@ import ch.jalu.configme.SettingsManager;
 import ch.jalu.configme.properties.Property;
 import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.plugin.SRServerPlugin;
 import net.skinsrestorer.shared.config.*;
+import net.skinsrestorer.shared.plugin.SRServerPlugin;
 
 import javax.inject.Inject;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static java.lang.reflect.Modifier.isStatic;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class MetricsCounter {
@@ -72,7 +71,7 @@ public class MetricsCounter {
     private void collectConfigDiff(Map<String, Map<String, Integer>> map, String name, Class<?> configClass) {
         Map<String, Integer> configMap = new HashMap<>();
         for (Field field : configClass.getDeclaredFields()) {
-            if (!isStatic(field.getModifiers())) continue;
+            if (!Modifier.isStatic(field.getModifiers())) continue;
             if (!Property.class.isAssignableFrom(field.getType())) continue;
             try {
                 Property<?> property = (Property<?>) field.get(null);
