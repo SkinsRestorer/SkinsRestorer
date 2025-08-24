@@ -29,6 +29,8 @@ import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static java.lang.reflect.Modifier.isStatic;
+
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class MetricsCounter {
     private final SettingsManager settings;
@@ -70,7 +72,7 @@ public class MetricsCounter {
     private void collectConfigDiff(Map<String, Map<String, Integer>> map, String name, Class<?> configClass) {
         Map<String, Integer> configMap = new HashMap<>();
         for (Field field : configClass.getDeclaredFields()) {
-            if (!java.lang.reflect.Modifier.isStatic(field.getModifiers())) continue;
+            if (!isStatic(field.getModifiers())) continue;
             if (!Property.class.isAssignableFrom(field.getType())) continue;
             try {
                 Property<?> property = (Property<?>) field.get(null);
