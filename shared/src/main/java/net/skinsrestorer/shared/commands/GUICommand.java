@@ -29,6 +29,7 @@ import net.skinsrestorer.shared.storage.GUIStorage;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
+import net.skinsrestorer.shared.utils.MetricsCounter;
 import org.incendo.cloud.annotations.Command;
 
 import javax.inject.Inject;
@@ -40,6 +41,7 @@ public final class GUICommand {
     private final GUIStorage guiStorage;
     private final SharedGUI sharedGUI;
     private final Injector injector;
+    private final MetricsCounter metricsCounter;
 
     @Command("skins")
     @RootDescription(Message.HELP_SKINS)
@@ -47,7 +49,7 @@ public final class GUICommand {
     @CommandPermission(value = PermissionRegistry.SKINS)
     private void onDefault(SRPlayer player) {
         player.sendMessage(Message.SKINSMENU_OPEN);
-
         platformAdapter.openGUI(player, sharedGUI.createGUIPage(player, guiStorage.getGUIPage(player, 0, PageType.SELECT)));
+        metricsCounter.increment(MetricsCounter.CommandType.SKIN_GUI);
     }
 }

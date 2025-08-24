@@ -1,13 +1,7 @@
 plugins {
-    id("org.cadixdev.licenser")
     id("com.diffplug.spotless")
     // id("com.github.spotbugs")
 }
-
-license.include("**/net/skinsrestorer/**")
-
-license.header(rootProject.file("file_header.txt"))
-license.newLine(false)
 
 /*
 spotbugs {
@@ -25,5 +19,7 @@ spotless {
         trimTrailingWhitespace()
         leadingTabsToSpaces(4)
         endWithNewline()
+
+        licenseHeaderFile(rootProject.file("file_header.txt"))
     }
 }

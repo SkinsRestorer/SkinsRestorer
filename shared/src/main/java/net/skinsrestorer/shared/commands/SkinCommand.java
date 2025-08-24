@@ -52,6 +52,7 @@ import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
 import net.skinsrestorer.shared.subjects.permissions.SkinPermissionManager;
+import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.SRHelpers;
 import net.skinsrestorer.shared.utils.ValidationUtil;
 import org.incendo.cloud.annotation.specifier.Greedy;
@@ -93,10 +94,12 @@ public final class SkinCommand {
     private final SRCommandManager commandManager;
     private final RecommendationsState recommendationsState;
     private final SkinPermissionManager permissionManager;
+    private final MetricsCounter metricsCounter;
 
     @Command("")
     @CommandPermission(PermissionRegistry.SKIN)
     public void rootCommand(SRCommandSender sender) {
+        metricsCounter.increment(MetricsCounter.CommandType.SKIN_ROOT_HELP);
         if (settings.getProperty(CommandConfig.CUSTOM_HELP_ENABLED)) {
             settings.getProperty(CommandConfig.CUSTOM_HELP_MESSAGE)
                     .forEach(l -> sender.sendMessage(ComponentHelper.parseMiniMessageToJsonString(l)));
@@ -134,6 +137,7 @@ public final class SkinCommand {
     @CommandPermission(PermissionRegistry.SKIN)
     @CommandDescription(Message.HELP_SKIN)
     public void commandHelp(SRCommandSender sender, @Argument(suggestions = "help_queries_skin") @Greedy String query) {
+        metricsCounter.increment(MetricsCounter.CommandType.SKIN_HELP);
         if (settings.getProperty(CommandConfig.CUSTOM_HELP_ENABLED)) {
             settings.getProperty(CommandConfig.CUSTOM_HELP_MESSAGE)
                     .forEach(l -> sender.sendMessage(ComponentHelper.parseMiniMessageToJsonString(l)));
@@ -175,6 +179,7 @@ public final class SkinCommand {
     @CommandDescription(Message.HELP_SKIN_CLEAR)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinClear(SRPlayer player) {
+        metricsCounter.increment(MetricsCounter.CommandType.SKIN_CLEAR);
         onSkinClearOther(player, PlayerSelector.singleton(player));
     }
 
@@ -183,6 +188,7 @@ public final class SkinCommand {
     @CommandDescription(Message.HELP_SKIN_CLEAR_OTHER)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinClearOther(SRCommandSender sender, PlayerSelector selector) {
+        metricsCounter.increment(MetricsCounter.CommandType.SKIN_CLEAR);
         for (UUID target : selector.resolve(sender)) {
             Optional<SRPlayer> targetPlayer = adapter.getPlayer(sender, target);
             String targetName = targetPlayer.map(SRPlayer::getName).orElseGet(target::toString);
@@ -221,6 +227,7 @@ public final class SkinCommand {
     @CommandDescription(Message.HELP_SKIN_RANDOM_OTHER)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinRandomOther(SRCommandSender sender, PlayerSelector selector) {
+        metricsCounter.increment(MetricsCounter.CommandType.SKIN_RANDOM);
         Optional<RecommenationResponse.SkinInfo> randomRecommendation = recommendationsState.getRandomRecommendation();
         if (randomRecommendation.isEmpty()) {
             logger.warning("No random skins available, skipping");
@@ -235,6 +242,7 @@ public final class SkinCommand {
     @CommandDescription(Message.HELP_SKIN_SEARCH)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinSearch(SRCommandSender sender, @Greedy String searchString) {
+        metricsCounter.increment(MetricsCounter.CommandType.SKIN_SEARCH);
         sender.sendMessage(Message.SKIN_SEARCH_MESSAGE, Placeholder.unparsed("search", searchString));
     }
 
@@ -243,6 +251,7 @@ public final class SkinCommand {
     @CommandDescription(Message.HELP_SKIN_EDIT)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinEdit(SRPlayer player) {
+        metricsCounter.increment(MetricsCounter.CommandType.SKIN_EDIT);
         player.sendMessage(Message.SKIN_EDIT_MESSAGE,
                 Placeholder.parsed("url", "https://minecraft.novaskin.me/?skin=%s".formatted(
                         PropertyUtils.getSkinTextureUrl(adapter.getSkinProperty(player).orElse(HardcodedSkins.STEVE.getProperty())))));
@@ -261,6 +270,7 @@ public final class SkinCommand {
     @CommandDescription(Message.HELP_SKIN_UPDATE_OTHER)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinUpdateOther(SRCommandSender sender, PlayerSelector selector) {
+        metricsCounter.increment(MetricsCounter.CommandType.SKIN_UPDATE);
         for (UUID target : selector.resolve(sender)) {
             Optional<SRPlayer> targetPlayer = adapter.getPlayer(sender, target);
             String targetName = targetPlayer.map(SRPlayer::getName).orElseGet(target::toString);
@@ -321,6 +331,7 @@ public final class SkinCommand {
     @CommandDescription(Message.HELP_SKIN_SET_OTHER)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinSetOther(SRCommandSender sender, @Quoted String skinName, PlayerSelector selector, SkinVariant skinVariant) {
+        metricsCounter.increment(MetricsCounter.CommandType.SKIN_SET);
         for (UUID target : selector.resolve(sender)) {
             Optional<SRPlayer> targetPlayer = adapter.getPlayer(sender, target);
             String targetName = targetPlayer.map(SRPlayer::getName).orElseGet(target::toString);
@@ -345,6 +356,7 @@ public final class SkinCommand {
     @CommandDescription(Message.HELP_SKIN_SET_URL)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinSetUrl(SRPlayer player, @Quoted String url, @Nullable SkinVariant skinVariant) {
+        metricsCounter.increment(MetricsCounter.CommandType.SKIN_URL);
         if (!ValidationUtil.validSkinUrl(url)) {
             player.sendMessage(Message.ERROR_INVALID_URLSKIN);
             return;
@@ -366,6 +378,7 @@ public final class SkinCommand {
     @CommandDescription(Message.HELP_SKIN_UNDO_OTHER)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinUndoOther(SRCommandSender sender, PlayerSelector selector) {
+        metricsCounter.increment(MetricsCounter.CommandType.SKIN_UNDO);
         for (UUID target : selector.resolve(sender)) {
             Optional<SRPlayer> targetPlayer = adapter.getPlayer(sender, target);
             String targetName = targetPlayer.map(SRPlayer::getName).orElseGet(target::toString);
@@ -421,6 +434,7 @@ public final class SkinCommand {
     @CommandDescription(Message.HELP_SKIN_UNDO_OTHER)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinHistoryOther(SRCommandSender sender, PlayerSelector selector) {
+        metricsCounter.increment(MetricsCounter.CommandType.SKIN_HISTORY);
         for (UUID target : selector.resolve(sender)) {
             List<HistoryData> historyDataList = playerStorage.getHistoryEntries(target, 0, Integer.MAX_VALUE);
             if (historyDataList.isEmpty()) {
@@ -452,6 +466,7 @@ public final class SkinCommand {
     @CommandDescription(Message.HELP_SKIN_FAVOURITE_OTHER)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinFavouriteOther(SRCommandSender sender, PlayerSelector selector) {
+        metricsCounter.increment(MetricsCounter.CommandType.SKIN_FAVOURITE);
         for (UUID target : selector.resolve(sender)) {
             Optional<SRPlayer> targetPlayer = adapter.getPlayer(sender, target);
             String targetName = targetPlayer.map(SRPlayer::getName).orElseGet(target::toString);
@@ -502,6 +517,7 @@ public final class SkinCommand {
     @CommandDescription(Message.HELP_SKIN_FAVOURITE_OTHER)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinFavouritesOther(SRCommandSender sender, PlayerSelector selector) {
+        metricsCounter.increment(MetricsCounter.CommandType.SKIN_FAVOURITES);
         for (UUID target : selector.resolve(sender)) {
             List<FavouriteData> favouriteDataList = playerStorage.getFavouriteEntries(target, 0, Integer.MAX_VALUE);
             if (favouriteDataList.isEmpty()) {

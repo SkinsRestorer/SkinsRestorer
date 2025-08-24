@@ -62,6 +62,8 @@ import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.SRHelpers;
 import org.bstats.MetricsBase;
+import org.bstats.charts.AdvancedPie;
+import org.bstats.charts.DrilldownPie;
 import org.bstats.charts.SimplePie;
 import org.bstats.charts.SingleLineChart;
 
@@ -71,8 +73,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class SRPlugin {
     @Getter
@@ -288,12 +289,13 @@ public class SRPlugin {
         }
 
         MetricsCounter metricsCounter = injector.getSingleton(MetricsCounter.class);
-        metrics.addCustomChart(new SingleLineChart("mineskin_calls", () -> metricsCounter.collect(MetricsCounter.Service.MINE_SKIN)));
-        metrics.addCustomChart(new SingleLineChart("mojang_calls", () -> metricsCounter.collect(MetricsCounter.Service.MOJANG)));
-        metrics.addCustomChart(new SingleLineChart("eclipse_uuid", () -> metricsCounter.collect(MetricsCounter.Service.ECLIPSE_UUID)));
-        metrics.addCustomChart(new SingleLineChart("eclipse_profile", () -> metricsCounter.collect(MetricsCounter.Service.ECLIPSE_PROFILE)));
         metrics.addCustomChart(new SimplePie("uses_mysql", metricsCounter::usesMySQL));
         metrics.addCustomChart(new SimplePie("proxy_mode", metricsCounter::isProxyMode));
+        metrics.addCustomChart(new DrilldownPie("plugin_config", metricsCounter::pluginConfig));
+        metrics.addCustomChart(new AdvancedPie("skin_command", metricsCounter::skinCommand));
+        for (MetricsCounter.Service service : MetricsCounter.Service.values()) {
+            metrics.addCustomChart(new SingleLineChart(service.name().toLowerCase(Locale.ROOT), () -> metricsCounter.collect(service)));
+        }
     }
 
     public void startup(Class<? extends SRPlatformInit> initClass) throws Exception {

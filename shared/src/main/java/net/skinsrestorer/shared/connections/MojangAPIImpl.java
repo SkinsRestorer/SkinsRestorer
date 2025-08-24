@@ -114,7 +114,7 @@ public class MojangAPIImpl implements MojangAPI {
     }
 
     public Optional<UUID> getUUIDMojang(String playerName, String endpoint) throws DataRequestException {
-        HttpResponse httpResponse = readURL(URI.create(endpoint.replace("%playerName%", playerName)), MetricsCounter.Service.MOJANG);
+        HttpResponse httpResponse = readURL(URI.create(endpoint.replace("%playerName%", playerName)), MetricsCounter.Service.MOJANG_UUID);
 
         // Not found
         if (httpResponse.statusCode() == 204 || httpResponse.statusCode() == 404 || httpResponse.body().isEmpty()) {
@@ -164,7 +164,7 @@ public class MojangAPIImpl implements MojangAPI {
     }
 
     public Optional<SkinProperty> getProfileMojang(UUID uuid) throws DataRequestException {
-        HttpResponse httpResponse = readURL(URI.create(PROFILE_MOJANG.replace("%uuid%", UUIDUtils.convertToNoDashes(uuid))), MetricsCounter.Service.MOJANG);
+        HttpResponse httpResponse = readURL(URI.create(PROFILE_MOJANG.replace("%uuid%", UUIDUtils.convertToNoDashes(uuid))), MetricsCounter.Service.MOJANG_PROFILE);
         MojangProfileResponse response = httpResponse.getBodyAs(MojangProfileResponse.class);
         if (response.getProperties() == null) {
             return Optional.empty();

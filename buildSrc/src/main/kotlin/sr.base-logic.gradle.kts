@@ -13,14 +13,14 @@ plugins {
 
 dependencies {
     api("org.jetbrains:annotations:26.0.2")
-    compileOnly("com.github.spotbugs:spotbugs-annotations:4.9.3")
+    compileOnly("com.github.spotbugs:spotbugs-annotations:4.9.4")
 
     errorprone("com.google.errorprone:error_prone_core:2.41.0")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testFixturesApi("org.junit.jupiter:junit-jupiter:5.13.4")
-    testFixturesApi("org.mockito:mockito-core:5.18.0")
-    testFixturesApi("org.mockito:mockito-junit-jupiter:5.18.0")
+    testFixturesApi("org.mockito:mockito-core:5.19.0")
+    testFixturesApi("org.mockito:mockito-junit-jupiter:5.19.0")
 }
 
 tasks {
@@ -39,15 +39,17 @@ tasks {
         ) {
             val sharedResources = rootDir.resolve("shared").resolve("src").resolve("main").resolve("resources")
             expand(
-                "version" to project.version,
-                "description" to project.description,
-                "url" to "https://skinsrestorer.net",
-                "commit" to (indraGit.commit()?.name ?: "unknown"),
-                "branch" to (indraGit.branch()?.name ?: "unknown"),
-                "build_time" to SimpleDateFormat("dd MMMM yyyy HH:mm:ss").format(Date()),
-                "ci_name" to getCIName(),
-                "ci_build_number" to getBuildNumber(),
-                "locales" to sharedResources.resolve("locales").list()?.joinToString("|")
+                mapOf(
+                    "version" to project.version,
+                    "description" to project.description,
+                    "url" to "https://skinsrestorer.net",
+                    "commit" to (indraGit.commit()?.name ?: "unknown"),
+                    "branch" to (indraGit.branch()?.name ?: "unknown"),
+                    "build_time" to SimpleDateFormat("dd MMMM yyyy HH:mm:ss").format(Date()),
+                    "ci_name" to getCIName(),
+                    "ci_build_number" to getBuildNumber(),
+                    "locales" to sharedResources.resolve("locales").list()?.joinToString("|")
+                )
             )
         }
     }

@@ -18,21 +18,25 @@
 package net.skinsrestorer.shared.utils;
 
 import ch.jalu.configme.SettingsManager;
+import ch.jalu.configme.properties.Property;
 import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.config.DatabaseConfig;
+import net.skinsrestorer.shared.config.*;
 import net.skinsrestorer.shared.plugin.SRServerPlugin;
 
 import javax.inject.Inject;
-import java.util.EnumMap;
-import java.util.Map;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class MetricsCounter {
+    private final SettingsManager settings;
     private final Injector injector;
     private final SettingsManager settingsManager;
-    private final Map<Service, AtomicInteger> map = new EnumMap<>(Service.class);
+    private final Map<Service, AtomicInteger> serviceMap = new EnumMap<>(Service.class);
+    private final Map<CommandType, AtomicInteger> commandeMap = new EnumMap<>(CommandType.class);
 
     public String usesMySQL() {
         return String.valueOf(settingsManager.getProperty(DatabaseConfig.MYSQL_ENABLED));
@@ -48,6 +52,76 @@ public class MetricsCounter {
         return String.valueOf(serverPlugin.isProxyMode());
     }
 
+    public Map<String, Map<String, Integer>> pluginConfig() {
+        Map<String, Map<String, Integer>> map = new HashMap<>();
+        collectConfigDiff(map, "Advanced", AdvancedConfig.class);
+        collectConfigDiff(map, "Api", APIConfig.class);
+        collectConfigDiff(map, "Command", CommandConfig.class);
+        collectConfigDiff(map, "Database", DatabaseConfig.class);
+        collectConfigDiff(map, "Dev", DevConfig.class);
+        collectConfigDiff(map, "GUI", GUIConfig.class);
+        collectConfigDiff(map, "Login", LoginConfig.class);
+        collectConfigDiff(map, "Message", MessageConfig.class);
+        collectConfigDiff(map, "Proxy", ProxyConfig.class);
+        collectConfigDiff(map, "Storage", StorageConfig.class);
+        collectConfigDiff(map, "Server", ServerConfig.class);
+        return map;
+    }
+
+    private void collectConfigDiff(Map<String, Map<String, Integer>> map, String name, Class<?> configClass) {
+        Map<String, Integer> configMap = new HashMap<>();
+        for (Field field : configClass.getDeclaredFields()) {
+            if (!Modifier.isStatic(field.getModifiers())) continue;
+            if (!Property.class.isAssignableFrom(field.getType())) continue;
+            try {
+                Property<?> property = (Property<?>) field.get(null);
+                Object value = settings.getProperty(property);
+                Object defaultValue = property.getDefaultValue();
+                boolean notDefault = !Objects.equals(value, defaultValue);
+                configMap.put(property.getPath(), notDefault ? 1 : 0);
+            } catch (IllegalAccessException ignored) {
+            }
+        }
+        map.put(name, configMap);
+    }
+
+    public Map<String, Integer> skinCommand() {
+        Map<String, Integer> map = new HashMap<>();
+        for (MetricsCounter.CommandType commandType : MetricsCounter.CommandType.values()) {
+            map.put(commandType.name().toLowerCase(Locale.ROOT).replace("skin_", ""), collect(commandType));
+        }
+        return map;
+    }
+
+    public void increment(CommandType commandType) {
+        getOrCreate(commandType).incrementAndGet();
+    }
+
+    public int collect(CommandType commandType) {
+        return getOrCreate(commandType).getAndSet(0);
+    }
+
+    private AtomicInteger getOrCreate(CommandType commandType) {
+        return commandeMap.computeIfAbsent(commandType, k -> new AtomicInteger());
+    }
+
+    public enum CommandType {
+        SKIN_ROOT_HELP,
+        SKIN_HELP,
+        SKIN_SET,
+        SKIN_CLEAR,
+        SKIN_RANDOM,
+        SKIN_SEARCH,
+        SKIN_EDIT,
+        SKIN_UPDATE,
+        SKIN_URL,
+        SKIN_UNDO,
+        SKIN_HISTORY,
+        SKIN_FAVOURITE,
+        SKIN_FAVOURITES,
+        SKIN_GUI
+    }
+
     public void increment(Service service) {
         getOrCreate(service).incrementAndGet();
     }
@@ -57,12 +131,13 @@ public class MetricsCounter {
     }
 
     private AtomicInteger getOrCreate(Service service) {
-        return map.computeIfAbsent(service, k -> new AtomicInteger());
+        return serviceMap.computeIfAbsent(service, k -> new AtomicInteger());
     }
 
     public enum Service {
-        MINE_SKIN,
-        MOJANG,
+        MINESKIN_CALLS,
+        MOJANG_UUID,
+        MOJANG_PROFILE,
         ECLIPSE_UUID,
         ECLIPSE_PROFILE
     }
