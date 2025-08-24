@@ -99,7 +99,7 @@ public final class SkinCommand {
     @Command("")
     @CommandPermission(PermissionRegistry.SKIN)
     public void rootCommand(SRCommandSender sender) {
-        metricsCounter.increment(MetricsCounter.CommandType.SKINCOMMAND);
+        metricsCounter.increment(MetricsCounter.CommandType.SKIN_ROOTCOMMAND);
         if (settings.getProperty(CommandConfig.CUSTOM_HELP_ENABLED)) {
             settings.getProperty(CommandConfig.CUSTOM_HELP_MESSAGE)
                     .forEach(l -> sender.sendMessage(ComponentHelper.parseMiniMessageToJsonString(l)));

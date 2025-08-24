@@ -23,7 +23,6 @@ import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.config.DatabaseConfig;
 import net.skinsrestorer.shared.plugin.SRServerPlugin;
-import org.bstats.charts.SingleLineChart;
 
 import javax.inject.Inject;
 import java.lang.reflect.Field;
@@ -109,7 +108,7 @@ public class MetricsCounter {
     }
 
     public enum CommandType {
-        SKINCOMMAND,
+        SKIN_ROOTCOMMAND,
         SKIN_HELP,
         SKIN_SET,
         SKIN_CLEAR,
