@@ -119,6 +119,7 @@ tasks {
     shadowJar {
         configureRelocations()
         transform(ShadowResourceTransformer())
+        failOnDuplicateEntries = true
     }
 
     build {

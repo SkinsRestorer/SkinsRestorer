@@ -119,5 +119,7 @@ adventure-shared = [
     "adventure-text-serializer-legacy",
     "adventure-text-serializer-ansi",
     "adventure-text-serializer-plain",
-    "adventure-text-minimessage"
+    "adventure-text-minimessage",
+    "adventure-bukkit",
+    "adventure-bungeecord"
 ]

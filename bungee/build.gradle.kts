@@ -16,8 +16,6 @@ dependencies {
 
     implementation(libs.bstats.bungeecord)
     implementation(libs.cloud.bungee)
-
-    implementation(libs.adventure.bungeecord)
 }
 
 tasks {
