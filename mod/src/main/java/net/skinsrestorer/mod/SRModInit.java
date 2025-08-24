@@ -80,12 +80,16 @@ public class SRModInit implements SRServerPlatformInit {
     @Override
     public void placeholderSetupHook() {
         if (adapter.getPluginInfo("miniplaceholders").isPresent()) {
-            new SRMiniPlaceholdersAPIExpansion<ServerPlayer>(
-                    adapter,
-                    audience -> audience instanceof ServerPlayer,
-                    wrapper::player
-            ).register();
-            logger.info("MiniPlaceholders expansion registered!");
+            try {
+                new SRMiniPlaceholdersAPIExpansion<>(
+                        adapter,
+                        ServerPlayer.class,
+                        wrapper::player
+                ).register();
+                logger.info("MiniPlaceholders expansion registered!");
+            } catch (Throwable t) {
+                logger.severe("Failed to load MiniPlaceholders expansion! Please check if both SkinsRestorer and MiniPlaceholders are up-to-date.", t);
+            }
         }
     }
 

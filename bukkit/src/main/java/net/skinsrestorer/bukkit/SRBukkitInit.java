@@ -306,21 +306,29 @@ public class SRBukkitInit implements SRServerPlatformInit {
     @Override
     public void placeholderSetupHook() {
         if (adapter.getPluginInfo("PlaceholderAPI").isPresent()) {
-            new SRPlaceholderAPIExpansion(
-                    logger,
-                    adapter.getPluginInstance().getDescription(),
-                    injector
-            ).register();
-            logger.info("PlaceholderAPI expansion registered!");
+            try {
+                new SRPlaceholderAPIExpansion(
+                        logger,
+                        adapter.getPluginInstance().getDescription(),
+                        injector
+                ).register();
+                logger.info("PlaceholderAPI expansion registered!");
+            } catch (Throwable t) {
+                logger.severe("Failed to load PlaceholderAPI expansion! Please check if both SkinsRestorer and PlaceholderAPI are up-to-date.", t);
+            }
         }
 
         if (adapter.getPluginInfo("MiniPlaceholders").isPresent()) {
-            new SRMiniPlaceholdersAPIExpansion<>(
-                    adapter,
-                    audience -> audience instanceof Player,
-                    wrapper::player
-            ).register();
-            logger.info("MiniPlaceholders expansion registered!");
+            try {
+                new SRMiniPlaceholdersAPIExpansion<>(
+                        adapter,
+                        Player.class,
+                        wrapper::player
+                ).register();
+                logger.info("MiniPlaceholders expansion registered!");
+            } catch (Throwable t) {
+                logger.severe("Failed to load MiniPlaceholders expansion! Please check if both SkinsRestorer and MiniPlaceholders are up-to-date.", t);
+            }
         }
     }
 }

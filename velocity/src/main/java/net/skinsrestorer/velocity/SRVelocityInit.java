@@ -69,12 +69,16 @@ public class SRVelocityInit implements SRProxyPlatformInit {
     @Override
     public void placeholderSetupHook() {
         if (adapter.getPluginInfo("miniplaceholders").isPresent()) {
-            new SRMiniPlaceholdersAPIExpansion<>(
-                    adapter,
-                    audience -> audience instanceof Player,
-                    wrapper::player
-            ).register();
-            logger.info("MiniPlaceholders expansion registered!");
+            try {
+                new SRMiniPlaceholdersAPIExpansion<>(
+                        adapter,
+                        Player.class,
+                        wrapper::player
+                ).register();
+                logger.info("MiniPlaceholders expansion registered!");
+            } catch (Throwable t) {
+                logger.severe("Failed to load MiniPlaceholders expansion! Please check if both SkinsRestorer and MiniPlaceholders are up-to-date.", t);
+            }
         }
     }
 }
