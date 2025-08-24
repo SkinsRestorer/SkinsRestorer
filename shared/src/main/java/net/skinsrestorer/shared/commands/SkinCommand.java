@@ -540,7 +540,6 @@ public final class SkinCommand {
     @Command("menu|gui")
     @CommandPermission(PermissionRegistry.SKINS)
     private void onGUIShortcut(SRPlayer player) {
-        metricsCounter.increment(MetricsCounter.CommandType.SKIN_GUI);
         commandManager.execute(player, "skins");
     }
 
