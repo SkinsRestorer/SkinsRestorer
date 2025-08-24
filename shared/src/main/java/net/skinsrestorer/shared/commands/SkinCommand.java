@@ -164,7 +164,6 @@ public final class SkinCommand {
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinSetShort(SRPlayer player, @Quoted String skinName) {
         onSkinSetOther(player, skinName, PlayerSelector.singleton(player), null);
-
     }
 
     @Command("<skinName> <selector>")

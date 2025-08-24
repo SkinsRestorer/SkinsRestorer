@@ -41,7 +41,6 @@ public class MetricsCounter {
     private final Map<Service, AtomicInteger> serviceMap = new EnumMap<>(Service.class);
     private final Map<CommandType, AtomicInteger> commandeMap = new EnumMap<>(CommandType.class);
 
-
     public String usesMySQL() {
         return String.valueOf(settingsManager.getProperty(DatabaseConfig.MYSQL_ENABLED));
     }
