@@ -29,7 +29,6 @@ import net.skinsrestorer.api.storage.SkinStorage;
 import net.skinsrestorer.shared.commands.SoundProvider;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.SRSubjectWrapper;
-import net.skinsrestorer.shared.utils.MetricsCounter;
 
 import java.util.Optional;
 
@@ -41,7 +40,6 @@ public class SharedSkinApplier<P> implements SkinApplier<P> {
     private final PlayerStorage playerStorage;
     private final SkinStorage skinStorage;
     private final Injector injector;
-    private MetricsCounter metricsCounter;
 
     public boolean accepts(Class<?> playerClass) {
         return this.playerClass.isAssignableFrom(playerClass);
@@ -63,7 +61,6 @@ public class SharedSkinApplier<P> implements SkinApplier<P> {
     public void applySkin(P player, SkinProperty property) {
         access.applySkin(player, property);
 
-        this.metricsCounter.incrementsSkinAppliedCount();
         SRPlayer srPlayer = wrapper.player(player);
         Optional.ofNullable(injector.getIfAvailable(SoundProvider.class))
                 .ifPresent(soundProvider -> soundProvider.accept(injector, srPlayer));
