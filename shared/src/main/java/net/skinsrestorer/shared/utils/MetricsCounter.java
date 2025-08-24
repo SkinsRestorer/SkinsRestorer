@@ -113,7 +113,6 @@ public class MetricsCounter {
         SKINCOMMAND,
         SKIN_HELP,
         SKIN_SET,
-        SKIN_SET_SHORT,
         SKIN_CLEAR,
         SKIN_RANDOM,
         SKIN_SEARCH,

@@ -163,7 +163,6 @@ public final class SkinCommand {
     @CommandDescription(Message.HELP_SKIN_SET)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinSetShort(SRPlayer player, @Quoted String skinName) {
-        metricsCounter.increment(MetricsCounter.CommandType.SKIN_SET_SHORT);
         onSkinSetOther(player, skinName, PlayerSelector.singleton(player), null);
 
     }
@@ -173,7 +172,6 @@ public final class SkinCommand {
     @CommandDescription(Message.HELP_SKIN_SET_OTHER)
     @SRCooldownGroup(COOLDOWN_GROUP_ID)
     private void onSkinSetShortOther(SRPlayer player, @Quoted String skinName, PlayerSelector selector) {
-        metricsCounter.increment(MetricsCounter.CommandType.SKIN_SET_SHORT);
         onSkinSetOther(player, skinName, selector, null);
     }
 
