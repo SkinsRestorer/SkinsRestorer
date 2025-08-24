@@ -73,10 +73,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class SRPlugin {
     @Getter
@@ -297,7 +294,7 @@ public class SRPlugin {
         metrics.addCustomChart(new DrilldownPie("plugin_config", metricsCounter::pluginConfig));
         metrics.addCustomChart(new AdvancedPie("skin_command", metricsCounter::skinCommand));
         for (MetricsCounter.Service service : MetricsCounter.Service.values()) {
-            metrics.addCustomChart(new SingleLineChart(service.name().toLowerCase(), () -> metricsCounter.collect(service)));
+            metrics.addCustomChart(new SingleLineChart(service.name().toLowerCase(Locale.ROOT), () -> metricsCounter.collect(service)));
         }
     }
 

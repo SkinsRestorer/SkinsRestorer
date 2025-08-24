@@ -21,15 +21,12 @@ import ch.jalu.configme.SettingsManager;
 import ch.jalu.configme.properties.Property;
 import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.config.DatabaseConfig;
 import net.skinsrestorer.shared.plugin.SRServerPlugin;
+import net.skinsrestorer.shared.config.*;
 
 import javax.inject.Inject;
 import java.lang.reflect.Field;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
@@ -56,17 +53,17 @@ public class MetricsCounter {
 
     public Map<String, Map<String, Integer>> pluginConfig() {
         Map<String, Map<String, Integer>> map = new HashMap<>();
-        collectConfigDiff(map, "Advanced", net.skinsrestorer.shared.config.AdvancedConfig.class);
-        collectConfigDiff(map, "Api", net.skinsrestorer.shared.config.AdvancedConfig.class);
-        collectConfigDiff(map, "Command", net.skinsrestorer.shared.config.CommandConfig.class);
-        collectConfigDiff(map, "Database", net.skinsrestorer.shared.config.DatabaseConfig.class);
-        collectConfigDiff(map, "Dev", net.skinsrestorer.shared.config.DevConfig.class);
-        collectConfigDiff(map, "GUI", net.skinsrestorer.shared.config.GUIConfig.class);
-        collectConfigDiff(map, "Login", net.skinsrestorer.shared.config.LoginConfig.class);
-        collectConfigDiff(map, "Message", net.skinsrestorer.shared.config.MessageConfig.class);
-        collectConfigDiff(map, "Proxy", net.skinsrestorer.shared.config.ProxyConfig.class);
-        collectConfigDiff(map, "Storage", net.skinsrestorer.shared.config.StorageConfig.class);
-        collectConfigDiff(map, "Server", net.skinsrestorer.shared.config.ServerConfig.class);
+        collectConfigDiff(map, "Advanced", AdvancedConfig.class);
+        collectConfigDiff(map, "Api", APIConfig.class);
+        collectConfigDiff(map, "Command", CommandConfig.class);
+        collectConfigDiff(map, "Database", DatabaseConfig.class);
+        collectConfigDiff(map, "Dev", DevConfig.class);
+        collectConfigDiff(map, "GUI", GUIConfig.class);
+        collectConfigDiff(map, "Login", LoginConfig.class);
+        collectConfigDiff(map, "Message", MessageConfig.class);
+        collectConfigDiff(map, "Proxy", ProxyConfig.class);
+        collectConfigDiff(map, "Storage", StorageConfig.class);
+        collectConfigDiff(map, "Server", ServerConfig.class);
         return map;
     }
 
@@ -90,7 +87,7 @@ public class MetricsCounter {
     public Map<String, Integer> skinCommand() {
         Map<String, Integer> map = new HashMap<>();
         for (MetricsCounter.CommandType commandType : MetricsCounter.CommandType.values()) {
-            map.put(commandType.name().toLowerCase().replace("skin_", ""), collect(commandType));
+            map.put(commandType.name().toLowerCase(Locale.ROOT).replace("skin_", ""), collect(commandType));
         }
         return map;
     }
@@ -108,7 +105,7 @@ public class MetricsCounter {
     }
 
     public enum CommandType {
-        SKIN_ROOTCOMMAND,
+        SKIN_ROOT_HELP,
         SKIN_HELP,
         SKIN_SET,
         SKIN_CLEAR,
