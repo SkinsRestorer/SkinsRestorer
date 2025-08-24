@@ -1,11 +1,9 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowCopyAction
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import com.github.jengelman.gradle.plugins.shadow.transformers.Transformer
+import com.github.jengelman.gradle.plugins.shadow.transformers.ResourceTransformer
 import com.github.jengelman.gradle.plugins.shadow.transformers.TransformerContext
 import org.apache.tools.zip.ZipEntry
 import org.apache.tools.zip.ZipOutputStream
-import org.codehaus.plexus.util.IOUtil
-import java.io.BufferedReader
-import java.io.ByteArrayInputStream
 
 plugins {
     id("sr.base-logic")
@@ -49,7 +47,7 @@ fun replaceRelocation(text: String): String {
     return returnedText
 }
 
-class ShadowResourceTransformer : Transformer {
+class ShadowResourceTransformer : ResourceTransformer {
     @Internal
     var replacedMap: MutableMap<String, String> = HashMap()
 
@@ -57,14 +55,14 @@ class ShadowResourceTransformer : Transformer {
         return "ShadowResourceTransformer"
     }
 
-    override fun canTransformResource(element: FileTreeElement?): Boolean {
-        val pathString: String = element?.relativePath?.pathString!!
+    override fun canTransformResource(element: FileTreeElement): Boolean {
+        val pathString: String = element.relativePath.pathString
 
         return pathString.contains("META-INF/services")
     }
 
-    override fun transform(context: TransformerContext?) {
-        val content = context?.`is`?.bufferedReader()?.use(BufferedReader::readText)!!
+    override fun transform(context: TransformerContext) {
+        val content = String(context.inputStream.readAllBytes())
 
         val replaced = replaceRelocation(content)
 
@@ -77,13 +75,28 @@ class ShadowResourceTransformer : Transformer {
         return replacedMap.isNotEmpty()
     }
 
-    override fun modifyOutputStream(os: ZipOutputStream?, preserveFileTimestamps: Boolean) {
+    internal inline fun zipEntry(
+        name: String,
+        preserveLastModified: Boolean = true,
+        lastModified: Long = -1,
+        block: ZipEntry.() -> Unit = {},
+    ): ZipEntry = ZipEntry(name).apply {
+        if (preserveLastModified) {
+            if (lastModified >= 0) {
+                time = lastModified
+            }
+        } else {
+            time = ShadowCopyAction.CONSTANT_TIME_FOR_ZIP_ENTRIES
+        }
+        block()
+    }
+
+    override fun modifyOutputStream(os: ZipOutputStream, preserveFileTimestamps: Boolean) {
         replacedMap.forEach { (path, value) ->
-            val entry = ZipEntry(replacePackageDot(path))
-            entry.time = TransformerContext.getEntryTimestamp(preserveFileTimestamps, entry.time)
-            os?.putNextEntry(entry)
-            IOUtil.copy(ByteArrayInputStream(value.toByteArray()), os)
-            os?.closeEntry()
+            val entry = zipEntry(replacePackageDot(path), preserveFileTimestamps)
+            os.putNextEntry(entry)
+            os.write(value.toByteArray())
+            os.closeEntry()
         }
     }
 }
