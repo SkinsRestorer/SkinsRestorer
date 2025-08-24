@@ -33,15 +33,16 @@ public class PlayerResourcePackStatusListener implements Listener {
     private final SettingsManager settings;
     private final LoginProfileListenerAdapter<Void> adapter;
     private final EventWrapper eventWrapper;
+    private final PlayerJoinListener playerJoinListener;
 
     @EventHandler
     public void onResourcePackStatus(PlayerResourcePackStatusEvent event) {
-        if (!settings.getProperty(ServerConfig.RESOURCE_PACK_FIX)) {
-            return;
+        if (event.getStatus().equals(PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED)) {
+            if (!settings.getProperty(ServerConfig.RESOURCE_PACK_FIX)) {
+                return;
+            }
+            playerJoinListener.setResourcePack(true);
+            adapter.handleLogin(eventWrapper.wrap(event));
         }
-
-        PlayerJoinListener.setResourcePack(true);
-
-        adapter.handleLogin(eventWrapper.wrap(event));
     }
 }

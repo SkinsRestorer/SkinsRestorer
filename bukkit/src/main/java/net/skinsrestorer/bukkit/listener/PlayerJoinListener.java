@@ -32,17 +32,18 @@ import javax.inject.Inject;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class PlayerJoinListener implements Listener {
     @Setter
-    private static boolean resourcePack;
+    public boolean resourcePack;
     private final SettingsManager settings;
     private final LoginProfileListenerAdapter<Void> adapter;
     private final EventWrapper eventWrapper;
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        if (resourcePack && settings.getProperty(ServerConfig.RESOURCE_PACK_FIX)) {
-            return;
-        }
-
+//        @todo fix resource pack issue when ResourcePackStatusEvent is called before PlayerJoinEvent
+//        if (resourcePack && settings.getProperty(ServerConfig.RESOURCE_PACK_FIX)) {
+//            System.out.println("onjoin-CANCEL");
+//            return;
+//        }
         adapter.handleLogin(eventWrapper.wrap(event));
     }
 }
