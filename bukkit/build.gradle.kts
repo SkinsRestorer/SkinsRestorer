@@ -41,6 +41,7 @@ dependencies {
 
     compileOnly(libs.authlib)
 
+    testImplementation(libs.adventure.bukkit)
     testImplementation(libs.spigot.api) {
         isTransitive = false
     }
