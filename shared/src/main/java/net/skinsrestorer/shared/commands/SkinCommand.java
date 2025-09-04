@@ -207,9 +207,11 @@ public final class SkinCommand {
                 } else {
                     sender.sendMessage(Message.SUCCESS_SKIN_CLEAR_OTHER, Placeholder.unparsed("name", targetName));
                 }
+                setCoolDown(sender, CommandConfig.SKIN_CHANGE_COOLDOWN);
             } catch (DataRequestException e) {
                 logger.severe("Error while clearing skin", e);
                 sender.sendMessage(Message.ERROR_UPDATING_SKIN); // TODO: Better error message
+                setCoolDown(sender, CommandConfig.SKIN_ERROR_COOLDOWN);
             }
         }
     }
