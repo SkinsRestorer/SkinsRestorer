@@ -58,7 +58,8 @@ public class DumpInfo {
         public enum StorageType {
             NONE,
             FILE,
-            MYSQL
+            MYSQL,
+            POSTGRESQL
         }
     }
 

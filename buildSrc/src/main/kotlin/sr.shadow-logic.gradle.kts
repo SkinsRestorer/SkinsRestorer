@@ -40,6 +40,8 @@ fun ShadowJar.configureRelocations() {
     relocate("org.bstats", "net.skinsrestorer.shadow.bstats")
 
     relocate("org.mariadb.jdbc", "net.skinsrestorer.shadow.mariadb")
+    relocate("org.postgresql", "net.skinsrestorer.shadow.postgresql")
+    relocate("com.zaxxer.hikari", "net.skinsrestorer.shadow.hikari")
 
     relocate("org.intellij.lang.annotations", "net.skinsrestorer.shadow.ijannotations")
     relocate("org.jetbrains.annotations", "net.skinsrestorer.shadow.jbannotations")

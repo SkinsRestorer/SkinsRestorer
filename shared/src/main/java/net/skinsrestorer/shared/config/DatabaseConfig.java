@@ -17,6 +17,7 @@
  */
 package net.skinsrestorer.shared.config;
 
+import ch.jalu.configme.Comment;
 import ch.jalu.configme.SettingsHolder;
 import ch.jalu.configme.configurationdata.CommentsConfiguration;
 import ch.jalu.configme.properties.Property;
@@ -25,7 +26,10 @@ import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 import static net.skinsrestorer.shared.config.ConfigHelpers.newCappedProperty;
 
 public class DatabaseConfig implements SettingsHolder {
-    public static final Property<Boolean> MYSQL_ENABLED = newProperty("database.enabled", false);
+    @Comment({
+            "Database backend selection. Valid values: FILE, MYSQL, POSTGRESQL."
+    })
+    public static final Property<DatabaseType> DATABASE_TYPE = newProperty(DatabaseType.class, "database.type", DatabaseType.FILE);
     public static final Property<String> MYSQL_HOST = newProperty("database.host", "localhost");
     public static final Property<Integer> MYSQL_PORT = newCappedProperty("database.port", 3306, 1, 65535);
     public static final Property<String> MYSQL_DATABASE = newProperty("database.database", "db");
@@ -44,9 +48,16 @@ public class DatabaseConfig implements SettingsHolder {
                 "\n############",
                 "\n",
                 "Settings for databases skin storage (recommended for large networks with a lot of skins)",
-                "[!] Make sure you have the correct permissions set for your MySQL user. [!]",
+                "Set database.type to FILE, MYSQL or POSTGRESQL.",
+                "[!] Make sure you have the correct permissions set for your database user. [!]",
                 "[!] Make sure to fill in database.connectionOptions if you're using certificate / ssl authentication. [!]",
-                "[!] If you're not using ssl, change sslMode=trust to sslMode=disable [!]"
+                "Example connectionOptions: mysql -> sslMode=trust&serverTimezone=UTC, postgresql -> sslmode=disable"
         );
+    }
+
+    public enum DatabaseType {
+        FILE,
+        MYSQL,
+        POSTGRESQL
     }
 }

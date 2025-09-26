@@ -52,9 +52,12 @@ import net.skinsrestorer.shared.storage.CacheStorageImpl;
 import net.skinsrestorer.shared.storage.PlayerStorageImpl;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.storage.adapter.AdapterReference;
+import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.storage.adapter.file.FileAdapter;
 import net.skinsrestorer.shared.storage.adapter.mysql.MySQLAdapter;
 import net.skinsrestorer.shared.storage.adapter.mysql.MySQLProvider;
+import net.skinsrestorer.shared.storage.adapter.postgresql.PostgreSQLAdapter;
+import net.skinsrestorer.shared.storage.adapter.postgresql.PostgreSQLProvider;
 import net.skinsrestorer.shared.subjects.SRSubjectWrapper;
 import net.skinsrestorer.shared.subjects.messages.MessageLoader;
 import net.skinsrestorer.shared.update.UpdateCheckInit;
@@ -227,27 +230,43 @@ public class SRPlugin {
         // Initialise SkinStorage
         SkinStorageImpl skinStorage = injector.getSingleton(SkinStorageImpl.class);
         SettingsManager settings = injector.getSingleton(SettingsManager.class);
+        DatabaseConfig.DatabaseType databaseType = settings.getProperty(DatabaseConfig.DATABASE_TYPE);
         try {
-            if (settings.getProperty(DatabaseConfig.MYSQL_ENABLED)) {
-                MySQLProvider mySQLProvider = injector.getSingleton(MySQLProvider.class);
+            StorageAdapter storageAdapter = switch (databaseType) {
+                case FILE -> injector.getSingleton(FileAdapter.class);
+                case POSTGRESQL -> {
+                    PostgreSQLProvider postgreSQLProvider = injector.getSingleton(PostgreSQLProvider.class);
+                    postgreSQLProvider.initPool();
 
-                mySQLProvider.initPool();
+                    PostgreSQLAdapter postgreSQLAdapter = injector.getSingleton(PostgreSQLAdapter.class);
+                    postgreSQLAdapter.init();
 
-                MySQLAdapter adapter = injector.getSingleton(MySQLAdapter.class);
+                    logger.info("Connected to PostgreSQL!");
+                    yield postgreSQLAdapter;
+                }
+                case MYSQL -> {
+                    MySQLProvider mySQLProvider = injector.getSingleton(MySQLProvider.class);
+                    mySQLProvider.initPool();
 
-                adapter.init();
+                    MySQLAdapter mySQLAdapter = injector.getSingleton(MySQLAdapter.class);
+                    mySQLAdapter.init();
 
-                logger.info("Connected to MySQL!");
+                    logger.info("Connected to MySQL!");
+                    yield mySQLAdapter;
+                }
+            };
 
-                injector.getSingleton(AdapterReference.class).setAdapter(adapter);
-            } else {
-                injector.getSingleton(AdapterReference.class).setAdapter(injector.getSingleton(FileAdapter.class));
-            }
+            injector.getSingleton(AdapterReference.class).setAdapter(storageAdapter);
 
             // Preload default skins
             adapter.runAsync(skinStorage::preloadDefaultSkins);
-        } catch (SQLException e) {
-            logger.severe("§cCan't connect to MySQL! Disabling SkinsRestorer.", e);
+        } catch (SQLException | RuntimeException e) {
+            String databaseName = switch (databaseType) {
+                case FILE -> "file storage";
+                case MYSQL -> "MySQL";
+                case POSTGRESQL -> "PostgreSQL";
+            };
+            logger.severe("§cCan't connect to %s! Disabling SkinsRestorer.".formatted(databaseName), e);
             throw new InitializeException(e);
         }
     }

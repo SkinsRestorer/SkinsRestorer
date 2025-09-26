@@ -59,13 +59,18 @@ public class ConfigMigratorService implements MigrationService {
                                      ConfigurationData configData) {
         boolean migrated = false;
         migrated |= moveProperty(newProperty("Debug", false), DevConfig.DEBUG, reader, configData);
-        migrated |= moveProperty(newProperty("MySQL.Enabled", false), DatabaseConfig.MYSQL_ENABLED, reader, configData);
         migrated |= moveProperty(newProperty("MySQL.Host", "localhost"), DatabaseConfig.MYSQL_HOST, reader, configData);
         migrated |= moveProperty(newProperty("MySQL.Port", 3306), DatabaseConfig.MYSQL_PORT, reader, configData);
         migrated |= moveProperty(newProperty("MySQL.Database", "db"), DatabaseConfig.MYSQL_DATABASE, reader, configData);
         migrated |= moveProperty(newProperty("MySQL.Username", "root"), DatabaseConfig.MYSQL_USERNAME, reader, configData);
         migrated |= moveProperty(newProperty("MySQL.Password", "password"), DatabaseConfig.MYSQL_PASSWORD, reader, configData);
         migrated |= moveProperty(newProperty("MySQL.ConnectionOptions", ""), DatabaseConfig.MYSQL_CONNECTION_OPTIONS, reader, configData);
+
+        boolean migratedDatabaseType = migrateDatabaseType(reader, configData, newProperty("database.enabled", false));
+        if (!migratedDatabaseType) {
+            migratedDatabaseType = migrateDatabaseType(reader, configData, newProperty("MySQL.Enabled", false));
+        }
+        migrated |= migratedDatabaseType;
         migrated |= moveProperty(newProperty("SkinWithoutPerm", true), CommandConfig.FORCE_DEFAULT_PERMISSIONS, reader, configData);
         migrated |= moveProperty(newProperty("SkinChangeCooldown", 30), CommandConfig.SKIN_CHANGE_COOLDOWN, reader, configData);
         migrated |= moveProperty(newProperty("SkinErrorCooldown", 5), CommandConfig.SKIN_ERROR_COOLDOWN, reader, configData);
@@ -98,7 +103,7 @@ public class ConfigMigratorService implements MigrationService {
         migrated |= moveProperty(newProperty("DisallowAutoUpdateSkin", false), StorageConfig.DISALLOW_AUTO_UPDATE_SKIN, reader, configData);
         migrated |= moveProperty(newProperty("EnablePaperJoinListener", true), AdvancedConfig.ENABLE_PAPER_JOIN_LISTENER, reader, configData);
 
-        if (Boolean.TRUE.equals(configData.getValue(DatabaseConfig.MYSQL_ENABLED))) {
+        if (configData.getValue(DatabaseConfig.DATABASE_TYPE) == DatabaseConfig.DatabaseType.MYSQL) {
             Property<String> oldMySQLSkinTable = newProperty("MySQL.SkinTable", "Skins");
             if (oldMySQLSkinTable.isValidInResource(reader)) {
                 try {
@@ -131,6 +136,19 @@ public class ConfigMigratorService implements MigrationService {
         migrated |= moveProperty(newListProperty("customGUI.list", List.of()), GUIConfig.CUSTOM_GUI_LIST, reader, configData);
 
         return migrated;
+    }
+
+    private boolean migrateDatabaseType(PropertyReader reader,
+                                        ConfigurationData configData,
+                                        Property<Boolean> oldProperty) {
+        PropertyValue<Boolean> oldValue = oldProperty.determineValue(reader);
+        if (!oldValue.isValidInResource()) {
+            return false;
+        }
+
+        boolean enabled = Boolean.TRUE.equals(oldValue.getValue());
+        configData.setValue(DatabaseConfig.DATABASE_TYPE, enabled ? DatabaseConfig.DatabaseType.MYSQL : DatabaseConfig.DatabaseType.FILE);
+        return true;
     }
 
     protected <T> boolean moveProperty(Property<T> oldProperty,

@@ -33,6 +33,8 @@ velocity-api = "3.1.1"
 bstats-velocity = "3.1.0"
 cloud-velocity = "2.0.0-SNAPSHOT"
 mariadb-java-client = "3.5.6"
+postgresql = "42.7.3"
+hikari = "5.1.0"
 configme = "beefdbdf7e"
 injector = "1.0"
 cloud-annotations = "2.0.0"
@@ -71,6 +73,7 @@ fabric-permissions-api = { module = "me.lucko:fabric-permissions-api", version.r
 bstats-base = { module = "org.bstats:bstats-base", version.ref = "bstats" }
 testcontainers = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers" }
 testcontainers-mariadb = { module = "org.testcontainers:mariadb", version.ref = "testcontainers" }
+testcontainers-postgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
 testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
 slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
@@ -88,6 +91,8 @@ velocity-api = { module = "com.velocitypowered:velocity-api", version.ref = "vel
 bstats-velocity = { module = "org.bstats:bstats-velocity", version.ref = "bstats-velocity" }
 cloud-velocity = { module = "org.incendo:cloud-velocity", version.ref = "cloud-velocity" }
 mariadb-java-client = { module = "org.mariadb.jdbc:mariadb-java-client", version.ref = "mariadb-java-client" }
+postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
+hikari-cp = { module = "com.zaxxer:HikariCP", version.ref = "hikari" }
 configme = { module = "com.github.SkinsRestorer:ConfigMe", version.ref = "configme" }
 injector = { module = "ch.jalu:injector", version.ref = "injector" }
 cloud-annotations = { module = "org.incendo:cloud-annotations", version.ref = "cloud-annotations" }

@@ -39,7 +39,8 @@ public class MetricsCounter {
     private final Map<CommandType, AtomicInteger> commandeMap = new EnumMap<>(CommandType.class);
 
     public String usesMySQL() {
-        return String.valueOf(settingsManager.getProperty(DatabaseConfig.MYSQL_ENABLED));
+        DatabaseConfig.DatabaseType databaseType = settingsManager.getProperty(DatabaseConfig.DATABASE_TYPE);
+        return String.valueOf(databaseType == DatabaseConfig.DatabaseType.MYSQL);
     }
 
     public String isProxyMode() {

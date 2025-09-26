@@ -12,6 +12,8 @@ dependencies {
     implementation(libs.mariadb.java.client) {
         exclude("com.github.waffle", "waffle-jna")
     }
+    implementation(libs.postgresql)
+    implementation(libs.hikari.cp)
 
     api(libs.configme)
     api(libs.injector) {

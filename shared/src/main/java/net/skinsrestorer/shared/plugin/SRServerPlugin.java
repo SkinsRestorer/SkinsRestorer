@@ -102,14 +102,15 @@ public class SRServerPlugin {
 
             SettingsManager settingsManager = injector.getSingleton(SettingsManager.class);
             if (proxyModeApiFile || settingsManager.getProperty(ServerConfig.PROXY_MODE_API)) {
-                if (settingsManager.getProperty(DatabaseConfig.MYSQL_ENABLED)) {
+                DatabaseConfig.DatabaseType databaseType = settingsManager.getProperty(DatabaseConfig.DATABASE_TYPE);
+                if (databaseType != DatabaseConfig.DatabaseType.FILE) {
                     plugin.loadStorage();
                     plugin.registerAPI();
 
                     // Load Floodgate hook
                     plugin.registerFloodgate();
                 } else {
-                    logger.warning("Proxy mode API is enabled (server.proxyMode.api), but MySQL is not set up, this is not supported. You must configure MySQL on all servers and on the proxy and use the same database.");
+                    logger.warning("Proxy mode API is enabled (server.proxyMode.api), but database storage is not set up. Configure MySQL or PostgreSQL on all servers and on the proxy and use the same settings.");
                 }
             }
 
