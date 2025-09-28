@@ -47,6 +47,7 @@ public class SkinApplierBungee implements SkinApplierAccess<ProxiedPlayer> {
     public static void applyToHandler(PendingConnection handler, SkinProperty property) {
         // LoginResult wrapper
         var loginProfileFieldWrapper = RStream.of(handler)
+                .withSuper() // Include custom implementations that extend InitialHandler
                 .fields()
                 .by("loginProfile");
         // LoginResult.class
@@ -91,6 +92,7 @@ public class SkinApplierBungee implements SkinApplierAccess<ProxiedPlayer> {
 
     public static Optional<SkinProperty> getSkinProperty(ProxiedPlayer player) {
         var properties = (Object[]) RStream.of(player.getPendingConnection())
+                .withSuper() // Include custom implementations that extend InitialHandler
                 .fields()
                 .by("loginProfile")
                 .stream()
