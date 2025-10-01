@@ -1,1 +1,7 @@
-{}
+{
+  "skinsrestorer.prefix_format": "<yellow><blue>[SkinsRestorer]</blue> <message>",
+  "skinsrestorer.help_skin_set": "",
+  "skinsrestorer.help_skin_set_other": " ",
+  "skinsrestorer.help_skin_set_url": "เปลี่ยนสกินของคุณจากURL",
+  "skinsrestorer.success_skull_get": "คุณได้รับหัวแล้ว"
+}
