@@ -87,14 +87,15 @@ public class Mapping1_21_9 implements IMapping {
     @Override
     public Set<String> getPaperMinecraftVersionIds() {
         return Set.of(
-                "1.21.9"
+                "1.21.9",
+                "1.21.10"
         );
     }
 
     @Override
     public Set<String> getSpigotMappingVersions() {
         return Set.of(
-                "614efe5192cd0510bc2ddc5feefa155d" // 1.21.9
+                "614efe5192cd0510bc2ddc5feefa155d" // 1.21.9 and 1.21.10
         );
     }
 }

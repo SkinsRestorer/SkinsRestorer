@@ -55,7 +55,7 @@ public class SRModPlatformImpl implements SRModPlatform {
             };
         }
 
-        return stack.hasPermission(stack.getServer().getOperatorUserPermissionLevel()) ? Tristate.TRUE : Tristate.UNDEFINED;
+        return stack.hasPermission(stack.getServer().operatorUserPermissionLevel()) ? Tristate.TRUE : Tristate.UNDEFINED;
     }
 
     @Override

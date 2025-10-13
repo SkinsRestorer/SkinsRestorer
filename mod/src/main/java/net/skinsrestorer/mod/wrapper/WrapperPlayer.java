@@ -59,12 +59,12 @@ public class WrapperPlayer extends WrapperCommandSender implements SRServerPlaye
 
     @Override
     public UUID getUniqueId() {
-        return player.getGameProfile().getId();
+        return player.getGameProfile().id();
     }
 
     @Override
     public String getName() {
-        return player.getGameProfile().getName();
+        return player.getGameProfile().name();
     }
 
     @Override

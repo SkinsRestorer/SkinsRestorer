@@ -32,6 +32,6 @@ jobs:
           sed -i 's/^maven_version=.*/maven_version='"${{ inputs.version }}"'/g' gradle.properties
 
       - name: 'Commit Version'
-        uses: stefanzweifel/git-auto-commit-action@v6
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: 'chore(release): bump version to ${{ inputs.version }}'

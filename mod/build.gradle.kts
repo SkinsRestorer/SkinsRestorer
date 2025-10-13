@@ -45,7 +45,7 @@ unimined.minecraft(fabric) {
     combineWith(main)
 
     fabric {
-        loader("0.16.14")
+        loader("0.17.2")
         accessWidener(project.projectDir.resolve("src/main/resources/skinsrestorer.accesswidener"))
     }
 

@@ -18,9 +18,12 @@
 package net.skinsrestorer.mod.gui;
 
 import ch.jalu.injector.Injector;
+import com.google.common.collect.ImmutableMultimap;
+import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import lombok.RequiredArgsConstructor;
+import net.minecraft.Util;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.network.chat.Component;
@@ -51,7 +54,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
@@ -71,10 +73,13 @@ public class ModGUI implements GUIManager<MenuProvider> {
         };
         PatchedDataComponentMap dataComponentMap = new PatchedDataComponentMap(item.components());
         entry.textureHash().ifPresent(hash -> {
-            PropertyMap propertyMap = new PropertyMap();
-            propertyMap.put(SkinProperty.TEXTURES_NAME, new Property(SkinProperty.TEXTURES_NAME, SRHelpers.encodeHashToTexturesValue(hash)));
+            final ImmutableMultimap.Builder<String, Property> builder = ImmutableMultimap.builder();
+            builder.put(SkinProperty.TEXTURES_NAME, new Property(SkinProperty.TEXTURES_NAME, SRHelpers.encodeHashToTexturesValue(hash)));
 
-            dataComponentMap.set(DataComponents.PROFILE, new ResolvableProfile(Optional.empty(), Optional.empty(), propertyMap));
+            PropertyMap propertyMap = new PropertyMap(builder.build());
+            GameProfile gameProfile = new GameProfile(Util.NIL_UUID, "", propertyMap);
+
+            dataComponentMap.set(DataComponents.PROFILE, ResolvableProfile.createResolved(gameProfile));
         });
         dataComponentMap.set(DataComponents.ITEM_NAME, ModComponentHelper.deserialize(entry.displayName()));
         dataComponentMap.set(DataComponents.LORE, new ItemLore(entry.lore().stream().map(ModComponentHelper::deserialize).toList()));

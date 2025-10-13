@@ -18,8 +18,11 @@
 package net.skinsrestorer.mod;
 
 import ch.jalu.injector.Injector;
+import com.google.common.collect.ImmutableMultimap;
+import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
+import net.minecraft.Util;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
@@ -146,16 +149,19 @@ public class SRModAdapter implements SRServerAdapter {
 
     @Override
     public void giveSkullItem(SRPlayer player, SRServerPluginMessage.GiveSkullChannelPayload giveSkullPayload) {
-        PropertyMap properties = new PropertyMap();
-        properties.put(SkinProperty.TEXTURES_NAME, new Property(
+        final ImmutableMultimap.Builder<String, Property> builder = ImmutableMultimap.builder();
+        builder.put(SkinProperty.TEXTURES_NAME, new Property(
                 SkinProperty.TEXTURES_NAME,
                 SRHelpers.encodeHashToTexturesValue(giveSkullPayload.textureHash()),
                 null
         ));
 
+        PropertyMap propertyMap = new PropertyMap(builder.build());
+        GameProfile gameProfile = new GameProfile(Util.NIL_UUID, "", propertyMap);
+
         ItemStack stack = new ItemStack(Items.PLAYER_HEAD);
         stack.applyComponents(DataComponentPatch.builder()
-                .set(DataComponents.PROFILE, new ResolvableProfile(Optional.empty(), Optional.empty(), properties))
+                .set(DataComponents.PROFILE, ResolvableProfile.createResolved(gameProfile))
                 .build());
 
         player.getAs(ServerPlayer.class).getInventory().add(stack);
@@ -227,7 +233,7 @@ public class SRModAdapter implements SRServerAdapter {
 
     @Override
     public Optional<SkinProperty> getSkinProperty(SRPlayer player) {
-        return player.getAs(ServerPlayer.class).getGameProfile().getProperties().values().stream()
+        return player.getAs(ServerPlayer.class).getGameProfile().properties().values().stream()
                 .map(property -> SkinProperty.tryParse(
                         property.name(),
                         property.value(),

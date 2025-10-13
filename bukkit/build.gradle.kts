@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.transformers.PreserveFirstFoundResourceTransformer
+
 plugins {
     id("sr.platform-logic")
     alias(libs.plugins.runpaper)
@@ -12,7 +14,6 @@ dependencies {
     runtimeOnly(project(":skinsrestorer-shared", "shadow"))
     implementation(projects.multiver.bukkit.shared)
     implementation(projects.multiver.bukkit.paper)
-    implementation(projects.multiver.bukkit.v17)
     compileOnly(projects.multiver.miniplaceholders)
 
     rootProject.subprojects.forEach {
@@ -56,8 +57,12 @@ tasks {
 
 tasks {
     shadowJar {
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
         mergeServiceFiles()
+        filesNotMatching("META-INF/services/**") {
+            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        }
+        transform<PreserveFirstFoundResourceTransformer>()
         relocate("net.kyori", "net.skinsrestorer.shadow.kyori")
-        failOnDuplicateEntries = true
     }
 }

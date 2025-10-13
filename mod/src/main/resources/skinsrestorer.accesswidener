@@ -8,3 +8,7 @@ accessible field net/minecraft/server/level/ServerPlayer containerCounter I
 
 accessible method net/minecraft/server/level/ServerPlayer nextContainerCounter ()V
 accessible method net/minecraft/server/level/ServerPlayer initMenu (Lnet/minecraft/world/inventory/AbstractContainerMenu;)V
+
+accessible field com/mojang/authlib/properties/PropertyMap properties Lcom/google/common/collect/Multimap;
+
+mutable field com/mojang/authlib/properties/PropertyMap properties Lcom/google/common/collect/Multimap;

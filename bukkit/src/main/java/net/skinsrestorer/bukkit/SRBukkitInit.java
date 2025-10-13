@@ -31,7 +31,6 @@ import net.skinsrestorer.bukkit.refresher.SpigotSkinRefresher;
 import net.skinsrestorer.bukkit.utils.BukkitPropertyApplier;
 import net.skinsrestorer.bukkit.utils.BukkitReflection;
 import net.skinsrestorer.bukkit.utils.SkinApplyBukkitAdapter;
-import net.skinsrestorer.bukkit.v1_7.BukkitLegacyPropertyApplier;
 import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
 import net.skinsrestorer.miniplaceholders.SRMiniPlaceholdersAPIExpansion;
 import net.skinsrestorer.shared.config.AdvancedConfig;
@@ -81,7 +80,7 @@ public class SRBukkitInit implements SRServerPlatformInit {
 
     @Override
     public void initSkinApplier() {
-        injector.register(SkinApplyBukkitAdapter.class, selectSkinApplyAdapter());
+        injector.register(SkinApplyBukkitAdapter.class, injector.getSingleton(BukkitPropertyApplier.class));
         injector.register(SkinRefresher.class, detectRefresh());
 
         plugin.registerSkinApplier(injector.getSingleton(SkinApplierBukkit.class), Player.class, wrapper);
@@ -91,16 +90,6 @@ public class SRBukkitInit implements SRServerPlatformInit {
 
         if (BukkitReflection.SERVER_VERSION.isOlderThan(new SemanticVersion(1, 8, 0))) {
             logger.warning(SRChatColor.YELLOW + "Although SkinsRestorer allows using this ancient version, we will not provide full support for it. This version of Minecraft does not allow using all of SkinsRestorers features due to client side restrictions. Please be aware things WILL BREAK and not work!");
-        }
-    }
-
-    private SkinApplyBukkitAdapter selectSkinApplyAdapter() {
-        if (ReflectionUtil.classExists("com.mojang.authlib.GameProfile")) {
-            logger.debug("Using BukkitPropertyApplier");
-            return injector.getSingleton(BukkitPropertyApplier.class);
-        } else {
-            logger.debug("Using BukkitLegacyPropertyApplier");
-            return injector.getSingleton(BukkitLegacyPropertyApplier.class);
         }
     }
 
