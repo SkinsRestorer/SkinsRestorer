@@ -1,1 +1,22 @@
-{}
+{
+  "skinsrestorer.help_skin": "Dərinizi dəyişdirir.",
+  "skinsrestorer.help_skins": "Dəri ekranını açın.",
+  "skinsrestorer.help_sr": "SkinSrestorer üçün admin əmrləri.",
+  "skinsrestorer.help_skin_help": "Yardım əmrini göstərir.",
+  "skinsrestorer.help_skin_set": "Öz dərinizi dəyişdirir.",
+  "skinsrestorer.help_skin_set_other": "Hədəf oyunçunun dərisini təmizləyir.",
+  "skinsrestorer.help_skin_set_url": "Dərini URL-dən dəyiş.",
+  "skinsrestorer.help_skin_clear": "Dərinizi dəyişdirir.",
+  "skinsrestorer.help_skin_clear_other": "Hədəf oyunçunun dərisini yeniləyir.",
+  "skinsrestorer.help_skin_random": "Sizə təsadüfi bir dəri verir.",
+  "skinsrestorer.help_skin_random_other": "Dərini hədəf oyunçu üçün qurur.",
+  "skinsrestorer.help_skin_search": "İstədiyin dərini axtar.",
+  "skinsrestorer.help_skin_edit": "İndiki dərini aktif şəkildə dəyiş.",
+  "skinsrestorer.help_skin_update": "Dərinizi dəyişdirir.",
+  "skinsrestorer.help_skin_update_other": "Hədəf oyunçunun dərisini təmizləyir.",
+  "skinsrestorer.help_skull": "Sizə kəllə verir.",
+  "skinsrestorer.help_skull_help": "SkinSrestorer üçün admin əmrləri.",
+  "skinsrestorer.help_skull_get": "Sizə kəllə verir.",
+  "skinsrestorer.help_skull_get_other": "Başqa bir oyunçuya təsadüfi bir kəllə verir.",
+  "skinsrestorer.help_skull_random": ""
+}
