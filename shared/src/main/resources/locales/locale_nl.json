@@ -36,8 +36,6 @@
   "skinsrestorer.help_sr_dump": "Upload ondersteuningsgegevens naar bytebin.lucko.me.",
   "skinsrestorer.success_generic": "<dark_green><message>",
   "skinsrestorer.info_use_quotes": "URL's moeten worden geciteerd. Voorbeeld: <yellow>/skin set \"https://example.com/skin.png\"</yellow> (U kunt op tabblad drukken om de aanhalingstekens automatisch aan te vullen)",
-  "skinsrestorer.success_skin_change": "Je skin is aangepast.",
-  "skinsrestorer.success_skin_change_other": "Je hebt de skin van <yellow><name></yellow> veranderd.",
   "skinsrestorer.error_skinurl_disallowed": "Fout: Dit domein is niet toegestaan door de beheerder.",
   "skinsrestorer.not_connected_to_server": "<red>Je bent niet verbonden met een server.",
   "skinsrestorer.admincommand_status_checking": "<gray>Benodigde diensten controleren om SR correct te laten functioneren...",
