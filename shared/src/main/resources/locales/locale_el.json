@@ -22,8 +22,6 @@
   "skinsrestorer.help_sr_purge_old_data": "Καθαρίστε παλιά στοιχεία του δέρματος παλαιότερα από x μέρες.",
   "skinsrestorer.help_sr_dump": "Ανεβάστε δεδομένα υποστήριξης στο bytebin.lucko.me.",
   "skinsrestorer.success_generic": "<dark_green><message>",
-  "skinsrestorer.success_skin_clear": "Η εμφάνιση σου επαναφέρθηκε στην αρχική της μορφή.",
-  "skinsrestorer.success_updating_skin": "Η εμφάνιση σου ενημερώθηκε.",
   "skinsrestorer.success_admin_applyskin": "Η εμφάνιση σου ανανεώθηκε!",
   "skinsrestorer.success_admin_drop": " Τα δεδομένα <type>  διαγράφτηκαν για τον <target>.",
   "skinsrestorer.success_admin_reload": "Οι ρυθμίσεις και η γλώσσα επαναφορτώθηκαν!",
