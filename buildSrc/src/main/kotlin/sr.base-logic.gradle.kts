@@ -13,9 +13,9 @@ plugins {
 
 dependencies {
     api("org.jetbrains:annotations:26.0.2-1")
-    compileOnly("com.github.spotbugs:spotbugs-annotations:4.9.6")
+    compileOnly("com.github.spotbugs:spotbugs-annotations:4.9.8")
 
-    errorprone("com.google.errorprone:error_prone_core:2.42.0")
+    errorprone("com.google.errorprone:error_prone_core:2.43.0")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testFixturesApi("org.junit.jupiter:junit-jupiter:6.0.0")
