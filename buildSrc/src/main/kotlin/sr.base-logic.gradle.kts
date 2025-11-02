@@ -24,7 +24,7 @@ dependencies {
     spotbugs("com.github.spotbugs:spotbugs:4.9.8")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    testFixturesApi("org.junit.jupiter:junit-jupiter:6.0.0")
+    testFixturesApi("org.junit.jupiter:junit-jupiter:6.0.1")
     testFixturesApi("org.mockito:mockito-core:5.20.0")
     testFixturesApi("org.mockito:mockito-junit-jupiter:5.20.0")
 }
