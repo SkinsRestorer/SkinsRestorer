@@ -271,6 +271,13 @@ public final class SkinCommand {
                         PropertyUtils.getSkinTextureUrl(adapter.getSkinProperty(player).orElse(HardcodedSkins.STEVE.getProperty())))));
     }
 
+    @Command("upload")
+    @CommandPermission(PermissionRegistry.SKIN_SET_URL)
+    @CommandDescription(Message.HELP_SKIN_UPLOAD)
+    private void onSkinUpload(SRPlayer player) {
+        player.sendMessage(Message.SKIN_UPLOAD_MESSAGE);
+    }
+
     @Command("update|refresh")
     @CommandPermission(PermissionRegistry.SKIN_UPDATE)
     @CommandDescription(Message.HELP_SKIN_UPDATE)

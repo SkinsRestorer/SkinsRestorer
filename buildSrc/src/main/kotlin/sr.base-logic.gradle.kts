@@ -9,6 +9,11 @@ plugins {
     id("net.kyori.indra.git")
     id("io.freefair.lombok")
     id("net.ltgt.errorprone")
+    id("com.github.spotbugs")
+}
+
+spotbugs {
+    ignoreFailures = true
 }
 
 dependencies {
@@ -16,9 +21,10 @@ dependencies {
     compileOnly("com.github.spotbugs:spotbugs-annotations:4.9.8")
 
     errorprone("com.google.errorprone:error_prone_core:2.43.0")
+    spotbugs("com.github.spotbugs:spotbugs:4.9.8")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    testFixturesApi("org.junit.jupiter:junit-jupiter:6.0.0")
+    testFixturesApi("org.junit.jupiter:junit-jupiter:6.0.1")
     testFixturesApi("org.mockito:mockito-core:5.20.0")
     testFixturesApi("org.mockito:mockito-junit-jupiter:5.20.0")
 }

@@ -27,6 +27,8 @@ public class APIConfig implements SettingsHolder {
     @Comment({
             "Here you can fill in your APIKey for lower MineSkin request times.",
             "Key can be requested from https://mineskin.org/apikey",
+            "MineSkin offers 10% off your first three months (all plans except Lite) with the coupon SKINSRESTORER10.",
+            "All plans other than Lite include cape generation, higher limits, and other exclusive features.",
             "[?] A key is not required, but recommended."
     })
     public static final Property<String> MINESKIN_API_KEY = newProperty("api.mineskinAPIKey", "key");
