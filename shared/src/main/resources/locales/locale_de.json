@@ -50,7 +50,6 @@
   "skinsrestorer.error_updating_skin": "Ein Fehler ist beim Aktualisieren deines Skins aufgetreten. Bitte versuche es später nochmal!",
   "skinsrestorer.error_updating_url": "Du kannst benutzerdefinierte URL-Skins nicht aktualisieren! <newline><red>Frage erneut mit /skin URL ab",
   "skinsrestorer.error_updating_customskin": "Der Skin kann nicht aktualisiert werden, weil er benutzerdefiniert ist.",
-  "skinsrestorer.error_invalid_urlskin": "Ungültige Skin-URL oder ungültiges Format.",
   "skinsrestorer.error_admin_applyskin": "Der Skin des Spielers konnte NICHT aktualisiert werden!",
   "skinsrestorer.error_ms_full": "Bei MineSkin API ist eine Zeitüberschreitung während des Hochladens deines Skins aufgetreten. Bitte versuche es später erneut.",
   "skinsrestorer.error_ms_api_failed": "Die MineSkin API ist überlastet, bitte versuche es später erneut!",
