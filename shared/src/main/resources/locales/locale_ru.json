@@ -50,7 +50,6 @@
   "skinsrestorer.error_updating_skin": "Произошла ошибка при попытке обновлении скина. Пожалуйста, попробуйте позже!",
   "skinsrestorer.error_updating_url": "Вы не можете обновлять ссылку скинов!<newline><red> Попробуйте снова использовать команду: /skin url",
   "skinsrestorer.error_updating_customskin": "Скин не может быть обновлен потому что он пользовательский.",
-  "skinsrestorer.error_invalid_urlskin": "Неверно указана URL-ссылка или формат, <newline><red>Попробуйте загрузить ваш скин на imgur и используя ПКМ 'скопировать адрес картинки' <newline><red>Гайд: <red><underlined><hover:show_text:'<dark_green>Кликните для открытия'><click:open_url:'https://skinsrestorer.net/skinurl'>https://skinsrestorer.net/skinurl</click></hover></underlined>.",
   "skinsrestorer.error_admin_applyskin": "Скин игрока НЕ МОЖЕТ БЫТЬ обновлен!",
   "skinsrestorer.error_ms_full": "Загрузка вашего скина через MineSkin API заняла слишком долгое время. Пожалуйста, повторите попытку позже.",
   "skinsrestorer.error_ms_api_failed": "MineSkincSkinData API перезагружено. Пожалуйста, попробуйте позже!",
