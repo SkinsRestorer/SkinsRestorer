@@ -50,7 +50,6 @@
   "skinsrestorer.error_updating_skin": "スキンの更新中にエラーが発生しました。\nしばらくしてからもう一度お試しください！",
   "skinsrestorer.error_updating_url": "カスタムURLスキンは更新できません！\n<newline><red>/skin urlを使用して再度要求してください",
   "skinsrestorer.error_updating_customskin": "カスタムスキンのため、スキンは更新できません。",
-  "skinsrestorer.error_invalid_urlskin": "無効なスキンURLまたは形式です。<newline><red>スキンをimgurにアップロードし、右クリックして「画像アドレスをコピー」してみてください<newline><red>ガイドはこちら： <red><underlined><hover:show_text:'<dark_green>クリックして開く'><click:open_url:'https://skinsrestorer.net/skinurl'>https://skinsrestorer.net/skinurl</click></hover></underlined>。",
   "skinsrestorer.error_admin_applyskin": "プレイヤーのスキンを更新できませんでした！",
   "skinsrestorer.error_ms_full": "スキンのアップロード中にMineSkin APIがタイムアウトしました。\nしばらくしてからもう一度お試しください。",
   "skinsrestorer.error_ms_api_failed": "MineSkin APIが過負荷です。しばらくしてからもう一度お試しください！",
