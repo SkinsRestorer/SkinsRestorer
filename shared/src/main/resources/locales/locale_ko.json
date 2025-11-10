@@ -66,7 +66,6 @@
   "skinsrestorer.error_updating_skin": "스킨을 갱신하던 도중 오류가 발생했어요! 나중에 다시 시도해 주세요!",
   "skinsrestorer.error_updating_url": "맞춤 URL 스킨을 갱신할 수 없어요!<newline><red>/skin url 명령어를 사용해서 다시 요청하세요",
   "skinsrestorer.error_updating_customskin": "맞춤 스킨은 갱신할 수 없어요.",
-  "skinsrestorer.error_invalid_urlskin": "잘못된 스킨 URL이거나 형식이에요. <newline><red>imgur에 스킨을 업로드한 후 '이미지 주소 복사하기'를 우클릭해 보세요 <newline><red>도움이 필요하다면 다음을 확인하세요. <red><underlined><hover:show_text:'<dark_green>눌러서 열기'><click:open_url:'https://skinsrestorer.net/skinurl'>https://skinsrestorer.net/skinurl</click></hover></underlined>",
   "skinsrestorer.error_admin_applyskin": "플레이어 스킨은 새로고침할 수 없어요!",
   "skinsrestorer.error_ms_full": "스킨을 업로드하던 도중 MineSkin API의 시간이 초과됐어요. 나중에 다시 시도해 주세요.",
   "skinsrestorer.error_ms_api_failed": "MineSkin API가 과부하됐어요. 나중에 다시 시도해 주세요!",
