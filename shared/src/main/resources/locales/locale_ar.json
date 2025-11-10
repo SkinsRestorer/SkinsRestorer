@@ -50,7 +50,6 @@
   "skinsrestorer.error_updating_skin": "حدث خطأ أثناء تحديث مظهرك.\nيرجى المحاولة مرة أخرى لاحقًا!",
   "skinsrestorer.error_updating_url": "لا يمكنك تحديث مظاهر URL المخصصة!\n<newline><red>اطلب مرة أخرى باستخدام /skin url",
   "skinsrestorer.error_updating_customskin": "لا يمكن تحديث المظهر لأنه مخصص.",
-  "skinsrestorer.error_invalid_urlskin": "عنوان URL أو تنسيق المظهر غير صالح،<newline><red>حاول تحميل مظهرك إلى imgur وانقر بزر الماوس الأيمن على 'نسخ عنوان الصورة'<newline><red>للحصول على دليل، انظر: <red><underlined><hover:show_text:'<dark_green>انقر للفتح'><click:open_url:'https://skinsrestorer.net/skinurl'>https://skinsrestorer.net/skinurl</click></hover></underlined>.",
   "skinsrestorer.error_admin_applyskin": "لا يمكن تحديث مظهر اللاعب!",
   "skinsrestorer.error_ms_full": "انتهت مهلة MineSkin API أثناء تحميل مظهرك.\nيرجى المحاولة مرة أخرى لاحقًا.",
   "skinsrestorer.error_ms_api_failed": "MineSkin API محمل بشكل زائد، يرجى المحاولة مرة أخرى لاحقًا!",
