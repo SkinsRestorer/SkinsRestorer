@@ -66,7 +66,6 @@
   "skinsrestorer.error_updating_skin": "Atnaujinant skiną įvyko klaida. Pabandykite dar kartą vėliau!",
   "skinsrestorer.error_updating_url": "<dark_red>Klaida<dark_gray>: <red>Negalite atnaujinti savadarbių išvaizdų nuorodos! <newline><red>Pateikite užklausą dar kartą naudodami /skin url",
   "skinsrestorer.error_updating_customskin": "Klaida: Išvaizdos nepavyko atnaujinti dėl to, kad ji įkelta pačio žaidėjo.",
-  "skinsrestorer.error_invalid_urlskin": "Neteisingas skin URL arba formatas, <newline><red>Pabandyk įkelti savo skiną į imgur ir spustelėti dešinį pelės mygtuką „copy image address“ <newline><red>Vadovą rasi čia: <red><underlined><hover:show_text:'<dark_green>Spustelėk, kad atidarytum'>click:open_url:'https://skinsrestorer.net/skinur'\nhttps://skinsrestorer.net/skinurl\n</click></hover></underlined>.",
   "skinsrestorer.error_admin_applyskin": "Žaidėjo skinas negalėjo būt perkrautas.",
   "skinsrestorer.error_ms_full": "MineSkin API buvo sustabdytas kol bandėte kelti savo skiną. Bandykite vėliau.",
   "skinsrestorer.error_ms_api_failed": "MineSkin API yra perkrautas, pabandykite vėliau!",
