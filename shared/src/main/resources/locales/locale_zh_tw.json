@@ -52,7 +52,6 @@
   "skinsrestorer.error_updating_skin": "更新你的外觀時發生錯誤。請稍後再試！",
   "skinsrestorer.error_updating_url": "你無法更新自訂網址外觀！<newline><red>請使用 /skin url 重新請求",
   "skinsrestorer.error_updating_customskin": "外觀無法更新，因為它是自訂的。",
-  "skinsrestorer.error_invalid_urlskin": "無效的造型網址或格式，<newline><red>請嘗試將你的造型上傳到 Imgur，然後對「複製圖片網址」按右鍵<newline><red>如需指南，請參閱：<red><underlined><hover:show_text:'<dark_green>按此開啟'><click:open_url:'https://skinsrestorer.net/skinurl'>https://skinsrestorer.net/skinurl</click></hover></underlined>。",
   "skinsrestorer.error_admin_applyskin": "無法重新整理玩家的外觀！",
   "skinsrestorer.error_ms_full": "MineSkin API 在上傳你的外觀時逾時。請稍後再試。",
   "skinsrestorer.error_ms_api_failed": "MineSkin API 已超載，請稍後再試！",
