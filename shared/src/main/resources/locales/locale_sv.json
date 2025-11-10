@@ -50,7 +50,6 @@
   "skinsrestorer.error_updating_skin": "Ett fel inträffade vid uppdatering av ditt skin.\nFörsök igen senare!",
   "skinsrestorer.error_updating_url": "Du kan inte uppdatera anpassade URL-skins!\n<newline><red>Begär igen med /skin url",
   "skinsrestorer.error_updating_customskin": "Skin kan inte uppdateras eftersom det är anpassat.",
-  "skinsrestorer.error_invalid_urlskin": "Ogiltig skin-URL eller format,<newline><red>Prova att ladda upp ditt skin till imgur och högerklicka 'kopiera bildadress'<newline><red>För guide, se: <red><underlined><hover:show_text:'<dark_green>Klicka för att öppna'><click:open_url:'https://skinsrestorer.net/skinurl'>https://skinsrestorer.net/skinurl</click></hover></underlined>.",
   "skinsrestorer.error_admin_applyskin": "Spelarens skin kunde INTE uppdateras!",
   "skinsrestorer.error_ms_full": "MineSkin API timeout vid uppladdning av ditt skin.\nFörsök igen senare.",
   "skinsrestorer.error_ms_api_failed": "MineSkin API är överbelastad, försök igen senare!",
