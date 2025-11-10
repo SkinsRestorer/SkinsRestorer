@@ -50,7 +50,6 @@
   "skinsrestorer.error_updating_skin": "Виникла помилка при оновленні скіна. Спробуйте ще раз пізніше!",
   "skinsrestorer.error_updating_url": "Ви не можете оновлювати користувацькі посилання скінів! <newline><red>Спробуйте ще раз використовуючи /skin url",
   "skinsrestorer.error_updating_customskin": "Скін не може бути оновлений, оскільки він користувацький.",
-  "skinsrestorer.error_invalid_urlskin": "Неправильне посилання або формат, <newline><red>Спробуйте завантажити скін на imgur та натисніть 'копіювати посилання на зображення' <newline><red>Детальна інформація тут: <red><underlined><hover:show_text:'<dark_green>Натисніть щоб відкрити'><click:open_url:'https://skinsrestorer.net/skinurl'>https://skinsrestorer.net/skinurl</click></hover></underlined>.",
   "skinsrestorer.error_admin_applyskin": "Скін гравця НЕ може бути оновлений!",
   "skinsrestorer.error_ms_full": "Під час завантаження скіну виникла помилка API MineSkin. Будь ласка, спробуйте пізніше.",
   "skinsrestorer.error_ms_api_failed": "MineSkin API перенавантажено, спробуйте ще раз пізніше!",
