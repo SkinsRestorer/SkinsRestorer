@@ -37,6 +37,7 @@
   "skinsrestorer.help_sr_dump": "Destek verilerini bytebin.lucko.me'e yükle.",
   "skinsrestorer.success_generic": "<dark_green><message>",
   "skinsrestorer.info_use_quotes": "URL'ler tırnak içine alınmalıdır. Örnek: <yellow>/skin set \"https://example.com/skin.png\"</yellow> (Tırnakları otomatik tamamlamak için sekmeye basabilirsiniz)",
+  "skinsrestorer.success_skin_unfavourite": "En sevdiğiniz cilt <sarı> <dim damgası> </wenes> 'den",
   "skinsrestorer.success_admin_applyskin": "Oyuncunun skin'i yenilendi!",
   "skinsrestorer.success_admin_createcustom": "<yellow><skin></yellow> adlı cilt oluşturuldu!",
   "skinsrestorer.success_admin_drop": "<target> için <type> verisi düşürüldü.",
