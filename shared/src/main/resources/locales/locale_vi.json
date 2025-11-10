@@ -50,7 +50,6 @@
   "skinsrestorer.error_updating_skin": "Đã xảy ra lỗi khi cập nhật skin của bạn. Vui lòng thử lại sau!",
   "skinsrestorer.error_updating_url": "Bạn không thể cập nhật skin qua url tùy chỉnh! <newline><red>Thử lại bằng cách sử dụng /skin url",
   "skinsrestorer.error_updating_customskin": "Không thể cập nhật skin vì đây là skin tùy chỉnh.",
-  "skinsrestorer.error_invalid_urlskin": "Liên kết hoặc định dạng skin không hợp lệ, <newline><red>Hãy thử tải skin của bạn lên imgur và nhấp chuột phải, sau đó chọn 'sao chép địa chỉ hình ảnh'. <newline><red>Để xem hướng dẫn, hãy truy cập: <red><underlined><hover:show_text:'<dark_green>Nhấn để mở'><click:open_url:'https://skinsrestorer.net/skinurl'>https://skinsrestorer.net/skinurl</click></hover></underlined>.",
   "skinsrestorer.error_admin_applyskin": "Skin của người chơi Không Thể Được làm mới!",
   "skinsrestorer.error_ms_full": "API MineSkin đã hết hạn trong khi tải lên skin của bạn. Hãy thử lại sau.",
   "skinsrestorer.error_ms_api_failed": "API MineSkin hiện quá tải, vui lòng thử lại sau!",
