@@ -49,7 +49,6 @@
   "skinsrestorer.error_updating_skin": "เกิดข้อผิดพลาดขณะอัปเดตสกินของคุณ กรุณาลองใหม่อีกครั้งในภายหลัง!",
   "skinsrestorer.error_updating_url": "คุณไม่สามารถอัปเดตสกินจาก URL ที่กำหนดเองได้! <newline><red>กรุณาร้องขออีกครั้งโดยใช้ /skin url",
   "skinsrestorer.error_updating_customskin": "ไม่สามารถอัปเดตสกินได้เนื่องจากเป็นสกินที่กำหนดเอง",
-  "skinsrestorer.error_invalid_urlskin": "URL หรือรูปแบบของสกินไม่ถูกต้อง <newline><red>ลองอัปโหลดสกินของคุณไปยัง imgur และคลิกขวาที่ 'คัดลอกที่อยู่รูปภาพ' (copy image address) <newline><red>สำหรับคำแนะนำ ดูได้ที่: <red><underlined><hover:show_text:'<dark_green>คลิกเพื่อเปิด'><click:open_url:'https://skinsrestorer.net/skinurl'>https://skinsrestorer.net/skinurl</click></hover></underlined>",
   "skinsrestorer.error_admin_applyskin": "ไม่สามารถรีเฟรชสกินของผู้เล่นได้!",
   "skinsrestorer.error_ms_full": "MineSkin API หมดเวลาขณะอัปโหลดสกินของคุณ กรุณาลองใหม่อีกครั้งในภายหลัง",
   "skinsrestorer.error_ms_api_failed": "MineSkin API ทำงานหนักเกินไป กรุณาลองใหม่อีกครั้งในภายหลัง!",
