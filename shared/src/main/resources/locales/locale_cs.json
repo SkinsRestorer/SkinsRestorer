@@ -50,7 +50,6 @@
   "skinsrestorer.error_updating_skin": "Došlo k chybě při aktualizaci tvého skinu. Zkus to, prosím, znovu později!",
   "skinsrestorer.error_updating_url": "Nemůžeš aktualizovat vlastní URL skiny! <newline><red>Požádej si znovu použitím /skin url",
   "skinsrestorer.error_updating_customskin": "Skin nemůže být aktualizován, protože je vlastní.",
-  "skinsrestorer.error_invalid_urlskin": "Neplatný URL skinu nebo formát, <newline><red>Zkus nahrát svůj skin na imgur službu, klikni na obrázek pravým a dej 'kopírovat odkaz na obrázek' <newline><red>Pro návod se podívej na: <red><underlined><hover:show_text:'<dark_green><hover:show_text:'<dark_green>Klikni pro otevření'><click:open_url:'https://skinsrestorer.net/skinurl'>https://skinsrestorer.net/skinurl</click></hover></underlined>.",
   "skinsrestorer.error_admin_applyskin": "Skin hráče nemohl být obnoven!",
   "skinsrestorer.error_ms_full": "MineSkin API vypršel časový limit při nahrávání skinu. Zkus to, prosím, znovu později.",
   "skinsrestorer.error_ms_api_failed": "MineSkin API je přetížena, zkus to, prosím, znovu později!",
