@@ -50,7 +50,6 @@
   "skinsrestorer.error_updating_skin": "在更新你的皮肤时出错，请稍后再试！",
   "skinsrestorer.error_updating_url": "你不能更新自定义链接的皮肤！ <newline><red>请使用 /skin url 命令",
   "skinsrestorer.error_updating_customskin": "不能更新自定义皮肤。",
-  "skinsrestorer.error_invalid_urlskin": "无效的皮肤URL或格式，<newline><red>请尝试将皮肤上传到Imgur后右键选择“复制图片地址”<newline><red>如需指南，<red><underlined><hover:show_text:'<dark_green>点击即可打开'><click:open_url:'https://skinsrestorer.net/skinurl'>https://skinsrestorer.net/skinurl</click></hover></underlined>。",
   "skinsrestorer.error_admin_applyskin": "无法刷新玩家的皮肤！",
   "skinsrestorer.error_ms_full": "通过MineSkin API 上传你的皮肤时超时。请稍后再试。",
   "skinsrestorer.error_ms_api_failed": "MineSkin API 过载，请稍后再试！",
