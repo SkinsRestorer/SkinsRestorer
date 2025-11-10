@@ -67,7 +67,6 @@
   "skinsrestorer.error_updating_skin": "Egy hiba történt a kinézeted frissítése során. Kérlek, próbáld meg később!",
   "skinsrestorer.error_updating_url": "Nem frissítheted az egyedi URL kinézeteket!<newline><red>Kérd le újra a /skin url paranccsal",
   "skinsrestorer.error_updating_customskin": "A kinézetet nem lehet frissíteni, mert egyedi.",
-  "skinsrestorer.error_invalid_urlskin": "Helytelen kinézet URL vagy formátum.<newline><red>Próbáld meg feltölteni a kinézeted az imgur-ra és jobb-klikkel 'másold ki a link címét' <newline><red>Útmutató: <red><underlined><hover:show_text:'<dark_green>Kattints ide, hogy megnyisd'><click:open_url:'https://skinsrestorer.net/skinurl'>https://skinsrestorer.net/skinurl</click></hover></underlined>.",
   "skinsrestorer.error_admin_applyskin": "A játékos kinézetét NEM lehet lefrissíteni!",
   "skinsrestorer.error_ms_full": "A kinézeted feltöltése során a MineSkin API időtúllépés miatt nem válaszol. Kérlek, próbáld meg később.",
   "skinsrestorer.error_ms_api_failed": "MineSkin API túl van terhelve. Kérlek, próbáld meg később!",
