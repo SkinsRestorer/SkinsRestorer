@@ -23,7 +23,7 @@ dependencies {
     implementation("xyz.wagyourtail.jvmdowngrader:xyz.wagyourtail.jvmdowngrader.gradle.plugin:1.3.4")
     implementation("net.ltgt.errorprone:net.ltgt.errorprone.gradle.plugin:4.3.0")
 
-    implementation("commons-io:commons-io:2.21.0")
+    implementation("commons-io:commons-io:20030203.000550")
     implementation("org.apache.ant:ant:1.10.15")
     implementation("org.codehaus.plexus:plexus-utils:4.0.2")
 }
