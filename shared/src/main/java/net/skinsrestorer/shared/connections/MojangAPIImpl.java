@@ -22,6 +22,7 @@ import net.skinsrestorer.api.connections.MojangAPI;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.property.MojangSkinDataResult;
 import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.connections.http.HttpClient;
 import net.skinsrestorer.shared.connections.http.HttpResponse;
 import net.skinsrestorer.shared.connections.responses.profile.EclipseProfileResponse;
@@ -44,16 +45,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public class MojangAPIImpl implements MojangAPI {
-    private static final String UUID_ECLIPSE = "https://eclipse.skinsrestorer.net/mojang/uuid/%playerName%";
-    private static final String PROFILE_ECLIPSE = "https://eclipse.skinsrestorer.net/mojang/skin/%uuid%";
-    private static final String PROFILE_MOJANG = "https://sessionserver.mojang.com/session/minecraft/profile/%uuid%?unsigned=false";
-    private static final String BATCH_UUID_NEW_ENDPOINT = "https://api.minecraftservices.com/minecraft/profile/lookup/bulk/byname";
-    private static final String BATCH_UUID_LEGACY_ENDPOINT = "https://api.mojang.com/profiles/minecraft";
-
     private final MetricsCounter metricsCounter;
     private final SRLogger logger;
     private final SRPlugin plugin;
     private final HttpClient httpClient;
+    private final SettingsManager settings;
 
     private final MojangBatchAPI newBatchAPI;
     private final MojangBatchAPI legacyBatchAPI;
@@ -64,6 +60,7 @@ public class MojangAPIImpl implements MojangAPI {
         this.logger = logger;
         this.plugin = plugin;
         this.httpClient = httpClient;
+        this.settings = settings;
 
         // Create batch API instances with different endpoints
         this.newBatchAPI = new MojangBatchAPI(
@@ -72,7 +69,7 @@ public class MojangAPIImpl implements MojangAPI {
                 plugin.getAdapter(),
                 httpClient,
                 settings,
-                BATCH_UUID_NEW_ENDPOINT,
+                settings.getProperty(AdvancedConfig.BATCH_UUID_NEW),
                 plugin.getUserAgent()
         );
 
@@ -82,7 +79,7 @@ public class MojangAPIImpl implements MojangAPI {
                 plugin.getAdapter(),
                 httpClient,
                 settings,
-                BATCH_UUID_LEGACY_ENDPOINT,
+                settings.getProperty(AdvancedConfig.BATCH_UUID_LEGACY),
                 plugin.getUserAgent()
         );
     }
@@ -162,7 +159,7 @@ public class MojangAPIImpl implements MojangAPI {
     }
 
     public Optional<UUID> getUUIDEclipse(String playerName) throws DataRequestException {
-        HttpResponse httpResponse = readURL(URI.create(UUID_ECLIPSE.replace("%playerName%", playerName)), MetricsCounter.Service.ECLIPSE_UUID);
+        HttpResponse httpResponse = readURL(URI.create(settings.getProperty(AdvancedConfig.UUID_ECLIPSE).replace("%playerName%", playerName)), MetricsCounter.Service.ECLIPSE_UUID);
         if (httpResponse.statusCode() != 200) {
             throw new DataRequestExceptionShared("Eclipse error: %d".formatted(httpResponse.statusCode()));
         }
@@ -189,7 +186,7 @@ public class MojangAPIImpl implements MojangAPI {
     }
 
     public Optional<SkinProperty> getProfileMojang(UUID uuid) throws DataRequestException {
-        HttpResponse httpResponse = readURL(URI.create(PROFILE_MOJANG.replace("%uuid%", UUIDUtils.convertToNoDashes(uuid))), MetricsCounter.Service.MOJANG_PROFILE);
+        HttpResponse httpResponse = readURL(URI.create(settings.getProperty(AdvancedConfig.PROFILE_MOJANG).replace("%uuid%", UUIDUtils.convertToNoDashes(uuid))), MetricsCounter.Service.MOJANG_PROFILE);
         MojangProfileResponse response = httpResponse.getBodyAs(MojangProfileResponse.class);
         if (response.getProperties() == null) {
             return Optional.empty();
@@ -204,7 +201,7 @@ public class MojangAPIImpl implements MojangAPI {
     }
 
     public Optional<SkinProperty> getProfileEclipse(UUID uuid) throws DataRequestException {
-        HttpResponse httpResponse = readURL(URI.create(PROFILE_ECLIPSE.replace("%uuid%", uuid.toString())), MetricsCounter.Service.ECLIPSE_PROFILE);
+        HttpResponse httpResponse = readURL(URI.create(settings.getProperty(AdvancedConfig.PROFILE_ECLIPSE).replace("%uuid%", uuid.toString())), MetricsCounter.Service.ECLIPSE_PROFILE);
         if (httpResponse.statusCode() != 200) {
             throw new DataRequestExceptionShared("Eclipse error: %d".formatted(httpResponse.statusCode()));
         }

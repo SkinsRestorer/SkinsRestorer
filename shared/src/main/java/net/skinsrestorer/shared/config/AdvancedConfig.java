@@ -64,6 +64,37 @@ public class AdvancedConfig implements SettingsHolder {
     })
     public static final Property<Boolean> PLAYER_HEAD_CHAT_OBJECTS = newProperty("advanced.playerHeadChatObjects", false);
 
+    @Comment({
+            "API endpoint for UUID lookups via the Eclipse proxy.",
+            "Used as a fallback when Mojang's API is rate-limited or unavailable.",
+    })
+    public static final Property<String> UUID_ECLIPSE = newProperty("advanced.api.uuidEclipse", "https://eclipse.skinsrestorer.net/mojang/uuid/%playerName%");
+
+    @Comment({
+            "API endpoint for textures (skin and cape data) lookups via the Eclipse proxy.",
+            "Used as a fallback when Mojang's session server is rate-limited or unavailable.",
+    })
+    public static final Property<String> PROFILE_ECLIPSE = newProperty("advanced.api.profileEclipse", "https://eclipse.skinsrestorer.net/mojang/skin/%uuid%");
+
+    @Comment({
+            "Primary Mojang session server endpoint for textures (skin and cape data) lookup .",
+            "Used by default when not rate-limited or unavailable.",
+    })
+    public static final Property<String> PROFILE_MOJANG = newProperty("advanced.api.profileMojang", "https://sessionserver.mojang.com/session/minecraft/profile/%uuid%?unsigned=false");
+
+    @Comment({
+            "Modern batch username → UUID lookup via Minecraft Services API.",
+            "Primary endpoint for converting up to 10 usernames at once.",
+    })
+    public static final Property<String> BATCH_UUID_NEW = newProperty("advanced.api.batchUuidNew", "https://api.minecraftservices.com/minecraft/profile/lookup/bulk/byname");
+
+    @Comment({
+            "Legacy Mojang API for batch UUID lookup (POST).",
+            "Used to convert up to 10 usernames to UUIDs.",
+            "Known to error or be buggy; should be used only as fallback.",
+    })
+    public static final Property<String> BATCH_UUID_LEGACY = newProperty("advanced.api.batchUuidLegacy", "https://api.mojang.com/profiles/minecraft");
+
     public static Component emptyIfPlayerHeadChatObjectsDisabled(SettingsManager settingsManager, Component component) {
         if (settingsManager.getProperty(PLAYER_HEAD_CHAT_OBJECTS)) {
             return component;
