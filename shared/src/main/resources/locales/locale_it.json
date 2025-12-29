@@ -49,6 +49,7 @@
   "skinsrestorer.error_ms_unknown": "Errore MineSkin sconosciuto!",
   "skinsrestorer.error_no_history": "Non hai nessuna storco della skin!",
   "skinsrestorer.error_no_favourites": "Non hai skin preferite!",
+  "skinsrestorer.error_player_refresh_no_mapping": "Impossibile aggiornare la tua skin perché questa versione di Minecraft non è supportata da SkinsRestorer. Per favore comunica agli amministratori del server di aggiornare il plugin SkinsRestorer.",
   "skinsrestorer.not_connected_to_server": "<red>Non sei connesso a nessun server.",
   "skinsrestorer.divider": "<dark_aqua>--------------------------------------",
   "skinsrestorer.admincommand_status_checking": "<gray>Verifica dei servizi necessari affinché SR funzioni correttamente...",
