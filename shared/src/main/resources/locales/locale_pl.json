@@ -67,6 +67,7 @@
   "skinsrestorer.error_updating_skin": "Wystąpił błąd podczas aktualizacji skórki. Spróbuj ponownie później!",
   "skinsrestorer.error_updating_url": "Nie można aktualizować niestandardowych skórek adresów URL! <newline><red>Użyj ponownie /skin url",
   "skinsrestorer.error_updating_customskin": "Skórka nie może być zaktualizowana, ponieważ jest niestandardowa.",
+  "skinsrestorer.error_invalid_urlskin": "Nieprawidłowy adres URL lub format skórki, <newline><red>Spróbuj przesłać skórkę na naszą stronę do skórek!<newline><red>Link: <red><underlined><hover:show_text:'<dark_green>Kliknij aby otworzyć'><click:open_url:'https://skinsrestorer.net/upload'>https://skinsrestorer.net/upload</click></hover></underlined>.",
   "skinsrestorer.error_admin_applyskin": "NIE można odświeżyć skórki gracza!",
   "skinsrestorer.error_ms_full": "Upłynął limit czasu połączenia z MineSkin API podczas przesyłania twojej skórki. Spróbuj ponownie później.",
   "skinsrestorer.error_ms_api_failed": "MineSkin API jest przeciążone, spróbuj ponownie później!",

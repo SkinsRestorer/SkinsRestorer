@@ -34,6 +34,7 @@ import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.property.SkinVariant;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
 import net.skinsrestorer.shared.codec.SRServerPluginMessage;
+import net.skinsrestorer.shared.commands.library.CommandHelpService;
 import net.skinsrestorer.shared.commands.library.PlayerSelector;
 import net.skinsrestorer.shared.commands.library.SRCommandManager;
 import net.skinsrestorer.shared.commands.library.annotations.CommandDescription;
@@ -64,9 +65,6 @@ import org.incendo.cloud.annotations.Argument;
 import org.incendo.cloud.annotations.Command;
 import org.incendo.cloud.annotations.suggestion.Suggestions;
 import org.incendo.cloud.context.CommandContext;
-import org.incendo.cloud.help.result.CommandEntry;
-import org.incendo.cloud.minecraft.extras.MinecraftHelp;
-import org.incendo.cloud.minecraft.extras.caption.ComponentCaptionFormatter;
 import org.incendo.cloud.processors.cooldown.CooldownGroup;
 import org.jetbrains.annotations.Nullable;
 
@@ -97,53 +95,24 @@ public final class SkullCommand {
     private final SRCommandManager commandManager;
     private final RecommendationsState recommendationsState;
     private final SkinPermissionManager permissionManager;
+    private final CommandHelpService helpService;
 
     @Command("")
     @CommandPermission(PermissionRegistry.SKULL)
     public void rootCommand(SRCommandSender sender) {
-        MinecraftHelp.<SRCommandSender>builder()
-                .commandManager(commandManager.getCommandManager())
-                .audienceProvider(ComponentHelper::commandSenderToAudience)
-                .commandPrefix("/skull help")
-                .messageProvider(MinecraftHelp.captionMessageProvider(
-                        commandManager.getCommandManager().captionRegistry(),
-                        ComponentCaptionFormatter.miniMessage()
-                ))
-                .descriptionDecorator((s, d) -> ComponentHelper.convertJsonToComponent(locale.getMessageRequired(s, Message.fromKey(d).orElseThrow())))
-                .commandFilter(c -> c.rootComponent().name().equals("skull") && !c.commandDescription().description().isEmpty())
-                .maxResultsPerPage(Integer.MAX_VALUE)
-                .build()
-                .queryCommands("", sender);
+        helpService.sendRootHelp(sender, "skull");
     }
 
     @Suggestions("help_queries_skull")
     public List<String> suggestHelpQueries(CommandContext<SRCommandSender> ctx, String input) {
-        return this.commandManager.getCommandManager()
-                .createHelpHandler()
-                .queryRootIndex(ctx.sender())
-                .entries()
-                .stream()
-                .filter(e -> e.command().rootComponent().name().equals("skull"))
-                .map(CommandEntry::syntax)
-                .toList();
+        return helpService.suggestHelpQueries(ctx.sender(), "skull");
     }
 
     @Command("help [query]")
     @CommandPermission(PermissionRegistry.SKULL)
     @CommandDescription(Message.HELP_SKULL)
     public void commandHelp(SRCommandSender sender, @Argument(suggestions = "help_queries_skull") @Greedy String query) {
-        MinecraftHelp.<SRCommandSender>builder()
-                .commandManager(commandManager.getCommandManager())
-                .audienceProvider(ComponentHelper::commandSenderToAudience)
-                .commandPrefix("/skull help")
-                .messageProvider(MinecraftHelp.captionMessageProvider(
-                        commandManager.getCommandManager().captionRegistry(),
-                        ComponentCaptionFormatter.miniMessage()
-                ))
-                .descriptionDecorator((s, d) -> ComponentHelper.convertJsonToComponent(locale.getMessageRequired(s, Message.fromKey(d).orElseThrow())))
-                .commandFilter(c -> c.rootComponent().name().equals("skull") && !c.commandDescription().description().isEmpty())
-                .build()
-                .queryCommands(query == null ? "" : query, sender);
+        helpService.sendQueryHelp(sender, "skull", query);
     }
 
     @Command("<skinName>")

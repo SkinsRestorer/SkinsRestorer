@@ -6,8 +6,8 @@ val repoName = if (version.toString().endsWith("SNAPSHOT")) "maven-snapshots" el
 publishing {
     repositories {
         maven("https://repo.codemc.org/repository/${repoName}/") {
-            credentials.username = System.getenv("CODEMC_USERNAME")
-            credentials.password = System.getenv("CODEMC_PASSWORD")
+            credentials.username = providers.environmentVariable("CODEMC_USERNAME").orNull
+            credentials.password = providers.environmentVariable("CODEMC_PASSWORD").orNull
             name = "codemc"
         }
     }

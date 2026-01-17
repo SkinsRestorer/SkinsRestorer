@@ -1,0 +1,12 @@
+accessWidener v2 named
+
+accessible class net/minecraft/server/level/ChunkMap$TrackedEntity
+
+accessible field net/minecraft/server/level/ChunkMap entityMap Lit/unimi/dsi/fastutil/ints/Int2ObjectMap;
+accessible field net/minecraft/server/level/ChunkMap$TrackedEntity seenBy Ljava/util/Set;
+accessible field net/minecraft/server/level/ServerPlayer containerCounter I
+
+accessible method net/minecraft/server/level/ServerPlayer nextContainerCounter ()V
+accessible method net/minecraft/server/level/ServerPlayer initMenu (Lnet/minecraft/world/inventory/AbstractContainerMenu;)V
+
+accessible class net/minecraft/server/network/ServerLoginPacketListenerImpl$State

@@ -67,6 +67,7 @@
   "skinsrestorer.error_updating_skin": "Ocorreu um erro ao atualizar sua skin. Tente novamente mais tarde!",
   "skinsrestorer.error_updating_url": "Você não pode atualizar skins de URL personalizados! <newline><red>Tente novamente usando /skin url",
   "skinsrestorer.error_updating_customskin": "A skin não pôde ser atualizada, pois, é customizada.",
+  "skinsrestorer.error_invalid_urlskin": "Formato ou URL de skin inválido, <newline><red>Tente enviar sua skin para nossa página de upload de skin!<newline><red>Link:\n<red><underlined><hover:show_text:'<dark_green>Clique para abrir'><click:open_url:'https://skinsrestorer.net/upload'>https://skinsrestorer.net/upload</click></hover></underlined>.",
   "skinsrestorer.error_admin_applyskin": "A skin do jogador NÃO pode ser recarregada!",
   "skinsrestorer.error_ms_full": "A API MineSkin demorou a responder. Por favor, tente novamente mais tarde.",
   "skinsrestorer.error_ms_api_failed": "A API MineSkin está sobrecarregada, tente novamente mais tarde!",

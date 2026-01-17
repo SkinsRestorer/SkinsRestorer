@@ -36,6 +36,7 @@ import net.skinsrestorer.shared.api.SkinApplierAccess;
 import net.skinsrestorer.shared.api.event.EventBusImpl;
 import net.skinsrestorer.shared.commands.GUICommand;
 import net.skinsrestorer.shared.commands.SRCommand;
+import net.skinsrestorer.shared.commands.SRProxyCommand;
 import net.skinsrestorer.shared.commands.SkinCommand;
 import net.skinsrestorer.shared.commands.SkullCommand;
 import net.skinsrestorer.shared.commands.library.SRCommandManager;
@@ -122,6 +123,11 @@ public class SRPlugin {
         if (!settings.getProperty(CommandConfig.DISABLE_GUI_COMMAND)) {
             manager.registerCommand(injector.newInstance(GUICommand.class));
         }
+    }
+
+    public void initProxyCommands() {
+        SRCommandManager manager = injector.getSingleton(SRCommandManager.class);
+        manager.registerCommand(injector.newInstance(SRProxyCommand.class));
     }
 
     public void loadConfig() {

@@ -18,7 +18,7 @@ tasks {
 
     jar {
         archiveClassifier.set("unshaded")
-        from(project.rootProject.file("LICENSE"))
+        from(rootProject.layout.projectDirectory.file("LICENSE"))
     }
 
     shadowJar {

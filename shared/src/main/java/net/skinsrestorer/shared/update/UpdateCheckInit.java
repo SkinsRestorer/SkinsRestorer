@@ -39,7 +39,8 @@ public class UpdateCheckInit {
     private final Injector injector;
 
     public Optional<UpdateDownloader> getDownloader() {
-        boolean downloaderDisabled = Files.exists(plugin.getDataFolder().resolve("noupdate.txt"));
+        boolean downloaderDisabled = Files.exists(plugin.getDataFolder().resolve("noautoupdate.txt"))
+                || Files.exists(plugin.getDataFolder().resolve("noupdate.txt")); // Legacy support
         if (downloaderDisabled) {
             logger.info("Auto updater was manually disabled. This is not recommended, as it will prevent the plugin from updating automatically. See why at: https://skinsrestorer.net/docs/configuration/auto-update");
         }

@@ -10,6 +10,6 @@ spotless {
         leadingTabsToSpaces(4)
         endWithNewline()
 
-        licenseHeaderFile(rootProject.file("file_header.txt"))
+        licenseHeaderFile(rootProject.layout.projectDirectory.file("file_header.txt"))
     }
 }

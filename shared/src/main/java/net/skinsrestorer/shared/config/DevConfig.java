@@ -37,7 +37,7 @@ public class DevConfig implements SettingsHolder {
                 "Using outdated version void's support, compatibility & stability.",
                 "\n",
                 "To block all types of automatic updates (which can risk keeping an exploit):",
-                "Create a file called 'noupdate.txt' in the plugin directory (./plugins/SkinsRestorer/ )",
+                "Create a file called 'noautoupdate.txt' in the plugin directory (./plugins/SkinsRestorer/ )",
                 "\n",
                 "\n################",
                 "\n# DEV's corner #",

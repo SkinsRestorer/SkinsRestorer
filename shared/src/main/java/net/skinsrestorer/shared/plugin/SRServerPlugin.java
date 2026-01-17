@@ -113,6 +113,9 @@ public class SRServerPlugin {
                 }
             }
 
+            // Init proxy-safe commands (dump and status)
+            plugin.initProxyCommands();
+
             init.initMessageChannel();
         } else {
             plugin.loadStorage();

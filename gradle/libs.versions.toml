@@ -7,21 +7,15 @@ runpaperversion = "1.21.9"
 runwaterfallversion = "1.19"
 runvelocityversion = "3.4.0-SNAPSHOT"
 adventure-platform = "4.4.1"
-adventure = "4.25.0"
-architectury = "18.0.6"
+adventure = "4.26.1"
 mixin = "0.8.7"
-fabric-api-bom = "0.135.0+1.21.10"
-cloud-fabric = "2.0.0-SNAPSHOT"
-architectury-neoforge = "18.0.6"
-cloud-neoforge = "2.0.0-SNAPSHOT"
-fabric-permissions-api = "0.5.0"
 bstats = "3.1.0"
-testcontainers = "2.0.2"
+testcontainers = "2.0.3"
 slf4j = "2.0.17"
 gson = "2.13.2"
 spigot-api = "1.19.3-R0.1-SNAPSHOT"
 bstats-bukkit = "3.1.0"
-xseries = "13.5.1"
+xseries = "13.6.0"
 multilib = "1.2.5"
 cloud-paper = "2.0.0-SNAPSHOT"
 placeholderapi = "2.11.7"
@@ -32,7 +26,7 @@ cloud-bungee = "2.0.0-SNAPSHOT"
 velocity-api = "3.1.1"
 bstats-velocity = "3.1.0"
 cloud-velocity = "2.0.0-SNAPSHOT"
-mariadb-java-client = "3.5.6"
+mariadb-java-client = "3.5.7"
 configme = "beefdbdf7e"
 injector = "1.0"
 cloud-annotations = "2.0.0"
@@ -43,12 +37,12 @@ cloud-translations-core = "1.0.0-SNAPSHOT"
 cloud-minecraft-extras = "2.0.0-SNAPSHOT"
 cloud-translations-minecraft-extras = "1.0.0-SNAPSHOT"
 floodgate = "2.2.2-SNAPSHOT"
-viaversion = "5.5.1"
-viabackwards = "5.5.1"
+viaversion = "5.6.0"
+viabackwards = "5.6.0"
 miniplaceholders = "3.1.0"
 paper-api = "1.21.5-R0.1-SNAPSHOT"
 craftbukkit = "1.7.10-R0.1-SNAPSHOT"
-reflect = "1.5.0"
+reflect = "1.6.1"
 
 [libraries]
 
@@ -60,14 +54,7 @@ adventure-text-serializer-legacy = { module = "net.kyori:adventure-text-serializ
 adventure-text-serializer-ansi = { module = "net.kyori:adventure-text-serializer-ansi", version.ref = "adventure" }
 adventure-text-serializer-plain = { module = "net.kyori:adventure-text-serializer-plain", version.ref = "adventure" }
 adventure-text-minimessage = { module = "net.kyori:adventure-text-minimessage", version.ref = "adventure" }
-architectury = { module = "dev.architectury:architectury", version.ref = "architectury" }
-architectury-fabric = { module = "dev.architectury:architectury-fabric", version.ref = "architectury" }
 mixin = { module = "org.spongepowered:mixin", version.ref = "mixin" }
-fabric-api-bom = { module = "net.fabricmc.fabric-api:fabric-api-bom", version.ref = "fabric-api-bom" }
-cloud-fabric = { module = "org.incendo:cloud-fabric", version.ref = "cloud-fabric" }
-architectury-neoforge = { module = "dev.architectury:architectury-neoforge", version.ref = "architectury-neoforge" }
-cloud-neoforge = { module = "org.incendo:cloud-neoforge", version.ref = "cloud-neoforge" }
-fabric-permissions-api = { module = "me.lucko:fabric-permissions-api", version.ref = "fabric-permissions-api" }
 bstats-base = { module = "org.bstats:bstats-base", version.ref = "bstats" }
 testcontainers = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers" }
 testcontainers-mariadb = { module = "org.testcontainers:testcontainers-mariadb", version.ref = "testcontainers" }

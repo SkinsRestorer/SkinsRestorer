@@ -24,7 +24,7 @@ jobs:
       contents: write
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
         ref: ${{ github.ref }}
     - name: Set up Gradle
@@ -129,8 +129,8 @@ jobs:
 
         files: |
           build/libs/SkinsRestorer.jar
-          mod/build/libs/SkinsRestorer-Mod-*-fabric.jar
-          mod/build/libs/SkinsRestorer-Mod-*-neoforge.jar
+          build/libs/SkinsRestorer-Mod-Fabric-*.jar
+          build/libs/SkinsRestorer-Mod-NeoForge-*.jar
 
         name: SkinsRestorer ${{ inputs.version }}
         version: ${{ inputs.version }}
@@ -192,7 +192,7 @@ jobs:
         modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
 
         files: |
-          mod/build/libs/SkinsRestorer-Mod-*-fabric.jar
+          build/libs/SkinsRestorer-Mod-Fabric-*.jar
 
         name: SkinsRestorer ${{ inputs.version }} Fabric
         version: ${{ inputs.version }}-fabric
@@ -221,7 +221,7 @@ jobs:
         modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
 
         files: |
-          mod/build/libs/SkinsRestorer-Mod-*-neoforge.jar
+          build/libs/SkinsRestorer-Mod-NeoForge-*.jar
 
         name: SkinsRestorer ${{ inputs.version }} NeoForge
         version: ${{ inputs.version }}-neoforge

@@ -30,6 +30,7 @@ import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.exception.MineSkinException;
 import net.skinsrestorer.api.property.*;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
+import net.skinsrestorer.shared.commands.library.CommandHelpService;
 import net.skinsrestorer.shared.commands.library.PlayerSelector;
 import net.skinsrestorer.shared.commands.library.SRCommandManager;
 import net.skinsrestorer.shared.commands.library.annotations.CommandDescription;
@@ -65,9 +66,6 @@ import org.incendo.cloud.annotations.Argument;
 import org.incendo.cloud.annotations.Command;
 import org.incendo.cloud.annotations.suggestion.Suggestions;
 import org.incendo.cloud.context.CommandContext;
-import org.incendo.cloud.help.result.CommandEntry;
-import org.incendo.cloud.minecraft.extras.MinecraftHelp;
-import org.incendo.cloud.minecraft.extras.caption.ComponentCaptionFormatter;
 import org.incendo.cloud.processors.cooldown.CooldownGroup;
 import org.jetbrains.annotations.Nullable;
 
@@ -99,6 +97,7 @@ public final class SkinCommand {
     private final RecommendationsState recommendationsState;
     private final SkinPermissionManager permissionManager;
     private final MetricsCounter metricsCounter;
+    private final CommandHelpService helpService;
 
     @Command("")
     @CommandPermission(PermissionRegistry.SKIN)
@@ -110,31 +109,12 @@ public final class SkinCommand {
             return;
         }
 
-        MinecraftHelp.<SRCommandSender>builder()
-                .commandManager(commandManager.getCommandManager())
-                .audienceProvider(ComponentHelper::commandSenderToAudience)
-                .commandPrefix("/skin help")
-                .messageProvider(MinecraftHelp.captionMessageProvider(
-                        commandManager.getCommandManager().captionRegistry(),
-                        ComponentCaptionFormatter.miniMessage()
-                ))
-                .descriptionDecorator((s, d) -> ComponentHelper.convertJsonToComponent(locale.getMessageRequired(s, Message.fromKey(d).orElseThrow())))
-                .commandFilter(c -> c.rootComponent().name().equals("skin") && !c.commandDescription().description().isEmpty())
-                .maxResultsPerPage(Integer.MAX_VALUE)
-                .build()
-                .queryCommands("", sender);
+        helpService.sendRootHelp(sender, "skin");
     }
 
     @Suggestions("help_queries_skin")
     public List<String> suggestHelpQueries(CommandContext<SRCommandSender> ctx, String input) {
-        return this.commandManager.getCommandManager()
-                .createHelpHandler()
-                .queryRootIndex(ctx.sender())
-                .entries()
-                .stream()
-                .filter(e -> e.command().rootComponent().name().equals("skin"))
-                .map(CommandEntry::syntax)
-                .toList();
+        return helpService.suggestHelpQueries(ctx.sender(), "skin");
     }
 
     @Command("help [query]")
@@ -148,18 +128,7 @@ public final class SkinCommand {
             return;
         }
 
-        MinecraftHelp.<SRCommandSender>builder()
-                .commandManager(commandManager.getCommandManager())
-                .audienceProvider(ComponentHelper::commandSenderToAudience)
-                .commandPrefix("/skin help")
-                .messageProvider(MinecraftHelp.captionMessageProvider(
-                        commandManager.getCommandManager().captionRegistry(),
-                        ComponentCaptionFormatter.miniMessage()
-                ))
-                .descriptionDecorator((s, d) -> ComponentHelper.convertJsonToComponent(locale.getMessageRequired(s, Message.fromKey(d).orElseThrow())))
-                .commandFilter(c -> c.rootComponent().name().equals("skin") && !c.commandDescription().description().isEmpty())
-                .build()
-                .queryCommands(query == null ? "" : query, sender);
+        helpService.sendQueryHelp(sender, "skin", query);
     }
 
     @Command("<skinName>")
