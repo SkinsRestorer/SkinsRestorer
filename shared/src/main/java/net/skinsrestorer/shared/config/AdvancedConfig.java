@@ -19,8 +19,10 @@ package net.skinsrestorer.shared.config;
 
 import ch.jalu.configme.Comment;
 import ch.jalu.configme.SettingsHolder;
+import ch.jalu.configme.SettingsManager;
 import ch.jalu.configme.configurationdata.CommentsConfiguration;
 import ch.jalu.configme.properties.Property;
+import net.kyori.adventure.text.Component;
 
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 
@@ -54,6 +56,21 @@ public class AdvancedConfig implements SettingsHolder {
             "This is useful for servers that are not connected to the internet or have a firewall blocking connections."
     })
     public static final Property<Boolean> NO_CONNECTIONS = newProperty("advanced.noConnections", false);
+    @Comment({
+            "<!! Warning !!>",
+            "When enabled SkinsRestorer will use the new player head objects inside chat messages.",
+            "While these new objects look great, they are not supported by all server software and plugins, especially older servers.",
+            "This option will be on by default in the future when backwards compatibility is no longer a concern.",
+    })
+    public static final Property<Boolean> PLAYER_HEAD_CHAT_OBJECTS = newProperty("advanced.playerHeadChatObjects", false);
+
+    public static Component emptyIfPlayerHeadChatObjectsDisabled(SettingsManager settingsManager, Component component) {
+        if (settingsManager.getProperty(PLAYER_HEAD_CHAT_OBJECTS)) {
+            return component;
+        }
+
+        return Component.empty();
+    }
 
     @Override
     public void registerComments(CommentsConfiguration conf) {

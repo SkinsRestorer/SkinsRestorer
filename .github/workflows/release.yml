@@ -24,11 +24,11 @@ jobs:
       contents: write
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
         ref: ${{ github.ref }}
     - name: Set up Gradle
-      uses: gradle/actions/setup-gradle@v4
+      uses: gradle/actions/setup-gradle@v5
     - name: Set up JDK 21
       uses: actions/setup-java@v5
       with:
@@ -39,7 +39,7 @@ jobs:
 
     - name: Build Changelog
       id: github_release
-      uses: mikepenz/release-changelog-builder-action@v5
+      uses: mikepenz/release-changelog-builder-action@v6
       with:
         mode: COMMIT
         toTag: ${{ github.ref }}
@@ -129,8 +129,8 @@ jobs:
 
         files: |
           build/libs/SkinsRestorer.jar
-          mod/build/libs/SkinsRestorer-Mod-*-fabric.jar
-          mod/build/libs/SkinsRestorer-Mod-*-neoforge.jar
+          build/libs/SkinsRestorer-Mod-Fabric-*.jar
+          build/libs/SkinsRestorer-Mod-NeoForge-*.jar
 
         name: SkinsRestorer ${{ inputs.version }}
         version: ${{ inputs.version }}
@@ -187,11 +187,12 @@ jobs:
       with:
         modrinth-id: skinsrestorer
         modrinth-featured: true
-        modrinth-unfeature-mode: subset
+        # Unfeature all previous releases for this loader
+        modrinth-unfeature-mode: loader-any
         modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
 
         files: |
-          mod/build/libs/SkinsRestorer-Mod-*-fabric.jar
+          build/libs/SkinsRestorer-Mod-Fabric-*.jar
 
         name: SkinsRestorer ${{ inputs.version }} Fabric
         version: ${{ inputs.version }}-fabric
@@ -215,11 +216,12 @@ jobs:
       with:
         modrinth-id: skinsrestorer
         modrinth-featured: true
-        modrinth-unfeature-mode: subset
+        # Unfeature all previous releases for this loader
+        modrinth-unfeature-mode: loader-any
         modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
 
         files: |
-          mod/build/libs/SkinsRestorer-Mod-*-neoforge.jar
+          build/libs/SkinsRestorer-Mod-NeoForge-*.jar
 
         name: SkinsRestorer ${{ inputs.version }} NeoForge
         version: ${{ inputs.version }}-neoforge

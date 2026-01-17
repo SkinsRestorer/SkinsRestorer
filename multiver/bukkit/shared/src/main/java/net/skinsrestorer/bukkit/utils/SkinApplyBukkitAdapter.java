@@ -17,6 +17,8 @@
  */
 package net.skinsrestorer.bukkit.utils;
 
+import net.lenni0451.reflect.stream.RStream;
+import net.lenni0451.reflect.stream.field.FieldWrapper;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.bukkit.entity.Player;
@@ -28,16 +30,33 @@ public interface SkinApplyBukkitAdapter {
 
     Optional<SkinProperty> getSkinProperty(Player player);
 
-    default <G> G getGameProfile(Player player, Class<G> gClass) throws ReflectiveOperationException {
+    static FieldWrapper getGameProfileField(Object serverPlayer) {
+        return RStream.of(serverPlayer)
+                .withSuper()
+                .fields()
+                .filter(false)
+                .filter(f -> f.type().getSimpleName().equals("GameProfile"))
+                .by(0);
+    }
+
+    default Object getGameProfile(Player player) {
         Object serverPlayer = HandleReflection.getHandle(player, Object.class);
 
         Object profile;
         try {
             profile = ReflectionUtil.invokeObjectMethod(serverPlayer, "getProfile");
-        } catch (ReflectiveOperationException e) {
-            profile = ReflectionUtil.getFieldByType(serverPlayer, "GameProfile");
+        } catch (ReflectiveOperationException e1) {
+            try {
+                profile = getGameProfileField(serverPlayer).get();
+            } catch (RuntimeException e2) {
+                IllegalStateException ise = new IllegalStateException("Failed to get GameProfile from player");
+                ise.addSuppressed(e1);
+                ise.addSuppressed(e2);
+
+                throw ise;
+            }
         }
 
-        return gClass.cast(profile);
+        return profile;
     }
 }

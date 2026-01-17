@@ -117,8 +117,9 @@ public class UpdateCheckerGitHub {
         logger.info("§b    Commit: §a%s".formatted(BuildData.COMMIT_SHORT));
         if (cause == UpdateCause.NETWORK_DISABLED) {
             logger.info("§c    Network connections are disabled in the SkinsRestorer config (advanced.noConnections), we will not check for updates.");
-        } else if (Files.exists(plugin.getDataFolder().resolve("noupdate.txt"))) {
-            logger.info("§e    The updater is disabled using noupdate.txt");
+        } else if (Files.exists(plugin.getDataFolder().resolve("noautoupdate.txt"))
+                || Files.exists(plugin.getDataFolder().resolve("noupdate.txt"))) { // Legacy support
+            logger.info("§e    The updater is disabled using noautoupdate.txt");
         } else {
             logger.info("§a    This is the latest version!");
         }

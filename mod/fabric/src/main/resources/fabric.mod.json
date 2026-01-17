@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "skinsrestorer",
+  "version": "${version}",
+  "name": "SkinsRestorer",
+  "description": "Ability to restore/change skins on servers!",
+  "authors": [
+    "AlexProgrammerDE",
+    "xknat"
+  ],
+  "contact": {
+    "homepage": "https://skinsrestorer.net",
+    "issues": "https://github.com/SkinsRestorer/SkinsRestorer/issues",
+    "sources": "https://github.com/SkinsRestorer/SkinsRestorer"
+  },
+  "license": "GPL-3.0",
+  "icon": "assets/skinsrestorer/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "net.skinsrestorer.mod.fabric.SRFabricMod"
+    ]
+  },
+  "mixins": [
+    "skinsrestorer.mixins.json"
+  ],
+  "accessWidener": "skinsrestorer.accesswidener",
+  "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.discord": "https://skinsrestorer.net/discord"
+      }
+    }
+  },
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "~1.21",
+    "java": ">=21",
+    "architectury": ">=13.0.2",
+    "fabric-api": "*",
+    "cloud": "*",
+    "fabric-permissions-api-v0": "*"
+  }
+}

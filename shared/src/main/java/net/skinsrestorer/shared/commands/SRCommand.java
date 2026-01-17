@@ -30,16 +30,16 @@ import net.skinsrestorer.api.model.MojangProfileTextureMeta;
 import net.skinsrestorer.api.property.*;
 import net.skinsrestorer.api.storage.CacheStorage;
 import net.skinsrestorer.api.storage.PlayerStorage;
-import net.skinsrestorer.builddata.BuildData;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.skinsrestorer.shared.commands.library.CommandHelpService;
 import net.skinsrestorer.shared.commands.library.PlayerSelector;
 import net.skinsrestorer.shared.commands.library.SRCommandManager;
+import net.skinsrestorer.shared.commands.library.SRCommandService;
 import net.skinsrestorer.shared.commands.library.annotations.CommandDescription;
 import net.skinsrestorer.shared.commands.library.annotations.CommandPermission;
 import net.skinsrestorer.shared.commands.library.annotations.ConsoleOnly;
 import net.skinsrestorer.shared.commands.library.annotations.RootDescription;
-import net.skinsrestorer.shared.config.DevConfig;
 import net.skinsrestorer.shared.config.StorageConfig;
 import net.skinsrestorer.shared.connections.DumpService;
 import net.skinsrestorer.shared.connections.ServiceCheckerService;
@@ -75,9 +75,6 @@ import org.incendo.cloud.annotations.Argument;
 import org.incendo.cloud.annotations.Command;
 import org.incendo.cloud.annotations.suggestion.Suggestions;
 import org.incendo.cloud.context.CommandContext;
-import org.incendo.cloud.help.result.CommandEntry;
-import org.incendo.cloud.minecraft.extras.MinecraftHelp;
-import org.incendo.cloud.minecraft.extras.caption.ComponentCaptionFormatter;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -109,53 +106,25 @@ public final class SRCommand {
     private final Injector injector;
     private final SkinsRestorerLocale locale;
     private final SRCommandManager commandManager;
+    private final CommandHelpService helpService;
+    private final SRCommandService srCommandService;
 
     @Command("")
     @CommandPermission(PermissionRegistry.SR)
     public void rootCommand(SRCommandSender sender) {
-        MinecraftHelp.<SRCommandSender>builder()
-                .commandManager(commandManager.getCommandManager())
-                .audienceProvider(ComponentHelper::commandSenderToAudience)
-                .commandPrefix("/sr help")
-                .messageProvider(MinecraftHelp.captionMessageProvider(
-                        commandManager.getCommandManager().captionRegistry(),
-                        ComponentCaptionFormatter.miniMessage()
-                ))
-                .descriptionDecorator((s, d) -> ComponentHelper.convertJsonToComponent(locale.getMessageRequired(s, Message.fromKey(d).orElseThrow())))
-                .commandFilter(c -> c.rootComponent().name().equals("sr") && !c.commandDescription().description().isEmpty())
-                .maxResultsPerPage(Integer.MAX_VALUE)
-                .build()
-                .queryCommands("", sender);
+        helpService.sendRootHelp(sender, "sr");
     }
 
     @Suggestions("help_queries_sr")
     public List<String> suggestHelpQueries(CommandContext<SRCommandSender> ctx, String input) {
-        return this.commandManager.getCommandManager()
-                .createHelpHandler()
-                .queryRootIndex(ctx.sender())
-                .entries()
-                .stream()
-                .filter(e -> e.command().rootComponent().name().equals("sr"))
-                .map(CommandEntry::syntax)
-                .toList();
+        return helpService.suggestHelpQueries(ctx.sender(), "sr");
     }
 
     @Command("help [query]")
     @CommandPermission(PermissionRegistry.SR)
     @CommandDescription(Message.HELP_SR)
     public void commandHelp(SRCommandSender sender, @Argument(suggestions = "help_queries_sr") @Greedy String query) {
-        MinecraftHelp.<SRCommandSender>builder()
-                .commandManager(commandManager.getCommandManager())
-                .audienceProvider(ComponentHelper::commandSenderToAudience)
-                .commandPrefix("/sr help")
-                .messageProvider(MinecraftHelp.captionMessageProvider(
-                        commandManager.getCommandManager().captionRegistry(),
-                        ComponentCaptionFormatter.miniMessage()
-                ))
-                .descriptionDecorator((s, d) -> ComponentHelper.convertJsonToComponent(locale.getMessageRequired(s, Message.fromKey(d).orElseThrow())))
-                .commandFilter(c -> c.rootComponent().name().equals("sr") && !c.commandDescription().description().isEmpty())
-                .build()
-                .queryCommands(query == null ? "" : query, sender);
+        helpService.sendQueryHelp(sender, "sr", query);
     }
 
     @Command("reload")
@@ -203,49 +172,7 @@ public final class SRCommand {
     @CommandPermission(PermissionRegistry.SR_STATUS)
     @CommandDescription(Message.HELP_SR_STATUS)
     private void onStatus(SRCommandSender sender) {
-        sender.sendMessage(Message.ADMINCOMMAND_STATUS_CHECKING);
-
-        sender.sendMessage(Message.DIVIDER);
-
-        ServiceCheckerService.ServiceCheckResponse response = serviceCheckerService.checkServices();
-        for (ServiceCheckerService.ServiceCheckResponse.ServiceCheckMessage message : response.getResults()) {
-            if (!message.success() || settings.getProperty(DevConfig.DEBUG)) {
-                sender.sendMessage(ComponentHelper.parseMiniMessageToJsonString(message.message()));
-            }
-        }
-
-        sender.sendMessage(Message.ADMINCOMMAND_STATUS_UUID_API,
-                Placeholder.parsed("count", String.valueOf(response.getSuccessCount(ServiceCheckerService.ServiceCheckResponse.ServiceCheckType.UUID))),
-                Placeholder.parsed("total", String.valueOf(response.getTotalCount(ServiceCheckerService.ServiceCheckResponse.ServiceCheckType.UUID)))
-        );
-        sender.sendMessage(Message.ADMINCOMMAND_STATUS_PROFILE_API,
-                Placeholder.parsed("count", String.valueOf(response.getSuccessCount(ServiceCheckerService.ServiceCheckResponse.ServiceCheckType.PROFILE))),
-                Placeholder.parsed("total", String.valueOf(response.getTotalCount(ServiceCheckerService.ServiceCheckResponse.ServiceCheckType.PROFILE)))
-        );
-
-        if (response.allFullySuccessful()) {
-            // There were no unavailable services
-            sender.sendMessage(Message.ADMINCOMMAND_STATUS_WORKING);
-        } else if (response.minOneServiceUnavailable()) {
-            // At least one service was fully unavailable
-            sender.sendMessage(Message.ADMINCOMMAND_STATUS_BROKEN);
-            sender.sendMessage(Message.ADMINCOMMAND_STATUS_FIREWALL);
-        } else {
-            // No services are unavailable, but some APIs are not working
-            sender.sendMessage(Message.ADMINCOMMAND_STATUS_DEGRADED);
-        }
-
-        sender.sendMessage(Message.DIVIDER);
-        sender.sendMessage(Message.ADMINCOMMAND_STATUS_SUMMARY_VERSION, Placeholder.parsed("version", BuildData.VERSION));
-        sender.sendMessage(Message.ADMINCOMMAND_STATUS_SUMMARY_SERVER, Placeholder.parsed("version", adapter.getPlatformVersion()));
-
-        SRServerPlugin serverPlugin = injector.getIfAvailable(SRServerPlugin.class);
-        if (serverPlugin != null) {
-            sender.sendMessage(Message.ADMINCOMMAND_STATUS_SUMMARY_PROXYMODE, Placeholder.parsed("proxy_mode", Boolean.toString(serverPlugin.isProxyMode())));
-        }
-
-        sender.sendMessage(Message.ADMINCOMMAND_STATUS_SUMMARY_COMMIT, Placeholder.parsed("hash", BuildData.COMMIT_SHORT));
-        sender.sendMessage(Message.DIVIDER);
+        srCommandService.executeStatus(sender);
     }
 
     @Command("drop|remove player <target>")
@@ -480,17 +407,6 @@ public final class SRCommand {
     @CommandPermission(PermissionRegistry.SR_DUMP)
     @CommandDescription(Message.HELP_SR_DUMP)
     private void onDump(SRCommandSender sender) {
-        try {
-            sender.sendMessage(Message.ADMINCOMMAND_DUMP_UPLOADING);
-            Optional<String> url = dumpService.dump();
-            if (url.isPresent()) {
-                sender.sendMessage(Message.ADMINCOMMAND_DUMP_SUCCESS, Placeholder.parsed("url", "https://bytebin.lucko.me/%s".formatted(url.get())));
-            } else {
-                sender.sendMessage(Message.ADMINCOMMAND_DUMP_ERROR);
-            }
-        } catch (IOException | DataRequestException e) {
-            logger.severe("Failed to dump data", e);
-            sender.sendMessage(Message.ADMINCOMMAND_DUMP_ERROR);
-        }
+        srCommandService.executeDump(sender);
     }
 }

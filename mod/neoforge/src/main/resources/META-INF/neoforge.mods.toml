@@ -1,0 +1,64 @@
+modLoader = "javafml"
+loaderVersion = "[4,)"
+issueTrackerURL = "https://github.com/SkinsRestorer/SkinsRestorer/issues"
+license = "GPL-3.0"
+
+[[mods]]
+modId = "skinsrestorer"
+version = "${version}"
+displayName = "SkinsRestorer"
+displayURL = "https://skinsrestorer.net"
+authors = "AlexProgrammerDE, xknat"
+description = '''
+Ability to restore/change skins on servers!
+'''
+logoFile = "skinsrestorer.png"
+modUrl = "https://modrinth.com/plugin/skinsrestorer"
+
+[[dependencies.skinsrestorer]]
+modId = "neoforge"
+type = "required"
+versionRange = "[21.0,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.skinsrestorer]]
+modId = "minecraft"
+type = "required"
+versionRange = "[1.21,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.skinsrestorer]]
+modId = "architectury"
+type = "required"
+versionRange = "[13.0.2,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.skinsrestorer]]
+modId = "cloud"
+type = "required"
+versionRange = "[1.0,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.skinsrestorer]]
+modId = "neoforwarding"
+type = "optional"
+versionRange = ""
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.skinsrestorer]]
+modId = "neovelocity"
+type = "optional"
+versionRange = "*"
+ordering = "AFTER"
+side = "BOTH"
+
+[[mixins]]
+config = "skinsrestorer.mixins.json"
+
+[[accessTransformers]]
+file = "META-INF/accesstransformer.cfg"

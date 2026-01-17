@@ -21,6 +21,8 @@ import java.net.URL;
 import java.util.Optional;
 
 public class ValidationUtil {
+    public static final String AXOLOTL_PREFIX = "skinsrestorer-axolotl://";
+
     private ValidationUtil() {
     }
 
@@ -42,6 +44,10 @@ public class ValidationUtil {
     }
 
     public static boolean validSkinUrl(String str) {
+        if (str.startsWith(AXOLOTL_PREFIX)) {
+            return true;
+        }
+
         Optional<URL> uriOptional = SRHelpers.parseURL(str);
         return uriOptional.isPresent() && (uriOptional.get().getProtocol().equals("http") || uriOptional.get().getProtocol().equals("https"));
     }

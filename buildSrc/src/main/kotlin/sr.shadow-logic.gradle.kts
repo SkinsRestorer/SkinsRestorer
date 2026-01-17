@@ -1,4 +1,5 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import com.github.jengelman.gradle.plugins.shadow.transformers.PreserveFirstFoundResourceTransformer
 
 plugins {
     id("sr.base-logic")
@@ -17,13 +18,18 @@ tasks {
 
     jar {
         archiveClassifier.set("unshaded")
-        from(project.rootProject.file("LICENSE"))
+        from(rootProject.layout.projectDirectory.file("LICENSE"))
     }
 
     shadowJar {
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
         mergeServiceFiles()
+        filesNotMatching("META-INF/services/**") {
+            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        }
+        transform<PreserveFirstFoundResourceTransformer>()
+        exclude("META-INF/annotations.shadow.kotlin_module")
         configureRelocations()
-        failOnDuplicateEntries = true
     }
 
     build {

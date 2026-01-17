@@ -28,7 +28,7 @@ import net.skinsrestorer.shared.storage.model.player.PlayerData;
 import net.skinsrestorer.shared.storage.model.skin.CustomSkinData;
 import net.skinsrestorer.shared.storage.model.skin.PlayerSkinData;
 import net.skinsrestorer.shared.storage.model.skin.URLSkinData;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -57,20 +57,20 @@ public class AdapterHelper {
         adapter.setCustomSkinData("test-skin2", CustomSkinData.of("test-skin2",
                 null, HardcodedSkins.ALEX.getProperty()));
 
-        Assert.assertEquals(2, adapter.getTotalCustomSkins());
-        Assert.assertEquals(2, adapter.getCustomGUISkins(0, Integer.MAX_VALUE).size());
+        Assertions.assertEquals(2, adapter.getTotalCustomSkins());
+        Assertions.assertEquals(2, adapter.getCustomGUISkins(0, Integer.MAX_VALUE).size());
 
         // Check if offset works as well, we actually have two skins in the storage for GUI
-        Assert.assertEquals(1, adapter.getCustomGUISkins(1, Integer.MAX_VALUE).size());
+        Assertions.assertEquals(1, adapter.getCustomGUISkins(1, Integer.MAX_VALUE).size());
 
-        Assert.assertEquals(1, adapter.getTotalPlayerSkins());
-        Assert.assertEquals(1, adapter.getPlayerGUISkins(0, Integer.MAX_VALUE).size());
+        Assertions.assertEquals(1, adapter.getTotalPlayerSkins());
+        Assertions.assertEquals(1, adapter.getPlayerGUISkins(0, Integer.MAX_VALUE).size());
 
         // Check if offset works as well, we actually have one skins in the storage for GUI
-        Assert.assertEquals(0, adapter.getPlayerGUISkins(1, Integer.MAX_VALUE).size());
+        Assertions.assertEquals(0, adapter.getPlayerGUISkins(1, Integer.MAX_VALUE).size());
 
         try {
-            Assert.assertEquals(playerData, adapter.getPlayerData(playerId).orElseThrow());
+            Assertions.assertEquals(playerData, adapter.getPlayerData(playerId).orElseThrow());
         } catch (StorageAdapter.StorageException e) {
             throw new RuntimeException(e);
         }

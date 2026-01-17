@@ -18,8 +18,6 @@
   "skinsrestorer.help_sr_purge_old_data": "Očisti stare podatke o skinovima od prije više od x dana.",
   "skinsrestorer.help_sr_dump": "Prenesite podatke za podršku na bytebin.lucko.me.",
   "skinsrestorer.success_generic": "<dark_green><message>",
-  "skinsrestorer.success_skin_clear": "Vaš skin je obrisan.",
-  "skinsrestorer.success_updating_skin": "Vaš skin je ažuriran.",
   "skinsrestorer.success_admin_applyskin": "Skin igrača je osvježen!",
   "skinsrestorer.success_admin_drop": "<type> podaci, ispušteni za <target>.",
   "skinsrestorer.success_admin_reload": "Konfiguracija i lokalizacija su ponovno učitani!",

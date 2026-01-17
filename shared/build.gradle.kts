@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.transformers.PreserveFirstFoundResourceTransformer
+
 plugins {
     id("sr.base-logic")
     id("com.gradleup.shadow")
@@ -41,8 +43,13 @@ dependencies {
 
 tasks {
     shadowJar {
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
         mergeServiceFiles()
+        filesNotMatching("META-INF/services/**") {
+            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        }
+        transform<PreserveFirstFoundResourceTransformer>()
+        exclude("META-INF/annotations.shadow.kotlin_module")
         relocate("net.kyori", "net.skinsrestorer.shadow.kyori")
-        failOnDuplicateEntries = true
     }
 }

@@ -21,6 +21,7 @@ import lombok.Setter;
 
 import javax.inject.Provider;
 import java.util.Objects;
+import java.util.function.Function;
 
 @Setter
 public class AdapterReference implements Provider<StorageAdapter> {
@@ -29,5 +30,24 @@ public class AdapterReference implements Provider<StorageAdapter> {
     @Override
     public StorageAdapter get() {
         return Objects.requireNonNull(adapter, "We're not connected to a storage backend!");
+    }
+
+    public <T> T getOrDefault(Function<StorageAdapter, T> function, T defaultValue) {
+        if (adapter == null) {
+            return defaultValue;
+        }
+        return function.apply(adapter);
+    }
+
+    public <T, E extends Throwable> T getOrDefaultThrowing(ThrowingFunction<StorageAdapter, T, E> function, T defaultValue) throws E {
+        if (adapter == null) {
+            return defaultValue;
+        }
+        return function.apply(adapter);
+    }
+
+    @FunctionalInterface
+    public interface ThrowingFunction<I, O, E extends Throwable> {
+        O apply(I input) throws E;
     }
 }

@@ -4,5 +4,5 @@ plugins {
 
 mapping {
     // 1.21.2 shipped with broken mappings
-    mcVersion = "1.21.3"
+    mcVersion.set("1.21.3")
 }

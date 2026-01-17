@@ -3,7 +3,7 @@ import io.papermc.hangarpublishplugin.model.Platforms
 plugins {
     java
     id("xyz.wagyourtail.jvmdowngrader")
-    id("io.papermc.hangar-publish-plugin") version "0.1.3"
+    id("io.papermc.hangar-publish-plugin") version "0.1.4"
 }
 
 dependencies {
@@ -36,7 +36,7 @@ tasks {
         downgradeTo = JavaVersion.VERSION_1_8
 
         archiveFileName = "SkinsRestorer.jar"
-        destinationDirectory = rootProject.projectDir.resolve("build/libs")
+        destinationDirectory = rootProject.layout.buildDirectory.dir("libs")
 
         shadePath = { _ -> "net/skinsrestorer/shadow/jvmdowngrader" }
     }

@@ -8,19 +8,15 @@ plugins {
 }
 
 val downgradePlatformBase = tasks.register<DowngradeJar>("downgradePlatformBase") {
-    dependsOn(tasks.shadowJar)
-
-    inputFile = tasks.shadowJar.get().archiveFile
+    inputFile.set(tasks.shadowJar.flatMap { it.archiveFile })
     downgradeTo = JavaVersion.VERSION_1_8
     archiveClassifier.set("downgraded-base")
 }
 
 val downgradePlatformShadow = tasks.register<ShadeJar>("downgradePlatformShadow") {
-    dependsOn(downgradePlatformBase)
-
-    inputFile = downgradePlatformBase.get().archiveFile
+    inputFile.set(downgradePlatformBase.flatMap { it.archiveFile })
     downgradeTo = JavaVersion.VERSION_1_8
-    archiveFileName.set("${base.archivesName.get()}-${project.version}-downgraded.jar")
+    archiveFileName.set(base.archivesName.map { "$it-${project.version}-downgraded.jar" })
 
     destinationDirectory.set(rootProject.layout.buildDirectory.dir("libs"))
     shadePath = { _ -> "net/skinsrestorer/shadow/jvmdowngrader" }
@@ -30,8 +26,8 @@ tasks {
     val downgradedTest by tasks.registering(Test::class) {
         group = "verification"
         useJUnitPlatform()
-        dependsOn(downgradePlatformShadow)
-        classpath = downgradePlatformShadow.get().outputs.files + sourceSets.test.get().output + sourceSets.test.get().runtimeClasspath - sourceSets.main.get().output
+        classpath =
+            files(downgradePlatformShadow.flatMap { it.archiveFile }) + sourceSets.test.get().output + sourceSets.test.get().runtimeClasspath - sourceSets.main.get().output
     }
     check {
         dependsOn(downgradedTest)
@@ -41,7 +37,7 @@ tasks {
 configurations.create("downgraded")
 
 artifacts {
-    add("downgraded", downgradePlatformBase.get().archiveFile) {
+    add("downgraded", downgradePlatformBase.flatMap { it.archiveFile }) {
         builtBy(downgradePlatformBase)
     }
 }

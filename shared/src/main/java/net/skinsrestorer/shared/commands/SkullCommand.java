@@ -20,22 +20,28 @@ package net.skinsrestorer.shared.commands;
 import ch.jalu.configme.SettingsManager;
 import ch.jalu.configme.properties.Property;
 import lombok.RequiredArgsConstructor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.object.ObjectContents;
+import net.kyori.adventure.text.object.PlayerHeadObjectContents;
 import net.skinsrestorer.api.PropertyUtils;
 import net.skinsrestorer.api.connections.MineSkinAPI;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.exception.MineSkinException;
 import net.skinsrestorer.api.property.InputDataResult;
 import net.skinsrestorer.api.property.SkinIdentifier;
+import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.property.SkinVariant;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
 import net.skinsrestorer.shared.codec.SRServerPluginMessage;
+import net.skinsrestorer.shared.commands.library.CommandHelpService;
 import net.skinsrestorer.shared.commands.library.PlayerSelector;
 import net.skinsrestorer.shared.commands.library.SRCommandManager;
 import net.skinsrestorer.shared.commands.library.annotations.CommandDescription;
 import net.skinsrestorer.shared.commands.library.annotations.CommandPermission;
 import net.skinsrestorer.shared.commands.library.annotations.RootDescription;
 import net.skinsrestorer.shared.commands.library.annotations.SRCooldownGroup;
+import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.config.CommandConfig;
 import net.skinsrestorer.shared.connections.RecommendationsState;
 import net.skinsrestorer.shared.connections.responses.RecommenationResponse;
@@ -59,9 +65,6 @@ import org.incendo.cloud.annotations.Argument;
 import org.incendo.cloud.annotations.Command;
 import org.incendo.cloud.annotations.suggestion.Suggestions;
 import org.incendo.cloud.context.CommandContext;
-import org.incendo.cloud.help.result.CommandEntry;
-import org.incendo.cloud.minecraft.extras.MinecraftHelp;
-import org.incendo.cloud.minecraft.extras.caption.ComponentCaptionFormatter;
 import org.incendo.cloud.processors.cooldown.CooldownGroup;
 import org.jetbrains.annotations.Nullable;
 
@@ -92,53 +95,24 @@ public final class SkullCommand {
     private final SRCommandManager commandManager;
     private final RecommendationsState recommendationsState;
     private final SkinPermissionManager permissionManager;
+    private final CommandHelpService helpService;
 
     @Command("")
     @CommandPermission(PermissionRegistry.SKULL)
     public void rootCommand(SRCommandSender sender) {
-        MinecraftHelp.<SRCommandSender>builder()
-                .commandManager(commandManager.getCommandManager())
-                .audienceProvider(ComponentHelper::commandSenderToAudience)
-                .commandPrefix("/skull help")
-                .messageProvider(MinecraftHelp.captionMessageProvider(
-                        commandManager.getCommandManager().captionRegistry(),
-                        ComponentCaptionFormatter.miniMessage()
-                ))
-                .descriptionDecorator((s, d) -> ComponentHelper.convertJsonToComponent(locale.getMessageRequired(s, Message.fromKey(d).orElseThrow())))
-                .commandFilter(c -> c.rootComponent().name().equals("skull") && !c.commandDescription().description().isEmpty())
-                .maxResultsPerPage(Integer.MAX_VALUE)
-                .build()
-                .queryCommands("", sender);
+        helpService.sendRootHelp(sender, "skull");
     }
 
     @Suggestions("help_queries_skull")
     public List<String> suggestHelpQueries(CommandContext<SRCommandSender> ctx, String input) {
-        return this.commandManager.getCommandManager()
-                .createHelpHandler()
-                .queryRootIndex(ctx.sender())
-                .entries()
-                .stream()
-                .filter(e -> e.command().rootComponent().name().equals("skull"))
-                .map(CommandEntry::syntax)
-                .toList();
+        return helpService.suggestHelpQueries(ctx.sender(), "skull");
     }
 
     @Command("help [query]")
     @CommandPermission(PermissionRegistry.SKULL)
     @CommandDescription(Message.HELP_SKULL)
     public void commandHelp(SRCommandSender sender, @Argument(suggestions = "help_queries_skull") @Greedy String query) {
-        MinecraftHelp.<SRCommandSender>builder()
-                .commandManager(commandManager.getCommandManager())
-                .audienceProvider(ComponentHelper::commandSenderToAudience)
-                .commandPrefix("/skull help")
-                .messageProvider(MinecraftHelp.captionMessageProvider(
-                        commandManager.getCommandManager().captionRegistry(),
-                        ComponentCaptionFormatter.miniMessage()
-                ))
-                .descriptionDecorator((s, d) -> ComponentHelper.convertJsonToComponent(locale.getMessageRequired(s, Message.fromKey(d).orElseThrow())))
-                .commandFilter(c -> c.rootComponent().name().equals("skull") && !c.commandDescription().description().isEmpty())
-                .build()
-                .queryCommands(query == null ? "" : query, sender);
+        helpService.sendQueryHelp(sender, "skull", query);
     }
 
     @Command("<skinName>")
@@ -204,18 +178,18 @@ public final class SkullCommand {
             Optional<SRPlayer> targetPlayer = adapter.getPlayer(sender, target);
             String targetName = targetPlayer.map(SRPlayer::getName).orElseGet(target::toString);
 
-            if (!setSkin(sender, target, skinName, skinVariant)) {
+            var givenSkull = giveSkull(sender, target, skinName, skinVariant);
+            if (givenSkull.isEmpty()) {
                 return;
             }
 
-            if (senderEqual(sender, target)) {
-                sender.sendMessage(Message.SUCCESS_SKULL_GET,
-                        Placeholder.unparsed("skin", skinName));
-            } else {
-                sender.sendMessage(Message.SUCCESS_SKULL_GET_OTHER,
-                        Placeholder.unparsed("name", targetName),
-                        Placeholder.unparsed("skin", skinName));
-            }
+            sender.sendMessage(senderEqual(sender, target) ? Message.SUCCESS_SKULL_GET : Message.SUCCESS_SKULL_GET_OTHER,
+                    Placeholder.unparsed("name", targetName),
+                    Placeholder.unparsed("skin", skinName),
+                    Placeholder.component("skin_head", AdvancedConfig.emptyIfPlayerHeadChatObjectsDisabled(settings, Component.object(ObjectContents.playerHead()
+                            .name(targetName)
+                            .profileProperty(PlayerHeadObjectContents.property(SkinProperty.TEXTURES_NAME, givenSkull.get().getValue(), givenSkull.get().getSignature()))
+                            .build()))));
         }
     }
 
@@ -233,11 +207,11 @@ public final class SkullCommand {
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    private boolean setSkin(SRCommandSender sender, UUID target, String skinInput, SkinVariant skinVariant) {
+    private Optional<SkinProperty> giveSkull(SRCommandSender sender, UUID target, String skinInput, SkinVariant skinVariant) {
         Optional<Message> noPermissionMessage = permissionManager.canSetSkin(sender, skinInput);
         if (noPermissionMessage.isPresent()) {
             sender.sendMessage(noPermissionMessage.get());
-            return false;
+            return Optional.empty();
         }
 
         try {
@@ -250,13 +224,13 @@ public final class SkullCommand {
 
             if (optional.isEmpty()) {
                 sender.sendMessage(Message.NOT_PREMIUM); // TODO: Is this the right message?
-                return false;
+                return Optional.empty();
             }
 
             Optional<SRPlayer> targetPlayer = adapter.getPlayer(sender, target);
             if (targetPlayer.isEmpty()) {
                 // TODO: Send message
-                return false;
+                return Optional.empty();
             }
 
             SkinIdentifier skinIdentifier = optional.get().getIdentifier();
@@ -271,7 +245,7 @@ public final class SkullCommand {
 
             setCoolDown(sender, CommandConfig.SKULL_GET_COOLDOWN);
 
-            return true;
+            return Optional.of(optional.get().getProperty());
         } catch (DataRequestException e) {
             ComponentHelper.sendException(e, sender, locale, logger);
         } catch (MineSkinException e) {
@@ -280,7 +254,7 @@ public final class SkullCommand {
         }
 
         setCoolDown(sender, CommandConfig.SKULL_ERROR_COOLDOWN);
-        return false;
+        return Optional.empty();
     }
 
     private void setCoolDown(SRCommandSender sender, Property<Integer> time) {

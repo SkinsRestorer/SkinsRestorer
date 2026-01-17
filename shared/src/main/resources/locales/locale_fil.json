@@ -31,6 +31,5 @@
   "skinsrestorer.help_sr_apply_skin": "Ibigay ulit ang itsura ng ibang tao.",
   "skinsrestorer.help_sr_create_custom": "Gumawa ng custom na itsura para sa server.",
   "skinsrestorer.help_sr_dump": "Ilagay ang impormasyon na support sa bytebin.lucko.me.",
-  "skinsrestorer.info_use_quotes": "Ang mga URLs dapat nakalagay sa mga quote. Halimbawa: <yellow>/skin set \"https://example.com/skin.png\"</yellow> (Pwedeing mag autocomplete ito)",
-  "skinsrestorer.success_skin_change": "Nag-iba ang iyong itsura."
+  "skinsrestorer.info_use_quotes": "Ang mga URLs dapat nakalagay sa mga quote. Halimbawa: <yellow>/skin set \"https://example.com/skin.png\"</yellow> (Pwedeing mag autocomplete ito)"
 }

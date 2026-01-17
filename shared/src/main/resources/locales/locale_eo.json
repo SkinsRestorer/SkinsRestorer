@@ -4,8 +4,6 @@
   "skinsrestorer.help_skin_clear": "Nuligas vian haŭton.",
   "skinsrestorer.help_skin_update": "Ĝisdatigas vian haŭton.",
   "skinsrestorer.success_generic": "<dark_green><message>",
-  "skinsrestorer.success_skin_clear": "Vian haŭton nuligis.",
-  "skinsrestorer.success_updating_skin": "Vian haŭton ĝisdatigis.",
   "skinsrestorer.error_generic": "<dark_red>Eraro<dark_gray>: <red><message>",
   "skinsrestorer.error_ms_unknown": "Nekonata eraro de MineSkin!",
   "skinsrestorer.divider": "<dark_aqua>----------------------------------------------",

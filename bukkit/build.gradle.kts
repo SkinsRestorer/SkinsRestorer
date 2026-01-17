@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.transformers.PreserveFirstFoundResourceTransformer
+
 plugins {
     id("sr.platform-logic")
     alias(libs.plugins.runpaper)
@@ -12,14 +14,17 @@ dependencies {
     runtimeOnly(project(":skinsrestorer-shared", "shadow"))
     implementation(projects.multiver.bukkit.shared)
     implementation(projects.multiver.bukkit.paper)
-    implementation(projects.multiver.bukkit.v17)
     compileOnly(projects.multiver.miniplaceholders)
 
-    rootProject.subprojects.forEach {
-        if (!it.name.startsWith("mc-")) return@forEach
-
-        compileOnly(project(":mappings:${it.name}"))
-        runtimeOnly(project(":mappings:${it.name}", "remapped"))
+    // Explicit mapping dependencies for configuration cache compatibility
+    listOf(
+        "mc-1-18", "mc-1-18-2",
+        "mc-1-19", "mc-1-19-1", "mc-1-19-2", "mc-1-19-3", "mc-1-19-4",
+        "mc-1-20", "mc-1-20-2", "mc-1-20-4", "mc-1-20-5",
+        "mc-1-21", "mc-1-21-2", "mc-1-21-4", "mc-1-21-5", "mc-1-21-6", "mc-1-21-9", "mc-1-21-11"
+    ).forEach { mapping ->
+        compileOnly(project(":mappings:$mapping"))
+        runtimeOnly(project(":mappings:$mapping", "remapped"))
     }
     testImplementation(testFixtures(projects.test))
 
@@ -56,8 +61,13 @@ tasks {
 
 tasks {
     shadowJar {
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
         mergeServiceFiles()
+        filesNotMatching("META-INF/services/**") {
+            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        }
+        transform<PreserveFirstFoundResourceTransformer>()
+        exclude("META-INF/annotations.shadow.kotlin_module")
         relocate("net.kyori", "net.skinsrestorer.shadow.kyori")
-        failOnDuplicateEntries = true
     }
 }

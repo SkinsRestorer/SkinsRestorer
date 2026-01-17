@@ -11,8 +11,9 @@
     "xknat"
   ],
   "ignoreDeps": [
-    "com.viaversion:viaversion",
-    "org.spigotmc:spigot-api"
+    "org.spigotmc:spigot-api",
+    "net.fabricmc.fabric-api:fabric-api-bom",
+    "net.fabricmc.fabric-api:fabric-api"
   ],
   "labels": [
     "renovate"
@@ -25,7 +26,8 @@
         "pin",
         "digest"
       ],
-      "automerge": true
+      "automerge": true,
+      "automergeType": "branch"
     },
     {
       "matchPackageNames": [
