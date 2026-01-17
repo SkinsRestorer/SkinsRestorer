@@ -41,13 +41,13 @@ public class PostgreSQLProvider {
     private HikariDataSource dataSource;
 
     public void initPool() {
-        String host = settings.getProperty(DatabaseConfig.MYSQL_HOST);
-        String username = settings.getProperty(DatabaseConfig.MYSQL_USERNAME);
-        String password = settings.getProperty(DatabaseConfig.MYSQL_PASSWORD);
-        String database = settings.getProperty(DatabaseConfig.MYSQL_DATABASE);
-        int port = settings.getProperty(DatabaseConfig.MYSQL_PORT);
-        int maxPoolSize = settings.getProperty(DatabaseConfig.MYSQL_MAX_POOL_SIZE);
-        String options = settings.getProperty(DatabaseConfig.MYSQL_CONNECTION_OPTIONS);
+        String host = settings.getProperty(DatabaseConfig.DATABASE_HOST);
+        String username = settings.getProperty(DatabaseConfig.DATABASE_USERNAME);
+        String password = settings.getProperty(DatabaseConfig.DATABASE_PASSWORD);
+        String database = settings.getProperty(DatabaseConfig.DATABASE_DATABASE);
+        int port = settings.getProperty(DatabaseConfig.DATABASE_PORT);
+        int maxPoolSize = settings.getProperty(DatabaseConfig.DATABASE_MAX_POOL_SIZE);
+        String options = settings.getProperty(DatabaseConfig.DATABASE_CONNECTION_OPTIONS);
 
         StringBuilder jdbcUrlBuilder = new StringBuilder("jdbc:postgresql://")
                 .append(host)

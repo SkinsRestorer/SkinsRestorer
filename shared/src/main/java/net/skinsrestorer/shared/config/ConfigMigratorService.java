@@ -59,12 +59,12 @@ public class ConfigMigratorService implements MigrationService {
                                      ConfigurationData configData) {
         boolean migrated = false;
         migrated |= moveProperty(newProperty("Debug", false), DevConfig.DEBUG, reader, configData);
-        migrated |= moveProperty(newProperty("MySQL.Host", "localhost"), DatabaseConfig.MYSQL_HOST, reader, configData);
-        migrated |= moveProperty(newProperty("MySQL.Port", 3306), DatabaseConfig.MYSQL_PORT, reader, configData);
-        migrated |= moveProperty(newProperty("MySQL.Database", "db"), DatabaseConfig.MYSQL_DATABASE, reader, configData);
-        migrated |= moveProperty(newProperty("MySQL.Username", "root"), DatabaseConfig.MYSQL_USERNAME, reader, configData);
-        migrated |= moveProperty(newProperty("MySQL.Password", "password"), DatabaseConfig.MYSQL_PASSWORD, reader, configData);
-        migrated |= moveProperty(newProperty("MySQL.ConnectionOptions", ""), DatabaseConfig.MYSQL_CONNECTION_OPTIONS, reader, configData);
+        migrated |= moveProperty(newProperty("MySQL.Host", "localhost"), DatabaseConfig.DATABASE_HOST, reader, configData);
+        migrated |= moveProperty(newProperty("MySQL.Port", 3306), DatabaseConfig.DATABASE_PORT, reader, configData);
+        migrated |= moveProperty(newProperty("MySQL.Database", "db"), DatabaseConfig.DATABASE_DATABASE, reader, configData);
+        migrated |= moveProperty(newProperty("MySQL.Username", "root"), DatabaseConfig.DATABASE_USERNAME, reader, configData);
+        migrated |= moveProperty(newProperty("MySQL.Password", "password"), DatabaseConfig.DATABASE_PASSWORD, reader, configData);
+        migrated |= moveProperty(newProperty("MySQL.ConnectionOptions", ""), DatabaseConfig.DATABASE_CONNECTION_OPTIONS, reader, configData);
 
         boolean migratedDatabaseType = migrateDatabaseType(reader, configData, newProperty("database.enabled", false));
         if (!migratedDatabaseType) {

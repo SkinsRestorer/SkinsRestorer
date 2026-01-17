@@ -594,39 +594,39 @@ public class PostgreSQLAdapter implements StorageAdapter {
     }
 
     private String resolveCustomSkinTable() {
-        return settings.getProperty(DatabaseConfig.MYSQL_TABLE_PREFIX) + "custom_skins";
+        return settings.getProperty(DatabaseConfig.DATABASE_TABLE_PREFIX) + "custom_skins";
     }
 
     private String resolveURLSkinTable() {
-        return settings.getProperty(DatabaseConfig.MYSQL_TABLE_PREFIX) + "url_skins";
+        return settings.getProperty(DatabaseConfig.DATABASE_TABLE_PREFIX) + "url_skins";
     }
 
     private String resolveURLSkinIndexTable() {
-        return settings.getProperty(DatabaseConfig.MYSQL_TABLE_PREFIX) + "url_index";
+        return settings.getProperty(DatabaseConfig.DATABASE_TABLE_PREFIX) + "url_index";
     }
 
     private String resolvePlayerSkinTable() {
-        return settings.getProperty(DatabaseConfig.MYSQL_TABLE_PREFIX) + "player_skins";
+        return settings.getProperty(DatabaseConfig.DATABASE_TABLE_PREFIX) + "player_skins";
     }
 
     private String resolvePlayerTable() {
-        return settings.getProperty(DatabaseConfig.MYSQL_TABLE_PREFIX) + "players";
+        return settings.getProperty(DatabaseConfig.DATABASE_TABLE_PREFIX) + "players";
     }
 
     private String resolvePlayerHistoryTable() {
-        return settings.getProperty(DatabaseConfig.MYSQL_TABLE_PREFIX) + "player_history";
+        return settings.getProperty(DatabaseConfig.DATABASE_TABLE_PREFIX) + "player_history";
     }
 
     private String resolvePlayerFavouritesTable() {
-        return settings.getProperty(DatabaseConfig.MYSQL_TABLE_PREFIX) + "player_favourites";
+        return settings.getProperty(DatabaseConfig.DATABASE_TABLE_PREFIX) + "player_favourites";
     }
 
     private String resolveCooldownTable() {
-        return settings.getProperty(DatabaseConfig.MYSQL_TABLE_PREFIX) + "cooldowns";
+        return settings.getProperty(DatabaseConfig.DATABASE_TABLE_PREFIX) + "cooldowns";
     }
 
     private String resolveCacheTable() {
-        return settings.getProperty(DatabaseConfig.MYSQL_TABLE_PREFIX) + "cache";
+        return settings.getProperty(DatabaseConfig.DATABASE_TABLE_PREFIX) + "cache";
     }
 
 }

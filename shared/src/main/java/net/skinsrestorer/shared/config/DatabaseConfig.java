@@ -30,14 +30,14 @@ public class DatabaseConfig implements SettingsHolder {
             "Database backend selection. Valid values: FILE, MYSQL, POSTGRESQL."
     })
     public static final Property<DatabaseType> DATABASE_TYPE = newProperty(DatabaseType.class, "database.type", DatabaseType.FILE);
-    public static final Property<String> MYSQL_HOST = newProperty("database.host", "localhost");
-    public static final Property<Integer> MYSQL_PORT = newCappedProperty("database.port", 3306, 1, 65535);
-    public static final Property<String> MYSQL_DATABASE = newProperty("database.database", "db");
-    public static final Property<String> MYSQL_USERNAME = newProperty("database.username", "root");
-    public static final Property<String> MYSQL_PASSWORD = newProperty("database.password", "pass");
-    public static final Property<Integer> MYSQL_MAX_POOL_SIZE = newCappedProperty("database.maxPoolSize", 10, 1, 1000);
-    public static final Property<String> MYSQL_TABLE_PREFIX = newProperty("database.tablePrefix", "sr_");
-    public static final Property<String> MYSQL_CONNECTION_OPTIONS = newProperty("database.connectionOptions", "sslMode=trust&serverTimezone=UTC");
+    public static final Property<String> DATABASE_HOST = newProperty("database.host", "localhost");
+    public static final Property<Integer> DATABASE_PORT = newCappedProperty("database.port", 3306, 1, 65535);
+    public static final Property<String> DATABASE_DATABASE = newProperty("database.database", "db");
+    public static final Property<String> DATABASE_USERNAME = newProperty("database.username", "root");
+    public static final Property<String> DATABASE_PASSWORD = newProperty("database.password", "pass");
+    public static final Property<Integer> DATABASE_MAX_POOL_SIZE = newCappedProperty("database.maxPoolSize", 10, 1, 1000);
+    public static final Property<String> DATABASE_TABLE_PREFIX = newProperty("database.tablePrefix", "sr_");
+    public static final Property<String> DATABASE_CONNECTION_OPTIONS = newProperty("database.connectionOptions", "sslMode=trust&serverTimezone=UTC");
 
     @Override
     public void registerComments(CommentsConfiguration conf) {

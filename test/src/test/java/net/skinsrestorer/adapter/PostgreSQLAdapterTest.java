@@ -56,13 +56,13 @@ public class PostgreSQLAdapterTest {
     @BeforeEach
     public void setup() {
         SettingsHelper.returnDefaultsForAllProperties(settingsManager);
-        when(settingsManager.getProperty(DatabaseConfig.MYSQL_HOST)).thenReturn(postgreSQLContainer.getHost());
-        when(settingsManager.getProperty(DatabaseConfig.MYSQL_PORT)).thenReturn(postgreSQLContainer.getFirstMappedPort());
-        when(settingsManager.getProperty(DatabaseConfig.MYSQL_USERNAME)).thenReturn(postgreSQLContainer.getUsername());
-        when(settingsManager.getProperty(DatabaseConfig.MYSQL_PASSWORD)).thenReturn(postgreSQLContainer.getPassword());
-        when(settingsManager.getProperty(DatabaseConfig.MYSQL_DATABASE)).thenReturn(postgreSQLContainer.getDatabaseName());
+        when(settingsManager.getProperty(DatabaseConfig.DATABASE_HOST)).thenReturn(postgreSQLContainer.getHost());
+        when(settingsManager.getProperty(DatabaseConfig.DATABASE_PORT)).thenReturn(postgreSQLContainer.getFirstMappedPort());
+        when(settingsManager.getProperty(DatabaseConfig.DATABASE_USERNAME)).thenReturn(postgreSQLContainer.getUsername());
+        when(settingsManager.getProperty(DatabaseConfig.DATABASE_PASSWORD)).thenReturn(postgreSQLContainer.getPassword());
+        when(settingsManager.getProperty(DatabaseConfig.DATABASE_DATABASE)).thenReturn(postgreSQLContainer.getDatabaseName());
 
-        when(settingsManager.getProperty(DatabaseConfig.MYSQL_CONNECTION_OPTIONS)).thenReturn("sslmode=disable");
+        when(settingsManager.getProperty(DatabaseConfig.DATABASE_CONNECTION_OPTIONS)).thenReturn("sslmode=disable");
     }
 
     @Test

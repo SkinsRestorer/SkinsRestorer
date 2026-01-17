@@ -64,11 +64,11 @@ public class MySQLAdapterTest {
     @BeforeEach
     public void setup() {
         SettingsHelper.returnDefaultsForAllProperties(settingsManager);
-        when(settingsManager.getProperty(DatabaseConfig.MYSQL_HOST)).thenReturn(mariaDBContainer.getHost());
-        when(settingsManager.getProperty(DatabaseConfig.MYSQL_PORT)).thenReturn(mariaDBContainer.getFirstMappedPort());
-        when(settingsManager.getProperty(DatabaseConfig.MYSQL_USERNAME)).thenReturn(mariaDBContainer.getUsername());
-        when(settingsManager.getProperty(DatabaseConfig.MYSQL_PASSWORD)).thenReturn(mariaDBContainer.getPassword());
-        when(settingsManager.getProperty(DatabaseConfig.MYSQL_DATABASE)).thenReturn(mariaDBContainer.getDatabaseName());
+        when(settingsManager.getProperty(DatabaseConfig.DATABASE_HOST)).thenReturn(mariaDBContainer.getHost());
+        when(settingsManager.getProperty(DatabaseConfig.DATABASE_PORT)).thenReturn(mariaDBContainer.getFirstMappedPort());
+        when(settingsManager.getProperty(DatabaseConfig.DATABASE_USERNAME)).thenReturn(mariaDBContainer.getUsername());
+        when(settingsManager.getProperty(DatabaseConfig.DATABASE_PASSWORD)).thenReturn(mariaDBContainer.getPassword());
+        when(settingsManager.getProperty(DatabaseConfig.DATABASE_DATABASE)).thenReturn(mariaDBContainer.getDatabaseName());
 
     }
 
