@@ -51,7 +51,7 @@ public class DatabaseConfig implements SettingsHolder {
                 "Set database.type to FILE, MYSQL or POSTGRESQL.",
                 "[!] Make sure you have the correct permissions set for your database user. [!]",
                 "[!] Make sure to fill in database.connectionOptions if you're using certificate / ssl authentication. [!]",
-                "Example connectionOptions: mysql -> sslMode=trust&serverTimezone=UTC, postgresql -> sslmode=disable"
+                "[!] If you're not using ssl, change sslMode=trust to sslMode=disable [!]"
         );
     }
 
