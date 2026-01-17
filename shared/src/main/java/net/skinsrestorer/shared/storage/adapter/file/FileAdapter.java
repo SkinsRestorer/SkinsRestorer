@@ -633,7 +633,8 @@ public class FileAdapter implements StorageAdapter {
     }
 
     @Override
-    public void purgeStoredOldSkins(long targetPurgeTimestamp) throws StorageException {
+    public int purgeStoredOldSkins(long targetPurgeTimestamp) throws StorageException {
+        int count = 0;
         List<Path> files = new ArrayList<>();
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(skinsFolder, "*.playerskin")) {
             stream.forEach(files::add);
@@ -649,11 +650,13 @@ public class FileAdapter implements StorageAdapter {
 
                 if (skinFile.getTimestamp() != 0L && skinFile.getTimestamp() < targetPurgeTimestamp) {
                     Files.deleteIfExists(file);
+                    count++;
                 }
             } catch (Exception e) {
                 throw new StorageException(e);
             }
         }
+        return count;
     }
 
     @Override

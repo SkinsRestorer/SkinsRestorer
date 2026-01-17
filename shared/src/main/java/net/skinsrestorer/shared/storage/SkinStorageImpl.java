@@ -408,15 +408,18 @@ public class SkinStorageImpl implements SkinStorage {
         return expiryDate <= now;
     }
 
-    public boolean purgeOldSkins(int days) {
+    /**
+     * @param days skins older than x days will be removed
+     * @return number of skins deleted, returns -1 if error
+     */
+    public int purgeOldSkins(int days) {
         long targetPurgeTimestamp = Instant.now().minus(days, ChronoUnit.DAYS).getEpochSecond();
 
         try {
-            adapterReference.get().purgeStoredOldSkins(targetPurgeTimestamp);
-            return true; // TODO: Do better than true/false return
+            return adapterReference.get().purgeStoredOldSkins(targetPurgeTimestamp);
         } catch (StorageAdapter.StorageException e) {
             logger.severe("Failed to purge old skins", e);
-            return false;
+            return -1;
         }
     }
 

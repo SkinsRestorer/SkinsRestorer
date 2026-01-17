@@ -396,7 +396,7 @@ public final class SRCommand {
     @CommandPermission(PermissionRegistry.SR_PURGE_OLD_DATA)
     @CommandDescription(Message.HELP_SR_PURGE_OLD_DATA)
     private void onPurgeOldData(SRCommandSender sender, int days) {
-        if (skinStorage.purgeOldSkins(days)) {
+        if (skinStorage.purgeOldSkins(days) == -1) {
             sender.sendMessage(Message.ADMINCOMMAND_PURGEOLDDATA_SUCCESS);
         } else {
             sender.sendMessage(Message.ADMINCOMMAND_PURGEOLDDATA_ERROR);
