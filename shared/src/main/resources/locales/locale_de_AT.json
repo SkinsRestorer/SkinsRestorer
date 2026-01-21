@@ -96,7 +96,7 @@
   "skinsrestorer.admincommand_info_invalid_uuid": "<red>Du musst eine UUID eines Spielers angeben.",
   "skinsrestorer.admincommand_info_no_set_skin": "<red>Spieler hat keinen explizit gesetzten Skin.",
   "skinsrestorer.admincommand_info_url_skin": "<gray>Skin-URL: <gold><click:open_url:'<url>'><url></click><newline><gray>MineSkin-ID: <gold><mine_skin_id>",
-  "skinsrestorer.admincommand_info_hardcoded_skin": "<gray>Hardcoded Skin: <gold><skin>",
+  "skinsrestorer.admincommand_info_hardcoded_skin": "<gray>Hartcodierte Skin: <gold><skin>",
   "skinsrestorer.admincommand_info_custom_skin": "<gray>Benutzerdefinierter Skin: <gold><skin>",
   "skinsrestorer.admincommand_info_player_skin": "<gray>Spieler Skin:<gold><skin><newline><gray>Zeitstempel: <gold><timestamp><newline><gray>Läuft ab:<gold><expires>",
   "skinsrestorer.admincommand_info_generic": "<gray>Textur-URL: <gold><click:open_url:'<url>'><url></click><newline><gray>Variante: <gold><variant><newline><gray>Profil-UUID: <gold><uuid><newline><gray>Profilname: <gold><name><newline><gray>Anfragezeit: <gold><request_time>",
