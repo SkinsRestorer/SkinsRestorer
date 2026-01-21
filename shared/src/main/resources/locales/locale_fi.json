@@ -1,4 +1,5 @@
 {
+  "skinsrestorer.prefix_format": "<yellow>[<dark_green>SkinsRestorer</dark_green>] <viesti>",
   "skinsrestorer.help_skin": "Vaihtaa omaa asuasi.",
   "skinsrestorer.help_skins": "Avaa asujen GUI.",
   "skinsrestorer.help_sr": "Admin komennot SkinsRestorer.",
@@ -129,6 +130,7 @@
   "skinsrestorer.skinsmenu_set_favourite_lore": "<gray>Shift + klikkaa asettaaksesi suosikiksi",
   "skinsrestorer.skinsmenu_remove_favourite_lore": "<gray>Shift + klikkaa poistaaksesi suosikeista",
   "skinsrestorer.skinsmenu_favourite_since_lore": "<blue>Suosikki <time> alkaen",
+  "skinsrestorer.skinsmenu_no_permission": "<red>Sinulla ei ole lupaa käyttää tätä ihoa.",
   "skinsrestorer.skinsmenu_main_button": "<aqua><bold>[</bold> <gray>Asu Valikko</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_history_button": "<aqua><bold>[</bold> <gray>Historia Valikko</gray> <bold>]</bold>",
   "skinsrestorer.skinsmenu_favourites_button": "<aqua><bold>[</bold> <gray>Suosikit Valikko</gray> <bold>]</bold>",
