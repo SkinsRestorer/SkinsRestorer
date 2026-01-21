@@ -35,7 +35,7 @@
   "skinsrestorer.help_sr_create_custom": "Cree una skin personalizada para todo el servidor.",
   "skinsrestorer.help_sr_purge_old_data": "Purga los datos de skins antiguos de hace más de x días.",
   "skinsrestorer.help_sr_dump": "Sube datos de soporte a bytebin.lucko.me.",
-  "skinsrestorer.success_generic": "<dark_green><message>",
+  "skinsrestorer.success_generic": "<dark_green><mensaje>",
   "skinsrestorer.info_use_quotes": "Las URLs deben ser citadas. Ejemplo: <yellow>/skin set \"https://example.com/skin.png\"</yellow> (Puedes presionar pestaña para completar automáticamente las comillas)",
   "skinsrestorer.success_skin_change": "Se ha cambiado tu skin  <white><skin_head></white>",
   "skinsrestorer.success_skin_change_other": "Has cambiado la skin de <yellow><name></yellow>. <white><skin_head></white>",
