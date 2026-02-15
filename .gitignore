@@ -9,6 +9,9 @@ target/
 .project
 .factorypath
 
+# OS files
+.DS_Store
+
 # UML
 *.plantuml
 
