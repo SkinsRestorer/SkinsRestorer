@@ -219,6 +219,9 @@ public class SkinStorageImpl implements SkinStorage {
     @Override
     public Optional<InputDataResult> findSkinData(String input, SkinVariant skinVariantHint) {
         input = SRHelpers.sanitizeSkinInput(input);
+        SkinInput skinInput = SkinInput.parse(input);
+        input = skinInput.name();
+        SkinType typeHint = skinInput.typeHint();
 
         try {
             if (ValidationUtil.validSkinUrl(input)) {
@@ -244,24 +247,26 @@ public class SkinStorageImpl implements SkinStorage {
                     return result;
                 }
 
-                Optional<CustomSkinData> customSkinData = adapterReference.get().getCustomSkinData(input);
+                if (typeHint != SkinType.PLAYER) {
+                    Optional<CustomSkinData> customSkinData = adapterReference.get().getCustomSkinData(input);
 
-                if (customSkinData.isPresent()) {
-                    return customSkinData.map(data ->
-                            InputDataResult.of(SkinIdentifier.ofCustom(data.getSkinName()), data.getProperty()));
+                    if (customSkinData.isPresent()) {
+                        return customSkinData.map(data ->
+                                InputDataResult.of(SkinIdentifier.ofCustom(data.getSkinName()), data.getProperty()));
+                    }
                 }
 
-                Optional<UUID> uuid = cacheStorage.getUUID(input, false);
+                if (typeHint != SkinType.CUSTOM) {
+                    Optional<UUID> uuid = cacheStorage.getUUID(input, false);
 
-                if (uuid.isEmpty()) {
-                    return Optional.empty();
-                }
+                    if (uuid.isPresent()) {
+                        Optional<PlayerSkinData> playerSkinData = adapterReference.get().getPlayerSkinData(uuid.get());
 
-                Optional<PlayerSkinData> playerSkinData = adapterReference.get().getPlayerSkinData(uuid.get());
-
-                if (playerSkinData.isPresent()) {
-                    return playerSkinData.map(data ->
-                            InputDataResult.of(SkinIdentifier.ofPlayer(uuid.get()), data.getProperty()));
+                        if (playerSkinData.isPresent()) {
+                            return playerSkinData.map(data ->
+                                    InputDataResult.of(SkinIdentifier.ofPlayer(uuid.get()), data.getProperty()));
+                        }
+                    }
                 }
             }
         } catch (StorageAdapter.StorageException | DataRequestException e) {
@@ -308,11 +313,17 @@ public class SkinStorageImpl implements SkinStorage {
     public Optional<InputDataResult> findOrCreateSkinData(String input, SkinVariant skinVariantHint) throws DataRequestException, MineSkinException {
         input = SRHelpers.sanitizeSkinInput(input);
 
+        // findSkinData handles prefix parsing internally for lookups
         Optional<InputDataResult> skinData = findSkinData(input, skinVariantHint);
 
         if (skinData.isPresent()) {
             return skinData;
         }
+
+        // Strip the prefix for the creation logic below
+        SkinInput skinInput = SkinInput.parse(input);
+        input = skinInput.name();
+        SkinType typeHint = skinInput.typeHint();
 
         // Create new skin data
         if (input.startsWith(RECOMMENDATION_PREFIX)) {
@@ -333,10 +344,12 @@ public class SkinStorageImpl implements SkinStorage {
             setURLSkinByResponse(input, response);
 
             return Optional.of(InputDataResult.of(SkinIdentifier.ofURL(input, response.getGeneratedVariant()), response.getProperty()));
-        } else {
+        } else if (typeHint != SkinType.CUSTOM) {
             return getPlayerSkin(input, false, true).map(result ->
                     InputDataResult.of(SkinIdentifier.ofPlayer(result.getUniqueId()), result.getSkinProperty()));
         }
+
+        return Optional.empty();
     }
 
     @Override
