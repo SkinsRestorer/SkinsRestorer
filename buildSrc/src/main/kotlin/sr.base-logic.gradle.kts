@@ -37,7 +37,7 @@ dependencies {
     spotbugs("com.github.spotbugs:spotbugs:4.9.8")
 
     rewrite("org.openrewrite.recipe:rewrite-static-analysis:2.27.0")
-    rewrite("org.openrewrite.recipe:rewrite-migrate-java:3.27.0")
+    rewrite("org.openrewrite.recipe:rewrite-migrate-java:3.27.1")
     rewrite("org.openrewrite.recipe:rewrite-rewrite:0.20.0")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
