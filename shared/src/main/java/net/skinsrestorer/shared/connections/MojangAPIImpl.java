@@ -51,7 +51,7 @@ public class MojangAPIImpl implements MojangAPI {
     private static final String UUID_ELYBY = "https://account.ely.by/api/mojang/profiles/%playerName%";
     private static final String PROFILE_ECLIPSE = "https://eclipse.skinsrestorer.net/mojang/skin/%uuid%";
     private static final String PROFILE_MOJANG = "https://sessionserver.mojang.com/session/minecraft/profile/%uuid%?unsigned=false";
-    private static final String PROFILE_ELYBY = "https://account.ely.by/api/minecraft/session/profile/%uuid%?unsigned=false";
+    private static final String PROFILE_ELYBY = "https://account.ely.by/api/minecraft/session/profile/%uuid%";
     private static final String PROFILE_ELYBY_SIGNED = "https://skinsystem.ely.by/textures/signed/%playerName%";
     private static final String BATCH_UUID_NEW_ENDPOINT = "https://api.minecraftservices.com/minecraft/profile/lookup/bulk/byname";
     private static final String BATCH_UUID_LEGACY_ENDPOINT = "https://api.mojang.com/profiles/minecraft";
