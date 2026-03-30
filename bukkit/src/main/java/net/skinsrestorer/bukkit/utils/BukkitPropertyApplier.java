@@ -93,22 +93,34 @@ public class BukkitPropertyApplier implements SkinApplyBukkitAdapter {
     @Override
     public void applyProperty(Player player, SkinProperty property) {
         try {
-            var properties = (Multimap<String, Object>) GET_PROPERTIES_METHOD.invoke(getGameProfile(player));
+            Object profile = getGameProfile(player);
+            boolean isResolvable = profile.getClass().getName().contains("ResolvableProfile");
+
+            Object gameProfile = isResolvable ? extractGameProfile(profile) : profile;
+
+            Method getPropsMethod = gameProfile.getClass().getMethod(GET_PROPERTIES_METHOD.getName());
+            var properties = (Multimap<String, Object>) getPropsMethod.invoke(gameProfile);
+
             var newProperties = ImmutableMultimap.<String, Object>builder();
             for (var entry : properties.entries()) {
-                if (SkinProperty.TEXTURES_NAME.equals(entry.getKey())) {
-                    continue;
-                }
-
+                if (SkinProperty.TEXTURES_NAME.equals(entry.getKey())) continue;
                 newProperties.put(entry);
             }
-            newProperties.put(SkinProperty.TEXTURES_NAME, PROPERTY_CLASS_CONSTRUCTOR.newInstance(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
+
+            Object newProperty = PROPERTY_CLASS_CONSTRUCTOR.newInstance(
+                    SkinProperty.TEXTURES_NAME,
+                    property.getValue(),
+                    property.getSignature()
+            );
+
+            newProperties.put(SkinProperty.TEXTURES_NAME, newProperty);
 
             RStream.of(properties)
                     .withSuper()
                     .fields()
                     .by("properties")
                     .set(newProperties.build());
+
         } catch (ReflectiveOperationException e) {
             logger.severe("Failed to apply skin property to player %s".formatted(player.getName()), e);
         }
@@ -118,7 +130,15 @@ public class BukkitPropertyApplier implements SkinApplyBukkitAdapter {
     @Override
     public Optional<SkinProperty> getSkinProperty(Player player) {
         try {
-            return ((Multimap<String, Object>) GET_PROPERTIES_METHOD.invoke(getGameProfile(player))).values()
+            Object profile = getGameProfile(player);
+
+            if (profile.getClass().getName().contains("ResolvableProfile")) {
+                profile = extractGameProfile(profile);
+            }
+
+            Object properties = GET_PROPERTIES_METHOD.invoke(profile);
+
+            return ((Multimap<String, Object>) properties).values()
                     .stream()
                     .map(property -> SkinProperty.tryParse(
                             AuthLibHelper.getPropertyName(property),
@@ -127,9 +147,20 @@ public class BukkitPropertyApplier implements SkinApplyBukkitAdapter {
                     )
                     .flatMap(Optional::stream)
                     .findFirst();
+
         } catch (ReflectiveOperationException e) {
             logger.severe("Failed to get skin property from player %s".formatted(player.getName()), e);
             return Optional.empty();
         }
+    }
+    private Object extractGameProfile(Object resolvableProfile) throws ReflectiveOperationException {
+
+        for (Method method : resolvableProfile.getClass().getMethods()) {
+            if (method.getReturnType().getName().equals("com.mojang.authlib.GameProfile")) {
+                return method.invoke(resolvableProfile);
+            }
+        }
+
+        throw new IllegalStateException("Could not extract GameProfile from ResolvableProfile");
     }
 }
