@@ -27,7 +27,7 @@ dependencies {
     implementation("org.openrewrite:plugin:7.29.0")
 
     implementation("commons-io:commons-io:2.21.0")
-    implementation("org.apache.ant:ant:1.10.15")
+    implementation("org.apache.ant:ant:1.10.16")
     implementation("org.codehaus.plexus:plexus-utils:4.0.3")
 
     // For custom SpigotRemapTask
