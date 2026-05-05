@@ -177,7 +177,7 @@
   "skinsrestorer.permission_admincommand_dump": "\"/sr dump\" аша сервер мәгълүматын йөкләү мөмкинлеген бирә.",
   "skinsrestorer.permission_bypasscooldown": "Конфигурациядә куелган һәртөрле команданың көтү вакытын урап узарга мөмкинлек бирә.",
   "skinsrestorer.permission_bypassdisabled": "Конфигурациядә сүндерелгән кыяфәтләрне урап үтү мөмкинлеген бирә.",
-  "skinsrestorer.permission_ownskin": "Үз кыяфәтеңне билгеләү мөмкинлеген бирә.",
+  "skinsrestorer.permission_ownskin": "Үз кыяфәтегезне урнаштырырга рөхсәт итә.",
   "skinsrestorer.duration_day": " көн",
   "skinsrestorer.duration_days": " көн",
   "skinsrestorer.duration_hour": " сәгать",
