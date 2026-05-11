@@ -146,9 +146,9 @@ public class UpdateCheckerGitHub {
 
     private void printHeader(UpdateCause cause) {
         logger.info(LOG_ROW);
-        logger.info("§a    +==================+");
-        logger.info("§a    |   SkinsRestorer  |");
-        logger.info("§a    |------------------|");
+        logger.info("§a    +===================+");
+        logger.info("§a    |   SkinsRestorer   |");
+        logger.info("§a    |-------------------|");
 
         if (cause.isError()) {
             logger.info("§a    |    §cError Mode§a    |");
@@ -156,13 +156,13 @@ public class UpdateCheckerGitHub {
             SRServerPlugin serverPlugin = injector.getIfAvailable(SRServerPlugin.class);
             if (serverPlugin != null) {
                 if (serverPlugin.isProxyMode()) {
-                    logger.info("§a    |    §eProxy Mode§a    |");
+                    logger.info("§a    |     §eProxy Mode§a    |");
                 } else {
-                    logger.info("§a    |  §9§n§lStandalone Mode§r§a |");
+                    logger.info("§a    |  §9§n§lStandalone Mode§r§a  |");
                 }
             }
         }
-        logger.info("§a    +==================+");
+        logger.info("§a    +===================+");
         logger.info(LOG_ROW);
     }
 
