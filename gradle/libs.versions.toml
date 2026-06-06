@@ -43,7 +43,7 @@ floodgate = "2.2.2-SNAPSHOT"
 viaversion = "5.9.1"
 viabackwards = "5.9.1"
 miniplaceholders = "3.2.0"
-paper-api = "1.21.5-R0.1-SNAPSHOT"
+paper-api = "26.1.2.build.69-stable"
 craftbukkit = "1.7.10-R0.1-SNAPSHOT"
 reflect = "1.6.3"
 
