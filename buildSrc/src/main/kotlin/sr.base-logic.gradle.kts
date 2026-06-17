@@ -31,14 +31,14 @@ rewrite {
 
 dependencies {
     api("org.jetbrains:annotations:26.1.0")
-    compileOnly("com.github.spotbugs:spotbugs-annotations:4.9.8")
+    compileOnly("com.github.spotbugs:spotbugs-annotations:4.10.2")
 
-    errorprone("com.google.errorprone:error_prone_core:2.49.0")
-    spotbugs("com.github.spotbugs:spotbugs:4.9.8")
+    errorprone("com.google.errorprone:error_prone_core:2.50.0")
+    spotbugs("com.github.spotbugs:spotbugs:4.10.2")
 
-    rewrite("org.openrewrite.recipe:rewrite-static-analysis:2.35.0")
-    rewrite("org.openrewrite.recipe:rewrite-migrate-java:3.35.0")
-    rewrite("org.openrewrite.recipe:rewrite-rewrite:0.25.0")
+    rewrite("org.openrewrite.recipe:rewrite-static-analysis:2.36.0")
+    rewrite("org.openrewrite.recipe:rewrite-migrate-java:3.36.0")
+    rewrite("org.openrewrite.recipe:rewrite-rewrite:0.26.0")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testFixturesApi("org.junit.jupiter:junit-jupiter:6.1.0")
