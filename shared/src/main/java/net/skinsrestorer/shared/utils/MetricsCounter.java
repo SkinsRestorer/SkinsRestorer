@@ -64,6 +64,7 @@ public class MetricsCounter {
         collectConfigDiff(map, "Login", LoginConfig.class);
         collectConfigDiff(map, "Message", MessageConfig.class);
         collectConfigDiff(map, "Proxy", ProxyConfig.class);
+        collectConfigDiff(map, "SkinSafety", SkinSafetyConfig.class);
         collectConfigDiff(map, "Storage", StorageConfig.class);
         collectConfigDiff(map, "Server", ServerConfig.class);
         return map;
@@ -124,7 +125,8 @@ public class MetricsCounter {
         SKIN_HISTORY,
         SKIN_FAVOURITE,
         SKIN_FAVOURITES,
-        SKIN_GUI
+        SKIN_GUI,
+        SKIN_REPORT
     }
 
     public void increment(Service service) {

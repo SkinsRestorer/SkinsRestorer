@@ -23,6 +23,8 @@ import net.skinsrestorer.shared.config.CommandConfig;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.messages.Message;
+import net.skinsrestorer.shared.storage.SkinInput;
+import net.skinsrestorer.shared.utils.SRHelpers;
 import net.skinsrestorer.shared.utils.ValidationUtil;
 
 import javax.inject.Inject;
@@ -68,8 +70,9 @@ public class SkinPermissionManager {
     }
 
     private boolean isDisabledSkin(String skinName) {
+        String normalizedName = SkinInput.parse(SRHelpers.sanitizeSkinInput(skinName)).name();
         return settings.getProperty(CommandConfig.DISABLED_SKINS_ENABLED)
-                && settings.getProperty(CommandConfig.DISABLED_SKINS).stream().anyMatch(skinName::equalsIgnoreCase);
+                && settings.getProperty(CommandConfig.DISABLED_SKINS).stream().anyMatch(normalizedName::equalsIgnoreCase);
     }
 
     private boolean allowedSkinUrl(String url) {

@@ -31,6 +31,9 @@ import net.skinsrestorer.shared.config.StorageConfig;
 import net.skinsrestorer.shared.connections.RecommendationsState;
 import net.skinsrestorer.shared.floodgate.FloodgateUtil;
 import net.skinsrestorer.shared.log.SRLogger;
+import net.skinsrestorer.shared.skinsafety.SkinSafetyDecision;
+import net.skinsrestorer.shared.skinsafety.SkinSafetyService;
+import net.skinsrestorer.shared.skinsafety.SkinSafetyState;
 import net.skinsrestorer.shared.storage.adapter.AdapterReference;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.storage.model.player.FavouriteData;
@@ -50,6 +53,8 @@ public class PlayerStorageImpl implements PlayerStorage {
     private final SRLogger logger;
     private final AdapterReference adapterReference;
     private final RecommendationsState recommendationsState;
+    private final SkinSafetyService skinSafetyService;
+    private final SkinSafetyState skinSafetyState;
 
     @Override
     public Optional<SkinIdentifier> getSkinIdOfPlayer(UUID uuid) {
@@ -220,7 +225,9 @@ public class PlayerStorageImpl implements PlayerStorage {
 
         if (setSkin.isPresent()) {
             if (requireProperty) {
-                return setSkin.flatMap(skinStorage::getSkinDataByIdentifier).map(property -> new SkinForResult(setSkin.get(), property));
+                return setSkin.flatMap(skinStorage::getSkinDataByIdentifier)
+                        .map(property -> new SkinForResult(setSkin.get(), property))
+                        .flatMap(result -> applySkinSafety(uuid, playerName, result));
             } else {
                 return Optional.of(new SkinForResult(setSkin.get(), null));
             }
@@ -237,20 +244,36 @@ public class PlayerStorageImpl implements PlayerStorage {
 
         boolean defaultSkinsEnabled = settings.getProperty(StorageConfig.DEFAULT_SKINS_ENABLED);
         if (defaultSkinsEnabled && settings.getProperty(StorageConfig.DEFAULT_SKINS_PREMIUM)) {
-            return getDefaultSkin();
+            return getDefaultSkin().flatMap(result -> applySkinSafety(uuid, playerName, result));
         }
 
         Optional<MojangSkinDataResult> premiumSkin = skinStorage.getPlayerSkin(playerName, false);
 
         if (premiumSkin.isPresent()) {
-            return premiumSkin.map(result -> new SkinForResult(SkinIdentifier.ofPlayer(result.getUniqueId()), result.getSkinProperty()));
+            return premiumSkin.map(result -> new SkinForResult(SkinIdentifier.ofPlayer(result.getUniqueId()), result.getSkinProperty()))
+                    .flatMap(result -> applySkinSafety(uuid, playerName, result));
         }
 
         if (defaultSkinsEnabled) {
-            return getDefaultSkin();
+            return getDefaultSkin().flatMap(result -> applySkinSafety(uuid, playerName, result));
         }
 
         return Optional.empty();
+    }
+
+    private Optional<SkinForResult> applySkinSafety(UUID uuid, String playerName, SkinForResult result) {
+        SkinSafetyDecision decision = skinSafetyService.checkPlayerSkin(uuid, playerName, result.property());
+        if (!decision.matched()) {
+            return Optional.of(result);
+        }
+
+        skinSafetyService.logMatch("player %s (%s)".formatted(playerName, uuid), decision);
+        if (!decision.shouldBlock()) {
+            return Optional.of(result);
+        }
+
+        var fallback = skinSafetyState.resolveFallbackSkin(skinStorage, skinSafetyService);
+        return Optional.of(new SkinForResult(fallback.getIdentifier(), fallback.getProperty()));
     }
 
     private Optional<SkinForResult> getDefaultSkin() {

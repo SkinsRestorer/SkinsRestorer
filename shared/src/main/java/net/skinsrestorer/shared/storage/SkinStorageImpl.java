@@ -32,6 +32,8 @@ import net.skinsrestorer.shared.connections.MojangAPIImpl;
 import net.skinsrestorer.shared.connections.RecommendationsState;
 import net.skinsrestorer.shared.connections.responses.RecommenationResponse;
 import net.skinsrestorer.shared.log.SRLogger;
+import net.skinsrestorer.shared.skinsafety.SkinSafetyDecision;
+import net.skinsrestorer.shared.skinsafety.SkinSafetyService;
 import net.skinsrestorer.shared.storage.adapter.AdapterReference;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.storage.model.cache.MojangCacheData;
@@ -61,6 +63,7 @@ public class SkinStorageImpl implements SkinStorage {
     private final SettingsManager settings;
     private final AdapterReference adapterReference;
     private final RecommendationsState recommendationsState;
+    private final SkinSafetyService skinSafetyService;
 
     public void preloadDefaultSkins() {
         if (!settings.getProperty(StorageConfig.DEFAULT_SKINS_ENABLED)) {
@@ -311,7 +314,19 @@ public class SkinStorageImpl implements SkinStorage {
 
     @Override
     public Optional<InputDataResult> findOrCreateSkinData(String input, SkinVariant skinVariantHint) throws DataRequestException, MineSkinException {
+        return findOrCreateSkinData(input, skinVariantHint, true);
+    }
+
+    public Optional<InputDataResult> findOrCreateSkinData(String input, SkinVariant skinVariantHint, boolean enforceSkinSafety) throws DataRequestException, MineSkinException {
         input = SRHelpers.sanitizeSkinInput(input);
+
+        if (enforceSkinSafety) {
+            SkinSafetyDecision requestedInputDecision = skinSafetyService.checkRequestedInput(input);
+            if (requestedInputDecision.shouldBlock()) {
+                skinSafetyService.logMatch("requested skin input %s".formatted(input), requestedInputDecision);
+                return Optional.empty();
+            }
+        }
 
         // findSkinData handles prefix parsing internally for lookups
         Optional<InputDataResult> skinData = findSkinData(input, skinVariantHint);

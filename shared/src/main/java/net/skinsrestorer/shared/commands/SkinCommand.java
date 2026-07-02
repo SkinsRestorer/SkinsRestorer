@@ -45,6 +45,9 @@ import net.skinsrestorer.shared.log.SRLogLevel;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.plugin.SRPlugin;
+import net.skinsrestorer.shared.skinsafety.SkinSafetyDecision;
+import net.skinsrestorer.shared.skinsafety.SkinSafetyReportService;
+import net.skinsrestorer.shared.skinsafety.SkinSafetyService;
 import net.skinsrestorer.shared.storage.HardcodedSkins;
 import net.skinsrestorer.shared.storage.PlayerStorageImpl;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
@@ -72,6 +75,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.inject.Inject;
 import java.time.Duration;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -98,6 +102,8 @@ public final class SkinCommand {
     private final SkinPermissionManager permissionManager;
     private final MetricsCounter metricsCounter;
     private final CommandHelpService helpService;
+    private final SkinSafetyService skinSafetyService;
+    private final SkinSafetyReportService skinSafetyReportService;
 
     @Command("")
     @CommandPermission(PermissionRegistry.SKIN)
@@ -539,6 +545,76 @@ public final class SkinCommand {
         }
     }
 
+    @Command("report self")
+    @CommandPermission(PermissionRegistry.SKIN_REPORT)
+    @CommandDescription(Message.HELP_SKIN_REPORT)
+    @SRCooldownGroup(COOLDOWN_GROUP_ID)
+    private void onSkinReportSelf(SRPlayer player) {
+        onSkinReport(player, PlayerSelector.singleton(player), null);
+    }
+
+    @Command("report self <reason>")
+    @CommandPermission(PermissionRegistry.SKIN_REPORT)
+    @CommandDescription(Message.HELP_SKIN_REPORT)
+    @SRCooldownGroup(COOLDOWN_GROUP_ID)
+    private void onSkinReportSelf(SRPlayer player, @Greedy String reason) {
+        onSkinReport(player, PlayerSelector.singleton(player), reason);
+    }
+
+    @Command("report <selector>")
+    @CommandPermission(PermissionRegistry.SKIN_REPORT)
+    @CommandDescription(Message.HELP_SKIN_REPORT)
+    @SRCooldownGroup(COOLDOWN_GROUP_ID)
+    private void onSkinReport(SRPlayer reporter, PlayerSelector selector) {
+        onSkinReport(reporter, selector, null);
+    }
+
+    @Command("report <selector> <reason>")
+    @CommandPermission(PermissionRegistry.SKIN_REPORT)
+    @CommandDescription(Message.HELP_SKIN_REPORT)
+    @SRCooldownGroup(COOLDOWN_GROUP_ID)
+    private void onSkinReport(SRPlayer reporter, PlayerSelector selector, @Greedy String reason) {
+        metricsCounter.increment(MetricsCounter.CommandType.SKIN_REPORT);
+        for (UUID target : selector.resolve(reporter)) {
+            Optional<SRPlayer> targetPlayer = adapter.getPlayer(reporter, target);
+            String targetName = targetPlayer.map(SRPlayer::getName).orElseGet(target::toString);
+
+            try {
+                Optional<SkinProperty> property = targetPlayer.isPresent()
+                        ? playerStorage.getSkinForPlayer(target, targetPlayer.get().getName())
+                        : playerStorage.getSkinOfPlayer(target);
+                if (property.isEmpty()) {
+                    reporter.sendMessage(Message.NO_SKIN_DATA);
+                    continue;
+                }
+
+                Optional<SkinIdentifier> identifier = targetPlayer.isPresent()
+                        ? playerStorage.getSkinIdForPlayer(target, targetPlayer.get().getName())
+                        : playerStorage.getSkinIdOfPlayer(target);
+                SkinIdentifier resolvedIdentifier = identifier.orElse(SkinIdentifier.ofPlayer(target));
+                String textureHash = PropertyUtils.getSkinTextureHash(property.get());
+
+                skinSafetyReportService.report(new net.skinsrestorer.shared.connections.requests.SkinSafetyReportRequest(
+                        reporter.getUniqueId().toString(),
+                        reporter.getName(),
+                        target.toString(),
+                        targetName,
+                        textureHash,
+                        resolvedIdentifier.getIdentifier(),
+                        PropertyUtils.getSkinVariant(property.get()).name(),
+                        safeTextureUrl(property.get()),
+                        reason == null || reason.isBlank() ? null : reason
+                ));
+
+                reporter.sendMessage(Message.SUCCESS_SKIN_REPORT,
+                        Placeholder.unparsed("name", targetName),
+                        Placeholder.unparsed("texture_hash", textureHash));
+            } catch (DataRequestException e) {
+                ComponentHelper.sendException(e, reporter, locale, logger);
+            }
+        }
+    }
+
     @Command("menu|gui")
     @CommandPermission(PermissionRegistry.SKINS)
     private void onGUIShortcut(SRPlayer player) {
@@ -553,17 +629,48 @@ public final class SkinCommand {
             return Optional.empty();
         }
 
+        boolean bypassSkinSafety = skinSafetyService.hasBypass(sender);
+        if (!bypassSkinSafety) {
+            SkinSafetyDecision requestedInputDecision = skinSafetyService.checkRequestedInput(skinInput);
+            if (requestedInputDecision.matched()) {
+                skinSafetyService.logMatch("command input %s".formatted(skinInput), requestedInputDecision);
+                if (requestedInputDecision.shouldBlock()) {
+                    sendSkinSafetyMessage(sender, Message.ERROR_SKIN_SAFETY_BLOCKED, requestedInputDecision);
+                    setCoolDown(sender, CommandConfig.SKIN_ERROR_COOLDOWN);
+                    return Optional.empty();
+                }
+                if (requestedInputDecision.shouldWarn()) {
+                    sendSkinSafetyMessage(sender, Message.WARNING_SKIN_SAFETY_MATCH, requestedInputDecision);
+                }
+            }
+        }
+
         try {
             if (ValidationUtil.validSkinUrl(skinInput)) {
                 sender.sendMessage(Message.MS_UPLOADING_SKIN);
             }
 
             // Perform skin lookup, which causes a second url regex check, but we don't care
-            Optional<InputDataResult> optional = skinStorage.findOrCreateSkinData(skinInput, skinVariant);
+            Optional<InputDataResult> optional = skinStorage.findOrCreateSkinData(skinInput, skinVariant, !bypassSkinSafety);
 
             if (optional.isEmpty()) {
                 sender.sendMessage(Message.NOT_PREMIUM); // TODO: Is this the right message?
                 return Optional.empty();
+            }
+
+            if (!bypassSkinSafety) {
+                SkinSafetyDecision resolvedDecision = skinSafetyService.checkResolved(skinInput, optional.get().getIdentifier(), optional.get().getProperty());
+                if (resolvedDecision.matched()) {
+                    skinSafetyService.logMatch("command skin %s".formatted(skinInput), resolvedDecision);
+                    if (resolvedDecision.shouldBlock()) {
+                        sendSkinSafetyMessage(sender, Message.ERROR_SKIN_SAFETY_BLOCKED, resolvedDecision);
+                        setCoolDown(sender, CommandConfig.SKIN_ERROR_COOLDOWN);
+                        return Optional.empty();
+                    }
+                    if (resolvedDecision.shouldWarn()) {
+                        sendSkinSafetyMessage(sender, Message.WARNING_SKIN_SAFETY_MATCH, resolvedDecision);
+                    }
+                }
             }
 
             Optional<SRPlayer> targetPlayer = adapter.getPlayer(sender, target);
@@ -587,6 +694,25 @@ public final class SkinCommand {
 
         setCoolDown(sender, CommandConfig.SKIN_ERROR_COOLDOWN);
         return Optional.empty();
+    }
+
+    private void sendSkinSafetyMessage(SRCommandSender sender, Message message, SkinSafetyDecision decision) {
+        if (!decision.matched()) {
+            return;
+        }
+
+        sender.sendMessage(message,
+                Placeholder.unparsed("match_type", decision.match().matchType().name().toLowerCase(Locale.ROOT)),
+                Placeholder.unparsed("match_value", decision.match().matchedValue()));
+    }
+
+    private @Nullable String safeTextureUrl(SkinProperty property) {
+        try {
+            return PropertyUtils.getSkinTextureUrl(property);
+        } catch (Exception e) {
+            logger.debug("Failed to extract texture URL for report", e);
+            return null;
+        }
     }
 
     private void setCoolDown(SRCommandSender sender, Property<Integer> time) {

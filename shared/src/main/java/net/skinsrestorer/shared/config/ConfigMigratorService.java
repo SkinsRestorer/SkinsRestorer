@@ -25,11 +25,16 @@ import ch.jalu.configme.resource.PropertyReader;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
+import net.skinsrestorer.shared.skinsafety.SkinSafetyDigest;
+import net.skinsrestorer.shared.skinsafety.SkinSafetyDigestAlgorithm;
 import net.skinsrestorer.shared.utils.SRHelpers;
 import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import static ch.jalu.configme.properties.PropertyInitializer.newListProperty;
@@ -52,7 +57,8 @@ public class ConfigMigratorService implements MigrationService {
     private boolean performMigrations(@NotNull PropertyReader reader, @NotNull ConfigurationData configurationData) {
         // Use | instead of || to ensure all methods are called in the chain
         return migrateV14Layout(reader, configurationData)
-                | migrateNewGUILayout(reader, configurationData);
+                | migrateNewGUILayout(reader, configurationData)
+                | migrateSkinSafetyDigests(reader, configurationData);
     }
 
     private boolean migrateV14Layout(PropertyReader reader,
@@ -138,6 +144,32 @@ public class ConfigMigratorService implements MigrationService {
         return migrated;
     }
 
+    private boolean migrateSkinSafetyDigests(PropertyReader reader,
+                                             ConfigurationData configData) {
+        Property<List<String>> blockedDigests = SkinSafetyConfig.LOCAL_BLOCKED_DIGESTS;
+        Property<List<String>> legacySha256 = newListProperty("skinSafety.local.blockedPngSha256", List.of());
+        Property<List<String>> legacyPerceptual = newListProperty("skinSafety.local.blockedPerceptualHashes", List.of());
+
+        boolean hasLegacySha256 = legacySha256.isValidInResource(reader);
+        boolean hasLegacyPerceptual = legacyPerceptual.isValidInResource(reader);
+        if (!hasLegacySha256 && !hasLegacyPerceptual) {
+            return false;
+        }
+
+        LinkedHashSet<String> mergedDigests = new LinkedHashSet<>(blockedDigests.determineValue(reader).getValue());
+        if (hasLegacySha256) {
+            logger.info("Renaming %s to %s with sha256: prefixes".formatted(legacySha256.getPath(), blockedDigests.getPath()));
+            mergedDigests.addAll(prefixDigests(legacySha256.determineValue(reader).getValue(), SkinSafetyDigestAlgorithm.SHA256));
+        }
+        if (hasLegacyPerceptual) {
+            logger.info("Renaming %s to %s with perceptual-v1: prefixes".formatted(legacyPerceptual.getPath(), blockedDigests.getPath()));
+            mergedDigests.addAll(prefixDigests(legacyPerceptual.determineValue(reader).getValue(), SkinSafetyDigestAlgorithm.PERCEPTUAL_V1));
+        }
+
+        configData.setValue(blockedDigests, new ArrayList<>(mergedDigests));
+        return true;
+    }
+
     private boolean migrateDatabaseType(PropertyReader reader,
                                         ConfigurationData configData,
                                         Property<Boolean> oldProperty) {
@@ -166,5 +198,19 @@ public class ConfigMigratorService implements MigrationService {
             return true;
         }
         return false;
+    }
+
+    private List<String> prefixDigests(Collection<String> digests, SkinSafetyDigestAlgorithm algorithm) {
+        List<String> encodedDigests = new ArrayList<>();
+        for (String digest : digests) {
+            if (digest == null || digest.isBlank()) {
+                continue;
+            }
+
+            encodedDigests.add(SkinSafetyDigest.parse(digest)
+                    .map(SkinSafetyDigest::encoded)
+                    .orElseGet(() -> algorithm.encode(digest)));
+        }
+        return encodedDigests;
     }
 }

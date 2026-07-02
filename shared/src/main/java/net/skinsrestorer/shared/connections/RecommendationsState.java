@@ -28,6 +28,8 @@ import net.skinsrestorer.shared.connections.responses.RecommenationResponse;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.plugin.SRPlugin;
+import net.skinsrestorer.shared.skinsafety.SkinSafetyDecision;
+import net.skinsrestorer.shared.skinsafety.SkinSafetyService;
 import net.skinsrestorer.shared.utils.SRHelpers;
 
 import javax.inject.Inject;
@@ -48,6 +50,7 @@ public class RecommendationsState {
     private final SRLogger logger;
     private final RecommendationsService recommendationsService;
     private final SettingsManager settingsManager;
+    private final SkinSafetyService skinSafetyService;
     private final Gson gson = new GsonBuilder().create();
     private Map<String, RecommenationResponse.SkinInfo> recommendationsMap = Map.of();
     private List<RecommenationResponse.SkinInfo> recommendationsList = List.of();
@@ -93,8 +96,18 @@ public class RecommendationsState {
     }
 
     private void setDataFromResponse(RecommenationResponse.SkinInfo[] recommendations) {
-        recommendationsMap = Stream.of(recommendations).collect(Collectors.toMap(RecommenationResponse.SkinInfo::getSkinId, skinInfo -> skinInfo));
-        recommendationsList = Arrays.asList(recommendations);
+        recommendationsMap = Stream.of(recommendations)
+                .filter(skinInfo -> {
+                    SkinSafetyDecision decision = skinSafetyService.checkRecommendation(skinInfo.getSkinId(), skinInfo.getSkinProperty());
+                    if (!decision.shouldBlock()) {
+                        return true;
+                    }
+
+                    skinSafetyService.logMatch("recommendation %s".formatted(skinInfo.getSkinId()), decision);
+                    return false;
+                })
+                .collect(Collectors.toMap(RecommenationResponse.SkinInfo::getSkinId, skinInfo -> skinInfo));
+        recommendationsList = new ArrayList<>(recommendationsMap.values());
         Collections.shuffle(recommendationsList);
     }
 

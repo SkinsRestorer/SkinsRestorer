@@ -65,6 +65,7 @@ import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.Permission;
 import net.skinsrestorer.shared.subjects.permissions.PermissionGroup;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
+import net.skinsrestorer.shared.skinsafety.SkinSafetyState;
 import net.skinsrestorer.shared.utils.ExpiringSet;
 import net.skinsrestorer.shared.utils.SRHelpers;
 import net.skinsrestorer.shared.utils.UUIDUtils;
@@ -108,6 +109,7 @@ public final class SRCommand {
     private final SRCommandManager commandManager;
     private final CommandHelpService helpService;
     private final SRCommandService srCommandService;
+    private final SkinSafetyState skinSafetyState;
 
     @Command("")
     @CommandPermission(PermissionRegistry.SR)
@@ -143,6 +145,8 @@ public final class SRCommand {
         } catch (InitializeException e) {
             logger.severe("Failed to load storage", e);
         }
+
+        skinSafetyState.refreshNow();
 
         sender.sendMessage(Message.SUCCESS_ADMIN_RELOAD);
     }

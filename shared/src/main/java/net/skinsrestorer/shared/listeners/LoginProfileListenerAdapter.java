@@ -26,6 +26,9 @@ import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.config.LoginConfig;
 import net.skinsrestorer.shared.listeners.event.SRLoginProfileEvent;
 import net.skinsrestorer.shared.log.SRLogger;
+import net.skinsrestorer.shared.skinsafety.SkinSafetyService;
+import net.skinsrestorer.shared.skinsafety.SkinSafetyState;
+import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.storage.adapter.AdapterReference;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 
@@ -38,6 +41,9 @@ public final class LoginProfileListenerAdapter<R> {
     private final PlayerStorage playerStorage;
     private final SRLogger logger;
     private final AdapterReference adapterReference;
+    private final SkinSafetyService skinSafetyService;
+    private final SkinSafetyState skinSafetyState;
+    private final SkinStorageImpl skinStorage;
 
     public R handleLogin(SRLoginProfileEvent<R> event) {
         logger.debug("Handling login for %s (%s)".formatted(event.getPlayerName(), event.getPlayerUniqueId()));
@@ -65,6 +71,21 @@ public final class LoginProfileListenerAdapter<R> {
             logger.severe("There was a bug while migrating a legacy player to the new format, contact us on Discord and provide this error message:", e);
         }
 
-        return playerStorage.getSkinForPlayer(event.getPlayerUniqueId(), event.getPlayerName(), event.hasOnlineProperties());
+        Optional<SkinProperty> property = playerStorage.getSkinForPlayer(event.getPlayerUniqueId(), event.getPlayerName(), event.hasOnlineProperties());
+        if (property.isEmpty()) {
+            return Optional.empty();
+        }
+
+        var decision = skinSafetyService.checkPlayerSkin(event.getPlayerUniqueId(), event.getPlayerName(), property.get());
+        if (!decision.matched()) {
+            return property;
+        }
+
+        skinSafetyService.logMatch("login profile %s (%s)".formatted(event.getPlayerName(), event.getPlayerUniqueId()), decision);
+        if (!decision.shouldBlock()) {
+            return property;
+        }
+
+        return Optional.of(skinSafetyState.resolveFallbackSkin(skinStorage, skinSafetyService).getProperty());
     }
 }

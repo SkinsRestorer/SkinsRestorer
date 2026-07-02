@@ -36,6 +36,7 @@ public enum PermissionGroup {
             PermissionRegistry.SKIN_CLEAR,
             PermissionRegistry.SKIN_UNDO,
             PermissionRegistry.SKIN_FAVOURITE,
+            PermissionRegistry.SKIN_REPORT,
             PermissionRegistry.SKIN_RANDOM,
             PermissionRegistry.SKIN_UPDATE,
             PermissionRegistry.SKIN_SEARCH,
@@ -65,7 +66,8 @@ public enum PermissionGroup {
             PermissionRegistry.SKULL_RANDOM,
             PermissionRegistry.SKULL_RANDOM_OTHER,
             PermissionRegistry.BYPASS_COOLDOWN,
-            PermissionRegistry.BYPASS_DISABLED
+            PermissionRegistry.BYPASS_DISABLED,
+            PermissionRegistry.BYPASS_SKIN_SAFETY
     );
 
     public static final PermissionGroup[] VALUES = values();

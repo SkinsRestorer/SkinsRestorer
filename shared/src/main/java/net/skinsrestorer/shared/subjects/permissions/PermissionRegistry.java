@@ -41,6 +41,7 @@ public enum PermissionRegistry {
     SKIN_UNDO_OTHER("skinsrestorer.command.undo.other", Message.PERMISSION_COMMAND_UNDO_OTHER),
     SKIN_FAVOURITE("skinsrestorer.command.favourite", Message.PERMISSION_COMMAND_FAVOURITE),
     SKIN_FAVOURITE_OTHER("skinsrestorer.command.favourite.other", Message.PERMISSION_COMMAND_FAVOURITE_OTHER),
+    SKIN_REPORT("skinsrestorer.command.report", Message.PERMISSION_COMMAND_REPORT),
     SKULL_GET("skinsrestorer.admincommand.skull.get", Message.PERMISSION_ADMINCOMMAND_SKULL_GET),
     SKULL_GET_OTHER("skinsrestorer.admincommand.skull.get.other", Message.PERMISSION_ADMINCOMMAND_SKULL_GET_OTHER),
     SKULL_GET_URL("skinsrestorer.admincommand.skull.get.url", Message.PERMISSION_ADMINCOMMAND_SKULL_GET_URL),
@@ -57,6 +58,7 @@ public enum PermissionRegistry {
 
     BYPASS_COOLDOWN("skinsrestorer.bypasscooldown", Message.PERMISSION_BYPASSCOOLDOWN),
     BYPASS_DISABLED("skinsrestorer.bypassdisabled", Message.PERMISSION_BYPASSDISABLED),
+    BYPASS_SKIN_SAFETY("skinsrestorer.skinsafety.bypass", Message.PERMISSION_BYPASSSKINSAFETY),
     OWN_SKIN("skinsrestorer.ownskin", Message.PERMISSION_OWNSKIN);
 
     private final Permission permission;

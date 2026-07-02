@@ -57,6 +57,7 @@ import net.skinsrestorer.shared.storage.adapter.postgresql.PostgreSQLAdapter;
 import net.skinsrestorer.shared.storage.adapter.postgresql.PostgreSQLProvider;
 import net.skinsrestorer.shared.subjects.SRSubjectWrapper;
 import net.skinsrestorer.shared.subjects.messages.MessageLoader;
+import net.skinsrestorer.shared.skinsafety.SkinSafetyState;
 import net.skinsrestorer.shared.update.UpdateCheckInit;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
@@ -145,6 +146,7 @@ public class SRPlugin {
                             ServerConfig.class,
                             LoginConfig.class,
                             APIConfig.class,
+                            SkinSafetyConfig.class,
                             AdvancedConfig.class,
                             DevConfig.class
                     )
@@ -375,6 +377,7 @@ public class SRPlugin {
             throw new IllegalStateException("No platform class available!");
         }
 
+        injector.getSingleton(SkinSafetyState.class).scheduleRefresh();
         injector.getSingleton(RecommendationsState.class).scheduleRecommendations();
 
         runJavaCheck();
