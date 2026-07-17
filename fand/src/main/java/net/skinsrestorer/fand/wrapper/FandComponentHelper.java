@@ -15,23 +15,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package net.skinsrestorer.shared.info;
+package net.skinsrestorer.fand.wrapper;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.skinsrestorer.shared.subjects.messages.ComponentString;
 
-@Getter
-@RequiredArgsConstructor
-public enum Platform {
-    BUKKIT("Bukkit", PlatformType.SERVER),
-    FAND("Fand", PlatformType.SERVER),
-    BUNGEE_CORD("BungeeCord", PlatformType.PROXY),
-    VELOCITY("Velocity", PlatformType.PROXY);
+public final class FandComponentHelper {
+    public static Component deserialize(ComponentString component) {
+        return GsonComponentSerializer.gson().deserialize(component.jsonString());
+    }
 
-    private final String friendlyName;
-    private final PlatformType platformType;
-
-    public String getPlatformDescription() {
-        return "%s %s".formatted(friendlyName, platformType.getFriendlyName());
+    private FandComponentHelper() {
     }
 }

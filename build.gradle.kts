@@ -100,6 +100,12 @@ allprojects {
             }
             mavenContent { snapshotsOnly() }
         }
+        maven("https://repo.fandmc.cn/repository/maven-public/") {
+            name = "FandMC Repository"
+            content {
+                includeGroup("io.fand")
+            }
+        }
         maven("https://central.sonatype.com/repository/maven-snapshots/") {
             name = "Sonatype Snapshot Repository"
             mavenContent { snapshotsOnly() }

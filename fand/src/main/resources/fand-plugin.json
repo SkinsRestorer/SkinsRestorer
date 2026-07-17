@@ -1,0 +1,14 @@
+{
+  "id": "skinsrestorer",
+  "version": "${version}",
+  "mainClass": "net.skinsrestorer.fand.SRFandBootstrap",
+  "description": "${description}",
+  "website": "${url}",
+  "license": "GPL-3.0-or-later",
+  "apiVersion": "0.1.1",
+  "authors": ["SkinsRestorer Team", "MC20018"],
+  "depends": [],
+  "loadAfter": [],
+  "loadBefore": [],
+  "permissions": []
+}

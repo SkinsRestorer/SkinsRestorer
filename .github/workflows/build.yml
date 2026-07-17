@@ -33,5 +33,6 @@ jobs:
           name: SkinsRestorer
           path: |
             ./build/libs/SkinsRestorer.jar
+            ./build/libs/SkinsRestorer-Fand-*.jar
             ./build/libs/SkinsRestorer-Mod-Fabric-*.jar
             ./build/libs/SkinsRestorer-Mod-NeoForge-*.jar

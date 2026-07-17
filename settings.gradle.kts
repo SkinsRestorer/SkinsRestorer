@@ -46,6 +46,7 @@ include("multiver:viaversion")
 setupSRSubproject("bukkit")
 setupSRSubproject("bungee")
 setupSRSubproject("velocity")
+include("fand")
 
 setupSubproject("skinsrestorer-mod-common") {
     projectDir = file("mod/common")
