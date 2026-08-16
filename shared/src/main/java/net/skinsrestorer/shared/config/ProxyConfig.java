@@ -28,13 +28,16 @@ import static ch.jalu.configme.properties.PropertyInitializer.newListProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 
 public class ProxyConfig implements SettingsHolder {
-    @Comment("Whether to enable the backend server command blocking feature.")
+    @Comment("Enables command restrictions for backend servers.")
     public static final Property<Boolean> NOT_ALLOWED_COMMAND_SERVERS_ENABLED = newProperty("proxy.notAllowedCommandServers.enabled", true);
-    @Comment("Block players from executing SkinsRestorer commands before having joined a server.")
+    @Comment("Blocks SkinsRestorer commands until the player joins a backend server.")
     public static final Property<Boolean> NOT_ALLOWED_COMMAND_SERVERS_IF_NONE_BLOCK_COMMAND = newProperty("proxy.notAllowedCommandServers.ifNoServerBlockCommand", true);
-    @Comment("When false means servers in the list are NOT allowed to execute SkinsRestorer commands, true means ONLY servers in the list are allowed to execute SkinsRestorer commands.")
+    @Comment({
+            "When false, commands are blocked on servers in the list.",
+            "When true, commands are allowed only on servers in the list."
+    })
     public static final Property<Boolean> NOT_ALLOWED_COMMAND_SERVERS_ALLOWLIST = newProperty("proxy.notAllowedCommandServers.allowList", false);
-    @Comment("List of servers where SkinsRestorer commands are allowed/disallowed depending on the 'allowList' setting.")
+    @Comment("The backend servers controlled by proxy.notAllowedCommandServers.allowList.")
     public static final Property<List<String>> NOT_ALLOWED_COMMAND_SERVERS = newListProperty("proxy.notAllowedCommandServers.list", List.of("auth"));
 
     @Override
@@ -45,11 +48,11 @@ public class ProxyConfig implements SettingsHolder {
                 "\n# Proxy #",
                 "\n#########",
                 "\n",
-                "Change proxy specific settings here."
+                "Controls behavior for proxy networks."
         );
         conf.setComment("proxy.notAllowedCommandServers",
-                "Disable all SkinsRestorer commands on specific backend servers.",
-                "[!] This only works & is relevant if you're using proxies like BungeeCord / Velocity"
+                "Restricts SkinsRestorer commands on selected backend servers.",
+                "These options apply only to proxy networks such as BungeeCord and Velocity."
         );
     }
 }

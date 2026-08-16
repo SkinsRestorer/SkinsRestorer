@@ -27,7 +27,7 @@ import static net.skinsrestorer.shared.config.ConfigHelpers.newCappedProperty;
 
 public class DatabaseConfig implements SettingsHolder {
     @Comment({
-            "Database backend selection. Valid values: FILE, MYSQL, POSTGRESQL."
+            "Selects the storage type. Valid values are FILE, MYSQL, and POSTGRESQL."
     })
     public static final Property<DatabaseType> DATABASE_TYPE = newProperty(DatabaseType.class, "database.type", DatabaseType.FILE);
     public static final Property<String> DATABASE_HOST = newProperty("database.host", "localhost");
@@ -47,11 +47,11 @@ public class DatabaseConfig implements SettingsHolder {
                 "\n# Database #",
                 "\n############",
                 "\n",
-                "Settings for databases skin storage (recommended for large networks with a lot of skins)",
-                "Set database.type to FILE, MYSQL or POSTGRESQL.",
-                "[!] Make sure you have the correct permissions set for your database user. [!]",
-                "[!] Make sure to fill in database.connectionOptions if you're using certificate / ssl authentication. [!]",
-                "[!] If you're not using ssl, change sslMode=trust to sslMode=disable [!]"
+                "Database storage is useful for large networks that share many skins.",
+                "Set database.type to FILE, MYSQL, or POSTGRESQL.",
+                "Make sure that the database user has the required permissions.",
+                "If you use certificate or SSL authentication, set database.connectionOptions.",
+                "If you do not use SSL, change sslMode=trust to sslMode=disable."
         );
     }
 

@@ -47,20 +47,21 @@ public class StorageConfig implements SettingsHolder {
         }
     }, List.of("xknat", "pistonmaster", "<random>"));
     @Comment({
-            "<!! Warning !!>",
-            "Enable this will require players to run \"/skin update\" to update their skin."
+            "WARNING:",
+            "When enabled, stored skins do not update automatically.",
+            "Players must run /skin update to get a newer skin."
     })
     public static final Property<Boolean> DISALLOW_AUTO_UPDATE_SKIN = newProperty("storage.disallowAutoUpdateSkin", false);
     @Comment({
-            "Time that skins are stored in the database before we request again (in minutes).",
-            "[?] A value of 0 will always trigger a request to the Mojang API.",
-            "[!] Lowering this value will increase the amount of requests which could be a problem on large servers."
+            "The skin cache duration, in minutes.",
+            "A value of 0 requests the skin from Mojang every time.",
+            "Lower values increase API requests and can cause rate limits on large servers."
     })
     public static final Property<Integer> SKIN_EXPIRES_AFTER = newCappedProperty("storage.skinExpiresAfter", 15, 0, Integer.MAX_VALUE);
     @Comment({
-            "How long we should cache the UUIDs of players (in minutes).",
-            "[?] A value of 0 will always trigger a request to the Mojang API.",
-            "[!] Lowering this value will increase the amount of requests which could be a problem on large servers."
+            "The player UUID cache duration, in minutes.",
+            "A value of 0 requests the UUID from Mojang every time.",
+            "Lower values increase API requests and can cause rate limits on large servers."
     })
     public static final Property<Integer> UUID_EXPIRES_AFTER = newCappedProperty("storage.uuidExpiresAfter", 60, 0, Integer.MAX_VALUE);
 
@@ -72,13 +73,13 @@ public class StorageConfig implements SettingsHolder {
                 "\n# Storage #",
                 "\n###########",
                 "\n",
-                "Here you can design the plugin the way you want it.",
+                "Controls stored skins and cache durations.",
                 "\n",
-                "Enable or disable default skins",
-                "applyForPremium: false will only put a skin on skinless/steve players.",
-                "If there is more than one, the plugin will choose a random one.",
-                "You can use \"<random>\" in the defaultSkins list to select a random SkinsRestorer recommended skin.",
-                "[!] url.png skins will be cached and therefore will not be updated"
+                "Default skins:",
+                "When applyForPremium is false, default skins apply only to players without a custom skin.",
+                "If the list contains multiple skins, SkinsRestorer selects one at random.",
+                "Use \"<random>\" to select a random recommended skin.",
+                "Skins from image URLs are cached and do not update automatically."
         );
     }
 }

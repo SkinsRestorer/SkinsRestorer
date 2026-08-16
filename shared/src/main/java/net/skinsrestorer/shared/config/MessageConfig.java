@@ -29,26 +29,26 @@ import static net.skinsrestorer.shared.config.ConfigHelpers.newLocaleProperty;
 
 public class MessageConfig implements SettingsHolder {
     @Comment({
-            "A locale code for the locale you want to use by default for messages and commands.",
-            "Has to be a string separated by an underscore."
+            "The default locale code for player messages and commands.",
+            "Use an underscore between the language and country codes. Example: en_US"
     })
     public static final Property<Locale> LOCALE = newLocaleProperty("messages.locale", Locale.ENGLISH);
     @Comment({
-            "A locale code for the messages and commands sent to the console.",
-            "This is useful if you want to use a different locale for the console than for players.",
-            "We recommend keeping this at the default value because we mostly only provide support in English.",
-            "Has to be a string separated by an underscore."
+            "The locale code for console messages and commands.",
+            "This value can differ from the player locale.",
+            "Support is primarily available in English, so the default value is recommended.",
+            "Use an underscore between the language and country codes. Example: en_US"
     })
     public static final Property<Locale> CONSOLE_LOCALE = newLocaleProperty("messages.consoleLocale", Locale.ENGLISH);
-    @Comment("Disable the message prefix in SkinsRestorer messages.")
+    @Comment("Removes the SkinsRestorer prefix from messages.")
     public static final Property<Boolean> DISABLE_PREFIX = newProperty("messages.disablePrefix", false);
     @Comment({
-            "Every message sent by the plugin will use the players client locale if a translation is available.",
-            "If disabled, the config locale will be used instead."
+            "Uses each player's client locale when a translation is available.",
+            "When disabled, all players use messages.locale."
     })
     public static final Property<Boolean> PER_ISSUER_LOCALE = newProperty("messages.perIssuerLocale", true);
     @Comment({
-            "How dates are formatted by the plugin in messages. Format is explained here:",
+            "The date format for plugin messages. Format reference:",
             "https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/format/DateTimeFormatter.html"
     })
     public static final Property<String> DATE_FORMAT = newProperty("messages.dateFormat", "dd MMMM yyyy");
@@ -61,8 +61,8 @@ public class MessageConfig implements SettingsHolder {
                 "\n# Locale #",
                 "\n##########",
                 "\n",
-                "Translation & message options here",
-                "To learn more about translations and how to make custom translations, visit: https://skinsrestorer.net/docs/configuration/locale-translations"
+                "Controls message languages and formatting.",
+                "Translation guide: https://skinsrestorer.net/docs/configuration/locale-translations"
         );
     }
 }
