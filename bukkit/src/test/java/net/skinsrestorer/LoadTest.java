@@ -33,6 +33,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.messaging.Messenger;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -92,6 +93,7 @@ class LoadTest {
             SimplePluginManager pluginManager = mock(SimplePluginManager.class);
             when(pluginManager.getPlugins()).thenReturn(new JavaPlugin[0]);
             when(server.getPluginManager()).thenReturn(pluginManager);
+            when(server.getMessenger()).thenReturn(mock(Messenger.class));
             when(server.getUpdateFolderFile()).thenReturn(tempDir.toFile());
 
             Bukkit.setServer(server);

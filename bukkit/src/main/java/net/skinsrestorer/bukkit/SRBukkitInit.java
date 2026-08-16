@@ -34,6 +34,7 @@ import net.skinsrestorer.miniplaceholders.SRMiniPlaceholdersAPIExpansion;
 import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.info.ClassInfo;
 import net.skinsrestorer.shared.info.PluginInfo;
+import net.skinsrestorer.shared.integration.skinshuffle.SkinShuffleChannels;
 import net.skinsrestorer.shared.log.SRChatColor;
 import net.skinsrestorer.shared.log.SRLogLevel;
 import net.skinsrestorer.shared.log.SRLogger;
@@ -188,6 +189,19 @@ public class SRBukkitInit implements SRServerPlatformInit {
     }
 
     @Override
+    public void initClientCompatibility(boolean proxyMode) {
+        if (!proxyMode) {
+            server.getPluginManager().registerEvents(injector.getSingleton(SkinShuffleJoinListener.class), adapter.getPluginInstance());
+        }
+
+        server.getMessenger().registerOutgoingPluginChannel(adapter.getPluginInstance(), SRHelpers.MESSAGE_CHANNEL);
+        server.getMessenger().registerOutgoingPluginChannel(adapter.getPluginInstance(), SkinShuffleChannels.HANDSHAKE);
+        server.getMessenger().registerOutgoingPluginChannel(adapter.getPluginInstance(), SkinShuffleChannels.REFRESH_PLAYER_LIST_ENTRY);
+        server.getMessenger().registerIncomingPluginChannel(adapter.getPluginInstance(), SkinShuffleChannels.SKIN_REFRESH,
+                injector.getSingleton(SkinShuffleMessageListener.class));
+    }
+
+    @Override
     public void checkPluginSupport() {
         checkViaVersion();
 
@@ -285,7 +299,6 @@ public class SRBukkitInit implements SRServerPlatformInit {
 
     @Override
     public void initMessageChannel() {
-        server.getMessenger().registerOutgoingPluginChannel(adapter.getPluginInstance(), SRHelpers.MESSAGE_CHANNEL);
         server.getMessenger().registerIncomingPluginChannel(adapter.getPluginInstance(), SRHelpers.MESSAGE_CHANNEL,
                 injector.getSingleton(ServerMessageListener.class));
     }

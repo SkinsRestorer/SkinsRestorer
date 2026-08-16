@@ -15,18 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package net.skinsrestorer.shared.plugin;
+package net.skinsrestorer.shared.integration.skinshuffle;
 
-public non-sealed interface SRServerPlatformInit extends SRPlatformInit {
-    default void initClientCompatibility(boolean proxyMode) {
+public final class SkinShuffleChannels {
+    public static final String HANDSHAKE = "skinshuffle:handshake";
+    public static final String SKIN_REFRESH = "skinshuffle:skin_refresh";
+    public static final String REFRESH_PLAYER_LIST_ENTRY = "skinshuffle:refresh_player_list_entry";
+
+    private SkinShuffleChannels() {
     }
-
-    default void initMetricsJoinListener() {
-    }
-
-    void initPermissions();
-
-    void initGUIListener();
-
-    void initMessageChannel();
 }

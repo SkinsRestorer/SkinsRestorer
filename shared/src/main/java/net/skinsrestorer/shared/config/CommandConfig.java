@@ -32,23 +32,24 @@ import static net.skinsrestorer.shared.config.ConfigHelpers.newCappedProperty;
 public class CommandConfig implements SettingsHolder {
 
     @Comment({
-            "For all player commands to work by default, you need to give players the permission 'skinsrestorer.player'.",
-            "This option allows you to force the default permission (skinsrestorer.player) to be given to all players.",
-            "A value of 'false' will disable this behaviour, and players will need to be given the permission explicitly.",
-            "This is because some platforms (like BungeeCord) do not have a default permission system.",
-            "If your platform supports default permissions, this option is ignored."
+            "The 'skinsrestorer.player' permission grants access to player commands.",
+            "When enabled, SkinsRestorer grants this permission to all players.",
+            "When disabled, grant the permission through your permission plugin.",
+            "SkinsRestorer ignores this option on platforms that support default permissions."
     })
     public static final Property<Boolean> FORCE_DEFAULT_PERMISSIONS = newProperty("commands.forceDefaultPermissions", true);
     @Comment({
-            "Players cooldown in seconds when changing skins (set to 0 to disable).",
-            "SkinErrorCooldown is used when an error or invalid url occurs.",
-            "Can be bypassed with 'skinsrestorer.bypasscooldown'."
+            "The cooldown, in seconds, between skin changes.",
+            "A value of 0 disables the cooldown.",
+            "Skin errors use commands.skinErrorCooldown instead.",
+            "The 'skinsrestorer.bypasscooldown' permission bypasses this cooldown."
     })
     public static final Property<Integer> SKIN_CHANGE_COOLDOWN = newCappedProperty("commands.skinChangeCooldown", 30, 0, Integer.MAX_VALUE);
     @Comment({
-            "Players cooldown in seconds when getting skulls (set to 0 to disable).",
-            "SkullErrorCooldown is used when an error or invalid url occurs.",
-            "Can be bypassed with 'skinsrestorer.bypasscooldown'."
+            "The cooldown, in seconds, between skull requests.",
+            "A value of 0 disables the cooldown.",
+            "Skull errors use commands.skullErrorCooldown instead.",
+            "The 'skinsrestorer.bypasscooldown' permission bypasses this cooldown."
     })
     public static final Property<Integer> SKULL_GET_COOLDOWN = newCappedProperty("commands.skullGetCooldown", 30, 0, Integer.MAX_VALUE);
 
@@ -70,41 +71,41 @@ public class CommandConfig implements SettingsHolder {
     public static final Property<List<String>> DISABLED_SKINS = newListProperty("commands.disabledSkins.list", "steve", "owner");
     public static final String CONSENT_MESSAGE = "I will follow the rules";
     @Comment({
-            "To enable per skin permissions you must agree to these rules:",
-            "- Do not monetize players being able to use their own skin",
-            "- Do not force players to steve skins and make them pay to use their own skin",
-            "- You can charge them for custom skins, but not their own skin",
-            "If you agree, set this to: '" + CONSENT_MESSAGE + "'"
+            "To enable per-skin permissions, you must accept these rules:",
+            "- Players must not pay to use their own skin.",
+            "- Do not replace player skins with Steve to require payment.",
+            "- You can charge for custom skins that you provide.",
+            "If you accept these rules, set this value to: '" + CONSENT_MESSAGE + "'"
     })
     public static final Property<String> PER_SKIN_PERMISSIONS_CONSENT = newProperty("commands.perSkinPermissionsConsent", "");
     @Comment({
-            "Allows the usage of per-skin permission.",
-            "Example: skinsrestorer.skin.xknat OR skinsrestorer.skin.Pistonmaster",
-            "with \"skinsrestorer.ownskin\" players can run /skin set <their own name>.",
-            "[!] Only enable if you have set up permissions properly and know what you are doing.",
-            "[!] This option only works if 'commands.perSkinPermissionsConsent' is consented to."
+            "Enables permissions for individual skins.",
+            "Examples: skinsrestorer.skin.xknat and skinsrestorer.skin.Pistonmaster",
+            "The 'skinsrestorer.ownskin' permission lets players use /skin set <their own name>.",
+            "Configure the required permissions before you enable this option.",
+            "You must also accept the rules in commands.perSkinPermissionsConsent."
     })
     public static final Property<Boolean> PER_SKIN_PERMISSIONS = newProperty("commands.perSkinPermissions", false);
     @Comment({
-            "How many commands to store in the player's command history.",
-            "This is used for the /skin undo command.",
-            "Use 0 to disable storing command history."
+            "The maximum number of skins in each player's history.",
+            "The /skin undo command uses this history.",
+            "A value of 0 disables skin history."
     })
     public static final Property<Integer> MAX_HISTORY_LENGTH = newCappedProperty("commands.maxHistoryLength", SharedGUI.HEAD_COUNT_PER_PAGE, 0, Integer.MAX_VALUE);
     @Comment({
-            "How many favourites a player may have.",
-            "This is used for the /skin favourite command.",
-            "Use 0 to disable storing favourites."
+            "The maximum number of favourite skins for each player.",
+            "The /skin favourite command uses this limit.",
+            "A value of 0 disables favourites."
     })
     public static final Property<Integer> MAX_FAVOURITE_LENGTH = newCappedProperty("commands.maxFavouriteLength", SharedGUI.HEAD_COUNT_PER_PAGE * 5, 0, Integer.MAX_VALUE);
     @Comment({
-            "Override the automatically generated translated help message with a custom one.",
-            "This is useful if you want to have a custom help message for your server.",
-            "This only affects the base help message when running /skin with no parameters, not the error/subcommand help messages."
+            "Replaces the translated /skin help message with a custom message.",
+            "This option changes only the message for /skin without arguments.",
+            "It does not change error messages or subcommand help."
     })
     public static final Property<Boolean> CUSTOM_HELP_ENABLED = newProperty("commands.customHelp.enabled", false);
     @Comment({
-            "The custom help message to send to the player when running /skin with no parameters."
+            "The custom message for /skin without arguments."
     })
     public static final Property<List<String>> CUSTOM_HELP_MESSAGE = newListProperty("commands.customHelp.message",
             "<yellow>Skin plugin Help",
@@ -112,24 +113,24 @@ public class CommandConfig implements SettingsHolder {
             "<gray>/skin set <skin> - <yellow>Set your skin"
     );
     @Comment({
-            "<!! Warning !!>",
-            "This option will disable the /skin command from being registered on the server.",
-            "Do not disable this unless you are overriding the /skin command with a different plugin or you don't want the skin command.",
-            "Requires a server restart to take effect."
+            "WARNING:",
+            "This option prevents SkinsRestorer from registering the /skin command.",
+            "Enable it only when another plugin provides /skin or when you do not want this command.",
+            "Restart the server after you change this option."
     })
     public static final Property<Boolean> DISABLE_SKIN_COMMAND = newProperty("commands.disableSkinCommand", false);
     @Comment({
-            "<!! Warning !!>",
-            "This option will disable the /skull command from being registered on the server.",
-            "Do not disable this unless you are overriding the /skull command with a different plugin or you don't want the skull command.",
-            "Requires a server restart to take effect."
+            "WARNING:",
+            "This option prevents SkinsRestorer from registering the /skull command.",
+            "Enable it only when another plugin provides /skull or when you do not want this command.",
+            "Restart the server after you change this option."
     })
     public static final Property<Boolean> DISABLE_SKULL_COMMAND = newProperty("commands.disableSkullCommand", false);
     @Comment({
-            "<!! Warning !!>",
-            "This option will disable the /skins command from being registered on the server.",
-            "Do not disable this unless you are overriding the /skins command with a different plugin or you don't want the GUI command.",
-            "Requires a server restart to take effect."
+            "WARNING:",
+            "This option prevents SkinsRestorer from registering the /skins command.",
+            "Enable it only when another plugin provides /skins or when you do not want the GUI command.",
+            "Restart the server after you change this option."
     })
     public static final Property<Boolean> DISABLE_GUI_COMMAND = newProperty("commands.disableGUICommand", false);
 
@@ -141,16 +142,16 @@ public class CommandConfig implements SettingsHolder {
                 "\n# Commands #",
                 "\n############",
                 "\n",
-                "Control behaviour of commands.",
-                "To learn more about commands and permissions, visit: https://skinsrestorer.net/docs/configuration/commands-permissions"
+                "Controls command behavior.",
+                "Command and permission guide: https://skinsrestorer.net/docs/configuration/commands-permissions"
         );
         conf.setComment("commands.disabledSkins",
-                "Skins in this list will be disabled, so users can't set them.",
-                "Can be bypassed with 'skinsrestorer.bypassdisabled'."
+                "Players cannot use skins in this list.",
+                "The 'skinsrestorer.bypassdisabled' permission bypasses this restriction."
         );
         conf.setComment("commands.restrictSkinUrls",
-                "When enabled, only websites from the list below is allowed to be set using /skin url <url>",
-                "[?] this is useful if you host your own image server."
+                "When enabled, /skin url accepts URLs only from domains in this list.",
+                "Use this option to restrict skins to trusted image hosts."
         );
     }
 }

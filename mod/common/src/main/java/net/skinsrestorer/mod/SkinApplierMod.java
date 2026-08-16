@@ -24,7 +24,6 @@ import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ServerLevel;
@@ -34,6 +33,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.mod.mixin.GameProfileAccessor;
+import net.skinsrestorer.mod.skinshuffle.SkinShuffleRefreshPlayerListEntryPayload;
 import net.skinsrestorer.shared.api.SkinApplierAccess;
 import net.skinsrestorer.shared.api.event.EventBusImpl;
 import net.skinsrestorer.shared.api.event.SkinApplyEventImpl;
@@ -105,6 +105,7 @@ public class SkinApplierMod implements SkinApplierAccess<ServerPlayer> {
 
         // Refresh the players own skin
         refresh(player);
+        refreshSkinShufflePlayerEntries(player);
     }
 
     private List<ServerPlayer> getSeenByPlayers(ServerPlayer player) {
@@ -158,6 +159,25 @@ public class SkinApplierMod implements SkinApplierAccess<ServerPlayer> {
         if (settings.getProperty(ServerConfig.DISMOUNT_PASSENGERS_ON_UPDATE) && !player.getPassengers().isEmpty()) {
             player.ejectPassengers();
         }
+    }
+
+    private void refreshSkinShufflePlayerEntries(ServerPlayer player) {
+        if (!settings.getProperty(ServerConfig.SKINSHUFFLE_SUPPORT)) {
+            return;
+        }
+
+        SkinShuffleRefreshPlayerListEntryPayload payload = new SkinShuffleRefreshPlayerListEntryPayload(player.getId());
+        for (ServerPlayer otherPlayer : getSeenByPlayers(player)) {
+            sendSkinShufflePayload(otherPlayer, payload);
+        }
+    }
+
+    private void sendSkinShufflePayload(ServerPlayer player, SkinShuffleRefreshPlayerListEntryPayload payload) {
+        if (!SRModPlatform.INSTANCE.canSend(player, SkinShuffleRefreshPlayerListEntryPayload.TYPE)) {
+            return;
+        }
+
+        SRModPlatform.INSTANCE.sendPluginMessage(player, payload);
     }
 
     @SuppressWarnings("resource")

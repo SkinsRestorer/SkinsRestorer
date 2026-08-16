@@ -24,7 +24,10 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.skinsrestorer.bungee.listeners.AdminInfoListener;
 import net.skinsrestorer.bungee.listeners.LoginListener;
 import net.skinsrestorer.bungee.listeners.ProxyMessageListener;
+import net.skinsrestorer.bungee.listeners.SkinShuffleHandshakeListener;
+import net.skinsrestorer.bungee.listeners.SkinShuffleProxyMessageListener;
 import net.skinsrestorer.bungee.wrapper.WrapperBungee;
+import net.skinsrestorer.shared.integration.skinshuffle.SkinShuffleChannels;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.plugin.SRProxyPlatformInit;
 import net.skinsrestorer.shared.plugin.SRProxyPluginSupportChecker;
@@ -59,11 +62,16 @@ public class SRBungeeInit implements SRProxyPlatformInit {
     @Override
     public void initAdminInfoListener() {
         proxy.getPluginManager().registerListener(adapter.getPluginInstance(), injector.newInstance(AdminInfoListener.class));
+        proxy.getPluginManager().registerListener(adapter.getPluginInstance(), injector.newInstance(SkinShuffleHandshakeListener.class));
     }
 
     @Override
     public void initMessageChannel() {
         proxy.registerChannel(SRHelpers.MESSAGE_CHANNEL);
+        proxy.registerChannel(SkinShuffleChannels.SKIN_REFRESH);
+        proxy.registerChannel(SkinShuffleChannels.HANDSHAKE);
+        proxy.registerChannel(SkinShuffleChannels.REFRESH_PLAYER_LIST_ENTRY);
         proxy.getPluginManager().registerListener(adapter.getPluginInstance(), injector.getSingleton(ProxyMessageListener.class));
+        proxy.getPluginManager().registerListener(adapter.getPluginInstance(), injector.getSingleton(SkinShuffleProxyMessageListener.class));
     }
 }

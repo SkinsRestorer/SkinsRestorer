@@ -126,14 +126,34 @@ public class SRModPlatformImpl implements SRModPlatform {
     }
 
     @Override
-    public <T extends CustomPacketPayload> void initMessageChannel(
+    public <T extends CustomPacketPayload> void initBidirectionalMessageChannel(
+            CustomPacketPayload.Type<T> type,
+            StreamCodec<? super RegistryFriendlyByteBuf, T> codec,
+            BiConsumer<T, ServerPlayer> receiver) {
+        initServerboundMessageChannel(type, codec, receiver);
+        initClientboundMessageChannel(type, codec);
+    }
+
+    @Override
+    public <T extends CustomPacketPayload> void initServerboundMessageChannel(
             CustomPacketPayload.Type<T> type,
             StreamCodec<? super RegistryFriendlyByteBuf, T> codec,
             BiConsumer<T, ServerPlayer> receiver) {
         PayloadTypeRegistry.serverboundPlay().register(type, codec);
-        PayloadTypeRegistry.clientboundPlay().register(type, codec);
         ServerPlayNetworking.registerGlobalReceiver(type, (payload, context) ->
                 receiver.accept(payload, context.player()));
+    }
+
+    @Override
+    public <T extends CustomPacketPayload> void initClientboundMessageChannel(
+            CustomPacketPayload.Type<T> type,
+            StreamCodec<? super RegistryFriendlyByteBuf, T> codec) {
+        PayloadTypeRegistry.clientboundPlay().register(type, codec);
+    }
+
+    @Override
+    public boolean canSend(ServerPlayer player, CustomPacketPayload.Type<?> type) {
+        return ServerPlayNetworking.canSend(player, type);
     }
 
     @Override

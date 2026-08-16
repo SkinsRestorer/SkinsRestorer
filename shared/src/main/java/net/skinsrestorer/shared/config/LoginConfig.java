@@ -25,15 +25,15 @@ import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 
 public class LoginConfig implements SettingsHolder {
     @Comment({
-            "Stops the process of setting a skin if the LoginEvent was canceled by an AntiBot plugin.",
-            "[?] Unsure? leave this true for better performance."
+            "Stops the skin update when an AntiBot plugin cancels the login event.",
+            "Keep this option enabled unless your AntiBot plugin requires different behavior."
     })
     public static final Property<Boolean> NO_SKIN_IF_LOGIN_CANCELED = newProperty("login.noSkinIfLoginCanceled", true);
-    @Comment("This will make SkinsRestorer always apply the skin even if the player joins as premium on an online mode server.")
+    @Comment("Applies the stored skin to paid accounts that join an online-mode server.")
     public static final Property<Boolean> ALWAYS_APPLY_PREMIUM = newProperty("login.alwaysApplyPremium", false);
     @Comment({
-            "Sends a one-time warning to offline-mode players that some third-party launchers can override SkinsRestorer skins.",
-            "SkinsRestorer cannot detect the exact launcher. Players can dismiss the warning with "
+            "Shows offline-mode players one warning about launchers that override SkinsRestorer skins.",
+            "SkinsRestorer cannot identify the player's launcher. Players can hide the warning with "
                     + "/skin notification ignore-cracked-client."
     })
     public static final Property<Boolean> OFFLINE_MODE_WARNING_ENABLED = newProperty("login.offlineModeWarning.enabled", true);

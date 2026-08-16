@@ -29,6 +29,9 @@ import net.skinsrestorer.shared.api.SkinApplierAccess;
 import net.skinsrestorer.shared.api.event.EventBusImpl;
 import net.skinsrestorer.shared.api.event.SkinApplyEventImpl;
 import net.skinsrestorer.shared.config.AdvancedConfig;
+import net.skinsrestorer.shared.config.ServerConfig;
+import net.skinsrestorer.shared.integration.skinshuffle.SkinShuffleChannels;
+import net.skinsrestorer.shared.integration.skinshuffle.SkinShuffleWire;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -92,6 +95,7 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
 
         // Refresh the players own skin
         refresh.refresh(player, property);
+        refreshSkinShufflePlayerEntries(player);
     }
 
     private void normalOtherRefresh(Player player) {
@@ -153,5 +157,21 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
         } catch (Throwable e) { // Catch all errors and fallback to bukkit
             return server.getOnlinePlayers();
         }
+    }
+
+    private void refreshSkinShufflePlayerEntries(Player player) {
+        if (!settingsManager.getProperty(ServerConfig.SKINSHUFFLE_SUPPORT)) {
+            return;
+        }
+
+        byte[] payload = SkinShuffleWire.createRefreshPlayerListEntryPayload(player.getEntityId());
+        for (Player otherPlayer : getSeenByPlayers(player)) {
+            sendSkinShufflePacket(otherPlayer, SkinShuffleChannels.REFRESH_PLAYER_LIST_ENTRY, payload);
+        }
+        sendSkinShufflePacket(player, SkinShuffleChannels.REFRESH_PLAYER_LIST_ENTRY, payload);
+    }
+
+    private void sendSkinShufflePacket(Player player, String channel, byte[] payload) {
+        player.sendPluginMessage(adapter.getPluginInstance(), channel, payload);
     }
 }

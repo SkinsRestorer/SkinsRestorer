@@ -28,39 +28,36 @@ import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 
 public class AdvancedConfig implements SettingsHolder {
     @Comment({
-            "<!! Warning !!>",
-            "Enabling this will stop SkinsRestorer to change skins on join.",
-            "Handy for when you want run /skin apply to apply skin after texturepack popup"
+            "WARNING:",
+            "When enabled, SkinsRestorer does not apply skins when players join.",
+            "Enable this only if another plugin runs /skin apply after the resource-pack prompt."
     })
     public static final Property<Boolean> DISABLE_ON_JOIN_SKINS = newProperty("advanced.disableOnJoinSkins", false);
     @Comment({
-            "<!! Warning !!>",
-            "This enables the PaperMC join event integration that allows instant skins on join.",
-            "It is recommended over the fallback listener because it is smoother and should not lag the server.",
-            "It also fixes all resource pack skin apply issues.",
-            "If your players are experiencing extremely long loading screens, try disabling this."
+            "Enables the Paper join event integration for immediate skins when players join.",
+            "This integration also reapplies skins after a resource pack loads.",
+            "If players have long loading screens, disable this option."
     })
     public static final Property<Boolean> ENABLE_PAPER_JOIN_LISTENER = newProperty("advanced.enablePaperJoinListener", true);
     @Comment({
-            "<!! Warning !!>",
-            "This is a very dangerous feature that should only be used if you know what you are doing.",
-            "Instead of resending player skins to other players by hiding and shadowing them, we will teleport them to a far away location and back",
-            "This is a workaround for some server software with broken vanishing support, like Arclight.",
+            "CAUTION:",
+            "This option teleports players to a distant location and back during a skin refresh.",
+            "Use this workaround only when broken vanish support prevents normal skin refreshes.",
+            "Arclight is one platform that can require this workaround."
     })
     public static final Property<Boolean> TELEPORT_REFRESH = newProperty("advanced.teleportRefresh", false);
     @Comment({
-            "<!! Warning !!>",
-            "When enabled SkinsRestorer will not try to connect to any web server, which means the follow things won't work:",
-            "Getting new skins from Mojang, looking up uuids of players, skin url, update checking and more.",
+            "WARNING:",
+            "When enabled, SkinsRestorer does not connect to external services.",
+            "Mojang skins, player UUID lookups, skin URLs, and update checks will not work.",
             "SkinsRestorer will only be able to access already downloaded skins.",
-            "This is useful for servers that are not connected to the internet or have a firewall blocking connections."
+            "Enable this option only on servers without internet access."
     })
     public static final Property<Boolean> NO_CONNECTIONS = newProperty("advanced.noConnections", false);
     @Comment({
-            "<!! Warning !!>",
-            "When enabled SkinsRestorer will use the new player head objects inside chat messages.",
-            "While these new objects look great, they are not supported by all server software and plugins, especially older servers.",
-            "This option will be on by default in the future when backwards compatibility is no longer a concern.",
+            "When enabled, SkinsRestorer uses player-head components in chat messages.",
+            "Some server platforms and plugins do not support these components.",
+            "This limitation is more common on older servers."
     })
     public static final Property<Boolean> PLAYER_HEAD_CHAT_OBJECTS = newProperty("advanced.playerHeadChatObjects", false);
 
@@ -80,7 +77,7 @@ public class AdvancedConfig implements SettingsHolder {
                 "\n# Danger Zone #",
                 "\n###############",
                 "\n",
-                "ABSOLUTELY DO NOT CHANGE SETTINGS HERE IF YOU DO NOT KNOW WHAT YOU DO!"
+                "CAUTION: These options change advanced behavior. Change them only to solve a specific problem."
         );
     }
 }

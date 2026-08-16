@@ -25,25 +25,24 @@ import ch.jalu.configme.properties.Property;
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 
 public class DevConfig implements SettingsHolder {
-    @Comment("Enable to start receiving debug messages about api requests & more.")
+    @Comment("Enables debug messages for API requests and other plugin activity.")
     public static final Property<Boolean> DEBUG = newProperty("dev.debug", false);
 
     @Override
     public void registerComments(CommentsConfiguration conf) {
         conf.setComment("dev",
                 "\n",
-                "Updater Settings",
-                "<!! Warning !!>",
-                "Using outdated version void's support, compatibility & stability.",
+                "Update settings",
+                "WARNING: Outdated versions do not receive support and can contain known security problems.",
                 "\n",
-                "To block all types of automatic updates (which can risk keeping an exploit):",
-                "Create a file called 'noautoupdate.txt' in the plugin directory (./plugins/SkinsRestorer/ )",
+                "To disable all automatic updates, create this file:",
+                "./plugins/SkinsRestorer/noautoupdate.txt",
                 "\n",
                 "\n################",
-                "\n# DEV's corner #",
+                "\n# Developer options #",
                 "\n################",
                 "\n",
-                "Enable these on the dev's request"
+                "Enable these options only when a SkinsRestorer developer asks you to."
         );
     }
 }

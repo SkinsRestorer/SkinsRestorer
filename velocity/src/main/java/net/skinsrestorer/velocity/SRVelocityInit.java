@@ -24,6 +24,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.miniplaceholders.SRMiniPlaceholdersAPIExpansion;
+import net.skinsrestorer.shared.integration.skinshuffle.SkinShuffleChannels;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.plugin.SRProxyPlatformInit;
@@ -32,6 +33,8 @@ import net.skinsrestorer.shared.utils.SRHelpers;
 import net.skinsrestorer.velocity.listener.AdminInfoListener;
 import net.skinsrestorer.velocity.listener.GameProfileRequest;
 import net.skinsrestorer.velocity.listener.ProxyMessageListener;
+import net.skinsrestorer.velocity.listener.SkinShuffleHandshakeListener;
+import net.skinsrestorer.velocity.listener.SkinShuffleProxyMessageListener;
 import net.skinsrestorer.velocity.wrapper.WrapperVelocity;
 
 import javax.inject.Inject;
@@ -60,6 +63,7 @@ public class SRVelocityInit implements SRProxyPlatformInit {
     @Override
     public void initAdminInfoListener() {
         proxy.getEventManager().register(adapter.pluginInstance(), injector.newInstance(AdminInfoListener.class));
+        proxy.getEventManager().register(adapter.pluginInstance(), injector.newInstance(SkinShuffleHandshakeListener.class));
     }
 
     @Override
@@ -70,7 +74,11 @@ public class SRVelocityInit implements SRProxyPlatformInit {
     @Override
     public void initMessageChannel() {
         proxy.getChannelRegistrar().register(MinecraftChannelIdentifier.from(SRHelpers.MESSAGE_CHANNEL));
+        proxy.getChannelRegistrar().register(MinecraftChannelIdentifier.from(SkinShuffleChannels.SKIN_REFRESH));
+        proxy.getChannelRegistrar().register(MinecraftChannelIdentifier.from(SkinShuffleChannels.HANDSHAKE));
+        proxy.getChannelRegistrar().register(MinecraftChannelIdentifier.from(SkinShuffleChannels.REFRESH_PLAYER_LIST_ENTRY));
         proxy.getEventManager().register(adapter.pluginInstance(), PluginMessageEvent.class, injector.getSingleton(ProxyMessageListener.class));
+        proxy.getEventManager().register(adapter.pluginInstance(), PluginMessageEvent.class, injector.getSingleton(SkinShuffleProxyMessageListener.class));
     }
 
     @Override

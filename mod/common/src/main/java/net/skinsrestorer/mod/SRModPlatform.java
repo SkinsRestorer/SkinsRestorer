@@ -65,10 +65,21 @@ public interface SRModPlatform {
      * bypassing Architectury's codec wrapping which adds varint length prefixes
      * incompatible with proxy plugin messages.
      */
-    <T extends CustomPacketPayload> void initMessageChannel(
+    <T extends CustomPacketPayload> void initBidirectionalMessageChannel(
             CustomPacketPayload.Type<T> type,
             StreamCodec<? super RegistryFriendlyByteBuf, T> codec,
             BiConsumer<T, ServerPlayer> receiver);
+
+    <T extends CustomPacketPayload> void initServerboundMessageChannel(
+            CustomPacketPayload.Type<T> type,
+            StreamCodec<? super RegistryFriendlyByteBuf, T> codec,
+            BiConsumer<T, ServerPlayer> receiver);
+
+    <T extends CustomPacketPayload> void initClientboundMessageChannel(
+            CustomPacketPayload.Type<T> type,
+            StreamCodec<? super RegistryFriendlyByteBuf, T> codec);
+
+    boolean canSend(ServerPlayer player, CustomPacketPayload.Type<?> type);
 
     /**
      * Sends a payload to a player using the platform networking API directly,
