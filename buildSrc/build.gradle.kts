@@ -25,7 +25,7 @@ dependencies {
     implementation("com.github.spotbugs.snom:spotbugs-gradle-plugin:6.5.10")
     implementation("net.kyori:indra-git:4.1.0")
     implementation("io.freefair.gradle:lombok-plugin:9.5.0")
-    implementation("xyz.wagyourtail.jvmdowngrader:xyz.wagyourtail.jvmdowngrader.gradle.plugin:1.3.6")
+    implementation("xyz.wagyourtail.jvmdowngrader:xyz.wagyourtail.jvmdowngrader.gradle.plugin:2.0.1")
     implementation("io.papermc.paperweight.userdev:io.papermc.paperweight.userdev.gradle.plugin:2.0.0-beta.21")
     implementation("net.ltgt.errorprone:net.ltgt.errorprone.gradle.plugin:5.1.0")
     implementation("org.openrewrite:plugin:7.39.0")
