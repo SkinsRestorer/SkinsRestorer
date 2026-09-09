@@ -225,7 +225,10 @@ public class MojangAPIImpl implements MojangAPI {
         }
 
         try {
-            return getProfileMojang(uuid);
+            Optional<SkinProperty> mojangProfile = getProfileMojang(uuid);
+            if (mojangProfile.isPresent()) {
+                return mojangProfile;
+            }
         } catch (DataRequestException e) {
             logger.debug(e);
         }
