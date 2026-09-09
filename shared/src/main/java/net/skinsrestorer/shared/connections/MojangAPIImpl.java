@@ -259,7 +259,7 @@ public class MojangAPIImpl implements MojangAPI {
     public Optional<SkinProperty> getProfileMojang(UUID uuid) throws DataRequestException {
         HttpResponse httpResponse = readURL(URI.create(PROFILE_MOJANG.replace("%uuid%", UUIDUtils.convertToNoDashes(uuid))), MetricsCounter.Service.MOJANG_PROFILE);
         MojangProfileResponse response = httpResponse.getBodyAs(MojangProfileResponse.class);
-        if (response.getProperties() == null) {
+        if (response == null || response.getProperties() == null) {
             return Optional.empty();
         }
 
