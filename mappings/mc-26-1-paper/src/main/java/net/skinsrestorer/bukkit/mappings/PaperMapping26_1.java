@@ -81,7 +81,8 @@ public class PaperMapping26_1 implements IMapping {
     public Set<String> getPaperMinecraftVersionIds() {
         return Set.of(
                 "26.1+",
-                "26.2+"
+                "26.2+",
+                "26.3+"
         );
     }
 

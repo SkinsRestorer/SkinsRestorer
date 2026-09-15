@@ -87,7 +87,8 @@ public class SpigotMapping26_1 implements IMapping {
     @Override
     public Set<String> getSpigotApiVersions() {
         return Set.of(
-                "26.2+"
+                "26.2+",
+                "26.3+"
         );
     }
 }
