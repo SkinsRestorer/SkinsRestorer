@@ -72,9 +72,13 @@ public class UpdateCheckerGitHub {
                     HttpClient.HttpMethod.GET,
                     Collections.emptyMap(),
                     90_000);
+            if (response.statusCode() != 200) {
+                throw new DataRequestExceptionShared("GitHub error: %d".formatted(response.statusCode()));
+            }
+
             GitHubReleaseInfo releaseInfo = response.getBodyAs(GitHubReleaseInfo.class);
 
-            if (releaseInfo.getAssets() == null || releaseInfo.getAssets().isEmpty()) {
+            if (releaseInfo == null || releaseInfo.getAssets() == null || releaseInfo.getAssets().isEmpty()) {
                 throw new DataRequestExceptionShared("No release info found");
             }
 
