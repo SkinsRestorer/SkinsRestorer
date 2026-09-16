@@ -225,10 +225,7 @@ public class MojangAPIImpl implements MojangAPI {
         }
 
         try {
-            Optional<SkinProperty> mojangProfile = getProfileMojang(uuid);
-            if (mojangProfile.isPresent()) {
-                return mojangProfile;
-            }
+            return getProfileMojang(uuid);
         } catch (DataRequestException e) {
             logger.debug(e);
         }
@@ -261,8 +258,15 @@ public class MojangAPIImpl implements MojangAPI {
 
     public Optional<SkinProperty> getProfileMojang(UUID uuid) throws DataRequestException {
         HttpResponse httpResponse = readURL(URI.create(PROFILE_MOJANG.replace("%uuid%", UUIDUtils.convertToNoDashes(uuid))), MetricsCounter.Service.MOJANG_PROFILE);
+        if (httpResponse.statusCode() == 204 || httpResponse.statusCode() == 404) {
+            return Optional.empty();
+        }
+        if (httpResponse.statusCode() != 200) {
+            throw new DataRequestExceptionShared("Mojang error: %d".formatted(httpResponse.statusCode()));
+        }
+
         MojangProfileResponse response = httpResponse.getBodyAs(MojangProfileResponse.class);
-        if (response == null || response.getProperties() == null) {
+        if (response == null || response.getProperties() == null || response.getProperties().length == 0) {
             return Optional.empty();
         }
 

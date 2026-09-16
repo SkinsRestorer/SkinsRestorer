@@ -134,11 +134,11 @@ public class MojangBatchAPI {
             }
         } catch (Exception e) {
             logger.debug("Error processing batch request", e);
-            // Complete all pending futures with empty on error
+            // Propagate failures so callers can try another provider.
             for (String name : namesToProcess) {
                 CompletableFuture<Optional<UUID>> future = pendingRequests.remove(name.toLowerCase(Locale.ROOT));
                 if (future != null) {
-                    future.complete(Optional.empty());
+                    future.completeExceptionally(e);
                 }
             }
         } finally {
@@ -186,8 +186,7 @@ public class MojangBatchAPI {
                 rateLimitBackoff.markRateLimited(batchEndpoint, httpResponse);
                 throw new DataRequestExceptionShared("Please wait a minute before requesting that skin again. (Rate Limited)");
             } else {
-                logger.debug("Batch request failed with status: " + httpResponse.statusCode());
-                return Collections.nCopies(batchNames.size(), Optional.empty());
+                throw new DataRequestExceptionShared("Mojang batch request failed with status: %d".formatted(httpResponse.statusCode()));
             }
         } catch (IOException e) {
             logger.debug("Error sending batch request", e);

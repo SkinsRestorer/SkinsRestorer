@@ -111,7 +111,17 @@ public class MineSkinAPIImpl implements MineSkinAPI {
         HttpResponse httpResponse = queryURL(imageUrl, skinVariant);
         logger.debug("MineSkinAPI: Response: %s".formatted(httpResponse));
 
+        switch (httpResponse.statusCode()) {
+            case 200, 400, 403, 429, 500 -> {
+                // Error responses carry API error codes used by the handlers below.
+            }
+            default -> throw new DataRequestExceptionShared("MineSkin error: %d".formatted(httpResponse.statusCode()));
+        }
+
         MineSkinUrlResponse response = httpResponse.getBodyAs(MineSkinUrlResponse.class);
+        if (response == null) {
+            throw new DataRequestExceptionShared("Empty MineSkin response: %d".formatted(httpResponse.statusCode()));
+        }
 
         MineSkinUrlResponse.RateLimit rateLimit = response.getRateLimit();
         if (rateLimit != null) {
@@ -119,13 +129,17 @@ public class MineSkinAPIImpl implements MineSkinAPI {
             nextRequestAt.updateAndGet(currentValue -> Math.max(currentValue, serverNextRequestAt));
         }
 
-        if (response.isSuccess()) {
+        if (httpResponse.statusCode() == 200 && response.isSuccess()) {
             MineSkinUrlResponse.Skin skin = response.getSkin();
             MineSkinUrlResponse.Skin.Texture.Data textureData = skin.getTexture().getData();
             SkinProperty property = SkinProperty.of(textureData.getValue(), textureData.getSignature());
             return Optional.of(MineSkinResponse.of(property, skin.getUuid(),
                     skinVariant, PropertyUtils.getSkinVariant(property)));
         } else {
+            if (response.getErrors() == null) {
+                throw new DataRequestExceptionShared("Missing MineSkin errors: %d".formatted(httpResponse.statusCode()));
+            }
+
             for (MineSkinUrlResponse.Error error : response.getErrors()) {
                 logger.debug("[ERROR] MineSkin Failed! Reason: %s Image URL: %s".formatted(error, imageUrl));
                 return switch (error.getCode()) {
