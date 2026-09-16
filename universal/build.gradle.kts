@@ -38,7 +38,7 @@ tasks {
         archiveFileName = "SkinsRestorer.jar"
         destinationDirectory = rootProject.layout.buildDirectory.dir("libs")
 
-        shadePath = { _ -> "net/skinsrestorer/shadow/jvmdowngrader" }
+        shadePath = "net/skinsrestorer/shadow/jvmdowngrader"
     }
     build {
         dependsOn(shadeDowngradedApi)
