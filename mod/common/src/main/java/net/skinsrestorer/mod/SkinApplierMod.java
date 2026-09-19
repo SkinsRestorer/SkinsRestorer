@@ -33,7 +33,7 @@ import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.skinsrestorer.api.property.SkinProperty;
-import net.skinsrestorer.mod.mixin.GameProfileAccessor;
+import net.skinsrestorer.mod.mixin.PlayerAccessor;
 import net.skinsrestorer.shared.api.SkinApplierAccess;
 import net.skinsrestorer.shared.api.event.EventBusImpl;
 import net.skinsrestorer.shared.api.event.SkinApplyEventImpl;
@@ -54,7 +54,7 @@ public class SkinApplierMod implements SkinApplierAccess<ServerPlayer> {
     private final SettingsManager settings;
     private final SRLogger logger;
 
-    public static void setGameProfileTextures(GameProfile gameProfile, SkinProperty property) {
+    public static GameProfile withGameProfileTextures(GameProfile gameProfile, SkinProperty property) {
         PropertyMap properties = gameProfile.properties();
         var newProperties = ImmutableMultimap.<String, Property>builder();
         for (var entry : properties.entries()) {
@@ -66,7 +66,7 @@ public class SkinApplierMod implements SkinApplierAccess<ServerPlayer> {
         }
         newProperties.put(SkinProperty.TEXTURES_NAME, new Property(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
 
-        ((GameProfileAccessor) (Object) gameProfile).skinsrestorer$setProperties(new PropertyMap(newProperties.build()));
+        return new GameProfile(gameProfile.id(), gameProfile.name(), new PropertyMap(newProperties.build()));
     }
 
     @Override
@@ -96,7 +96,7 @@ public class SkinApplierMod implements SkinApplierAccess<ServerPlayer> {
 
         ejectPassengers(player);
 
-        setGameProfileTextures(player.getGameProfile(), property);
+        ((PlayerAccessor) player).skinsrestorer$setGameProfile(withGameProfileTextures(player.getGameProfile(), property));
 
         for (ServerPlayer otherPlayer : getSeenByPlayers(player)) {
             untrackAndHideEntity(otherPlayer, player);

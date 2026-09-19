@@ -36,42 +36,48 @@ public class PlayerJoinListener {
         INSTANCE = this;
     }
 
-    public void join(GameProfile gameProfile) {
-        adapter.handleLogin(wrap(gameProfile));
+    public GameProfile join(GameProfile gameProfile) {
+        LoginProfileEvent event = new LoginProfileEvent(gameProfile);
+        adapter.handleLogin(event);
+        return event.gameProfile;
     }
 
-    private SRLoginProfileEvent<Void> wrap(GameProfile gameProfile) {
-        return new SRLoginProfileEvent<>() {
-            @Override
-            public boolean hasOnlineProperties() {
-                return !gameProfile.properties().get(SkinProperty.TEXTURES_NAME).isEmpty();
-            }
+    private static final class LoginProfileEvent implements SRLoginProfileEvent<Void> {
+        private GameProfile gameProfile;
 
-            @Override
-            public UUID getPlayerUniqueId() {
-                return gameProfile.id();
-            }
+        private LoginProfileEvent(GameProfile gameProfile) {
+            this.gameProfile = gameProfile;
+        }
 
-            @Override
-            public String getPlayerName() {
-                return gameProfile.name();
-            }
+        @Override
+        public boolean hasOnlineProperties() {
+            return !gameProfile.properties().get(SkinProperty.TEXTURES_NAME).isEmpty();
+        }
 
-            @Override
-            public boolean isCancelled() {
-                return false;
-            }
+        @Override
+        public UUID getPlayerUniqueId() {
+            return gameProfile.id();
+        }
 
-            @Override
-            public void setResultProperty(SkinProperty property) {
-                SkinApplierMod.setGameProfileTextures(gameProfile, property);
-            }
+        @Override
+        public String getPlayerName() {
+            return gameProfile.name();
+        }
 
-            @Override
-            public Void runAsync(Runnable runnable) {
-                runnable.run();
-                return null;
-            }
-        };
+        @Override
+        public boolean isCancelled() {
+            return false;
+        }
+
+        @Override
+        public void setResultProperty(SkinProperty property) {
+            gameProfile = SkinApplierMod.withGameProfileTextures(gameProfile, property);
+        }
+
+        @Override
+        public Void runAsync(Runnable runnable) {
+            runnable.run();
+            return null;
+        }
     }
 }

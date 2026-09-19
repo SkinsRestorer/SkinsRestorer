@@ -52,8 +52,7 @@ public class ServerLoginPacketListenerImplMixin {
         state = ServerLoginPacketListenerImpl.State.PROTOCOL_SWITCHING;
         Thread thread = new Thread("SkinsRestorer Login Handler #" + UNIQUE_THREAD_ID.incrementAndGet()) {
             public void run() {
-                listener.join(gameProfile);
-                original.call(gameProfile);
+                original.call(listener.join(gameProfile));
             }
         };
         thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(LOGGER));

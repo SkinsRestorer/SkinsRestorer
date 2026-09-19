@@ -12,7 +12,7 @@
     "defaultRequire": 1
   },
   "mixins": [
-    "GameProfileAccessor",
+    "PlayerAccessor",
     "ServerLoginPacketListenerImplMixin"
   ]
 }
