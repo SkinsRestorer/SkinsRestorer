@@ -27,7 +27,9 @@ import net.minecraft.server.permissions.Permission.HasCommandLevel;
 import net.minecraft.server.permissions.PermissionLevel;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.loading.FMLPaths;
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -38,6 +40,8 @@ import net.neoforged.neoforge.server.permission.events.PermissionGatherEvent;
 import net.neoforged.neoforge.server.permission.nodes.PermissionNode;
 import net.neoforged.neoforge.server.permission.nodes.PermissionTypes;
 import net.skinsrestorer.mod.SRModPlatform;
+import net.skinsrestorer.mod.network.TabHeadVisibilityPayload;
+import net.skinsrestorer.mod.network.TabHeadVisibilityState;
 import net.skinsrestorer.shared.info.Platform;
 import net.skinsrestorer.shared.info.PluginInfo;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
@@ -156,5 +160,24 @@ public class SRModPlatformImpl implements SRModPlatform {
     @Override
     public void sendPluginMessage(ServerPlayer player, CustomPacketPayload payload) {
         PacketDistributor.sendToPlayer(player, payload);
+    }
+
+    @Override
+    public void initTabHeadVisibilityChannel() {
+        ModLoadingContext.get().getActiveContainer().getEventBus()
+                .addListener(RegisterPayloadHandlersEvent.class, event -> {
+                    PayloadRegistrar registrar = event.registrar("1").optional();
+                    registrar.playToClient(TabHeadVisibilityPayload.TYPE, TabHeadVisibilityPayload.STREAM_CODEC,
+                            (payload, context) -> TabHeadVisibilityState.set(payload.suppressed()));
+                });
+
+        // Client-only event class — this class is also loaded on a dedicated server /
+        // when this instance hosts, where it must stay untouched.
+        if (!FMLEnvironment.getDist().isClient()) {
+            return;
+        }
+        // Don't let a suppression from one server bleed into the next connection.
+        NeoForge.EVENT_BUS.addListener(ClientPlayerNetworkEvent.LoggingOut.class,
+                e -> TabHeadVisibilityState.set(false));
     }
 }
