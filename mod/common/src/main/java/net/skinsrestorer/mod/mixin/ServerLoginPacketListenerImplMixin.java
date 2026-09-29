@@ -23,6 +23,7 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.DefaultUncaughtExceptionHandler;
 import net.minecraft.server.network.ServerLoginPacketListenerImpl;
 import net.skinsrestorer.mod.listener.PlayerJoinListener;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -40,6 +41,8 @@ public class ServerLoginPacketListenerImplMixin {
     private static AtomicInteger UNIQUE_THREAD_ID;
     @Shadow
     private volatile ServerLoginPacketListenerImpl.State state;
+    @Shadow
+    private @Nullable GameProfile authenticatedProfile;
 
     @WrapMethod(method = "finishLoginAndWaitForClient")
     private void skinsrestorerOnLoginFinish(GameProfile gameProfile, Operation<Void> original) {
@@ -52,7 +55,9 @@ public class ServerLoginPacketListenerImplMixin {
         state = ServerLoginPacketListenerImpl.State.PROTOCOL_SWITCHING;
         Thread thread = new Thread("SkinsRestorer Login Handler #" + UNIQUE_THREAD_ID.incrementAndGet()) {
             public void run() {
-                original.call(listener.join(gameProfile));
+                GameProfile newProfile = listener.join(gameProfile);
+                authenticatedProfile = newProfile;
+                original.call(newProfile);
             }
         };
         thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(LOGGER));
