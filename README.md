@@ -47,3 +47,8 @@ You can find instructions on how to use the SkinsRestorer API on [our website](h
 
 See [Contributors](https://skinsrestorer.net/contributors) for a list of people that have
 supported this project by contributing.
+
+## Contributing and support
+
+Read [the contribution guide](CONTRIBUTING.md) for development and review.
+Use [the support guide](SUPPORT.md) for questions and issue routing.

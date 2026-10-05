@@ -1,34 +1,39 @@
-name: 💡 Feature Request
-description: Request a feature/enhancement
-type: "Feature"
-
+name: Feature request
+description: Propose a focused change and explain its use case.
+type: Feature
 body:
-  - type: checkboxes
-    attributes:
-      label: Is there an existing feature request for this?
-      description: |
-        Please search to see if an feature request like this already exists.
-
-        Tip: You can go to the [GitHub issue tab](https://github.com/SkinsRestorer/SkinsRestorer/labels/type%3A%20%3Abulb%3A%20enhancement) for a list of open feature requests
-      options:
-      - label: I have searched the existing feature requests
-        required: true
-  - type: textarea
-    attributes:
-      label: Describe your feature request
-      description: What do you want added to SkinsRestorer?
-      placeholder: "I want x feature added to SkinsRestorer"
-    validations:
+- type: markdown
+  attributes:
+    value: For setup questions, read [the support guide](https://github.com/SkinsRestorer/SkinsRestorer/blob/dev/SUPPORT.md).
+      Remove secrets and private data from reports.
+- type: checkboxes
+  id: prior-search
+  attributes:
+    label: Before submitting
+    options:
+    - label: I searched existing issues and the relevant documentation.
       required: true
-  - type: textarea
-    attributes:
-      label: Explain what you need this for
-      description: What do you want to use this feature for?
-      placeholder: "I want to use this to do x on my server"
-    validations:
-      required: true
-  - type: textarea
-    attributes:
-      label: Additional context
-      description: Links to other relevant places. Like internet articles or links to Discord messages.
-      placeholder: "e.g. https://discord.com/channels/xxx/xxx/xxx"
+- type: textarea
+  id: problem
+  attributes:
+    label: Problem or use case
+    description: Who encounters this limitation, and what task does it block?
+  validations:
+    required: true
+- type: textarea
+  id: proposal
+  attributes:
+    label: Proposed behavior
+    description: Describe the result or API you want.
+  validations:
+    required: true
+- type: textarea
+  id: alternatives
+  attributes:
+    label: Alternatives considered
+    description: Describe existing options or workarounds.
+- type: textarea
+  id: compatibility
+  attributes:
+    label: Compatibility and context
+    description: Include affected versions, integrations, migration needs, and relevant references.
