@@ -18,6 +18,9 @@
 package net.skinsrestorer.mod.fabric;
 
 import me.lucko.fabric.api.permissions.v0.Permissions;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -34,6 +37,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.permissions.Permission.HasCommandLevel;
 import net.minecraft.server.permissions.PermissionLevel;
 import net.skinsrestorer.mod.SRModPlatform;
+import net.skinsrestorer.mod.network.TabHeadVisibilityPayload;
+import net.skinsrestorer.mod.network.TabHeadVisibilityState;
 import net.skinsrestorer.shared.info.Platform;
 import net.skinsrestorer.shared.info.PluginInfo;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
@@ -139,5 +144,19 @@ public class SRModPlatformImpl implements SRModPlatform {
     @Override
     public void sendPluginMessage(ServerPlayer player, CustomPacketPayload payload) {
         ServerPlayNetworking.send(player, payload);
+    }
+
+    @Override
+    public void initTabHeadVisibilityChannel() {
+        // Client-only API (ClientPlayNetworking) — this class is also loaded on a
+        // dedicated server / when this instance hosts, where it must stay untouched.
+        if (FabricLoader.getInstance().getEnvironmentType() != EnvType.CLIENT) {
+            return;
+        }
+        PayloadTypeRegistry.clientboundPlay().register(TabHeadVisibilityPayload.TYPE, TabHeadVisibilityPayload.STREAM_CODEC);
+        ClientPlayNetworking.registerGlobalReceiver(TabHeadVisibilityPayload.TYPE,
+                (payload, context) -> TabHeadVisibilityState.set(payload.suppressed()));
+        // Don't let a suppression from one server bleed into the next connection.
+        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> TabHeadVisibilityState.set(false));
     }
 }

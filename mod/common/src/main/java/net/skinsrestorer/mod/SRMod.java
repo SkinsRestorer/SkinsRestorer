@@ -30,6 +30,10 @@ public final class SRMod {
     private static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID_NAME);
 
     public static void init() {
+        // Independent of the rest of the bootstrap below: must run even when this mod
+        // instance is a pure client connecting to an external server it does not host.
+        SRModPlatform.INSTANCE.initTabHeadVisibilityChannel();
+
         SRBootstrapper.startPlugin(
                 runnable -> {
                 },
