@@ -31,10 +31,10 @@ rewrite {
 
 dependencies {
     api("org.jetbrains:annotations:26.1.0")
-    compileOnly("com.github.spotbugs:spotbugs-annotations:4.10.4")
+    compileOnly("com.github.spotbugs:spotbugs-annotations:4.10.5")
 
     errorprone("com.google.errorprone:error_prone_core:2.50.0")
-    spotbugs("com.github.spotbugs:spotbugs:4.10.4")
+    spotbugs("com.github.spotbugs:spotbugs:4.10.5")
 
     rewrite("org.openrewrite.recipe:rewrite-static-analysis:2.41.1")
     rewrite("org.openrewrite.recipe:rewrite-migrate-java:3.42.1")
