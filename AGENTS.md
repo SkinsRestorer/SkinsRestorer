@@ -62,3 +62,7 @@
 - Use TestContainers for integration tests
 - Follow naming pattern: `*Test.java` for unit tests
 - Use SRExtension for shared test setup
+
+## Java conventions
+
+- Import Java types instead of using fully qualified class names in code.
