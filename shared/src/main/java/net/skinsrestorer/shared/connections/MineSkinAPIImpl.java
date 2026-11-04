@@ -71,6 +71,11 @@ public class MineSkinAPIImpl implements MineSkinAPI {
     private final HttpClient httpClient;
     private final AtomicLong nextRequestAt = new AtomicLong();
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Axolotl URLs reuse an existing signed skin; image URLs use MineSkin generation.
+     */
     @Override
     public MineSkinResponse genSkin(String imageUrl, @Nullable SkinVariant skinVariant) throws DataRequestException, MineSkinException {
         if (imageUrl.startsWith(AXOLOTL_PREFIX)) {
@@ -225,6 +230,10 @@ public class MineSkinAPIImpl implements MineSkinAPI {
         return Optional.of(apiKey);
     }
 
+    /**
+     * Validates a decrypted MineSkin page URL and returns its original signed texture and variant.
+     * Malformed responses are reported as request failures so callers can apply their error cooldown.
+     */
     private MineSkinResponse lookupAxolotlSkin(String url, @Nullable SkinVariant requestedVariant) throws DataRequestException {
         URI uri;
         try {
@@ -243,18 +252,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
         String skinId = uri.getPath().replace("/", "").replace("-", "");
 
         try {
-            Map<String, String> headers = new HashMap<>();
-            getApiKey(settings).ifPresent(key -> headers.put("Authorization", "Bearer %s".formatted(key)));
-            metricsCounter.increment(MetricsCounter.Service.MINESKIN_CALLS);
-            HttpResponse httpResponse = httpClient.execute(
-                    URI.create("https://api.mineskin.org/v2/skins/" + skinId),
-                    null,
-                    HttpClient.HttpType.JSON,
-                    MINESKIN_USER_AGENT,
-                    HttpClient.HttpMethod.GET,
-                    headers,
-                    30_000
-            );
+            HttpResponse httpResponse = querySkin(skinId);
             if (httpResponse.statusCode() != 200) {
                 throw new DataRequestExceptionShared("MineSkin lookup error: %d".formatted(httpResponse.statusCode()));
             }
@@ -272,12 +270,49 @@ public class MineSkinAPIImpl implements MineSkinAPI {
             }
             // Keep the complete signed value unchanged: it includes both the cape and skin model.
             SkinProperty property = SkinProperty.of(data.getValue(), data.getSignature());
-            return MineSkinResponse.of(property, skin.getUuid(), requestedVariant, PropertyUtils.getSkinVariant(property));
+            SkinVariant generatedVariant;
+            try {
+                generatedVariant = PropertyUtils.getSkinVariant(property);
+            } catch (RuntimeException e) {
+                throw new DataRequestExceptionShared(e);
+            }
+            return MineSkinResponse.of(property, skin.getUuid(), requestedVariant, generatedVariant);
         } catch (IOException e) {
             throw new DataRequestExceptionShared(e);
         }
     }
 
+    /**
+     * Looks up a skin with at most three attempts on connection failures.
+     * HTTP error responses are returned unchanged and are never retried here.
+     */
+    private HttpResponse querySkin(String skinId) throws IOException {
+        Map<String, String> headers = new HashMap<>();
+        getApiKey(settings).ifPresent(key -> headers.put("Authorization", "Bearer %s".formatted(key)));
+
+        for (int attempt = 0; true; attempt++) {
+            try {
+                metricsCounter.increment(MetricsCounter.Service.MINESKIN_CALLS);
+                return httpClient.execute(
+                        URI.create("https://api.mineskin.org/v2/skins/" + skinId),
+                        null,
+                        HttpClient.HttpType.JSON,
+                        MINESKIN_USER_AGENT,
+                        HttpClient.HttpMethod.GET,
+                        headers,
+                        30_000
+                );
+            } catch (IOException e) {
+                if (attempt >= 2) {
+                    throw e;
+                }
+            }
+        }
+    }
+
+    /**
+     * Decrypts an Axolotl URL into its MineSkin page URL, mapping service and JSON errors to request failures.
+     */
     private String decryptAxolotlUrl(String imageUrl) throws DataRequestException {
         if (!imageUrl.startsWith(AXOLOTL_PREFIX)) {
             return imageUrl;

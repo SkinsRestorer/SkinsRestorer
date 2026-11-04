@@ -21,13 +21,14 @@ import ch.jalu.configme.SettingsManager;
 import com.google.gson.Gson;
 import net.skinsrestorer.api.PropertyUtils;
 import net.skinsrestorer.api.connections.model.MineSkinResponse;
-import net.skinsrestorer.api.property.SkinVariant;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.exception.MineSkinException;
+import net.skinsrestorer.api.property.SkinVariant;
 import net.skinsrestorer.shared.config.APIConfig;
 import net.skinsrestorer.shared.connections.MineSkinAPIImpl;
 import net.skinsrestorer.shared.connections.http.HttpClient;
 import net.skinsrestorer.shared.connections.http.HttpResponse;
+import net.skinsrestorer.shared.exception.DataRequestExceptionShared;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import org.junit.jupiter.api.Test;
@@ -40,6 +41,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -53,7 +55,8 @@ class MineSkinAPIImplTest {
     private static final Gson GSON = new Gson();
     private final HttpClient httpClient = mock(HttpClient.class);
     private final SettingsManager settings = mock(SettingsManager.class);
-    private final MineSkinAPIImpl api = new MineSkinAPIImpl(mock(SRLogger.class), mock(MetricsCounter.class),
+    private final MetricsCounter metricsCounter = mock(MetricsCounter.class);
+    private final MineSkinAPIImpl api = new MineSkinAPIImpl(mock(SRLogger.class), metricsCounter,
             settings, httpClient);
 
     @ParameterizedTest
@@ -172,6 +175,31 @@ class MineSkinAPIImplTest {
     }
 
     @Test
+    void invalidLookupTextureBase64IsAHandledRequestFailure() throws Exception {
+        respond(decrypted("https://minesk.in/" + SKIN_ID), signedSkin("%%%not-base64%%%"));
+
+        DataRequestExceptionShared error = assertThrowsExactly(DataRequestExceptionShared.class,
+                () -> api.genSkin(AXOLOTL_URL, null));
+
+        assertInstanceOf(IllegalArgumentException.class, error.getCause());
+        verify(httpClient, times(2)).execute(any(), any(), any(), any(), any(), any(), anyInt());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"not-json", "null", "{}", "{\"textures\":null}", "{\"textures\":{}}",
+            "{\"textures\":{\"SKIN\":null}}", "{\"textures\":{\"SKIN\":[]}}"})
+    void malformedLookupTextureProfilesAreHandledRequestFailures(String texture) throws Exception {
+        String value = Base64.getEncoder().encodeToString(texture.getBytes(StandardCharsets.UTF_8));
+        respond(decrypted("https://minesk.in/" + SKIN_ID), signedSkin(value));
+
+        DataRequestExceptionShared error = assertThrowsExactly(DataRequestExceptionShared.class,
+                () -> api.genSkin(AXOLOTL_URL, null));
+
+        assertInstanceOf(RuntimeException.class, error.getCause());
+        verify(httpClient, times(2)).execute(any(), any(), any(), any(), any(), any(), anyInt());
+    }
+
+    @Test
     void decryptConnectionFailureNeverReachesMineSkin() throws Exception {
         when(httpClient.execute(any(), any(), any(), any(), any(), any(), anyInt()))
                 .thenThrow(new IOException("Connection failed"));
@@ -180,14 +208,48 @@ class MineSkinAPIImplTest {
         verify(httpClient, times(1)).execute(any(), any(), any(), any(), any(), any(), anyInt());
     }
 
+    @ParameterizedTest
+    @ValueSource(ints = {1, 2})
+    void lookupRetriesTransientConnectionFailures(int failures) throws Exception {
+        String value = textureValue(SkinVariant.SLIM);
+        respond(decrypted("https://minesk.in/" + SKIN_ID));
+        AtomicInteger attempts = new AtomicInteger();
+        when(httpClient.execute(eq(LOOKUP_URI), any(), any(), any(), any(), any(), anyInt()))
+                .thenAnswer(invocation -> {
+                    if (attempts.getAndIncrement() < failures) {
+                        throw new IOException("Temporary connection failure");
+                    }
+                    return signedSkin(value);
+                });
+
+        MineSkinResponse result = api.genSkin(AXOLOTL_URL, SkinVariant.CLASSIC);
+
+        assertEquals(value, result.getProperty().getValue());
+        assertEquals("original-signature", result.getProperty().getSignature());
+        assertEquals(SkinVariant.SLIM, result.getGeneratedVariant());
+        assertEquals(SkinVariant.CLASSIC, result.getRequestedVariant());
+        verify(httpClient, times(failures + 1)).execute(eq(LOOKUP_URI), isNull(), eq(HttpClient.HttpType.JSON),
+                eq("SkinsRestorer/MineSkinAPI"), eq(HttpClient.HttpMethod.GET), eq(Map.of()), eq(30_000));
+        verify(metricsCounter, times(failures + 1)).increment(MetricsCounter.Service.MINESKIN_CALLS);
+        verify(httpClient, times(failures + 2)).execute(any(), any(), any(), any(), any(), any(), anyInt());
+        verify(httpClient, never()).execute(any(), any(), any(), any(), eq(HttpClient.HttpMethod.POST), any(), anyInt());
+    }
+
     @Test
     void lookupConnectionFailureNeverFallsBackToGeneration() throws Exception {
         respond(decrypted("https://minesk.in/" + SKIN_ID));
+        IOException failure = new IOException("Connection failed");
         when(httpClient.execute(eq(LOOKUP_URI), any(), any(), any(), any(), any(), anyInt()))
-                .thenThrow(new IOException("Connection failed"));
+                .thenThrow(failure);
 
-        assertThrows(DataRequestException.class, () -> api.genSkin(AXOLOTL_URL, null));
-        verify(httpClient, times(2)).execute(any(), any(), any(), any(), any(), any(), anyInt());
+        DataRequestExceptionShared error = assertThrowsExactly(DataRequestExceptionShared.class,
+                () -> api.genSkin(AXOLOTL_URL, null));
+
+        assertSame(failure, error.getCause());
+        verify(httpClient, times(3)).execute(eq(LOOKUP_URI), any(), any(), any(), any(), any(), anyInt());
+        verify(metricsCounter, times(3)).increment(MetricsCounter.Service.MINESKIN_CALLS);
+        verify(httpClient, times(4)).execute(any(), any(), any(), any(), any(), any(), anyInt());
+        verify(httpClient, never()).execute(any(), any(), any(), any(), eq(HttpClient.HttpMethod.POST), any(), anyInt());
     }
 
     @Test
@@ -219,6 +281,7 @@ class MineSkinAPIImplTest {
                 """.formatted(SKIN_ID, value), Map.of());
     }
 
+    /** Builds a profile containing both a cape and the requested skin model for preservation checks. */
     private String textureValue(SkinVariant variant) {
         String metadata = variant == SkinVariant.SLIM ? ",\"metadata\":{\"model\":\"slim\"}" : "";
         String texture = """
