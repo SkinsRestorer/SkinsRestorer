@@ -33,6 +33,7 @@ import net.skinsrestorer.shared.connections.http.HttpResponse;
 import net.skinsrestorer.shared.connections.mineskin.MineSkinVariant;
 import net.skinsrestorer.shared.connections.mineskin.MineSkinVisibility;
 import net.skinsrestorer.shared.connections.mineskin.requests.MineSkinUrlRequest;
+import net.skinsrestorer.shared.connections.mineskin.responses.MineSkinLookupResponse;
 import net.skinsrestorer.shared.connections.mineskin.responses.MineSkinUrlResponse;
 import net.skinsrestorer.shared.exception.DataRequestExceptionShared;
 import net.skinsrestorer.shared.exception.MineSkinExceptionShared;
@@ -40,6 +41,7 @@ import net.skinsrestorer.shared.log.SRLogLevel;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.utils.MetricsCounter;
+import net.skinsrestorer.shared.utils.RateLimitBackoff;
 import net.skinsrestorer.shared.utils.SRHelpers;
 import org.jetbrains.annotations.Nullable;
 
@@ -60,10 +62,13 @@ import static net.skinsrestorer.shared.utils.ValidationUtil.AXOLOTL_PREFIX;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class MineSkinAPIImpl implements MineSkinAPI {
     private static final int MAX_RETRIES = 5;
+    private static final long MAX_LOOKUP_WAIT_MS = TimeUnit.SECONDS.toMillis(30);
+    private static final String LOOKUP_BACKOFF_KEY = "mineskin-skin-lookup";
     private static final String MINESKIN_USER_AGENT = "SkinsRestorer/MineSkinAPI";
     private static final URI MINESKIN_ENDPOINT = URI.create("https://api.mineskin.org/v2/generate");
     private static final URI AXOLOTL_DECRYPT_ENDPOINT = URI.create("https://axolotl.skinsrestorer.net/mineskin/decrypt-url");
     private final Semaphore semaphore = new Semaphore(5);
+    private final RateLimitBackoff lookupBackoff = new RateLimitBackoff();
     private final Gson gson = new Gson();
     private final SRLogger logger;
     private final MetricsCounter metricsCounter;
@@ -256,12 +261,11 @@ public class MineSkinAPIImpl implements MineSkinAPI {
             if (httpResponse.statusCode() != 200) {
                 throw new DataRequestExceptionShared("MineSkin lookup error: %d".formatted(httpResponse.statusCode()));
             }
-            MineSkinUrlResponse response = httpResponse.getBodyAs(MineSkinUrlResponse.class);
-            if (response == null || !response.isSuccess() || response.getSkin() == null
-                    || response.getSkin().getTexture() == null || response.getSkin().getTexture().getData() == null) {
+            MineSkinLookupResponse response = httpResponse.getBodyAs(MineSkinLookupResponse.class);
+            MineSkinUrlResponse.Skin skin = response == null ? null : response.resolveSkin();
+            if (skin == null || skin.getTexture() == null || skin.getTexture().getData() == null) {
                 throw new DataRequestExceptionShared("Missing MineSkin lookup skin data");
             }
-            MineSkinUrlResponse.Skin skin = response.getSkin();
             MineSkinUrlResponse.Skin.Texture.Data data = skin.getTexture().getData();
             if (skin.getUuid() == null || skin.getUuid().isBlank()
                     || data.getValue() == null || data.getValue().isBlank()
@@ -283,30 +287,60 @@ public class MineSkinAPIImpl implements MineSkinAPI {
     }
 
     /**
-     * Looks up a skin with at most three attempts on connection failures.
-     * HTTP error responses are returned unchanged and are never retried here.
+     * Limits lookup concurrency and retries connection failures up to three times and HTTP 429 up to five times.
+     * Lookup backoff is separate from generation delays and has a 30-second total wait budget.
      */
-    private HttpResponse querySkin(String skinId) throws IOException {
+    private HttpResponse querySkin(String skinId) throws IOException, DataRequestException {
         Map<String, String> headers = new HashMap<>();
         getApiKey(settings).ifPresent(key -> headers.put("Authorization", "Bearer %s".formatted(key)));
+        long waitDeadline = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(MAX_LOOKUP_WAIT_MS);
+        int connectionFailures = 0;
 
-        for (int attempt = 0; true; attempt++) {
-            try {
-                metricsCounter.increment(MetricsCounter.Service.MINESKIN_CALLS);
-                return httpClient.execute(
-                        URI.create("https://api.mineskin.org/v2/skins/" + skinId),
-                        null,
-                        HttpClient.HttpType.JSON,
-                        MINESKIN_USER_AGENT,
-                        HttpClient.HttpMethod.GET,
-                        headers,
-                        30_000
-                );
-            } catch (IOException e) {
-                if (attempt >= 2) {
-                    throw e;
+        try {
+            for (int attempt = 0; true; attempt++) {
+                semaphore.acquire();
+                try {
+                    awaitLookupBackoff(waitDeadline);
+                    metricsCounter.increment(MetricsCounter.Service.MINESKIN_CALLS);
+                    HttpResponse response = httpClient.execute(
+                            URI.create("https://api.mineskin.org/v2/skins/" + skinId),
+                            null,
+                            HttpClient.HttpType.JSON,
+                            MINESKIN_USER_AGENT,
+                            HttpClient.HttpMethod.GET,
+                            headers,
+                            30_000
+                    );
+                    if (response.statusCode() == 429) {
+                        lookupBackoff.markRateLimited(LOOKUP_BACKOFF_KEY, response);
+                        if (attempt < MAX_RETRIES - 1) {
+                            continue;
+                        }
+                    }
+                    return response;
+                } catch (IOException e) {
+                    if (++connectionFailures >= 3 || attempt >= MAX_RETRIES - 1) {
+                        throw e;
+                    }
+                } finally {
+                    semaphore.release();
                 }
             }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new DataRequestExceptionShared(e);
+        }
+    }
+
+    /** Waits for a lookup retry without exceeding the caller's wait budget or sending requests early. */
+    private void awaitLookupBackoff(long waitDeadline) throws InterruptedException, DataRequestException {
+        long remaining;
+        while ((remaining = lookupBackoff.getRemainingMs(LOOKUP_BACKOFF_KEY)) > 0) {
+            long budget = TimeUnit.NANOSECONDS.toMillis(waitDeadline - System.nanoTime());
+            if (remaining > budget) {
+                throw new DataRequestExceptionShared("MineSkin lookup retry delay exceeds the request wait budget");
+            }
+            Thread.sleep(remaining);
         }
     }
 

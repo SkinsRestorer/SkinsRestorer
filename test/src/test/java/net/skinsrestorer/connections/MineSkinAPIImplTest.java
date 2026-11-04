@@ -32,6 +32,7 @@ import net.skinsrestorer.shared.exception.DataRequestExceptionShared;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -39,9 +40,17 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -123,6 +132,30 @@ class MineSkinAPIImplTest {
         assertNull(result.getRequestedVariant());
     }
 
+    @Test
+    void deployedV2EnvelopeAlsoPreservesTheSignedTexture() throws Exception {
+        String value = textureValue(SkinVariant.SLIM);
+        respond(decrypted("https://minesk.in/" + SKIN_ID), generatedSkin(value));
+
+        MineSkinResponse result = api.genSkin(AXOLOTL_URL, SkinVariant.CLASSIC);
+
+        assertEquals(value, result.getProperty().getValue());
+        assertEquals("original-signature", result.getProperty().getSignature());
+        assertEquals(SkinVariant.SLIM, result.getGeneratedVariant());
+        assertEquals(SkinVariant.CLASSIC, result.getRequestedVariant());
+        assertEquals(SKIN_ID, result.getMineSkinId());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"false", "null"})
+    void unsuccessfulEnvelopesNeverReturnTheirSkin(String success) throws Exception {
+        String body = "{\"success\":" + success + ",\"skin\":"
+                + signedSkin(textureValue(SkinVariant.CLASSIC)).body() + "}";
+        respond(decrypted("https://minesk.in/" + SKIN_ID), new HttpResponse(200, body, Map.of()));
+
+        assertThrows(DataRequestException.class, () -> api.genSkin(AXOLOTL_URL, null));
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {"not a URL", "", "https://example.com/skin.png", "https://minesk.in/",
             "https://minesk.in/not-a-uuid", "https://minesk.in/1-2-3-4-5",
@@ -167,7 +200,9 @@ class MineSkinAPIImplTest {
     @ValueSource(strings = {"null", "{}", "not-json", "{\"success\":false}",
             "{\"success\":true,\"skin\":{}}",
             "{\"success\":true,\"skin\":{\"texture\":{\"data\":{}}}}",
-            "{\"success\":true,\"skin\":{\"uuid\":\"id\",\"texture\":{\"data\":{\"value\":\"unsigned\"}}}}"})
+            "{\"success\":true,\"skin\":{\"uuid\":\"id\",\"texture\":{\"data\":{\"value\":\"unsigned\"}}}}",
+            "[]", "{\"uuid\":\"id\"}", "{\"uuid\":\"id\",\"texture\":{}}",
+            "{\"uuid\":\"id\",\"texture\":{\"data\":{\"value\":\"unsigned\"}}}"})
     void invalidLookupResponsesAreRequestFailures(String body) throws Exception {
         respond(decrypted("https://minesk.in/" + SKIN_ID), new HttpResponse(200, body, Map.of()));
 
@@ -253,9 +288,121 @@ class MineSkinAPIImplTest {
     }
 
     @Test
+    @Timeout(10)
+    void lookupHonorsRetryAfterBeforeRetrying() throws Exception {
+        respond(decrypted("https://minesk.in/" + SKIN_ID));
+        AtomicLong firstRequest = new AtomicLong();
+        AtomicLong secondRequest = new AtomicLong();
+        when(httpClient.execute(eq(LOOKUP_URI), any(), any(), any(), any(), any(), anyInt()))
+                .thenAnswer(invocation -> {
+                    firstRequest.set(System.nanoTime());
+                    return new HttpResponse(429, "{}", Map.of("Retry-After", List.of("1")));
+                }).thenAnswer(invocation -> {
+                    secondRequest.set(System.nanoTime());
+                    return signedSkin(textureValue(SkinVariant.SLIM));
+                });
+
+        MineSkinResponse result = api.genSkin(AXOLOTL_URL, null);
+
+        assertEquals(SkinVariant.SLIM, result.getGeneratedVariant());
+        assertTrue(secondRequest.get() - firstRequest.get() >= TimeUnit.MILLISECONDS.toNanos(900));
+        verify(httpClient, times(2)).execute(eq(LOOKUP_URI), any(), any(), any(), any(), any(), anyInt());
+        verify(metricsCounter, times(2)).increment(MetricsCounter.Service.MINESKIN_CALLS);
+    }
+
+    @Test
+    @Timeout(10)
+    void repeatedRateLimitsHaveABoundedRetryCount() throws Exception {
+        respond(decrypted("https://minesk.in/" + SKIN_ID));
+        when(httpClient.execute(eq(LOOKUP_URI), any(), any(), any(), any(), any(), anyInt()))
+                .thenReturn(new HttpResponse(429, "{}", Map.of("Retry-After", List.of("1"))));
+
+        assertThrows(DataRequestException.class, () -> api.genSkin(AXOLOTL_URL, null));
+        verify(httpClient, times(5)).execute(eq(LOOKUP_URI), any(), any(), any(), any(), any(), anyInt());
+        verify(metricsCounter, times(5)).increment(MetricsCounter.Service.MINESKIN_CALLS);
+        verify(httpClient, never()).execute(any(), any(), any(), any(), eq(HttpClient.HttpMethod.POST), any(), anyInt());
+    }
+
+    @Test
+    @Timeout(5)
+    void excessiveBackoffFailsWithoutSendingAnotherLookupOrDelayingGeneration() throws Exception {
+        respond(decrypted("https://minesk.in/" + SKIN_ID));
+        when(httpClient.execute(eq(LOOKUP_URI), any(), any(), any(), any(), any(), anyInt()))
+                .thenReturn(new HttpResponse(429, "{}", Map.of("Retry-After", List.of("60"))));
+        when(httpClient.execute(eq(URI.create("https://api.mineskin.org/v2/generate")),
+                any(), any(), any(), any(), any(), anyInt()))
+                .thenReturn(generatedSkin(textureValue(SkinVariant.CLASSIC)));
+
+        assertThrows(DataRequestException.class, () -> api.genSkin(AXOLOTL_URL, null));
+        assertThrows(DataRequestException.class, () -> api.genSkin(AXOLOTL_URL, null));
+        assertEquals(SkinVariant.CLASSIC, api.genSkin("https://example.com/skin.png", null).getGeneratedVariant());
+        verify(httpClient, times(1)).execute(eq(LOOKUP_URI), any(), any(), any(), any(), any(), anyInt());
+    }
+
+    @Test
+    void interruptedLookupPreservesTheInterruptFlag() throws Exception {
+        respond(decrypted("https://minesk.in/" + SKIN_ID));
+        try {
+            Thread.currentThread().interrupt();
+            DataRequestException error = assertThrows(DataRequestException.class, () -> api.genSkin(AXOLOTL_URL, null));
+            assertInstanceOf(InterruptedException.class, error.getCause());
+            assertTrue(Thread.currentThread().isInterrupted());
+            verify(httpClient, never()).execute(eq(LOOKUP_URI), any(), any(), any(), any(), any(), anyInt());
+        } finally {
+            Thread.interrupted();
+        }
+    }
+
+    /** Holds five lookup requests open and verifies that the sixth cannot enter until a permit is released. */
+    @Test
+    @Timeout(10)
+    void concurrentLookupsNeverExceedFiveRequests() throws Exception {
+        respond(decrypted("https://minesk.in/" + SKIN_ID));
+        CountDownLatch firstFive = new CountDownLatch(5);
+        CountDownLatch sixth = new CountDownLatch(1);
+        CountDownLatch release = new CountDownLatch(1);
+        AtomicInteger requests = new AtomicInteger();
+        AtomicInteger active = new AtomicInteger();
+        AtomicInteger maximumActive = new AtomicInteger();
+        when(httpClient.execute(eq(LOOKUP_URI), any(), any(), any(), any(), any(), anyInt()))
+                .thenAnswer(invocation -> {
+                    maximumActive.accumulateAndGet(active.incrementAndGet(), Math::max);
+                    if (requests.incrementAndGet() == 6) {
+                        sixth.countDown();
+                    }
+                    firstFive.countDown();
+                    try {
+                        assertTrue(release.await(5, TimeUnit.SECONDS));
+                        return signedSkin(textureValue(SkinVariant.CLASSIC));
+                    } finally {
+                        active.decrementAndGet();
+                    }
+                });
+        ExecutorService executor = Executors.newFixedThreadPool(6);
+        try {
+            List<Future<MineSkinResponse>> results = new ArrayList<>();
+            for (int i = 0; i < 6; i++) {
+                results.add(executor.submit(() -> api.genSkin(AXOLOTL_URL, null)));
+            }
+            assertTrue(firstFive.await(5, TimeUnit.SECONDS));
+            assertFalse(sixth.await(200, TimeUnit.MILLISECONDS));
+            release.countDown();
+            for (Future<MineSkinResponse> result : results) {
+                assertEquals(SkinVariant.CLASSIC, result.get(5, TimeUnit.SECONDS).getGeneratedVariant());
+            }
+            assertEquals(5, maximumActive.get());
+            assertEquals(6, requests.get());
+        } finally {
+            release.countDown();
+            executor.shutdownNow();
+            assertTrue(executor.awaitTermination(5, TimeUnit.SECONDS));
+        }
+    }
+
+    @Test
     void normalImageUrlsStillUseGeneration() throws Exception {
         String value = textureValue(SkinVariant.SLIM);
-        respond(signedSkin(value));
+        respond(generatedSkin(value));
 
         MineSkinResponse result = api.genSkin("https://example.com/skin.png", SkinVariant.SLIM);
 
@@ -276,9 +423,13 @@ class MineSkinAPIImplTest {
 
     private HttpResponse signedSkin(String value) {
         return new HttpResponse(200, """
-                {"success":true,"skin":{"uuid":"%s","texture":{"data":{
-                "value":"%s","signature":"original-signature"}}}}
+                {"uuid":"%s","texture":{"data":{
+                "value":"%s","signature":"original-signature"}}}
                 """.formatted(SKIN_ID, value), Map.of());
+    }
+
+    private HttpResponse generatedSkin(String value) {
+        return new HttpResponse(200, "{\"success\":true,\"skin\":" + signedSkin(value).body() + "}", Map.of());
     }
 
     /** Builds a profile containing both a cape and the requested skin model for preservation checks. */
