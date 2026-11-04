@@ -73,7 +73,9 @@ public class MineSkinAPIImpl implements MineSkinAPI {
 
     @Override
     public MineSkinResponse genSkin(String imageUrl, @Nullable SkinVariant skinVariant) throws DataRequestException, MineSkinException {
-        imageUrl = decryptAxolotlUrl(imageUrl);
+        if (imageUrl.startsWith(AXOLOTL_PREFIX)) {
+            return lookupAxolotlSkin(decryptAxolotlUrl(imageUrl), skinVariant);
+        }
         imageUrl = SRHelpers.sanitizeImageURL(imageUrl);
 
         try {
@@ -223,6 +225,59 @@ public class MineSkinAPIImpl implements MineSkinAPI {
         return Optional.of(apiKey);
     }
 
+    private MineSkinResponse lookupAxolotlSkin(String url, @Nullable SkinVariant requestedVariant) throws DataRequestException {
+        URI uri;
+        try {
+            uri = URI.create(url);
+        } catch (IllegalArgumentException e) {
+            throw new DataRequestExceptionShared(e);
+        }
+
+        // Decryption returns a MineSkin page, not an image to regenerate. Only accept a skin UUID.
+        if (!"https".equalsIgnoreCase(uri.getScheme()) || !"minesk.in".equalsIgnoreCase(uri.getHost())
+                || uri.getRawUserInfo() != null || uri.getPort() != -1
+                || !uri.getRawPath().matches("/([0-9a-fA-F]{32}|"
+                + "[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12})/?")) {
+            throw new DataRequestExceptionShared("Invalid MineSkin URL returned by Axolotl");
+        }
+        String skinId = uri.getPath().replace("/", "").replace("-", "");
+
+        try {
+            Map<String, String> headers = new HashMap<>();
+            getApiKey(settings).ifPresent(key -> headers.put("Authorization", "Bearer %s".formatted(key)));
+            metricsCounter.increment(MetricsCounter.Service.MINESKIN_CALLS);
+            HttpResponse httpResponse = httpClient.execute(
+                    URI.create("https://api.mineskin.org/v2/skins/" + skinId),
+                    null,
+                    HttpClient.HttpType.JSON,
+                    MINESKIN_USER_AGENT,
+                    HttpClient.HttpMethod.GET,
+                    headers,
+                    30_000
+            );
+            if (httpResponse.statusCode() != 200) {
+                throw new DataRequestExceptionShared("MineSkin lookup error: %d".formatted(httpResponse.statusCode()));
+            }
+            MineSkinUrlResponse response = httpResponse.getBodyAs(MineSkinUrlResponse.class);
+            if (response == null || !response.isSuccess() || response.getSkin() == null
+                    || response.getSkin().getTexture() == null || response.getSkin().getTexture().getData() == null) {
+                throw new DataRequestExceptionShared("Missing MineSkin lookup skin data");
+            }
+            MineSkinUrlResponse.Skin skin = response.getSkin();
+            MineSkinUrlResponse.Skin.Texture.Data data = skin.getTexture().getData();
+            if (skin.getUuid() == null || skin.getUuid().isBlank()
+                    || data.getValue() == null || data.getValue().isBlank()
+                    || data.getSignature() == null || data.getSignature().isBlank()) {
+                throw new DataRequestExceptionShared("Missing signed MineSkin lookup texture");
+            }
+            // Keep the complete signed value unchanged: it includes both the cape and skin model.
+            SkinProperty property = SkinProperty.of(data.getValue(), data.getSignature());
+            return MineSkinResponse.of(property, skin.getUuid(), requestedVariant, PropertyUtils.getSkinVariant(property));
+        } catch (IOException e) {
+            throw new DataRequestExceptionShared(e);
+        }
+    }
+
     private String decryptAxolotlUrl(String imageUrl) throws DataRequestException {
         if (!imageUrl.startsWith(AXOLOTL_PREFIX)) {
             return imageUrl;
@@ -245,8 +300,8 @@ public class MineSkinAPIImpl implements MineSkinAPI {
             );
 
             if (response.statusCode() == 200) {
-                AxolotlDecryptResponse decryptResponse = gson.fromJson(response.body(), AxolotlDecryptResponse.class);
-                if (decryptResponse.url != null && !decryptResponse.url.isEmpty()) {
+                AxolotlDecryptResponse decryptResponse = response.getBodyAs(AxolotlDecryptResponse.class);
+                if (decryptResponse != null && decryptResponse.url != null && !decryptResponse.url.isBlank()) {
                     logger.debug("Successfully decrypted axolotl URL to: %s".formatted(decryptResponse.url));
                     return decryptResponse.url;
                 } else {
@@ -254,13 +309,13 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                     throw new DataRequestExceptionShared(new IOException("Invalid decrypt response: missing URL"));
                 }
             } else if (response.statusCode() == 400) {
-                AxolotlErrorResponse errorResponse = gson.fromJson(response.body(), AxolotlErrorResponse.class);
-                String errorMsg = errorResponse.error != null ? errorResponse.error : "Malformed ciphertext";
+                AxolotlErrorResponse errorResponse = response.getBodyAs(AxolotlErrorResponse.class);
+                String errorMsg = errorResponse != null && errorResponse.error != null ? errorResponse.error : "Malformed ciphertext";
                 logger.debug(SRLogLevel.WARNING, "Axolotl decrypt failed (400): %s".formatted(errorMsg));
                 throw new DataRequestExceptionShared(new IOException("Failed to decrypt axolotl URL: " + errorMsg));
             } else if (response.statusCode() == 500) {
-                AxolotlErrorResponse errorResponse = gson.fromJson(response.body(), AxolotlErrorResponse.class);
-                String errorMsg = errorResponse.error != null ? errorResponse.error : "Server configuration error";
+                AxolotlErrorResponse errorResponse = response.getBodyAs(AxolotlErrorResponse.class);
+                String errorMsg = errorResponse != null && errorResponse.error != null ? errorResponse.error : "Server configuration error";
                 logger.debug(SRLogLevel.WARNING, "Axolotl decrypt server error (500): %s".formatted(errorMsg));
                 throw new DataRequestExceptionShared(new IOException("Axolotl decrypt service error: " + errorMsg));
             } else {
