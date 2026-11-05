@@ -13,7 +13,6 @@ dependencies {
     implementation(projects.multiver.miniplaceholders)
 
     testImplementation(testFixtures(projects.test))
-    testImplementation(libs.velocity.api)
 
     compileOnly(libs.velocity.api)
 
