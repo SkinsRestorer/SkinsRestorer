@@ -9,6 +9,7 @@ dependencies {
 
     testImplementation(libs.testcontainers)
     testImplementation(libs.testcontainers.mariadb)
+    testImplementation(libs.testcontainers.mysql)
     testImplementation(libs.testcontainers.postgresql)
     testImplementation(libs.testcontainers.junit.jupiter)
 
