@@ -1,0 +1,13 @@
+min_version: 1.13.6
+
+pre-commit:
+  commands:
+    whitespace:
+      run: git diff --cached --check
+
+pre-push:
+  commands:
+    verify:
+      files: git diff --name-only @{upstream} HEAD
+      glob: "*.{java,gradle,kts}"
+      run: ./gradlew spotlessCheck

@@ -59,3 +59,9 @@ Add a body when the reason or compatibility impact is not obvious.
 
 For vulnerabilities, follow [the security reporting instructions](SECURITY.md).
 Remove credentials and private data from examples, logs, and screenshots.
+
+## Git hooks
+
+Install [Lefthook](https://lefthook.dev/install/) 1.13.6 or newer, then run `lefthook install` once per checkout.
+Commits check staged whitespace. Before pushing source or build-script changes, the hook runs `./gradlew spotlessCheck`.
+The pre-push hook compares `HEAD` with the branch's upstream. Keep the upstream set to the branch that you push.
