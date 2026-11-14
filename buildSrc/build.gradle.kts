@@ -25,7 +25,13 @@ dependencies {
     implementation("com.github.spotbugs.snom:spotbugs-gradle-plugin:6.5.13")
     implementation("net.kyori:indra-git:4.1.0")
     implementation("io.freefair.gradle:lombok-plugin:9.8.3")
-    implementation("xyz.wagyourtail.jvmdowngrader:xyz.wagyourtail.jvmdowngrader.gradle.plugin:2.0.1")
+    // Pin the published snapshot containing the Java 8 byte-view VarHandle shims.
+    implementation("xyz.wagyourtail.jvmdowngrader:gradle-plugin:2.0.2-20261110.114234-3")
+    constraints {
+        implementation("xyz.wagyourtail.jvmdowngrader:jvmdowngrader:2.0.2-20261110.114234-3") {
+            version { strictly("2.0.2-20261110.114234-3") }
+        }
+    }
     implementation("io.papermc.paperweight.userdev:io.papermc.paperweight.userdev.gradle.plugin:2.0.0-beta.24")
     implementation("net.ltgt.errorprone:net.ltgt.errorprone.gradle.plugin:5.2.0")
     implementation("org.openrewrite:plugin:7.39.0")

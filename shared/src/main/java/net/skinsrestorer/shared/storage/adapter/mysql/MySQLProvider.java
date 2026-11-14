@@ -48,7 +48,7 @@ public class MySQLProvider {
         int maxPoolSize = settings.getProperty(DatabaseConfig.DATABASE_MAX_POOL_SIZE);
         String options = settings.getProperty(DatabaseConfig.DATABASE_CONNECTION_OPTIONS);
 
-        Configuration configuration = Configuration.parse("jdbc:mysql://%s:%d/%s?permitMysqlScheme&maxPoolSize=%d&%s".formatted(host, port, database, maxPoolSize, options));
+        Configuration configuration = Configuration.parse("jdbc:mariadb://%s:%d/%s?maxPoolSize=%d&%s".formatted(host, port, database, maxPoolSize, options));
 
         pool = Pools.retrievePool(configuration.clone(username, password));
     }
