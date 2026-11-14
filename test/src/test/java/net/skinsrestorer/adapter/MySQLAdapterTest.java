@@ -39,9 +39,14 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.nio.file.Path;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -118,5 +123,23 @@ public class MySQLAdapterTest {
 
             AdapterHelper.testAdapter(adapter);
         });
+        packagedDriverRunsOnJava8(database);
     }
+
+    private void packagedDriverRunsOnJava8(JdbcDatabaseContainer<?> database) throws Exception {
+        String classpath = System.getProperty("skinsrestorer.java8ProbeClasspath") + File.pathSeparator
+                + System.getProperty("skinsrestorer.packagedPlugin");
+        Process process = new ProcessBuilder(
+                System.getProperty("skinsrestorer.java8Executable"), "-cp", classpath,
+                "net.skinsrestorer.adapter.Java8DriverProbe",
+                database.getJdbcUrl().replace("jdbc:mysql:", "jdbc:mariadb:"), database.getUsername(), database.getPassword())
+                .redirectErrorStream(true).start();
+        boolean finished = process.waitFor(60, TimeUnit.SECONDS);
+        if (!finished) process.destroyForcibly();
+        assertTrue(finished, "Packaged Java 8 driver timed out");
+        String output = new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+        assertEquals(0, process.exitValue(), output);
+        assertTrue(output.contains("passes on Java 1.8."), output);
+    }
+
 }
