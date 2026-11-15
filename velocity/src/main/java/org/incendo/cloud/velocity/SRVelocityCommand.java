@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 public class SRVelocityCommand<C> implements RawCommand {
 
@@ -43,11 +44,21 @@ public class SRVelocityCommand<C> implements RawCommand {
 
     @Override
     public List<String> suggest(Invocation invocation) {
+        return this.suggestAsync(invocation).join();
+    }
+
+    /**
+     * Velocity calls this on the Netty event loop of the requesting player, so it must not wait for suggestions.
+     */
+    @Override
+    public CompletableFuture<List<String>> suggestAsync(Invocation invocation) {
         var cmd = this.command.name() + " " + invocation.arguments();
-        final Suggestions<C, ?> result = this.manager.suggestionFactory().suggestImmediately(
-                this.manager.senderMapper().map(invocation.source()),
-                cmd
-        );
+        return this.manager.suggestionFactory()
+                .suggest(this.manager.senderMapper().map(invocation.source()), cmd)
+                .thenApply(SRVelocityCommand::mapSuggestions);
+    }
+
+    private static List<String> mapSuggestions(Suggestions<?, ?> result) {
         return result.list().stream()
                 .map(Suggestion::suggestion)
                 .map(suggestion -> StringUtils.trimBeforeLastSpace(suggestion, result.commandInput()))
