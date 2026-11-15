@@ -38,7 +38,7 @@ dependencies {
 
     implementation("commons-io:commons-io:2.22.0")
     implementation("org.apache.ant:ant:1.10.18")
-    implementation("org.codehaus.plexus:plexus-utils:4.1.0")
+    implementation("org.codehaus.plexus:plexus-utils:4.2.0")
 
     // For custom SpigotRemapTask
     implementation("net.md-5:SpecialSource:1.11.6")
