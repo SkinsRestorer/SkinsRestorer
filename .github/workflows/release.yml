@@ -127,6 +127,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         OPENAI_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         RELEASE_TAG: ${{ inputs.version }}
+        RELEASE_URL: https://modrinth.com/plugin/skinsrestorer/version/${{ inputs.version }}
         COMMIT_CHANGELOG: ${{ steps.github_release.outputs.changelog }}
       run: |
         # The release step creates the real tag. A local tag lets communique find the release range now.
@@ -135,10 +136,19 @@ jobs:
         # Drop the generated "# <tag>: <title>" heading because each release keeps its own name.
         sed '1{/^# /d}' "$RUNNER_TEMP/communique.md" | sed '/./,$!d' > "$RUNNER_TEMP/release-highlights.md"
         printf '\n\n## Commits\n\n%s\n' "$COMMIT_CHANGELOG" | cat "$RUNNER_TEMP/release-highlights.md" - > "$RUNNER_TEMP/release-notes.md"
+        python3 - "$RUNNER_TEMP/release-highlights.md" "$RELEASE_URL" > "$RUNNER_TEMP/discord.md" <<'PY'
+        import re, sys
+        # Show headings as bold text and keep the embed within Discord's 4096-character limit.
+        text = re.sub(r"^#{1,6}\s+(.+)$", r"**\1**", open(sys.argv[1]).read(), flags=re.M).strip()
+        more = f"\n\n[Read the full release notes]({sys.argv[2]})"
+        if len(text) > 4096:
+            text = text[: 4096 - len(more)].rsplit("\n", 1)[0] + more
+        print(text)
+        PY
         delimiter="EOF_$(openssl rand -hex 16)"
         {
-          echo "highlights<<$delimiter"
-          cat "$RUNNER_TEMP/release-highlights.md"
+          echo "discord<<$delimiter"
+          cat "$RUNNER_TEMP/discord.md"
           echo
           echo "$delimiter"
           echo "notes<<$delimiter"
@@ -320,15 +330,15 @@ jobs:
         HANGAR_CHANGELOG: ${{ steps.release_notes.outputs.notes }}
 
     - name: Announce release on Discord
-      uses: SethCohen/github-releases-to-discord@v1.20.0
+      uses: tsickert/discord-webhook@v7.0.0
       with:
-        webhook_url: ${{ secrets.WEBHOOK_URL }}
+        webhook-url: ${{ secrets.WEBHOOK_URL }}
         content: <@&1201133350916739173> New SkinsRestorer version released!
-        release_name: SkinsRestorer ${{ inputs.version }}
-        release_body: ${{ steps.release_notes.outputs.highlights }}
-        release_html_url: https://modrinth.com/plugin/skinsrestorer/version/${{ inputs.version }}
-        color: '16641028'
-        reduce_headings: true
+        embed-title: SkinsRestorer ${{ inputs.version }}
+        embed-url: https://modrinth.com/plugin/skinsrestorer/version/${{ inputs.version }}
+        embed-description: ${{ steps.release_notes.outputs.discord }}
+        embed-color: 16641028
+        embed-thumbnail-url: https://skinsrestorer.net/logo.png
 
   deploy-javadoc:
     needs: build
