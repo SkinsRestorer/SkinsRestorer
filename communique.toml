@@ -7,7 +7,8 @@ SkinsRestorer is a Minecraft plugin and mod that lets players change their skin 
 
 system_extra = """
 Write for the people who install and run SkinsRestorer, not for contributors.
-Keep release_body short. It is also posted to Discord, which cuts embeds at 4096 characters, so aim for under 2500 characters.
+Keep release_body under 1200 characters with at most 5 bullet points in total. It is also posted to Discord as a chat announcement.
+Do not credit AlexProgrammerDE or bots such as dependabot and renovate, because they are the maintainer and automation. Credit other contributors once, in their bullet or in New Contributors.
 Describe what users can now do or what works better. Skip tests, CI, formatting, dependency bumps, and internal refactors unless users notice the change.
 Do not invent speed, reliability, security, or compatibility claims.
 Do not use emoji or em dashes.
