@@ -127,24 +127,23 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         OPENAI_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         RELEASE_TAG: ${{ inputs.version }}
-        RELEASE_URL: https://modrinth.com/plugin/skinsrestorer/version/${{ inputs.version }}
         COMMIT_CHANGELOG: ${{ steps.github_release.outputs.changelog }}
       run: |
         # The release step creates the real tag. A local tag lets communique find the release range now.
         git update-ref "refs/tags/$RELEASE_TAG" HEAD
-        communique generate "$RELEASE_TAG" --tag-pattern '[0-9]*' --output "$RUNNER_TEMP/communique.md"
-        # Drop the generated "# <tag>: <title>" heading because each release keeps its own name.
-        sed '1{/^# /d}' "$RUNNER_TEMP/communique.md" | sed '/./,$!d' > "$RUNNER_TEMP/release-highlights.md"
+        # Generate again when the notes break the length limits. The last attempt trims them instead.
+        for attempt in 1 2 3; do
+          communique generate "$RELEASE_TAG" --tag-pattern '[0-9]*' --output "$RUNNER_TEMP/communique.md"
+          if [ "$attempt" = 3 ]; then
+            python3 .github/scripts/release_notes.py highlights --trim "$RUNNER_TEMP/communique.md" > "$RUNNER_TEMP/release-highlights.md"
+          elif python3 .github/scripts/release_notes.py highlights "$RUNNER_TEMP/communique.md" > "$RUNNER_TEMP/release-highlights.md"; then
+            break
+          else
+            echo "::notice::Release notes attempt $attempt is over the length limits. Generating again."
+          fi
+        done
         printf '\n\n<details>\n<summary>All commits</summary>\n\n%s\n\n</details>\n' "$COMMIT_CHANGELOG" | cat "$RUNNER_TEMP/release-highlights.md" - > "$RUNNER_TEMP/release-notes.md"
-        python3 - "$RUNNER_TEMP/release-highlights.md" "$RELEASE_URL" > "$RUNNER_TEMP/discord.md" <<'PY'
-        import re, sys
-        # Show headings as bold text and keep the embed within Discord's 4096-character limit.
-        text = re.sub(r"^#{1,6}\s+(.+)$", r"**\1**", open(sys.argv[1]).read(), flags=re.M).strip()
-        more = f"\n\n[Read the full release notes]({sys.argv[2]})"
-        if len(text) > 4096:
-            text = text[: 4096 - len(more)].rsplit("\n", 1)[0] + more
-        print(text)
-        PY
+        python3 .github/scripts/release_notes.py discord "$RUNNER_TEMP/release-highlights.md" > "$RUNNER_TEMP/discord.md"
         delimiter="EOF_$(openssl rand -hex 16)"
         {
           echo "discord<<$delimiter"
