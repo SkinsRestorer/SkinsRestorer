@@ -33,6 +33,7 @@ import net.skinsrestorer.shared.connections.http.HttpResponse;
 import net.skinsrestorer.shared.connections.mineskin.MineSkinVariant;
 import net.skinsrestorer.shared.connections.mineskin.MineSkinVisibility;
 import net.skinsrestorer.shared.connections.mineskin.requests.MineSkinUrlRequest;
+import net.skinsrestorer.shared.connections.mineskin.responses.MineSkinLookupResponse;
 import net.skinsrestorer.shared.connections.mineskin.responses.MineSkinUrlResponse;
 import net.skinsrestorer.shared.exception.DataRequestExceptionShared;
 import net.skinsrestorer.shared.exception.MineSkinExceptionShared;
@@ -40,6 +41,7 @@ import net.skinsrestorer.shared.log.SRLogLevel;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.utils.MetricsCounter;
+import net.skinsrestorer.shared.utils.RateLimitBackoff;
 import net.skinsrestorer.shared.utils.SRHelpers;
 import org.jetbrains.annotations.Nullable;
 
@@ -60,10 +62,13 @@ import static net.skinsrestorer.shared.utils.ValidationUtil.AXOLOTL_PREFIX;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class MineSkinAPIImpl implements MineSkinAPI {
     private static final int MAX_RETRIES = 5;
+    private static final long MAX_LOOKUP_WAIT_MS = TimeUnit.SECONDS.toMillis(30);
+    private static final String LOOKUP_BACKOFF_KEY = "mineskin-skin-lookup";
     private static final String MINESKIN_USER_AGENT = "SkinsRestorer/MineSkinAPI";
     private static final URI MINESKIN_ENDPOINT = URI.create("https://api.mineskin.org/v2/generate");
     private static final URI AXOLOTL_DECRYPT_ENDPOINT = URI.create("https://axolotl.skinsrestorer.net/mineskin/decrypt-url");
     private final Semaphore semaphore = new Semaphore(5);
+    private final RateLimitBackoff lookupBackoff = new RateLimitBackoff();
     private final Gson gson = new Gson();
     private final SRLogger logger;
     private final MetricsCounter metricsCounter;
@@ -71,9 +76,16 @@ public class MineSkinAPIImpl implements MineSkinAPI {
     private final HttpClient httpClient;
     private final AtomicLong nextRequestAt = new AtomicLong();
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Axolotl URLs reuse an existing signed skin; image URLs use MineSkin generation.
+     */
     @Override
     public MineSkinResponse genSkin(String imageUrl, @Nullable SkinVariant skinVariant) throws DataRequestException, MineSkinException {
-        imageUrl = decryptAxolotlUrl(imageUrl);
+        if (imageUrl.startsWith(AXOLOTL_PREFIX)) {
+            return lookupAxolotlSkin(decryptAxolotlUrl(imageUrl), skinVariant);
+        }
         imageUrl = SRHelpers.sanitizeImageURL(imageUrl);
 
         try {
@@ -223,6 +235,118 @@ public class MineSkinAPIImpl implements MineSkinAPI {
         return Optional.of(apiKey);
     }
 
+    /**
+     * Validates a decrypted MineSkin page URL and returns its original signed texture and variant.
+     * Malformed responses are reported as request failures so callers can apply their error cooldown.
+     */
+    private MineSkinResponse lookupAxolotlSkin(String url, @Nullable SkinVariant requestedVariant) throws DataRequestException {
+        URI uri;
+        try {
+            uri = URI.create(url);
+        } catch (IllegalArgumentException e) {
+            throw new DataRequestExceptionShared(e);
+        }
+
+        // Decryption returns a MineSkin page, not an image to regenerate. Only accept a skin UUID.
+        if (!"https".equalsIgnoreCase(uri.getScheme()) || !"minesk.in".equalsIgnoreCase(uri.getHost())
+                || uri.getRawUserInfo() != null || uri.getPort() != -1
+                || !uri.getRawPath().matches("/([0-9a-fA-F]{32}|"
+                + "[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12})/?")) {
+            throw new DataRequestExceptionShared("Invalid MineSkin URL returned by Axolotl");
+        }
+        String skinId = uri.getPath().replace("/", "").replace("-", "");
+
+        try {
+            HttpResponse httpResponse = querySkin(skinId);
+            if (httpResponse.statusCode() != 200) {
+                throw new DataRequestExceptionShared("MineSkin lookup error: %d".formatted(httpResponse.statusCode()));
+            }
+            MineSkinLookupResponse response = httpResponse.getBodyAs(MineSkinLookupResponse.class);
+            MineSkinUrlResponse.Skin skin = response == null ? null : response.resolveSkin();
+            if (skin == null || skin.getTexture() == null || skin.getTexture().getData() == null) {
+                throw new DataRequestExceptionShared("Missing MineSkin lookup skin data");
+            }
+            MineSkinUrlResponse.Skin.Texture.Data data = skin.getTexture().getData();
+            if (skin.getUuid() == null || skin.getUuid().isBlank()
+                    || data.getValue() == null || data.getValue().isBlank()
+                    || data.getSignature() == null || data.getSignature().isBlank()) {
+                throw new DataRequestExceptionShared("Missing signed MineSkin lookup texture");
+            }
+            // Keep the complete signed value unchanged: it includes both the cape and skin model.
+            SkinProperty property = SkinProperty.of(data.getValue(), data.getSignature());
+            SkinVariant generatedVariant;
+            try {
+                generatedVariant = PropertyUtils.getSkinVariant(property);
+            } catch (RuntimeException e) {
+                throw new DataRequestExceptionShared(e);
+            }
+            return MineSkinResponse.of(property, skin.getUuid(), requestedVariant, generatedVariant);
+        } catch (IOException e) {
+            throw new DataRequestExceptionShared(e);
+        }
+    }
+
+    /**
+     * Limits lookup concurrency and retries connection failures up to three times and HTTP 429 up to five times.
+     * Lookup backoff is separate from generation delays and has a 30-second total wait budget.
+     */
+    private HttpResponse querySkin(String skinId) throws IOException, DataRequestException {
+        Map<String, String> headers = new HashMap<>();
+        getApiKey(settings).ifPresent(key -> headers.put("Authorization", "Bearer %s".formatted(key)));
+        long waitDeadline = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(MAX_LOOKUP_WAIT_MS);
+        int connectionFailures = 0;
+
+        try {
+            for (int attempt = 0; true; attempt++) {
+                semaphore.acquire();
+                try {
+                    awaitLookupBackoff(waitDeadline);
+                    metricsCounter.increment(MetricsCounter.Service.MINESKIN_CALLS);
+                    HttpResponse response = httpClient.execute(
+                            URI.create("https://api.mineskin.org/v2/skins/" + skinId),
+                            null,
+                            HttpClient.HttpType.JSON,
+                            MINESKIN_USER_AGENT,
+                            HttpClient.HttpMethod.GET,
+                            headers,
+                            30_000
+                    );
+                    if (response.statusCode() == 429) {
+                        lookupBackoff.markRateLimited(LOOKUP_BACKOFF_KEY, response);
+                        if (attempt < MAX_RETRIES - 1) {
+                            continue;
+                        }
+                    }
+                    return response;
+                } catch (IOException e) {
+                    if (++connectionFailures >= 3 || attempt >= MAX_RETRIES - 1) {
+                        throw e;
+                    }
+                } finally {
+                    semaphore.release();
+                }
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new DataRequestExceptionShared(e);
+        }
+    }
+
+    /** Waits for a lookup retry without exceeding the caller's wait budget or sending requests early. */
+    private void awaitLookupBackoff(long waitDeadline) throws InterruptedException, DataRequestException {
+        long remaining;
+        while ((remaining = lookupBackoff.getRemainingMs(LOOKUP_BACKOFF_KEY)) > 0) {
+            long budget = TimeUnit.NANOSECONDS.toMillis(waitDeadline - System.nanoTime());
+            if (remaining > budget) {
+                throw new DataRequestExceptionShared("MineSkin lookup retry delay exceeds the request wait budget");
+            }
+            Thread.sleep(remaining);
+        }
+    }
+
+    /**
+     * Decrypts an Axolotl URL into its MineSkin page URL, mapping service and JSON errors to request failures.
+     */
     private String decryptAxolotlUrl(String imageUrl) throws DataRequestException {
         if (!imageUrl.startsWith(AXOLOTL_PREFIX)) {
             return imageUrl;
@@ -245,8 +369,8 @@ public class MineSkinAPIImpl implements MineSkinAPI {
             );
 
             if (response.statusCode() == 200) {
-                AxolotlDecryptResponse decryptResponse = gson.fromJson(response.body(), AxolotlDecryptResponse.class);
-                if (decryptResponse.url != null && !decryptResponse.url.isEmpty()) {
+                AxolotlDecryptResponse decryptResponse = response.getBodyAs(AxolotlDecryptResponse.class);
+                if (decryptResponse != null && decryptResponse.url != null && !decryptResponse.url.isBlank()) {
                     logger.debug("Successfully decrypted axolotl URL to: %s".formatted(decryptResponse.url));
                     return decryptResponse.url;
                 } else {
@@ -254,13 +378,13 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                     throw new DataRequestExceptionShared(new IOException("Invalid decrypt response: missing URL"));
                 }
             } else if (response.statusCode() == 400) {
-                AxolotlErrorResponse errorResponse = gson.fromJson(response.body(), AxolotlErrorResponse.class);
-                String errorMsg = errorResponse.error != null ? errorResponse.error : "Malformed ciphertext";
+                AxolotlErrorResponse errorResponse = response.getBodyAs(AxolotlErrorResponse.class);
+                String errorMsg = errorResponse != null && errorResponse.error != null ? errorResponse.error : "Malformed ciphertext";
                 logger.debug(SRLogLevel.WARNING, "Axolotl decrypt failed (400): %s".formatted(errorMsg));
                 throw new DataRequestExceptionShared(new IOException("Failed to decrypt axolotl URL: " + errorMsg));
             } else if (response.statusCode() == 500) {
-                AxolotlErrorResponse errorResponse = gson.fromJson(response.body(), AxolotlErrorResponse.class);
-                String errorMsg = errorResponse.error != null ? errorResponse.error : "Server configuration error";
+                AxolotlErrorResponse errorResponse = response.getBodyAs(AxolotlErrorResponse.class);
+                String errorMsg = errorResponse != null && errorResponse.error != null ? errorResponse.error : "Server configuration error";
                 logger.debug(SRLogLevel.WARNING, "Axolotl decrypt server error (500): %s".formatted(errorMsg));
                 throw new DataRequestExceptionShared(new IOException("Axolotl decrypt service error: " + errorMsg));
             } else {
