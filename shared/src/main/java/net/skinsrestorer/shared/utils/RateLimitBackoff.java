@@ -19,6 +19,9 @@ package net.skinsrestorer.shared.utils;
 
 import net.skinsrestorer.shared.connections.http.HttpResponse;
 
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -46,7 +49,7 @@ public class RateLimitBackoff {
             return false;
         }
         if (System.currentTimeMillis() >= until) {
-            backoffUntil.remove(endpoint);
+            backoffUntil.remove(endpoint, until);
             return false;
         }
         return true;
@@ -62,7 +65,7 @@ public class RateLimitBackoff {
         }
         long remaining = until - System.currentTimeMillis();
         if (remaining <= 0) {
-            backoffUntil.remove(endpoint);
+            backoffUntil.remove(endpoint, until);
             return 0;
         }
         return remaining;
@@ -71,13 +74,16 @@ public class RateLimitBackoff {
     /**
      * Mark an endpoint as rate-limited based on an HTTP response.
      * Parses the Retry-After header if present, otherwise uses the default backoff.
+     * Concurrent responses can extend an existing backoff but never shorten it.
      *
      * @param endpoint the endpoint identifier
      * @param response the HTTP response that triggered the rate limit
      */
     public void markRateLimited(String endpoint, HttpResponse response) {
         long backoffMs = parseRetryAfter(response.headers());
-        backoffUntil.put(endpoint, System.currentTimeMillis() + backoffMs);
+        long now = System.currentTimeMillis();
+        long until = now + Math.min(backoffMs, Long.MAX_VALUE - now);
+        backoffUntil.merge(endpoint, until, Math::max);
     }
 
     /**
@@ -86,31 +92,44 @@ public class RateLimitBackoff {
      * @param endpoint the endpoint identifier
      */
     public void markRateLimited(String endpoint) {
-        backoffUntil.put(endpoint, System.currentTimeMillis() + DEFAULT_BACKOFF_MS);
+        backoffUntil.merge(endpoint, System.currentTimeMillis() + DEFAULT_BACKOFF_MS, Math::max);
     }
 
+    /** Parses delay-seconds or an HTTP-date, falling back to a conservative delay for invalid headers. */
     private long parseRetryAfter(Map<String, List<String>> headers) {
         if (headers == null) {
             return DEFAULT_BACKOFF_MS;
         }
 
-        List<String> retryAfterValues = headers.get("Retry-After");
-        if (retryAfterValues == null || retryAfterValues.isEmpty()) {
-            // Some servers use lowercase
-            retryAfterValues = headers.get("retry-after");
+        List<String> retryAfterValues = null;
+        for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
+            if ("Retry-After".equalsIgnoreCase(entry.getKey())) {
+                retryAfterValues = entry.getValue();
+                break;
+            }
         }
 
         if (retryAfterValues == null || retryAfterValues.isEmpty()) {
             return DEFAULT_BACKOFF_MS;
         }
 
+        String value = retryAfterValues.getFirst();
+        if (value == null) {
+            return DEFAULT_BACKOFF_MS;
+        }
         try {
-            long seconds = Long.parseLong(retryAfterValues.getFirst().trim());
-            if (seconds > 0) {
+            long seconds = Long.parseLong(value.trim());
+            if (seconds >= 0) {
                 return TimeUnit.SECONDS.toMillis(seconds);
             }
         } catch (NumberFormatException ignored) {
-            // Not a numeric Retry-After value
+            try {
+                long until = ZonedDateTime.parse(value.trim(), DateTimeFormatter.RFC_1123_DATE_TIME)
+                        .toInstant().toEpochMilli();
+                return Math.max(0, until - System.currentTimeMillis());
+            } catch (DateTimeParseException ignoredDate) {
+                // Invalid Retry-After value; use the conservative default below.
+            }
         }
 
         return DEFAULT_BACKOFF_MS;
