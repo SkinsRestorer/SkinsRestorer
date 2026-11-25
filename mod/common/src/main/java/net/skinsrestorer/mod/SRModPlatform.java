@@ -75,4 +75,16 @@ public interface SRModPlatform {
      * bypassing Architectury's codec wrapping.
      */
     void sendPluginMessage(ServerPlayer player, CustomPacketPayload payload);
+
+    /**
+     * Registers the client-side receiver for
+     * {@link net.skinsrestorer.mod.network.TabHeadVisibilityPayload}. Unlike
+     * {@link #initMessageChannel}, this must work even when this mod instance is a
+     * pure client connecting to an external server it does not host, so it cannot go
+     * through the same server-role registration path. A no-op on the physical server
+     * side (dedicated server / this instance hosting) — the payload only ever flows
+     * server-to-client.
+     */
+    default void initTabHeadVisibilityChannel() {
+    }
 }
